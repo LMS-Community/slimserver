@@ -4,6 +4,7 @@ PLUGIN_RADIO_ARTWORK
 	EN	Find Artwork for Radio Stations
 	FR	Rechercher des pochettes pour les radios internet
 	NL	Artwork zoeken voor radiostations
+	SV	Sök efter omslagsbilder för webradio
 
 PLUGIN_RADIO_ARTWORK_DESC
 	CS	Pokuste se najít obaly alb pro skladby přehrávané z rádiových stanic, které neposkytují vlastní obal alba. Je založeno na běžně používaném formátu názvu „interpret - skladba“.
@@ -11,6 +12,7 @@ PLUGIN_RADIO_ARTWORK_DESC
 	EN	Try to find artwork for tracks played from radio stations which don't provide their own artwork. It's based on the widely used title format passed as "artist - title".
 	FR	Essayer de trouver des illustrations pour les pistes jouées depuis des stations de radio qui ne fournissent pas leurs propres illustrations. C'est basé sur le format de titre largement utilisé transmis comme "artiste - titre".
 	NL	Probeer artwork te vinden voor tracks die worden afgespeeld van radiostations die geen eigen artwork leveren. Het is gebaseerd op het veelgebruikte titelformaat dat wordt doorgegeven als "artiest - titel".
+	SV	Försök att hitta omslagsbilder för spår som spelas av radiostationer som inte skickar med egna bilder. Sökningen baseras på den allmänt använda formatet "artist - titel".
 
 PLUGIN_ARTWORK_DONT_SEARCH_FOR_ARTWORK
 	CS	Nehledat obal alba na této stanici
@@ -18,6 +20,7 @@ PLUGIN_ARTWORK_DONT_SEARCH_FOR_ARTWORK
 	EN	Don't search for title artwork on this station
 	FR	Ne pas rechercher de pochettes de titres sur cette station
 	NL	Zoek niet naar titelafbeeldingen op dit station
+	SV	Sök inte efter omslagsbilder för den här stationen
 
 PLUGIN_ARTWORK_SEARCH_FOR_ARTWORK
 	CS	Hledat obaly alb, pokud je to možné
@@ -25,6 +28,7 @@ PLUGIN_ARTWORK_SEARCH_FOR_ARTWORK
 	EN	Search for title artwork if possible
 	FR	Rechercher des pochettes de titres si possible
 	NL	Zoek indien mogelijk naar titelafbeeldingen
+	SV	Sök efter omslagsbilder om det är möjligt
 
 PLUGIN_ARTWORK_ADDED_TO_IGNORELIST
 	CS	Již nebude hledat obaly alb
@@ -32,6 +36,7 @@ PLUGIN_ARTWORK_ADDED_TO_IGNORELIST
 	EN	Will no longer search for artwork
 	FR	La recherche de pochettes est désactivée
 	NL	Zal niet langer zoeken naar artwork
+	SV	Söker inte längre efter omslagsbilder
 
 PLUGIN_ARTWORK_REMOVED_FROM_IGNORELIST
 	CS	Bude hledat obaly alb
@@ -39,6 +44,7 @@ PLUGIN_ARTWORK_REMOVED_FROM_IGNORELIST
 	EN	Will search for track artwork
 	FR	La recherche de pochettes est réactivée
 	NL	Zal weer zoeken naar track artwork
+	SV	Söker efter omslagsbilder igen
 
 PLUGIN_ARTWORK_SETTINGS_IGNORELIST
 	CS	Nehledat obaly alb pro následující rádiové stanice (jedna adresa URL na řádek):
@@ -46,3 +52,4 @@ PLUGIN_ARTWORK_SETTINGS_IGNORELIST
 	EN	Don't look up artwork for the following radio stations (one URL per line):
 	FR	Ne recherchez pas de pochettes pour les stations de radio suivantes (une URL par ligne) :
 	NL	Zoek geen artwork voor de volgende radiostations (één URL per regel):
+	SV	Sök inte efter omslagsbilder för dessa stationer (en URL på varje rad):

@@ -6,6 +6,7 @@ PLUGIN_LIBRARY_DEMO
 	HU	Alkönyvtár demo
 	NL	Sub-collectie demo
 	NO	Underbibliotek-demo
+	SV	Delbiblioteksdemo
 
 PLUGIN_LIBRARY_DEMO_DESC
 	CS	Zásuvný modul pro demonstraci podpory více (nebo virtuálních) knihoven. Tento zásuvný modul vytvoří několik (částečně zbytečných) virtuálních knihoven. Je určen především jako inspirace pro vývojáře zásuvných modulů.
@@ -15,6 +16,7 @@ PLUGIN_LIBRARY_DEMO_DESC
 	HU	Beépülő modul több (vagy virtuális) könyvtár támogatásának demonstrálására. Ez a beépülő modul létrehoz néhány (részben haszontalan) virtuális könyvtárat. Leginkább a bővítmények fejlesztői számára készült inspirációnak.
 	NL	Plug-in om de ondersteuning van meerdere (of virtuele) collecties te demonstreren. Deze plug-in maakt (deels nutteloze) virtuele collecties aan. Het is meer bedoelt als een inspiratiebron voor plug-inontwikkelaars.
 	NO	Plugin for å demonstrere støtte for multiple (eller virtuelle) samlinger. Denne modulen lager noen (delvis ubrukelige) virtuelle samlinger, og er mest tenkt som en inspirasjon for plugin-utviklere.
+	SV	Ett pluginprogram för att demonstrera hur delbibliotek kan implementeras. Programmet kommer att skapa flera, delvis oanvändbara delbibliotek. Programmet är mest tänkt som inspiration till pluginprogramsutvecklare.
 
 PLUGIN_LIBRARY_DEMO_ARTISTS
 	CS	Interpreti milující dlouhé skladby
@@ -24,6 +26,7 @@ PLUGIN_LIBRARY_DEMO_ARTISTS
 	HU	Előadók, akik szeretik a hosszú számokat
 	NL	Artiesten met lange nummers
 	NO	Artister som er glad i lange spor
+	SV	Artister som gärna gör långa låtar
 
 PLUGIN_LIBRARY_DEMO_ALBUMS
 	CS	Alba s přídavky a dalšími dlouhými skladbami
@@ -33,3 +36,4 @@ PLUGIN_LIBRARY_DEMO_ALBUMS
 	HU	Albumok outrókkal és más hosszú dalokkal
 	NL	Albums met outro's en andere lange nummers
 	NO	Albumer med outroer og andre lange spor
+	SV	Album med outros och andra långa låtar

@@ -188,6 +188,7 @@ LOGIC_SKIN
 	DA	Logic blågrøn
 	EN	Logic Teal
 	NL	Logic Turquoise
+	SV	Logic blågrön
 	ZH_CN	逻辑蓝绿
 
 DEFAULT_MAP
@@ -262,7 +263,7 @@ SLIMP3_HOME
 	PL	SLIMP3 - strona główna
 	PT	Início SLIMP3
 	RU	Главное меню SLIMP3
-	SV	SLIMP3 Hem
+	SV	SLIMP3 Huvudmeny
 	ZH_CN	SLIMP3主页
 
 SQUEEZEBOX_HOME
@@ -282,7 +283,7 @@ SQUEEZEBOX_HOME
 	PL	Squeezebox — strona główna
 	PT	Início Squeezebox
 	RU	Главное меню Squeezebox
-	SV	Squeezebox Hem
+	SV	Squeezebox Huvudmeny
 	ZH_CN	Squeezebox主页
 
 SQUEEZEBOX2_HOME
@@ -302,7 +303,7 @@ SQUEEZEBOX2_HOME
 	PL	Squeezebox — strona główna
 	PT	Início Squeezebox
 	RU	Главное меню Squeezebox
-	SV	Squeezebox Hem
+	SV	Squeezebox Huvudmeny
 	ZH_CN	Squeezebox主页
 
 TRANSPORTER_HOME
@@ -322,7 +323,7 @@ TRANSPORTER_HOME
 	PL	Transporter - strona główna
 	PT	Início Transporter
 	RU	Главное меню Transporter
-	SV	Transporter Hem
+	SV	Transporter Huvudmeny
 	ZH_CN	Transporter主页
 
 SOFTSQUEEZE_HOME
@@ -362,7 +363,7 @@ HOMEMENU
 	PL	Strona główna
 	PT	Início
 	RU	Главное меню
-	SV	Hem
+	SV	Huvudmeny
 	ZH_CN	主页
 
 LIBRARY_CONTAINS
@@ -382,7 +383,7 @@ LIBRARY_CONTAINS
 	PL	Twoja biblioteka multimedialna zawiera
 	PT	O arquivo de música contêm
 	RU	Ваша библиотека мультимедиа содержит
-	SV	Mediebiblioteket innehåller
+	SV	Ditt mediebibliotek innehåller
 	ZH_CN	您的音乐库存有
 
 MUSIC
@@ -1464,7 +1465,7 @@ COLLAPSE
 	PL	Zwiń
 	PT	Contrair
 	RU	Свернуть
-	SV	Komprimera
+	SV	Dölj
 	ZH_CN	折叠
 
 UNDOCK_PLAYER_PANEL
@@ -1704,7 +1705,7 @@ ALARM_ADD_DESC
 	PL	Możesz dodać dowolną liczbę alarmów. Każdy alarm może zostać uruchomiony codziennie, w wybranym dniu lub tylko raz. Aby rozpocząć dodawanie nowego alarmu, wybierz opcję „Dodaj alarm”.
 	PT	Pode adicionar tantos alarmes quantos queira. Cada alarme pode ser programado para que dispare diariamente, só em determinados dias ou em uma só vez. Seleccione "Adicione alarme" para criar um novo alarme.
 	RU	Можно добавить любое число будильников. Каждый будильник может звонить ежедневно, только по определенным дням или один раз. Щелкните "Добавить будильник", чтобы добавить новый будильник.
-	SV	Du kan ställa in hur många alarm du vill. För varje alarm kan du ange om det ska ringa varje dag, vissa bestämda dagar eller bara vid ett tillfälle. Välj Lägg till alarm om du vill ställa in ett nytt alarm.
+	SV	Du kan ställa in hur många alarm du vill. För varje alarm kan du ange om det ska ringa varje dag, vissa bestämda dagar eller bara vid ett tillfälle. Välj Lägg till alarm om du vill lägga till ett nytt alarm.
 	ZH_CN	您可以添加任意数量的闹钟。每个闹钟可以设置为每天、特定日期或仅一次响起。选择“添加闹钟”以开始添加新的闹钟。
 
 ALARM_NEW
@@ -1884,7 +1885,7 @@ ALARM_ALARMS_ENABLED_DESC
 	PL	Ta opcja umożliwia natychmiastowe włączenie lub wyłączenie alarmów. Po wybraniu ustawienia Wył. alarm nie zostanie uruchomiony.
 	PT	Esta opção permite activar/desactivar todos os alarmes de uma sóa vez. Se optar por Desligado nenhum alarme será activado.
 	RU	Эта настройка позволяет включить/выключить все будильники. Если она отключена, будильники выключены не будут.
-	SV	Med den här inställningen kan du aktivera/avaktivera alla alarm på en gång.Om du väljer inställningen Av avaktiveras alla alarm.
+	SV	Med den här inställningen kan du aktivera/avaktivera alla alarm på en gång. Om du väljer inställningen Av avaktiveras alla alarm.
 	ZH_CN	此设置允许您一次打开/关闭所有闹钟。如果设置为关闭，则不会发出任何闹钟提醒。
 
 ALARM_FADE
@@ -2291,7 +2292,7 @@ ALARM_SHORT_DAY_0
 	PL	Ni
 	PT	Dom
 	RU	Вс
-	SV	Sö
+	SV	Sön
 	ZH_CN	星期日
 
 ALARM_SHORT_DAY_1
@@ -2309,7 +2310,7 @@ ALARM_SHORT_DAY_1
 	PL	Po
 	PT	2ªF
 	RU	Пн
-	SV	Må
+	SV	Mån
 	ZH_CN	星期一
 
 ALARM_SHORT_DAY_2
@@ -2327,7 +2328,7 @@ ALARM_SHORT_DAY_2
 	PL	Wt
 	PT	3ªF
 	RU	Вт
-	SV	Ti
+	SV	Tis
 	ZH_CN	星期二
 
 ALARM_SHORT_DAY_3
@@ -2345,7 +2346,7 @@ ALARM_SHORT_DAY_3
 	PL	Śr
 	PT	4ªF
 	RU	Ср
-	SV	On
+	SV	Ons
 	ZH_CN	星期三
 
 ALARM_SHORT_DAY_4
@@ -2363,7 +2364,7 @@ ALARM_SHORT_DAY_4
 	PL	Czw
 	PT	5ªF
 	RU	Чт
-	SV	To
+	SV	Tor
 	ZH_CN	星期四
 
 ALARM_SHORT_DAY_5
@@ -2381,7 +2382,7 @@ ALARM_SHORT_DAY_5
 	PL	Pi
 	PT	6ªF
 	RU	Пт
-	SV	Fr
+	SV	Fre
 	ZH_CN	星期五
 
 ALARM_SHORT_DAY_6
@@ -2399,7 +2400,7 @@ ALARM_SHORT_DAY_6
 	PL	So
 	PT	Sab
 	RU	Сб
-	SV	Lö
+	SV	Lör
 	ZH_CN	星期六
 
 SLIMP3
@@ -2987,7 +2988,7 @@ PROBLEM_OPENING_REMOTE_URL
 	PL	Błąd: nie można otworzyć zdalnego adresu URL
 	PT	Erro: Não foi possível abrir a URL remota
 	RU	Ошибка: сбой открытия удаленного URL
-	SV	Fel: Fel: Det går inte att öppna den externa webbadressen.
+	SV	Fel: Det går inte att öppna den externa webbadressen.
 	ZH_CN	失误：无法连接网址
 
 PROBLEM_CONVERT_FILE
@@ -3059,7 +3060,7 @@ PROBLEM_CONVERTING_STREAM
 	PL	Błąd: mechanizm DRM w pliku:
 	PT	Erro: ficheiro contendo DRM
 	RU	Ошибка: DRM в файле:
-	SV	Fel: DRM i filen:
+	SV	Fel: DRM-skyddad fil:
 	ZH_CN	错误：文件中的DRM
 
 PROBLEM_UNKNOWN_TYPE
@@ -3153,7 +3154,7 @@ HOME
 	PL	Strona główna
 	PT	Início
 	RU	Главное меню
-	SV	Hem
+	SV	Huvudmeny
 	ZH_CN	主页
 
 STATUS
@@ -3298,7 +3299,7 @@ XML_EDITOR
 	PL	Edytor
 	PT	Editor
 	RU	Редактор
-	SV	Redigerare
+	SV	Redigeringsprogram
 	ZH_CN	编辑
 
 XML_ENCLOSURE
@@ -3335,7 +3336,7 @@ XML_AUDIO_ENCLOSURES
 	NO	Lydvedlegg
 	PL	Załączniki audio
 	RU	Аудиовложения
-	SV	Högtalarkabinett
+	SV	Audiokabinett
 	ZH_CN	音频框架
 
 XML_FEED_DESCRIPTION
@@ -3584,7 +3585,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	PL	Są to formaty dostępne do wyboru w interfejsie internetowym i w odtwarzaczach. Aby usunąć format, wyczyść pole tekstowe; aby wprowadzić nowy format, wpisz go w pustym polu. Dostępne elementy danych to: CT (typ zawartości), TITLE, GENRE, TRACKNUM (numer utworu jako liczba rzeczywista), FS (rozmiar pliku), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT, YEAR, SECS (całkowita liczba sekund), DURATION (minuty i sekundy), LONGDATE (bieżąca data, długa), SHORTDATE (bieżąca data, krótka), CURRTIME (bieżąca godzina). Elementy mogą być rozdzielone dowolnym znakiem (lub nierozdzielone). Separatory są używane tylko wtedy, gdy występują elementy danych.<br>Aktualny wybór to format, który będzie używany na stronach internetowych.
 	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no reprodutor. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
 	RU	Данные форматы доступны для выбора в веб-интерфейсе и плеерах. Чтобы удалить формат, снимите для него флажок, чтобы ввести новый формат, установите флажок в пустое поле. Доступные элементы данных: CT (тип содержимого), TITLE, GENRE, TRACKNUM (номер дорожки в виде целого числа), FS (размер файла), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT, YEAR, SECS (общее число секунд), DURATION (число минут и секунд), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (имя тома), PATH, FILE, EXT (расширение файла), LONGDATE (текущая дата, длинный формат), SHORTDATE (текущая дата, краткий формат), CURRTIME (текущее время). Элементы могут разделяться каким-либо символом (или никаким). Разделители используются только при наличии элементов данных.<br>«Текущий выбор» — это формат, который будет использоваться на веб-страницах.
-	SV	Dessa är de tillgängliga formaten för webbgränssnittet och själva spelaren. Töm textboxen för att ta bort ett format. Skriv i en tom textbox för att lägga till ett nytt format. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT (kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, BITRATE, LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar.<br>Det valda formatet är det som kommer användas på websidorna.
+	SV	Dessa är de tillgängliga formaten för webbgränssnittet och själva spelaren. Töm textboxen för att ta bort ett format. Skriv i en tom textbox för att lägga till ett nytt format. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT (kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, BITRATE, LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera data-elementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om data-elementet existerar.<br>Det valda formatet är det som kommer användas på websidorna.
 	ZH_CN	以上或播放器设置内皆设有各类不同的显示格式可供选择。如要除去某个格式，便清除其属复选框中的标记。您也可在空的资料栏中输入新格式。可用基本资料包括CT（内容类别）、TITLE（曲目）、GENRE（曲风）、TRACKNUM（音轨序号）、FS（文件大小）、ARTIST（艺人）、ALBUM（专辑）、COMMENT（注解）、YEAR（年份）、SECS（总秒数）、DURATION（总长度）、BITRATE（比特率）、LONGDATE（日期，完整）、SHORTDATE（日期，缩写）、CURRTIME（现在时间）。基本资料可使用任何方式区分。<br>当前的格式便是网页所应用的格式。
 
 SETUP_PLAYER_TITLEFORMATS_DESC
@@ -3604,7 +3605,7 @@ SETUP_PLAYER_TITLEFORMATS_DESC
 	PL	Są to formaty dostępne do wyboru w odtwarzaczu. Aby wprowadzić nowy format do wyboru na odtwarzaczu, wybierz jeden z listy rozwijanej i zapisz ustawienia.<br>Aktualny wybór to format, który będzie używany na odtwarzaczu.<br>Jeżeli chcesz dodać nowy format, niedostępny w liscie rozwijanej, przejdź do: Ustawienia serwera > Interfejs > Format tytułu
 	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no reprodutor. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
 	RU	Данные форматы доступны для выбора в веб-интерфейсе и плеерах. Чтобы удалить формат, снимите для него флажок, чтобы ввести новый формат, установите флажок в пустое поле. Доступные элементы данных: CT (тип содержимого), TITLE, GENRE, TRACKNUM (номер дорожки в виде целого числа), FS (размер файла), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT, YEAR, SECS (общее число секунд), DURATION (число минут и секунд), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (имя тома), PATH, FILE, EXT (расширение файла), LONGDATE (текущая дата, длинный формат), SHORTDATE (текущая дата, краткий формат), CURRTIME (текущее время). Элементы могут разделяться каким-либо символом (или никаким). Разделители используются только при наличии элементов данных.<br>«Текущий выбор» — это формат, который будет использоваться на веб-страницах.
-	SV	Dessa är de tillgängliga formaten för webbgränssnittet och själva spelaren. Töm textboxen för att ta bort ett format. Skriv i en tom textbox för att lägga till ett nytt format. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT (kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, BITRATE, LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar.<br>Det valda formatet är det som kommer användas på websidorna.
+	SV	Dessa är de tillgängliga formaten för webbgränssnittet och själva spelaren. Töm textboxen för att ta bort ett format. Skriv i en tom textbox för att lägga till ett nytt format. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, WORK, GROUPING, SUBTITLE, COMMENT (kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, BITRATE, LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera data-elementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar.<br>Det valda formatet är det som kommer användas på websidorna.
 	ZH_CN	以上或播放器设置内皆设有各类不同的显示格式可供选择。如要除去某个格式，便清除其属复选框中的标记。您也可在空的资料栏中输入新格式。可用基本资料包括CT（内容类别）、TITLE（曲目）、GENRE（曲风）、TRACKNUM（音轨序号）、FS（文件大小）、ARTIST（艺人）、ALBUM（专辑）、COMMENT（注解）、YEAR（年份）、SECS（总秒数）、DURATION（总长度）、BITRATE（比特率）、LONGDATE（日期，完整）、SHORTDATE（日期，缩写）、CURRTIME（现在时间）。基本资料可使用任何方式区分。<br>当前的格式便是网页所应用的格式。
 
 SETUP_GROUP_MENUITEMS
@@ -3644,7 +3645,7 @@ SETUP_GROUP_MENUITEMS_DESC
 	PL	Dostępne opcje można dostosować na najwyższym poziomie menu Strona główna ekranu odtwarzacza. Kliknij, aby przenieść pozycje w górę lub w dół albo usunąć pozycję menu. Kliknij przycisk „Dodaj”, aby ponownie dodać usunięte pozycje menu.
 	PT	Pode personalizar as opções disponíveis no menu inicial. Escolha as opções para mover para cima, para baixo, ou para apagar. Escolha "Adicionar" para adicionar um item ao menu.
 	RU	Можно настроить элементы, доступные для выбора в главном меню верхнего уровня на экране плеера. Щелкайте элементы меню, перемещая их вверх и вниз или удаляя. Нажмите кнопку "Добавить", чтобы вернуть удаленный элемент обратно в меню.
-	SV	Du kan anpassa vilka alternativ som visas på rotmenyn på spelarens skärm. Flytta ett menyalternativ uppåt och nedåt eller ta bort alternativet genom att klicka. Klicka på Lägg till om du vill lägga till ett borttaget alternativ på menyn igen.
+	SV	Du kan anpassa vilka alternativ som visas på huvudmenyn på spelarens skärm. Flytta ett menyalternativ uppåt och nedåt eller ta bort alternativet genom att klicka. Klicka på Lägg till om du vill lägga till ett borttaget alternativ på menyn igen.
 	ZH_CN	您可将播放器最高阶层的主页菜单加以用户化。单击以调整排序或除去该菜单项目。如要列入已被除去的菜单项目，请单击"Add"。
 
 SETUP_GROUP_NONMENUITEMS_INTRO
@@ -3883,7 +3884,7 @@ SETUP_SCROLLRATE_DESC
 	PL	Możliwe jest dostosowanie szybkości przewijania tekstu na ekranie. Szybkość przewijania określa czas między aktualizacjami zawartości wyświetlacza. W przypadku odtwarzacza z wyświetlaczem graficznym parametr ten można dostosować razem z opcją Przewijane piksele w celu ustawienia szybkości i jakości przewijania (tekst będzie przesuwany o wartość ustawienia Przewijane piksele co liczbę sekund określoną w opcji Szybkość przewijania). W przypadku odtwarzacza z wyświetlaczem znakowym parametr ten oznacza czas przed przewinięciem do następnego znaku. Wprowadź wartość czasu między aktualizacjami w sekundach. Mniejsze wartości powodują szybsze przewijanie. 0,15 to wartość domyślna.
 	PT	Pode ajustar a velocidade a que o texto se move no ecran. A velocidade de scrolling define o tempo entre actualizações do ecran. Num reprodutor com ecran grafico este parametro pode ser ajustado em conbinação com os Scroll Pixels para ajustar a qualidade e velocidade do scrolling (o texto mover-se-á segundo o valor do Scroll Pixels por cada valor em segundos da Velocidade de scrolling definida). Num reprodutor com ecran de texto define o tempo de duração antes da entrada do caracter seguinte. Introduza um valor em segundos para o tempo de espera entre actualizações. Quanto menor for o numero mais rápido será o scrolling. Por defeito o valor é 0,033 segundos.
 	RU	Можно настроить скорость прокрутки теста на экране. Параметр «Скорость прокрутки» определяет промежуток времени между обновлениями экрана. На плеерах с графическим экраном он настраивается совместно с параметром «Число пикселей прокрутки», при этом задается скорость и качество прокрутки (текст будет перемещаться на число пикселей прокрутки через каждые несколько секунд скорости прокрутки). На плеерах с символьным экраном этот параметр определяет промежуток времени перед прокруткой до следующего символа. Чтобы задать промежуток времени между обновлениями, введите значение в секундах. Чем меньше число, тем выше скорость. Значение по умолчанию 0,033 с.
-	SV	Du kan justera hastigheten för textremsan som rullar över skärmen. Texthastigheten bestämmer hur ofta informationen uppdateras. På spelare med grafisk skärm kan hastigheten kombineras med hur många bildpunkter som rullas. De två inställningarna bestämmer tillsammans hastigheten och bildkvaliteten: Texten rullar det angivna antalet bildpunkter under det angivna antalet sekunder. På spelare med teckenskärm anger detta tiden innan nästa tecken visas. Ange ett värde i sekunder för tiden mellan uppdateringarna. Ju lägre tal, desto snabbare rullar texten. 0,03 sekunder är standard.
+	SV	Du kan justera hastigheten för textremsan som rullar över skärmen. Rullningshastigheten bestämmer hur ofta informationen uppdateras. På spelare med grafisk skärm kan hastigheten kombineras med hur många bildpunkter som rullas. De två inställningarna bestämmer tillsammans hastigheten och bildkvaliteten: Texten rullar det angivna antalet bildpunkter under det angivna antalet sekunder. På spelare med teckenskärm anger detta tiden innan nästa tecken visas. Ange ett värde i sekunder för tiden mellan uppdateringarna. Ju lägre tal, desto snabbare rullar texten. 0,03 sekunder är standard.
 	ZH_CN	您可以调节文字横向卷动的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放器，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放器这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
 
 DOUBLE_LINE
@@ -3941,7 +3942,7 @@ SETUP_GROUP_IRSETS_DESC
 	PL	Odtwarzacz można ustawić tak, aby reagował na określone sygnały pilota na podczerwień lub je ignorował. Aby włączyć zestaw kodów pilota zdalnego sterowania, zaznacz pole wyboru obok nazwy poniżej. Aby wyłączyć zestaw kodów, usuń zaznaczenie.
 	PT	Pode optar por permitir ou negar alguns sinais do controlo remoto no seu reprodutor. Para activar um sinal, active a opção junto ao nome abaixo. Para desactivar, limpe a opção.
 	RU	Можно настроить, на какие инфракрасные сигналы пульта плеер будет реагировать, а какие — игнорировать. Чтобы включить набор кодов пульта ДУ, установите флажок рядом с его именем. Чтобы отключить его, снимите флажок.
-	SV	Du kan välja om denna spelare ska svara till eller ignorera signaler från vissa fjärrkontroller. Om du vill aktivera en fjärrkontrolls koduppsättning, markerar du rutan bredvid namnet nedan och klickar på Ändra. Om du vill avaktivera en koduppsättning avmarkerar du rutan och klickar på Ändra.
+	SV	Du kan välja om denna spelare ska svara på eller ignorera signaler från vissa fjärrkontroller. Om du vill aktivera en fjärrkontrolls koduppsättning, markerar du rutan bredvid namnet nedan och klickar på Ändra. Om du vill avaktivera en koduppsättning avmarkerar du rutan och klickar på Ändra.
 	ZH_CN	您可选择让这个播放器对某些红外线遥控信号有所反应。如要激活某个遥控代码组，请在如下的复选框内标记。如要撤销某个遥控代码组，请清除其复选框中的标记。
 
 SETUP_GROUP_PLUGINS
@@ -4065,6 +4066,7 @@ SETUP_FORMATS_PREFER_NATIVE
 	NL	Prefereer oorspronkelijk formaat indien mogelijk (decoderen op muziekspeler)
 	HU	Amikor csak lehetséges, részesítse előnyben a natív formátumot (dekódolás a lejátszón).
 	PT	Utilizar de preferência o formato nativo se possível (evitar a conversão no reprodutor).
+	SV	Använd alltid originalformatet på spelaren när det är möjligt (låt spelaren avkoda)
 	ZH_CN	尽可能优先使用原生格式（在播放器上解码），以避免转码
 
 SETUP_FORMATSLIST_MISSING_BINARY
@@ -4117,6 +4119,7 @@ SETUP_INPUTTYPE
 	NL	Van
 	HU	forrás:
 	PT	De
+	SV	Från
 
 STREAM_FORMAT
 	CS	Formát proudu
@@ -4377,7 +4380,7 @@ SETUP_RESET_PLAYER_CONFIRM
 	PL	Czy na pewno chcesz przywrócić domyślne ustawienia fabryczne odtwarzacza?
 	PT	Confirma que quer efectuar o reset do reprodutor para os valores de fabrica?
 	RU	Вернуть заводские настройки плеера по умолчанию?
-	SV	Vill du återställa spelarens fabriksinställningar?
+	SV	Vill du återställa till spelarens fabriksinställningar?
 	ZH_CN	您真的想将播放器重置为出厂默认设置吗？
 
 SETUP_POWERONBRIGHTNESS
@@ -4539,7 +4542,7 @@ SETUP_MINAUTOBRIGHTNESS_DESC
 	PL	Ustaw minimalną wartość automatycznego ustawienia jasności.
 	PT	Ajustar o nível minímo para a configuração de brilho automatico.
 	RU	Задайте минимальный уровень яркости для автоматической настройки яркости.
-	SV	Justera den minsta möjliga ljusnivån för den automatiska inställningen av ljusstyrkan.
+	SV	Justera den minsta möjliga nivån för den automatiska inställningen av ljusstyrkan.
 	ZH_CN	设置最小亮度级别以自动调整亮度。
 
 SETUP_SENSAUTOBRIGHTNESS
@@ -4855,7 +4858,7 @@ SETUP_SYNCPOWER
 	PL	Zasilanie przy synchronizacji
 	PT	Sincronizar Ligar
 	RU	Синхронизовать мощность
-	SV	Synkronisera av/på
+	SV	Synkronisera på/av
 	ZH_CN	电源同步化
 
 SETUP_SYNCPOWER_DESC
@@ -5004,7 +5007,7 @@ SETUP_BUFFERSECS
 	PL	Sekundy buforu stacji radiowej
 	PT	Buffer em segundos das emissoras de radio
 	RU	Секунд буферизации для радиостанции
-	SV	Storlek på buffert för Internetradio i sekunder
+	SV	Storlek på buffert för internetradio i sekunder
 	ZH_CN	收音机频道缓冲秒数
 
 SETUP_BUFFERSECS_DESC
@@ -5023,7 +5026,7 @@ SETUP_BUFFERSECS_DESC
 	PL	Podczas odtwarzania strumienia internetowego odtwarzacz buforuje niewielką ilość danych przed rozpoczęciem odtwarzania. Określ ilość danych audio do buforowania w sekundach od 3 do 30. Wartość domyślna to 3 sekundy. Jeżeli dźwięk będzie odtwarzany z przerwami, zwiększenie tej wartości może rozwiązać problem.
 	PT	Ao reproduzir streams da internet, o reprodutor armazena no buffer uma pequena quantidade de dados antes de iniciar a reprodução. Especifique a o tamanho do buffer pretendido, em segundos, de 3 a 30s. O valor predeterminado é de 3 segundos. Se o é audio intermitente, pode que tentar que melhorar este aspecto aumentando esse valor.
 	RU	Перед воспроизведением интернет-потока плеер буферизует небольшой объем данных. Укажите размер буферизуемых аудиоданных в секундах, от 3 до 30. Значение по умолчанию — 3 с. Увеличив это значение, можно устранить прерывистость воспроизведения аудио.
-	SV	När strömmat innehåll spelas upp från Internet så buffrar spelaren en liten mängd data innan uppspelningen börjar. Ange mängden data som ska buffras, i sekunder från 3 till 20. Standardvärdet är 3 sekunder. Om uppspelningen hackar kan det hjälpa att öka det här värdet.
+	SV	När strömmat innehåll spelas upp från internet så buffrar spelaren en liten mängd data innan uppspelningen börjar. Ange mängden data som ska buffras, i sekunder från 3 till 20. Standardvärdet är 3 sekunder. Om uppspelningen hackar kan det hjälpa att öka det här värdet.
 	ZH_CN	当播放互联网流时，播放器在开始播放之前会缓冲一小部分数据。指定要缓冲的音频数据量（3到30秒），默认值为3秒。如果音频出现卡顿，增加此值可能会有帮助。
 
 SETUP_MAXWMARATE
@@ -5061,7 +5064,7 @@ SETUP_MAXWMARATE_DESC
 	PL	W niektóre strumieniach WMA dostępnych jest kilka szybkości transmisji bitów do przesyłania strumieniowego. Domyślnie program Lyrion Music Server wybierze strumień z najwyższą dostępną szybkością transmisji bitów, ale jeżeli używane jest wolniejsze połączenie internetowe, można w tym miejscu ustawić niższą wartość w celu ograniczenia maksymalnej szybkości, jaką można wybrać w przypadku strumieni o kilku szybkościach.
 	PT	Alguns streams WMA permitem vários bitrates.  Por defeito oLyrion Music Server irá seleccionar o bitrate mais alto disponível. Contudo se tiver uma ligação à internet lenta poderá seleccionar um valor mais baixo para limitar o bitrate máximo que pode ser escolhido quando existirem multiplos disponíveis.
 	RU	В некоторых потоках WMA доступно несколько скоростей передачи для потокового воспроизведения. По умолчанию Lyrion Music Server выбирает поток с самой высокой скоростью передачи. Но при медленном соединении с Интернетом можно ограничить максимально доступное значение скорости передачи, сделав его более низким.
-	SV	Vissa WMA-strömmar har flera olika bithastigheter. Som standard väljer Lyrion Music Server den högsta tillgängliga bithastigheten. Om du har en långsammare Internetuppkoppling kan du ange ett lägre värde här, så sänks gränsen för hur snabba hastigheter som kan väljas.
+	SV	Vissa WMA-strömmar har flera olika bithastigheter. Som standard väljer Lyrion Music Server den högsta tillgängliga bithastigheten. Om du har en långsammare internetuppkoppling kan du ange ett lägre värde här, så sänks gränsen för hur snabba hastigheter som kan väljas.
 	ZH_CN	一些WMA流可以以多种比特率进行流式传输。默认情况下，Lyrion Music Server会选择可用的最高比特率流，但如果您的互联网连接较慢，您可以在此处设置一个较低的值，以限制可以从这些具有多种比特率的流中选择的最大速度。
 
 SETUP_SYNCSTARTDELAY
@@ -5173,7 +5176,7 @@ SETUP_MAINTAINSYNC_DESC
 	PL	Nawet jeżeli kilka odtwarzaczy rozpocznie odtwarzanie utworu dokładnie w tym samym momencie, po pewnym czasie (zwykle po kilku minutach) nie będą już zsynchronizowane. Różnica większa niż 30 ms (milisekund) będzie zauważana w przypadku słuchania dźwięku z kilku odtwarzaczy jednocześnie. Program Lyrion Music Server rozwiązuje ten problem przez stałe śledzenie, jaka część utworu została odtworzona przez dany odtwarzacz i wprowadzanie niewielkich zmian w razie potrzeby. Funkcję tę można włączyć lub wyłączyć.
 	PT	Mesmo quando vários reprodutores comecem a tocar uma musica em perfeira sincronização poderá acontecer que decorrendo algum tempo comecem a perder essa sincronização (usualmente depois de alguns minutos). Uma diferença de mais de 30 milisegundos será perceptível se ouvir o som de vários reprodutores simultaneamente. O Lyrion Music Server aborda este problema ao continuadamente verificar o que cada reprodutor já tocou e introduzindo pequenos ajustes, qaundp necessários. Pode ligar ou desligar esta capacidade.
 	RU	Даже если несколько плееров начинают воспроизводить дорожку абсолютно синхронно, со временем (обычно через несколько минут) могут появиться расхождения. Расхождения более 30 мс будут заметны, если одновременно слушать музыку из нескольких плееров. Lyrion Music Server решает эту проблему, отслеживая время работы каждого плеера и корректируя ход воспроизведения. Эту функцию можно включать и отключать.
-	SV	Även om när flera spelare är perfekt synkroniserade när en låt börjar spelas upp, kan de komma i otakt senare (vanligtvis efter ett par minuter). Det går att höra tidsskillnader på över 30 millisekunder från flera spelare samtidigt. I Lyrion Music Server hanteras det här problemet med att speltiden för varje spelare spåras, så att justeringar kan göras vid behov. Du kan aktivera eller avaktivera den här funktionen.
+	SV	Även om flera spelare är perfekt synkroniserade när en låt börjar spelas upp, kan de komma i otakt senare (vanligtvis efter ett par minuter). Det går att höra tidsskillnader på över 30 millisekunder från flera spelare samtidigt. I Lyrion Music Server hanteras det här problemet med att speltiden för varje spelare spåras, så att justeringar kan göras vid behov. Du kan aktivera eller avaktivera den här funktionen.
 	ZH_CN	即使多个播放器从开始就完全同步播放，但经过一段时间后，它们可能会变得不同步（通常在几分钟内）。如果同时听多个播放器的声音，超过30毫秒的延迟是可感知的。在Lyrion Music Server中，这个问题通过跟踪每个播放器播放的时间，并在需要时进行小的调整来解决。您可以启用或禁用此功能。
 
 SETUP_MAINTAINSYNC_ON
@@ -5583,7 +5586,7 @@ SETUP_REPLAYGAINMODE_DESC
 	NO	Enkelte lydspor har informasjon om volumjusteringer, eller «Replay Gain», som kan brukes under avspilling for å sikre at spor og album får samme lydnivå. Spilleren kan bruke denne informasjonen hvis den finnes. «Track gain» kan brukes til å sikre at alle sanger spilles like høyt. «Album gain» kan brukes til å sikre at album spilles med samme lydstyrke, uten at variasjoner mellom sporene blir borte. «Smart gain» bruker «Album gain» når flere sanger fra samme album spilles etter hverandre, men «Track gain» i spillelister som blander spor fra ulike album.
 	PL	Niektóre utwory audio zwierają informacje o regulacji głośności lub wzmocnieniu przy ponownym odtwarzaniu, których można użyć podczas odtwarzania w celu uzyskania jednakowej głośności odtwarzania utworów i albumów. Odtwarzacz może użyć tych informacji, jeżeli są dostępne. Opcja „Wzmocnienie utworu” umożliwia uzyskanie jednakowej głośności wszystkich utworów. Opcja „Wzmocnienie albumu” umożliwia uzyskanie jednakowej głośności albumów, ale różnice głośności między utworami w albumie zostaną zachowane. Opcja „Inteligentne” dotycząca wzmocnienia korzysta ze wzmocnienia albumu, jeżeli kolejne utwory pochodzą z tego samego albumu lub wzmocnienia utworu dla mieszanej listy odtwarzania.
 	RU	На некоторых аудиодорожках содержатся сведения выравнивания громкости (алгоритм Replay Gain), которые обеспечивают одинаковую громкость воспроизведения дорожек и альбомов. Плеер может использовать эту информацию (если она есть). При выравнивании громкости по дорожкам достигается одинаковая громкость всех дорожек. При выравнивании громкости по альбомам — одинаковая громкость для всех альбомов, при этом различия в громкости дорожек в пределах одного альбома сохраняются. При интеллектуальном выравнивании используется выравнивание по альбомам, если последующие песни входят в тот же альбом, либо выравнивание по дорожкам, если плей-лист состоит из песен разных альбомов.
-	SV	Vissa ljudspår innehåller volymjusteringar (Replay Gain), information som kan användas för att få alla spår och album att spelas upp med samma volym Om det finns sådan här information kan spelaren använda den. Volymutjämning av spår (Track Gain) kan användas för att se till att alla spår har samma volym. Volymutjämning av album kan användas för att se till att alla album har samma volym utan att volymskillnader mellan olika låtar på ett album ändras. Smart volymutjämning innebär att ser till att volymutjämningen av album används när låtar som spelas upp efter varandra kommer från samma album, medan volymutjämningen av spår används med blandade spellistor.
+	SV	Vissa ljudspår innehåller volymjusteringsinformation (Replay Gain), dessa kan användas för att anpassa volymen av de enskilda spåren. Volymutjämning av spår används för att se till att alla spår i en blandad spellista spelas med samma volym. Volymutjämning av album används för anpassa volymen av alla spår på ett album. Smart volymutjämning innebär att volymutjämningen av album används när spår som spelas upp efter varandra kommer från samma album, medan volymutjämningen av spår används med blandade spellistor.
 	ZH_CN	某些音轨包含音量调节或“回放增益”信息，这些信息可在播放过程中使用，以确保曲目和专辑听起来同样响亮。如果存在此信息，玩家可以使用它。“曲目增益”可用于确保所有曲目听起来都同样响亮。“专辑增益”可用于确保所有专辑听起来都同样响亮，但专辑中曲目之间的音量差异得以保留。“智能”增益选择使用专辑增益，如果连续的歌曲来自同一专辑或混合播放列表的曲目增益。
 
 SETUP_REPLAYGAIN_REMOTE
@@ -5899,6 +5902,7 @@ OUTPUT_CHANNELS_COMBINED
 	FR	Deux Canaux (Mono)
 	HU	Mindkét csatorna (monó)
 	NL	Beide kanalen (mono)
+	SV	Bägge kanalerna (mono)
 	ZH_CN	左右声道（单声道）
 
 SETUP_TRANSITIONTYPE
@@ -6170,7 +6174,7 @@ SETUP_TRANSITIONSAMPLERESTRICTION_DESC
 	DE	In manchen Konfigurationen kann es angebracht sein, Überblendung zwischen Titeln mit unterschiedlichen Sampleraten zu deaktivieren. Dies kann etwa notwendig sein, wenn ein Player beim Überblenden nur ein Knacken oder Lärm wieder gibt.
 	EN	It may be appropriate to disable crossfading between tracks with different sample rates. This may be required if this player produces a burst of noise during such transitions.
 	FR	Il peut être approprié de désactiver les transitions entre les pistes ayant des fréquences d'échantillonnage différentes. Cela peut être nécessaire si la platine génère du bruit pendant ces transitions.
-	SV	Ibland kan det vara nödvändigt att avaktivera korstoning mellan spår som har olika samplingshastighet. Det gäller speciellt för spelare som bara genererar oväsen vid sådan korstoning.
+	SV	Ibland kan det vara nödvändigt att avaktivera korstoning mellan spår som har olika samplingshastighet. Det gäller speciellt för spelare som genererar oväsen vid sådan korstoning.
 	NL	Het kan passend zijn om crossfading tussen nummers met verschillende samplefrequenties uit te schakelen. Dit kan handig zijn als de muziekspeler een uitbarsting van ruis produceert tijdens dergelijke overgangen.
 	HU	Célszerű lehet letiltani az áttűnést a különböző mintavételi gyakoriságú sávok között. Erre akkor lehet szükség, ha a lejátszó az ilyen átmenetek során zajt produkál.
 	ZH_CN	可能需要禁用不同采样率的曲目之间的交叉淡入。如果此播放器在此类过渡期间产生噪音，则可能需要这样做。
@@ -6419,7 +6423,7 @@ SETUP_GROUP_GUESSFILEFORMATS_DESC
 	NO	Hvis du har filer som ikke har forståelige etiketter, kan Lyrion Music Server gjette på etiketter ved å bruke informasjon om bane og filnavn. Ved å bruke noen av de samme variablene som i Tittelformat, kan du lage et mønster som passer måten du navngir filer på, slik at programmet lettere kan gjette hva etikettene skal være. Programmet prioriterer som oppgitt nedenfor. Det første gyldige treffet på mønster brukes.
 	PL	W przypadku plików, które nie mają odpowiednich znaczników program Lyrion Music Server może odgadnąć tagi na podstawie ścieżki i nazwy pliku. Używając tej samej zmiennej co opcja Format tytułu, można utworzyć wzór odpowiedni do utworzenia konwencji nazywania plików, co ułatwi aplikacji utworzenie właściwego znacznika. Priorytety mają kolejność podaną poniżej. Stosowany jest pierwszy pasujący wzór.
 	RU	Lyrion Music Server может угадывать теги на основе пути и имени файла для тех файлов, у которых нет корректных тегов. С помощью переменных, аналогичных формату названия, можно создать шаблон, отвечающий условиям именования файлов, чтобы приложению было легче угадывать возможные теги. Приоритет присваивается в нижеследующем порядке. Используется первое допустимое совпадение шаблона.
-	SV	För filer som inte har taggats korrekt kan du låta Lyrion Music Server gissa taggarna med hjälp av sökväg och filnamn. Om du använder samma variabler som i titelformatet kan du skapa ett mönster som överensstämmer med hur man brukar namnge filer, så kan programmet gissa vad taggarna borde vara. Prioriteringsordningen är densamma som i listan nedan. Det första giltiga mönstret används.
+	SV	För filer som inte har taggats korrekt kan du låta Lyrion Music Server gissa taggarna med hjälp av sökväg och filnamn. Om du använder samma variabler som i titelformatet kan du skapa ett mönster som överensstämmer med hur man brukar namnge filer, så kan programmet gissa vad taggarna borde vara. Prioriteringsordningen är densamma som i listan är nedan. Det första giltiga mönstret används.
 	ZH_CN	那些没有合理标签的文件,您可以让服务器凭着使用路径和文件名为基础进行标签猜测。您可以使用和标题格式一样的变量来建立匹配您的文件命名惯例的样式，以方便服务器对标签的猜测。优先权将取决于下列的排序。第一个被匹配的样式将被接受使用。
 
 SETUP_IRMAP
@@ -6494,7 +6498,7 @@ SETUP_NO_PREFS
 	NO	Det er ingen innstillinger for denne spilleren på denne siden
 	PL	Na tej stronie nie ma ustawień dla tego odtwarzacza
 	RU	На странице нет настроек для этого плеера
-	SV	Det finns inga inställningar den här spelaren på den här sidan
+	SV	Det finns inga inställningar för den här spelaren på den här sidan
 	ZH_CN	此页面上没有此播放器的设置
 
 # Server Settings
@@ -6634,6 +6638,7 @@ SETUP_SKIPSENTINEL
 	NL	Bestandsnaam voor uitsluitingen
 	HU	A megadott fájlnév kihagyása
 	PT	Excluir ficheiro deste tipo
+	SV	Namn på "Hoppa över" flagg-fil
 	ZH_CN	跳过哨兵文件名
 
 SETUP_SKIPSENTINEL_DESC
@@ -6644,6 +6649,7 @@ SETUP_SKIPSENTINEL_DESC
 	FR	Les (sous-)dossiers multimédias contenant un fichier portant ce nom sont ignorés.
 	NL	Media-(sub)mappen waarin een bestand met deze naam voorkomt worden overgeslagen.
 	HU	Az ilyen nevű fájlt tartalmazó média (al)mappák kimaradnak.
+	SV	Mediemappar som innehåller en fil med detta namn skannas inte.
 	ZH_CN	包含此名称的媒体（子）文件夹将被跳过。
 
 SETUP_PLAYLISTDIR
@@ -6710,6 +6716,7 @@ SETUP_NO_PORTRAITS
 	DE	Künstlerbilder
 	EN	Artist Portraits
 	FR	Photos d'artistes
+	SV	Artistfoton
 	ZH_CN	艺术家头像
 
 SETUP_NO_PORTRAITS_ON
@@ -6717,6 +6724,7 @@ SETUP_NO_PORTRAITS_ON
 	DE	Beim Blättern durch Künstler keine Bilder zeigen
 	EN	Don't show pictures when browsing artists
 	FR	Ne pas afficher de photos lors du parcours des artistes
+	SV	Visa inga bilder när man bläddrar igenom artister
 	ZH_CN	浏览艺术家时不显示图片
 
 SETUP_NO_PORTRAITS_OFF
@@ -6724,6 +6732,7 @@ SETUP_NO_PORTRAITS_OFF
 	DE	Beim Blättern durch Künstler Bilder anzeigen
 	EN	Show pictures when browsing artists
 	FR	Afficher les photos lors du parcours des artistes
+	SV	Visa bilder när man bläddrar igenom artister
 	ZH_CN	浏览艺术家时显示图片
 
 SETUP_BAD_FILE
@@ -6902,6 +6911,7 @@ RESCAN_ALBUM
 	EN	Rescan Album
 	FR	Réanalyser l'album
 	NL	Album opnieuw scannen
+	SV	Skanna om album
 
 SETUP_AUTO_RESCAN
 	CS	Automaticky detekovat změny
@@ -6985,7 +6995,7 @@ SETUP_AUTO_RESCAN_STAT_INTERVAL
 	NO	Intervall for oppdagelse av delte nettverkselementer
 	PL	Interwał wykrywania udziału sieciowego
 	RU	Интервал между попытками найти общий сетевой ресурс
-	SV	Identifieringsintervall för nätverksresurs
+	SV	Identifieringsintervall för nätverksfilsystem
 	ZH_CN	网络共享检测间隔
 
 SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC
@@ -7002,7 +7012,7 @@ SETUP_AUTO_RESCAN_STAT_INTERVAL_DESC
 	NO	Filene må kontrolleres for å se etter endringer med jevne mellomrom, slik at endringer av delte elementer på eksterne nettverk og på systemer som ikke har støtte for oppdagelse av endringer, kan oppdages. Velg hvor lang tid det skal gå mellom hver kontroll (i minutter). Standardverdien er 10 minutter.
 	PL	Aby możliwe było wykrywanie zmian w zdalnych udziałach sieciowych lub w niektórych systemach operacyjnych bez wbudowanej obsługi wykrywania zmian, konieczne jest odpytywanie o zmiany plików w regularnych przedziałach czasu. Wybierz interwał takiego sprawdzania (w minutach). Wartość domyślna to 10 minut.
 	RU	Если нужно отслеживать изменения на удаленных сетевых ресурсах или в операционных системах, в которых не поддерживается функция  обнаружения изменений, следует регулярно опрашивать файлы на наличие изменений. Выберите интервал между опросами (в минутах). Значение по умолчанию — 10 минут.
-	SV	För att upptäcka ändringar i fjärrnätverksresurser eller i vissa operativsystem som saknar inbyggt stöd för upptäckt av ändringar, måste filerna avsökas efter ändringar med regelbundna intervall. Välj ett tidsintervall i minuter för kontrollen. Standardvärdet är 10 minuter.
+	SV	För att upptäcka ändringar i fjärrnätverksfilsystem eller i vissa operativsystem som saknar inbyggt stöd för upptäckt av ändringar, måste filerna avsökas efter ändringar med regelbundna intervall. Välj ett tidsintervall i minuter för kontrollen. Standardvärdet är 10 minuter.
 	ZH_CN	为了检测远程网络共享或没有本地更改检测支持的某些操作系统上的更改，必须定期轮询文件是否有更改。选择用于此检查的间隔，以分钟为单位。默认值为10分钟。
 
 RESCANNING
@@ -7161,6 +7171,7 @@ SETUP_EXTENSIONS_CATEGORY_TOP
 	EN	Most Popular (not installed)
 	FR	Les plus populaires (non installés)
 	HU	Legnépszerűbb (nincs telepítve)
+	SV	Mest populära
 	ZH_CN	最流行的（未安装）
 
 SETUP_EXTENSIONS_CATEGORY_DATABASE
@@ -7170,6 +7181,7 @@ SETUP_EXTENSIONS_CATEGORY_DATABASE
 	EN	Music library
 	FR	Bibliothèque musicale
 	HU	Zenei könyvtár
+	SV	Musikbibliotek
 	ZH_CN	音乐库
 
 SETUP_EXTENSIONS_CATEGORY_HARDWARE
@@ -7178,6 +7190,7 @@ SETUP_EXTENSIONS_CATEGORY_HARDWARE
 	EN	Hardware
 	FR	Matériel
 	HU	Hardver
+	SV	Hårdvara
 	ZH_CN	硬件
 
 SETUP_EXTENSIONS_CATEGORY_INFORMATION
@@ -7205,6 +7218,7 @@ SETUP_EXTENSIONS_CATEGORY_MISC
 	EN	Miscellaneous
 	FR	Divers
 	HU	Merevlemezek
+	SV	Diverse
 	ZH_CN	杂项
 
 SETUP_EXTENSIONS_CATEGORY_MUSICSERVICES
@@ -7214,6 +7228,7 @@ SETUP_EXTENSIONS_CATEGORY_MUSICSERVICES
 	EN	Streaming Services
 	FR	Services de streaming
 	HU	Streamer szolgáltatás
+	SV	Strömmningstjänster
 	ZH_CN	流媒体服务
 
 SETUP_EXTENSIONS_CATEGORY_PLAYLISTS
@@ -7227,7 +7242,7 @@ SETUP_EXTENSIONS_CATEGORY_PLAYLISTS
 	JA	保存されたプレイリスト
 	NO	Spillelister
 	PL	Listy odtwarzania
-	SV	Låtlistor
+	SV	Spellistor
 	ZH_CN	保存播放表
 	NL	Afspeellijst
 
@@ -7271,6 +7286,7 @@ SETUP_EXTENSIONS_CATEGORY_SKIN
 	EN	Skins
 	FR	Thèmes (Skins)
 	HU	Felületek ("bőrök")
+	SV	Utseende (Skins)
 	ZH_CN	外观
 
 SETUP_EXTENSIONS_CATEGORY_TOOLS
@@ -7280,6 +7296,7 @@ SETUP_EXTENSIONS_CATEGORY_TOOLS
 	EN	Tools
 	FR	Outils
 	HU	Eszközök
+	SV	Verktyg
 	ZH_CN	工具
 
 SETUP_EXTENSIONS_REPOS
@@ -7522,6 +7539,7 @@ SETUP_EXTENSIONS_WARNING_POPUP_OTHERREPO
 	IT	Per assistenza, rivolgersi all'autore del plugin.
 	NL	Neem contact op met de auteur van de plug-in voor ondersteuning.
 	NO	Du kan kontakte de som laget modulen for støtte.
+	SV	OBS! Användning av dessa plugin-program sker på eget ansvar. Du kan kontakta plugin-programmets upphovsman för hjälp.
 	ZH_CN	请注意，使用第三方插件的风险由您自行承担。请联系插件作者以获取支持。
 
 SETUP_EXTENSIONS_RECOMMENDED_REPOSITORIES
@@ -7570,6 +7588,7 @@ SETUP_EXTENSIONS_USE_UNSUPPORTED
 	NL	Gebruik niet ondersteunde extensies
 	HU	Nem támogatott bővítmények használatámak engedélyezése
 	PT	Usar extensões não suportadas
+	SV	Plugin-program som inte längre har support
 	ZH_CN	使用不受支持的扩展
 
 SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC
@@ -7580,6 +7599,7 @@ SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC
 	FR	AVERTISSEMENT - Il s'agit de plugins tiers dont le fonctionnement n'est pas garanti avec la version actuelle de Lyrion Music Server. Ils ont été abandonnés par leurs auteurs et ne sont plus maintenus. Dans le pire des cas, ils pourraient empêcher votre Lyrion Music Server de fonctionner. À utiliser à vos risques et périls.
 	NL	WAARSCHUWING - Dit zijn plug-ins van derden die niet gegarandeerd werken met de huidige versie van Lyrion Music Server. Ze worden niet langer onderhouden door hun auteurs. In het ergste geval kunnen ze schade toebrengen aan Lyrion Music Server. Gebruik op eigen risico.
 	HU	FIGYELMEZTETÉS – Ezek harmadik féltől származó beépülő modulok, amelyek nem garantáltan működnek a Lyrion Music Server jelenlegi verziójában. Szerzőik elhagyták őket, és már nem tartják karban. A legrosszabb esetben feltörhetik a Lyrion zeneszerverét. Használat csak saját felelősségre.
+	SV	OBS! Dessa tredjeparts plugin-program fungerar kanske inte med denna version av Lyrion Music Server. De underhålls inte längre aktivt av deras upphovsmän.
 	ZH_CN	警告 - 这些是第三方插件，不能保证在 Lyrion Music Server 的当前版本中正常工作。它们已经被它们的作者遗弃，并且不再维护。最坏的情况下，它们可能会破坏您的 Lyrion Music Server。使用风险自负。
 
 SETUP_EXTENSIONS_TOGGLE_VIEW
@@ -7588,6 +7608,7 @@ SETUP_EXTENSIONS_TOGGLE_VIEW
 	EN	Toggle between grid and list view
 	FR	Basculer entre les vues grille et liste
 	NL	Schakelen tussen raster- en lijstweergave
+	SV	Byt mellan list- eller rutnätsvy
 	ZH_CN	切换网格和列表视图
 
 SETUP_REFRESHRATE
@@ -7666,7 +7687,7 @@ SETUP_COVERART_DESC
 	PL	Obrazy okładki albumu (jeżeli są dostępne) pojawiają się po wyświetleniu informacji o albumie lub utworze. Obrazy okładek znajdują się w znacznikach ID3 poszczególnych utworów lub w tym samym folderze co pliki utworów. Domyślnie używane są obrazy o nazwie „cover.jpg”, „folder.jpg”, „album.jpg” lub „thumb.jpg”. Możliwe jest określenie dodatkowej nazwy pliku używanej dla okładek albumów. Można także określić inne nazwy plików dla miniatur i obrazów pełnowymiarowych. Poprzedzenie opcji znakiem % umożliwia dodanie dowolnego ciągu złożonego z tych samych elementów, jakie są używane w formatach tytułów (np. wpisanie tekstu %ARTIST - ALBUM spowoduje wyszukiwanie pliku Artist - Album.jpg w celu dopasowania do znalezionych informacji o wykonawcy i albumie.
 	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
 	RU	При просмотре информации об альбоме или песне отображаются доступные изображения обложек. Изображения обложек находятся в тегах ID3 отдельных песен или могут располагаться в той же папке, что и файлы песен. По умолчанию используются изображения с именами cover.jpg, folder.jpg, album.jpg или thumb.jpg. Можно указать дополнительное имя файла, используемое для изображений обложек альбома. Можно также задавать различные имена файлов для эскизов и полноразмерных изображений. Введите перед параметром символ "%", а затем укажите любую строку, состоящую из тех же элементов, которые доступны для форматов названия (например, при вводе %ARTIST — ALBUM будет выполнен поиск строки Artist — Album.jpg в соответствии с найденной информацией об исполнителе и альбоме).
-	SV	Omslagsbilder för album, visas (om de finns tillgängliga) när du öppnar album- eller låtinformationen. Omslagsbilderna finns i ID3-taggarna för enskilda låtar eller i samma mapp som låtfilerna. Som standard används bilder med namnen cover.jpg, folder.jpg, album.jpg, och thumb.jpg. Du ange fler filnamn för albumomslagsbilder. Det går att ange olika filnamn för miniatyrer och bilder i full storlek. Om du börjar med prefixet % kan du fortsätta med vilken kombination som helst av samma element som är tillgängliga för Titelformat. %ARTIST – ALBUM genererar t.ex. sökningar efter artist – album.jpg med den artist- och albuminformation som hittats.
+	SV	Omslagsbilder för album, visas (om de finns tillgängliga) när du öppnar album- eller låtinformationen. Omslagsbilderna finns i taggarna för enskilda låtar eller i samma mapp som låtfilerna. Som standard används bilder med namnen cover.jpg, folder.jpg, album.jpg, och thumb.jpg. Du kan ange fler filnamn för albumomslagsbilder. Det går att ange olika filnamn för miniatyrer och bilder i full storlek. Om du börjar med prefixet % kan du fortsätta med vilken kombination som helst av samma element som är tillgängliga för Titelformat. %ARTIST – ALBUM genererar t.ex. sökningar efter artist – album.jpg med den artist- och albuminformation som hittats.
 	ZH_CN	若专辑的封面图象存在，观看专辑或歌曲信息时图象将一同显示。图象除了可内藏于个别歌曲文件的ID3标签内，也可以放置在同歌曲文件一起的文件夹内。根据缺省规定，图象名为＇cover.jpg＇、＇albumartsmall.jpg＇、＇folder.jpg＇、＇album.jpg＇、或＇thumb.jpg＇将被接受使用。您可以指定额外的图像文件名。您也可以为指图或大型图象指定不同的文件名字。如果以%为前缀，您可以利用同标题格式一样的元素（例如%ARTIST - ALBUM, 将寻找匹配的ARTIST - Album.jpg。
 
 SETUP_THUMBSIZE
@@ -7745,7 +7766,7 @@ SETUP_HTTPPORT_DESC
 	PL	Numer portu używany w celu uzyskania dostępu do serwera z przeglądarki internetowej można zmienić (domyślny to 9000).
 	PT	Pode mudar a porta usada para aceder ao servidor usando um navegador web. (Por omissão é 9000)
 	RU	Номер порта для доступа к серверу можно изменить в веб-браузере. (Номер по умолчанию — 9000.)
-	SV	Du kan ändra portnumret som används för tillgång till servern från en webbläsare. (Standard är 9 000.)
+	SV	Du kan ändra portnumret som används för tillgång till servern från en webbläsare. (Standard är 9000.)
 	ZH_CN	您可以改变浏览器访问服务器时所使用的端口号。（缺省值为9000）
 
 SETUP_HTTPPORT_OK
@@ -7927,6 +7948,7 @@ SETUP_CHECKVERSION_DESC
 	FR	Le serveur peut automatiquement vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible. Veuillez noter que le programme vérifiera toujours les mises à jour des plug-ins selon les intervalles sélectionnés, même si les vérifications logicielles sont désactivées.
 	HU	A Lyrion Music Server automatikusan ellenőrzi, hogy elérhető-e a szoftver frissített verziója.  Ha igen, akkor egy üzenet jelenik meg a Lyrion Music Server webes felületén.
 	NL	Lyrion Music Server kan automatisch kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de webinterface van Lyrion Music Server. Houd er rekening mee dat het programma altijd zal controleren op updates voor plug-ins volgens de geselecteerde intervallen, zelfs als softwarecontroles zijn uitgeschakeld.
+	SV	Lyrion Music Server kan automatiskt kontrollera on det finns en nyare version tillgänglig. Om så är fallet visas ett meddelande in Lyrion Music servers webgränssnitt. Observera att Lyrion Music Server kommer alltid att kontrollera om det finns nya versioner av de installerade plugin-programmen.
 	ZH_CN	Lyrion Music Server 可以自动检查是否有更新的软件版本可用。如果有，则在 Lyrion Music Server 的网页界面中会显示一条消息。
 
 SETUP_CHECKVERSION_1
@@ -8251,7 +8273,7 @@ SETUP_SCREENSAVER_DESC
 	NO	Når fjernkontrollen ikke er blitt brukt på en stund, kan spilleren vise ulike typer informasjon som «skjermsparer». Du kan velge ulike skjermsparere for ulike typer spillerstatus, dvs. om spilleren spiller eller ikke, eller om den er avskrudd. Du kan også velge hvor lenge fjernkontrollen skal være inaktiv før skjermsparerne aktiveres.
 	PL	Po okresie nieaktywności pilota zdalnego sterowania odtwarzacz może wyświetlić różne informacje takie jak „wygaszacz ekranu”. Możliwe jest wyświetlenie różnych wygaszaczy, w zależności od tego czy odtwarzacz odtwarza muzykę lub jest wyłączony. Możliwe jest także ustawienie czasu przed włączeniem wygaszacza.
 	RU	Если некоторое время с пульта ДУ не поступает никаких команд, плеер может проигрывать разную информацию в качестве экранных заставок. Вы можете выбрать экранные заставки, которые будут отображаться в зависимости от того, играет плеер или нет, и от того, выключен ли он. Также можно задать интервал времени перед появлением экранной заставки.
-	SV	Olika typer av information kan visas som skärmsläckare på spelarens skärm när inga kommandon har skickats från fjärrkontrollen under en viss tid. Du kan välja olika skärmsläckare beroende på om spelaren är påslagen eller avstängd, tyst eller spelar upp musik. Du kan också ange hur lång period av inaktivititet som ska passera innan respektive skärmsläckare börjar visas.
+	SV	Olika typer av information kan visas som skärmsläckare på spelarens skärm när inga kommandon har skickats från fjärrkontrollen sedan en viss tid. Du kan välja olika skärmsläckare beroende på om spelaren är påslagen eller avstängd, pausad eller spelar upp musik. Du kan också ange hur länge det skall dröja innan respektive skärmsläckare börjar visas.
 	ZH_CN	您可以通过遥控器选择在播放器非活动状态时以屏幕保护程序来显示信息。您可以设定屏幕保护程序介入前的等候时间。并且设定播放器在不同状态下如播放时、停止播放时、或关机时应用不同屏幕保护程序。
 
 SETUP_NO_SCREENSAVERS
@@ -8261,6 +8283,7 @@ SETUP_NO_SCREENSAVERS
 	EN	There seem to be no screensavers installed. Do you want to install the Date and Time screensaver?
 	FR	Aucun écran de veille ne semble avoir été installé. Voulez-vous installer l'économiseur d'écran "Date et Heure" ?
 	NL	Er lijken geen screensavers geïnstalleerd te zijn. Wil je de screensaver 'Datum en Tijd' installeren?
+	SV	Det verkar som om inga skärmsläckare är installerade. Vill du installera skärmsläckaren "Datum och tid"?
 	ZH_CN	似乎没有安装屏幕保护程序。您想安装日期和时间屏幕保护程序吗？
 
 SETUP_INSTALL
@@ -8663,7 +8686,7 @@ SETUP_ROLESINARTISTS_DESC
 	PL	Wyświetlaj kompozytorów oraz nazwy zespołów i orkiestr na liście wykonawców.
 	PT	A informação relativa ao compositor, banda e orquestra poderá ser incluida na listas ou na procura.
 	RU	Информацию о композиторах, группах и оркестрах для данной песни можно включить в список исполнителей для просмотра и поиска.
-	SV	Låtinformation om kompositörer, band och orkestrar kan inkluderas i artistlistan för bläddring eller sökning.
+	SV	Information om kompositörer, band och orkestrar kan inkluderas i artistlistan för bläddring eller sökning.
 	ZH_CN	在浏览及搜寻艺人时，有关作曲家及乐队的歌曲信息可以包括一同显示。
 
 SETUP_PERSISTPLAYLISTS
@@ -8977,7 +9000,7 @@ SETUP_SPLITLIST_DESC
 	NO	Lyrion Music Server kan hente flere artister, albumtitler og sjangere fra etikettene i musikkfilene dine. Hvis den finner noen av ordene eller tegnene nedenfor i etikettene, oppretter den separate lister for hvert element. Hvis du for eksempel skriver et semikolon i listen nedenfor, kommer en sang med artistetiketten «J. S. Bach;Michael Tilson Thomas» opp under både «J. S. Bach» og «Michael Tilson Thomas». Hvis du endrer denne innstillingen, blir musikkbiblioteket gjennomsøkt på nytt.
 	PL	Program Lyrion Music Server może wyodrębnić wykonawców, tytuły albumów i gatunki ze znaczników plików muzycznych. Jeżeli program Lyrion Music Server znajdzie poniższe słowa lub znaki w znacznikach, utworzy listy dla każdego elementu. Na przykład umieszczenie średnika na liście poniżej, spowoduje, że utwór ze znacznikiem wykonawcy „J. S. Bach;Michael Tilson Thomas” pojawi się w obszarze wykonawców dla „J. S. Bach” i „Michael Tilson Thomas”. Zmiana tego ustawienia spowoduje ponowne przeszukanie biblioteki muzyki.
 	RU	Lyrion Music Server может извлекать из тегов музыкальных файлов имена исполнителей, названия альбомов и жанры, даже если их несколько. Если в тегах обнаружатся какие-либо из нижеперечисленных слов или символов, для каждого элемента будут созданы отдельные записи. Например, если в списке ниже поставить точку с запятой, песня с тегом исполнителя "И. С. Бах; Майкл Тилсон Томас" появится в области исполнителей и под именем "И. С. Бах", и под именем "Майкл Тилсон Томас". При изменении этой настройки будет запущено повторное сканирование медиатеки.
-	SV	Lyrion Music Server har stöd för taggar med flera artistnamn, albumtitlar eller genrer för samma låt. Om ett eller flera av orden eller tecknen i taggarna hittas, så skapas självständiga poster för varje objekt. Om du t.ex. använder semikolon i listan nedan visas en låt med taggen J. S. Bach;Michael Tilson Thomas i artistområdet för både J. S. Bach och Michael Tilson Thomas. Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
+	SV	Lyrion Music Server har stöd för taggar med flera artistnamn, albumtitlar eller genrer för samma låt. Om ett eller flera av orden eller tecknen i taggarna hittas, så skapas självständiga poster för varje objekt. Om du t.ex. använder semikolon i listan nedan visas en låt med taggen J. S. Bach;Michael Tilson Thomas i artistvyn för både J. S. Bach och Michael Tilson Thomas. Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
 	ZH_CN	Lyrion Music Server可以从音乐文件中的标签中提取多个艺术家、专辑标题和流派。如果它在您的标签中找到以下任何单词或字符，它将为每个项目创建单独的列表。例如，如果你在下面的列表中放一个分号，一首带有艺术家标签“J.S.Bach；Michael Tilson Thomas”的歌曲将出现在“J.S.巴赫”和“Michael Tilson托马斯”的艺术家区域。更改此设置将开始重新扫描您的音乐库。
 
 SETUP_ARTISTS_BROWSE_MODES
@@ -9098,6 +9121,7 @@ SETUP_SCAN_ON_PREF_CHANGE_DESC
 	NL	Sommige voorkeuren vragen om het volledig wissen van jouw mediabibliotheek en een herscan. Deze scan kan automatisch worden gestart als je dat wilt. Het tegelijkertijd aanpassen van verschillende voorkeuren kan leiden tot meerdere scans die in een wachtrij worden geplaatst.
 	NO	Noen innstillinger krever en fullstendig gjennomsøking av musikksamlingen for å tre i kraft. Denne gjennomsøkingen kan om ønskelig startes automatisk, men det kan føre til at flere gjennomsøkinger havner i kø hvis du endrer flere innstillinger samtidig.
 	PL	Niektóre ustawienia wymagają ponownego przeszukania całej Twojej biblioteki multimedialnej do poprawnego działania. Ten proces może być uruchamiany automatycznie, lecz może spowodować zakolejkowanie wielokrotnego przeszukiwania biblioteki w przypadku zmiany kilku ustawień naraz.
+	SV	Ändringar av somliga inställningar orsakar en komplett ny inskanning av mediebiblioteket.En sådan skan kan utföras automatiskt, detta kan emellertid leda till a flera sådan skannar köas upp och startar efter varandra om flera sådana ändringar görs.
 	ZH_CN	一些首选项需要完全清除并重新扫描您的媒体库才能生效。如果您希望，此扫描可以自动触发。但是，如果您同时更改多个首选项，可能会导致多个扫描排队。
 
 SETUP_SCAN_ON_PREF_CHANGE_ON
@@ -9153,7 +9177,8 @@ SETUP_DBHIGHMEM
 	NO	Konfigurering av databaseminne
 	PL	Konfiguracja pamięci bazy danych
 	RU	Настройка памяти базы данных
-	SV	数据库管理员
+	SV	Inställning av Databasminnet
+	ZH_CN	数据库管理员
 
 SETUP_DBHIGHMEM_DESC
 	CS	Pokud má váš server dostatek paměti, můžete zvýšit výkon navýšením objemu paměti dostupné pro databázi. Změna nastavení této možnosti vyžaduje restart serveru.
@@ -9299,6 +9324,7 @@ SETUP_ENHANCEDHTTP
 	FR	Mode de streaming HTTP(S)
 	HU	Streamelési mód a HTTP(S) számára
 	NL	Streammethode voor HTTP(S)
+	SV	Strömmningsmodus (HTTP(S)
 	ZH_CN	HTTP(S)流媒体模式
 
 SETUP_ENHANCEDHTTP_DESC
@@ -9309,6 +9335,7 @@ SETUP_ENHANCEDHTTP_DESC
 	FR	Lorsqu'une connexion HTTP(S) échoue, Lyrion Music Server termine le streaming. Il peut aussi essayer de re-ouvrir la connection (Mode persistent) ou mettre en tampon (Cacher) sur disque les flux dont la taille est connue (podcasts, piste individuelles). Chaque fichier tampon est supprimé à la fin du streaming. Ceci peut améliorer la connection avec certains serveurs qui attendent que les pistes soient téléchargées et non en flux et qui ferment les sessions longues. Mais l'écriture sur disque peut l'endommager à long terme (cartes SD). Le mode "Cacher" est le meilleur si vous avez de la place disque.
 	HU	Ha a HTTP(S) kapcsolat meghiúsul egy szerverrel, a Lyrion Music Server leállítja a lejátszást. Megpróbálhatja újra megnyitni (Persistent mód), vagy pufferelhet meghatározott hosszúságú adatfolyamokat (Cache mód) (podcastok, egyetlen sáv) a lemezfájlokon. Ezeket a stream lejátszása után eltávolítjuk. Ez javíthatja a megbízhatóságot egyes kiszolgálók esetében, amelyek a műsorszámok letöltését várják, nem pedig streamelve, és így lezárják a hosszú kapcsolatokat. De ez több írást is okoz a fájlrendszerben, ami esetleg elhasználódhat pl. SD kártyák. Ha van elég hely a fájlok puffereléséhez, akkor a „Cache” mód a megfelelő megoldás
 	NL	Als een HTTP(S) verbinding met een server mislukt, beëindigt Lyrion Music Server het afspelen. De server kan de verbinding opnieuw openen (Persistent-modus) of de streams van bekende grootte, zoals podcasts en nummers, op schijf bufferen (Cache-modus). Cache-modus kan de betrouwbaarheid verbeteren bij het verbinden naar servers die verwachten dat nummers niet worden gestreamd maar worden gedownload. Cache-modus veroorzaakt meer schrijven naar het bestandssysteem, wat mogelijk kan leiden tot meer slijtage van bijvoorbeeld SD-kaarten. Als je genoeg ruimte hebt voor het bufferen van bestanden, dan is Cache-modus de beste keuze. Bufferbestanden worden aan het einde van de streaming verwijderd.
+	SV	När en HTTP(S) förbindelse till en server bryts, kommer Lyrion Music Server att avsluta uppspelningen. Den kan också försöka att återuppta förbindelsen (beständig modus) eller den kan buffra strömmar (cachemodus) av en bestämd längd (podsändningar, enstaka spår) till disk. Den buffrade datan avlägsnas när strömmen har spelats färdigt. Detta kan förbättra tillförlitligheten hos en del servrar som förväntar sig att spår skall laddas ner istället för att strömmas och därför avbryter uppkopplingar från klienter efter ett tag. Men det orsakar också mer skrivaktivitet på de lokala filsystemen, vilket kan påverka livslängden av t.ex. SD-kort.
 	ZH_CN	当与服务器的HTTP（S）连接失败时，Lyrion Music server会终止播放。它还可以尝试重新打开它（持久模式），或者可以在磁盘文件上缓冲定义长度的流（播客、单曲）（缓存模式）。一旦播放完流，这些将被删除。这可以提高某些服务器的可靠性，这些服务器希望下载曲目，而不是流式传输，从而关闭长连接。但它也会导致对文件系统的更多写入，这可能会磨损SD卡等。如果你有足够的空间来缓冲文件，那么“缓存”模式就是你的选择。
 
 SETUP_ENABLE_PERSISTENTHTTP
@@ -9319,6 +9346,7 @@ SETUP_ENABLE_PERSISTENTHTTP
 	FR	Mode persistent
 	HU	Állandó mód
 	NL	Persistent-modus
+	SV	Beständig modus
 	ZH_CN	持久模式
 
 SETUP_ENABLE_BUFFEREDHTTP
@@ -9329,6 +9357,7 @@ SETUP_ENABLE_BUFFEREDHTTP
 	FR	Cacher les flux HTTP(S) sur disque
 	HU	Gyorsítótárazza a HTTP(S) adatfolyamokat a lemezen
 	NL	Cache-modus
+	SV	Cache modus
 	ZH_CN	将HTTP（S）流缓存到磁盘上
 
 SETUP_DISABLE_ENHANCEDHTTP
@@ -9339,6 +9368,7 @@ SETUP_DISABLE_ENHANCEDHTTP
 	FR	Streaming normal
 	HU	Normál streamelés
 	NL	Normaal streamen
+	SV	Normal strömning
 	ZH_CN	正常流媒体播放
 
 SETUP_LONGDATEFORMAT
@@ -9378,7 +9408,7 @@ SETUP_LONGDATEFORMAT_DESC
 	PL	Ta opcja określa format używany w długich datach (wyświetlanych na przykład po wyłączeniu odtwarzacza). W poniższych opcjach używane są następujące konwencje:<br>WWWW to pełny dzień tygodnia (Sobota, Niedziela itp.)<br>WWW to skrócony dzień tygodnia (Sob, Nie itp.)<br>DD to dzień miesiąca (bez początkowego zera)<br>MM to miesiąc roku<br>RR to rok dwucyfrowy<br>RRRR to rok czterocyfrowy
 	PT	Esta opção determina o formato longo a usar para datas (tais como a que é mostrada quando o reprodutor está desligado). São usadas as seguintes convenções para as opções abaixo
 	RU	Данный параметр определяет формат, используемый для длинных дат (например, отображаемых, когда плеер выключен). Доступны следующие условные обозначения :<br>НННН — полное название дня недели (суббота, воскресенье)<br>ННН — сокращенное название дня недели (сб, вс и др.)<br>ДД — это день месяца (без первого нуля)<br>ММ — это месяц года<br>ГГ — это год, обозначенный двумя цифрами<br>ГГГГ — это год, обозначенный четырьмя цифрами
-	SV	Här väljer du långt datumformat (används för att visa datum när spelaren är avstängd). Följande konventioner används för alternativen nedan:<br>WWWW är veckodagen (lördag, söndag, o.s.v.).<br>WWW är veckodagen i förkortad form (lör, sön, o.s.v.).<br>DD är dagen i månaden (utan inledande nolla).<br>MM är månaden.<br>YY är det tvåsiffriga årtalet.<br>YYYY är det fyrsiffriga årtalet.
+	SV	Här väljer du långt datumformat (används för att visa datum när spelaren är avstängd). Följande konventioner används för alternativen nedan:<br>WWWW är veckodagen (lördag, söndag, o.s.v.).<br>WWW är veckodagen i förkortad form (lör, sön, o.s.v.).<br>DD är dagen i månaden (utan inledande nolla).<br>MM är månaden.<br>YY är det tvåsiffriga årtalet.<br>YYYY är årtalet med fyra siffror.
 	ZH_CN	这个选项决定了显示完整日期所使用的格式（譬如在播放器关机状态时）。以下是各个选择所使用的惯例：<br>WWWW=星期（星期六、星期天、等）<br>WWW=简化的星期（六、日、等）<br>DD=日（主导零被去除）<br>MM=简化的月份<br>YY=两位数的年份<br>YYYY=四位数的年份
 
 SETUP_LONGDATEFORMAT_DEFAULT
@@ -9454,7 +9484,7 @@ SETUP_SHORTDATEFORMAT_DESC
 	PL	Ta opcja określa format krótkich dat. W poniższych opcjach używane są następujące konwencje:<br>RRRRR to rok czterocyfrowy<br>RR to rok dwucyfrowy<br>MM to miesiąc w roku<br>DD to dzień miesiąca<br>Tekst w nawiasach na końcu to komentarz, który nie jest wyświetlany.
 	PT	Esta opção determina o formato curto a usar para datas. São usadas as seguintes convenções para as opções abaixo
 	RU	Данный параметр определяет формат, используемый для кратких дат. Используются следующие условные обозначения:<br>ГГГГ — это год, обозначенный четырьмя цифрами<br>ГГ — это год, обозначенный двумя цифрами<br>ММ — это месяц года<br>ДД — это день месяца<br>Последующие сведения в скобках — это комментарий, который не отображается.
-	SV	Här väljer du kort datumformat. Följande konventioner används för alternativen nedan:<br>YYYY är det fyrsiffriga årtalet.<br>YY är det tvåsiffriga årtalet.<br>MM är månaden.<br>DD är dagen i månaden.<br>Information som visas sist inom parentes är endast kommentarer och kommer inte att visas.
+	SV	Här väljer du kort datumformat. Följande konventioner används för alternativen nedan:<br>YYYY är det fyrsiffriga årtalet.<br>YY är årtalet med två siffror.<br>MM är månaden.<br>DD är dagen i månaden.<br>Information som visas sist inom parentes är endast kommentarer och kommer inte att visas.
 	ZH_CN	这个选项决定了显示简化日期所使用的格式。以下是各个选择所使用的惯例：<br>YYYY=四位数的年份<br>YY=两位数的年份<br>MM=月份<br>DD=日<br>在末端括弧内的任何信息为备注而将不显示。
 
 SETUP_SHORTDATEFORMAT_DEFAULT
@@ -9590,7 +9620,7 @@ SETUP_TCPREADMAXIMUM
 	PL	Maksymalna liczba gniazd TCP do odczytania w jednym przebiegu
 	PT	Número máximo de sockets TCP a ler por passagem
 	RU	Максимальное число ТСР-сокетов, считываемых за один проход
-	SV	Maximalt antal TCP-socketar som kan läsas per genomgång
+	SV	Maximalt antal TCP-sockets som kan läsas per genomgång
 	ZH_CN	每次通行时读取TCP插口的最大数量
 
 SETUP_TCPWRITEMAXIMUM
@@ -9610,7 +9640,7 @@ SETUP_TCPWRITEMAXIMUM
 	PL	Maksymalna liczba gniazd TCP do zapisania w jednym przebiegu
 	PT	Número máximo de sockets TCP a escrever por passagem
 	RU	Макс. число TCP-сокетов для записи за один проход
-	SV	Maximalt antal TCP-socketar som kan skrivas per genomgång
+	SV	Maximalt antal TCP-sockets som kan skrivas per genomgång
 	ZH_CN	每次通行时写出TCP插口的最大数量
 
 SETUP_UDPCHUNKSIZE
@@ -9640,6 +9670,7 @@ SETUP_MAX_REDIRECTS
 	EN	Maximum number of redirects
 	FR	Nombre maximal de redirections
 	NL	Maximum aantal omleidingen
+	SV	Maximalt antal omdirigeringar
 	ZH_CN	最大重定向次数
 
 SETUP_MAX_REDIRECTS_DESC
@@ -9649,6 +9680,7 @@ SETUP_MAX_REDIRECTS_DESC
 	EN	The maximum number of HTTP redirects to follow. Should more redirects be required, then the request is considered failure.
 	FR	Nombre maximal de redirections HTTP à suivre. Si plus de redirections sont nécessaires, la demande est considérée comme un échec.
 	NL	Het maximale aantal HTTP-omleidingen dat moet worden gevolgd. Als er meer omleidingen nodig zijn, wordt het verzoek als mislukt beschouwd.
+	SV	Det högsta antalet HTTP-omdirigeringar som skall tillåtas. Om det krävs fler anses uppkopplingsförsöket att ha misslyckats.
 	ZH_CN	要遵循的HTTP重定向的最大次数。如果需要更多的重定向，则认为请求失败。
 
 SETUP_WEBPROXY
@@ -9795,7 +9827,7 @@ SETUP_INSECURE_HTTPS_DESC
 	EN	Enabling "Insecure HTTPS" switches off certificate verification when Lyrion Music Server acts as an HTTPS client. <b>Enabling this option is discouraged!</b> It is bad practice to disable certificate verification, but can be necessary under certain circumstances, eg. when the libraries can't be updated.
 	FR	Choisir "HTTPS non sécurisé" revient à désactiver la vérification du certificat serveur lorsque Lyrion Music Server agit en tant que client HTTPS. <b>L'activation de cette option est déconseillée !</b> C'est une mauvaise pratique de désactiver la vérification des certificats, mais cela peut être nécessaire dans certaines circonstances, par exemple lorsque les bibliothèques ne peuvent pas être mises à jour.
 	HU	A „Nem biztonságos HTTPS” engedélyezése kikapcsolja a tanúsítvány ellenőrzését, amikor a Lyrion Music Server HTTPS-kliensként működik. <b>Nem javasoljuk ennek a lehetőségnek az engedélyezését!</b> Rossz gyakorlat a tanúsítvány-ellenőrzés letiltása, de bizonyos körülmények között szükséges lehet, pl. amikor a könyvtárakat nem lehet frissíteni.
-	SV	"Avaktivera kontroll av HTTPS-certifikat" betyder att Lyrion Music Server inte kontrollerar att HTTPS-certifikaten från andra webbplatser är giltiga. <b>Det rekommenderas inte att avaktivera denna kontroll!</b> Kontroll av https-certifikat skall alltid ske men ibland kan det behövas för att kunna uppdatera ett online-mediebibliotek.
+	SV	"Avaktivera kontroll av HTTPS-certifikat" betyder att Lyrion Music Server inte kontrollerar att HTTPS-certifikaten från andra webbplatser är giltiga. <b>Det är inte rekommenderat att avaktivera denna kontroll!</b> Kontroll av https-certifikat skall alltid ske men ibland kan det behövas för att kunna uppdatera ett online-mediebibliotek.
 	NL	Als u "Onveilige HTTPS" inschakelt, wordt certificaatverificatie uitgeschakeld wanneer Lyrion Music Server fungeert als een HTTPS client. <b>Het wordt afgeraden om deze optie in te schakelen!</b> Het is onverstandig om certificaatverificatie uit te schakelen, maar kan onder bepaalde omstandigheden nodig zijn, bijv. wanneer de mediabibliotheek niet kan worden geüpdatet.
 	ZH_CN	启用“不安全的HTTPS”会在Lyrion Music Server作为HTTPS客户端时关闭证书验证。<b>不建议启用此选项！</b>禁用证书验证是不好的做法，但在某些情况下可能是必要的，例如当无法更新库时。
 
@@ -10172,6 +10204,7 @@ SETUP_RELEASE_TYPES
 	HU	Kiadástípusok az albumokhoz
 	NL	Releasetypes voor albums
 	PT	Tipo de lançamento para os albuns
+	SV	Utgåvetyp för album
 	ZH_CN	专辑发布类型
 
 SETUP_RELEASE_TYPES_INCLUDE
@@ -10183,6 +10216,7 @@ SETUP_RELEASE_TYPES_INCLUDE
 	HU	Az Albumok listájába felvenni kívánt kiadástípusok
 	NL	Releasetypes die in de albumlijst worden opgenomen
 	PT	Tipos de lançamentos para serem incluídos na Lista de albuns
+	SV	Utgåvetyper som skall visas i Albumlistan
 	ZH_CN	包含在专辑列表中的发布类型
 
 SETUP_RELEASE_TYPES_DESC
@@ -10193,6 +10227,7 @@ SETUP_RELEASE_TYPES_DESC
 	FR	Vous pouvez spécifier quels types de sorties (voir <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>) doivent être inclus dans la liste des albums. Si aucun type n'a été défini pour une sortie, le type "Album" est pris par défaut. Le type "Album" ne peut pas être exclu.
 	HU	Megadhatja, hogy mely kiadástípusokat szeretné felvenni az albumlistába (lásd: <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Ha egy kiadáshoz nincs megadva típus, a rendszer az „Album”-t feltételezi. Az albumokat nem lehet kizárni a listáról.
 	NL	Je kunt opgeven welke releasetypes je wilt opnemen in de albumlijst (zie <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Als voor een release geen type is gedefinieerd, wordt uitgegaan van 'Album'. Albums kunnen niet van die lijst worden uitgesloten.
+	SV	Du kan bestämma vilka utgåvetyper som skall visas i Albumlistan (se <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>). Om en utgåva inte har en definierad för utgåvetyp, används utgåvetypen Album automatiskt. Utgåvetypen Album kan inte tas bort från listan.
 	ZH_CN	您可以指定要在专辑列表中包含哪些发布类型（参见 <a href="https://musicbrainz.org/doc/Release_Group/Type">MusicBrainz</a>）。如果发布没有定义类型，则假定“专辑”。专辑不能从该列表中排除。
 
 SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
@@ -10205,6 +10240,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
 	NL	Opties voor componistalbums
 	ES	Opciones de álbum compositor
 	PT	Opções para Compositor do album
+	SV	Inställningar för Kompositöralbum
 	ZH_CN	作曲家专辑选项
 
 SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
@@ -10216,6 +10252,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
 	HU	Hozzon létre egy zeneszerzői album csoportot – mindig, soha vagy bizonyos műfajokhoz. Ha e beállítás miatt bizonyos zeneszerzői szerepkörök nem szerepelnek a Zeneszerzői albumok csoportban, akkor azok egy külön „Kompozíciók” csoportban jelennek meg, amely az egyes számokat, nem pedig az albumokat listázza. A műfaji listát vesszővel kell elválasztani.
 	NL	Maak altijd, nooit of voor bepaalde genres een groep voor componistalbums. Als vanwege deze instelling bepaalde componistrollen niet zijn opgenomen in de groep componistalbums, verschijnen ze in plaats daarvan in een aparte groep "Composities", waarin individuele nummers worden vermeld en geen albums. De genrelijst moet door komma's worden gescheiden.
 	ES	Crea un grupo de Álbumes de compositor: siempre, nunca o para determinados géneros. Si debido a esta configuración, ciertos roles de compositor no están incluidos en el grupo Álbumes del compositor, aparecerán en un grupo "Composiciones" separado, que enumerará pistas individuales, no álbumes. La lista de géneros debe estar separada por comas.
+	SV	Inrätta en Kompositörsalbum-grupp - alltid, aldrig eller för vissa genrer. Om vissa kompositörer inte, p.g.a. den här inställningen, inkluderas i Kompositöralbum-gruppen, kommer de istället att bli inkluderade i en separat Kompositions-grupp, som listar spår istället för album. Genrelistan måste vara komma-separerad.
 	ZH_CN	创建作曲家专辑组 - 总是、从不或针对特定流派。如果由于此设置，某些作曲家角色未包含在作曲家专辑组中，则它们将出现在一个单独的“Composition”组中，该组将列出单个曲目，而不是专辑。流派列表应以逗号分隔。
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0
@@ -10227,6 +10264,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0
 	HU	Ne hozzon létre zeneszerzői albumcsoportot
 	NL	Maak geen groep van componistalbums
 	ES	No crear un grupo de Álbum de Composer
+	SV	Inrätta inte en Kompositörsalbum-grupp.
 	ZH_CN	不创建作曲家专辑组
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
@@ -10238,6 +10276,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_1
 	HU	Mindig hozzon létre egy zeneszerzői albumcsoportot
 	NL	Maak altijd een groep van componistalbums
 	ES	Crear siempre un grupo de Álbum de compositor
+	SV	Inrätta alltid en Kompositörsalbum-grupp.
 	ZH_CN	始终创建作曲家专辑组
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
@@ -10249,6 +10288,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_2
 	FR	Créer un groupe "Albums du compositeur" pour les "Genres en lien avec des œuvres et des compositeurs" (ci-dessus)
 	HU	Zeneszerzői albumcsoport létrehozása a "Műfajaim művekhez és zeneszerzői albumokhoz" számára (fent)
 	NL	Maak een groep van componistalbums voor 'Mijn genres voor composities en albums van componisten' (hierboven)
+	SV	Inrätta en Kompositörsalbum-grupp för "Mina genrer för verk och kompositörsalbum" (ovanför)
 	ZH_CN	为“我的作品和作曲家专辑流派”创建作曲家专辑组（上面）
 
 SETUP_IGNORE_RELEASE_TYPES_0
@@ -10259,6 +10299,7 @@ SETUP_IGNORE_RELEASE_TYPES_0
 	FR	Activer la prise en charge des types de sorties des albums
 	HU	Engedélyezze a kiadástípusok támogatását az albumokhoz
 	NL	Releasetypes voor albums inschakelen
+	SV	Aktivera Utgåvetyper för album
 	ZH_CN	为专辑启用发行类型支持
 
 SETUP_IGNORE_RELEASE_TYPES_1
@@ -10271,6 +10312,7 @@ SETUP_IGNORE_RELEASE_TYPES_1
 	NL	Releasetypes voor albums uitschakelen
 	PT	Ignore o tipo de lançamento dos albuns
 	PT	Ignore o tipo de lançamento dos albuns
+	SV	Ignorera Utgåvetyper för album 
 	ZH_CN	忽略专辑发行类型
 
 SETUP_CLEANUP_RELEASE_TYPES
@@ -10282,6 +10324,7 @@ SETUP_CLEANUP_RELEASE_TYPES
 	HU	Próbálja meg automatikusan felismerni az EP-ket és kislemezeket, ha a kiadás típusa „album” vagy hiányzik.
 	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype-informatie afwezig is.
 	PT	Tentar de reconhecer EPs e singles automaticamente quando ainformação sobre o tipo de lançamento for "album" ou não existir
+	SV	Försök att identifiera EP-skivor och singlar automatiskt om Utgåvetyp  är Album eller saknas
 	ZH_CN	当发布类型信息为“专辑”或缺失时，尝试自动识别EP和单曲。
 
 SETUP_GROUP_BY_RELEASE_TYPES_0
@@ -10293,6 +10336,7 @@ SETUP_GROUP_BY_RELEASE_TYPES_0
 	HU	Ne csoportosítsa a kiadásokat
 	NL	Releases niet groeperen op type
 	PT	Não agrupar lançamentos
+	SV	Gruppera inte Utgåvetyper
 	ZH_CN	不组合发行
 
 SETUP_GROUP_BY_RELEASE_TYPES_1
@@ -10304,6 +10348,7 @@ SETUP_GROUP_BY_RELEASE_TYPES_1
 	HU	Csoportosítsa az előadók listáját kiadás típusa szerint
 	NL	Releases van een artiest groeperen op type
 	PT	Agrupar numa lista de artistas por tipo de lançamento
+	SV	Gruppera artisters lista baserat på Utgåvetyper
 	ZH_CN	按发行类型组合艺术家的列表
 
 SETUP_GROUP_BY_RELEASE_TYPES_2
@@ -10315,6 +10360,7 @@ SETUP_GROUP_BY_RELEASE_TYPES_2
 	HU	Csoportosítsa az összes listát kiadás típusa szerint
 	NL	Groepeer alle releases op type
 	PT	Agrupar todas as listas por tipo de lançamento
+	SV	Gruppera alla listor baserat på Utgåvetypen
 	ZH_CN	按发行类型组合所有列表
 
 SETUP_GROUPDISCS
@@ -10353,7 +10399,7 @@ SETUP_GROUPDISCS_DESC
 	NO	Du kan angi om flere plater skal behandles som ett album (med ett navn), eller som flere separate album der hver plate har et eget navn, for eksempel «Albumtittel (plate 2 av 3)». Hvis du endrer denne innstillingen, blir musikkbiblioteket gjennomsøkt på nytt.
 	PL	Możliwe jest określenie, czy zestawy kilku dysków są traktowane jako pojedynczy album (z jedną nazwą) czy jako kilka albumów, gdzie każdy dysk ma unikatową nazwę, na przykład „Tytuł albumu (dysk 2 z 3)”. Zmiana tego ustawienia spowoduje ponowne przeszukanie biblioteki muzyki.
 	RU	Можно указать, рассматривать ли набор из нескольких дисков как единый альбом (с единым именем) или как несколько альбомов, у каждого из которых свое уникальное имя для каждого из дисков, например "Название альбома (диск 2 из 3)". При изменении этой настройки будет запущено повторное сканирование медиатеки.
-	SV	Du kan ange om de ingående skivorna i en box ska behandlas som ett album eller flera separata album. Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
+	SV	Du kan ange om ett album med fler än en skiva ska behandlas som ett album eller flera separata album. Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
 	ZH_CN	您可以指定由多个光碟组成的合集是否视为一个单一的乐谱帖（以一个名字）或保持为个别单独的专辑。例如“专辑标题（光碟1）”。更动此设置Lyrion Music Server将开始重新扫描您的音乐库。
 
 SETUP_GROUPDISCS_0
@@ -10373,7 +10419,7 @@ SETUP_GROUPDISCS_0
 	PL	Traktuj zestaw kilku dysków jako kilka albumów
 	PT	Tratar conjuntos de multi-discos como multiplos albuns
 	RU	Наборы из нескольких дисков как несколько альбомов
-	SV	Behandla de ingående skivorna i en box som enskilda album.
+	SV	Behandla album med flera skivor som flera album.
 	ZH_CN	把多个光碟组成的合集视为个别单独的专辑
 
 SETUP_GROUPDISCS_1
@@ -10393,7 +10439,7 @@ SETUP_GROUPDISCS_1
 	PL	Traktuj zestaw kilku dysków jako jeden album
 	PT	Tratar conjuntos de multi-discos como um só album
 	RU	Наборы из нескольких дисков как единый альбом
-	SV	Behandla boxar med flera skivor som ett album.
+	SV	Behandla album med flera skivor som ett album.
 	ZH_CN	把多个光碟组成的合集视为单一的专辑
 
 SETUP_SIGNOUT
@@ -10404,6 +10450,7 @@ SETUP_SIGNOUT
 	FR	Déconnexion
 	HU	Kijelentkezés
 	NL	Afmelden
+	SV	Logga ut
 	ZH_CN	登出
 
 SETUP_NO_JAVASCRIPT
@@ -10431,6 +10478,7 @@ SETUP_WIZARD_WELCOME
 	FR	Bienvenue dans l'assistant de configuration initiale du Lyrion Music Server
 	NL	Welkom bij de eerste installatie van Lyrion Music Server
 	HU	Üdvözöljük a Lyrion Music Server kezdő beállításokban
+	SV	Välkommen till konfigurationsguiden för Lyrion Music Server
 	ZH_CN	欢迎来到Lyrion音乐服务器的初始设置
 
 SETUP_WIZARD_WELCOME_INTRO
@@ -10441,6 +10489,7 @@ SETUP_WIZARD_WELCOME_INTRO
 	FR	Cet assistant vous guidera dans la configuration initiale de votre Lyrion Music Server.
 	NL	Deze assistent begeleidt je bij de eerste installatie van jouw Lyrion Music Server.
 	HU	Ez az asszisztens végigvezeti Önt a Lyrion Music Server kezdeti beállításán.
+	SV	Guiden hjälper dig med den första konfigurationen av din Lyrion Music Server.
 	ZH_CN	本助手将引导您完成Lyrion音乐服务器的初始设置
 
 SETUP_WIZARD_PLUGINS_INTRO
@@ -10451,6 +10500,7 @@ SETUP_WIZARD_PLUGINS_INTRO
 	NL	We raden aan de volgende plugins van derden te installeren. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Veel andere plugins</a> kunnen op elk moment worden geïnstalleerd via Instellingen/Beheer Plug-ins nadat de installatie is voltooid.
 	FR	Nous recommandons l'installation des plugins tiers suivants. (<a href="https://lyrion.org/plugins/directory/" target="lyrion">De nombreux autres plugins</a> peuvent être installés à tout moment dans "Paramètres / Gérer les plugins" une fois l'installation initiale terminée.)
 	HU	Javasoljuk a következő külső beépülő modulok telepítését. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Sok más beépülő modul</a> a telepítés befejezése után bármikor telepíthető a Beállítások/Beépülő modulok kezelése menüpontban.
+	SV	Följande tredje-parts pluginprogram rekommenderas. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Många andra pluginprogram</a> kan installeras från Inställningar/Plugin-program efter att installationen är komplett.
 	ZH_CN	我们建议安装以下第三方插件。 <a href="https://lyrion.org/plugins/directory/" target="lyrion">许多其他插件</a>可以在安装完成后随时在设置/管理插件中安装。
 
 SETUP_WIZARD_AUDIODIR
@@ -10501,7 +10551,7 @@ SETUP_WIZARD_SHARE_WIN
 	NO	<br/><br/>Hvis du vil ha tilgang til mediefiler som er lagret på en annen datamaskin, eller på en delt nettverksstasjon, må du sørge for at den delte stasjonen er montert og tilgjengelig på filsystemet. Så snart stasjonen er tilgjengelig, vises den i valgvinduet til venstre. Hvis du vet banen til stasjonen du vil ha tilgang til, kan du angi den nedenfor.
 	PL	<br/><br/>Aby uzyskać dostęp do multimediów zapisanych na innym komputerze lub udostępnionym dysku sieciowym, upewnij się, że udostępniony dysk sieciowy jest zainstalowany i dostępny w systemie plików. Po udostępnieniu dysku zostanie on wyświetlony w oknie wyboru po lewej. Jeżeli znasz ścieżkę do dysku, którego chcesz użyć, wprowadź ją poniżej.
 	RU	<br/><br/>Если необходимо получить доступ к файлам мультимедиа, хранящимся на другом компьютере или на общем сетевом диске, убедитесь, что общий диск подключен и доступен файловой системе. Доступные диски отображаются в окне выбора слева. Если путь к требуемому диску известен, можно ввести его ниже.
-	SV	<br/><br/>Om du vill ha tillgång till mediefiler som du sparat på en annan dator eller på en delad nätverksenhet så kontrollerar du att den delade enheten har monterats och är tillgänglig på ditt filsystem. När enheten är tillgänglig visas den bland alternativen i fönstret till vänster. Om du vet sökvägen till enheten du vill ha tillgång till kan du ange den nedan.
+	SV	<br/><br/>Om du vill ha tillgång till mediefiler som är sparade på en annan dator eller på en delad nätverksenhet så måste du kontrollera att den delade enheten är ansluten och är tillgänglig på ditt system. När enheten är tillgänglig visas den bland alternativen i fönstret till vänster. Om du vet sökvägen till enheten du vill ha tillgång till kan du ange den nedan.
 	ZH_CN	<br/><br/>如果您想访问存储在其他计算机或共享网络驱动器上的媒体文件，请确保共享驱动器已挂载并可供您的文件系统使用。一旦驱动器可用，它将出现在左侧的选择窗口中。如果您知道要访问的驱动器的路径，可以在下面输入。
 
 SETUP_WIZARD_SHARE_OTHERS
@@ -10518,7 +10568,7 @@ SETUP_WIZARD_SHARE_OTHERS
 	NO	<br/><br/>Hvis du vil ha tilgang til mediefiler som er lagret på en annen datamaskin, eller på et delt dataområde på nettverket, må du sørge for at det delte dataområdet er montert og tilgjengelig på filsystemet. Så snart dataområdet er tilgjengelig, vises det i valgvinduet til venstre. Hvis du vet banen til dataområdet du vil ha tilgang til, kan du angi den nedenfor.
 	PL	<br/><br/>Aby uzyskać dostęp do multimediów zapisanych na innym komputerze lub udostępnionym woluminie sieciowym, upewnij się, że udostępniony wolumin jest zainstalowany i dostępny w systemie plików. Po udostępnieniu woluminu zostanie on wyświetlony w oknie wyboru po lewej. Jeżeli znasz ścieżkę do woluminu, którego chcesz użyć, wprowadź ją poniżej.
 	RU	<br/><br/>Если необходимо получить доступ к файлам мультимедиа, хранящимся на другом компьютере или на общем сетевом томе, убедитесь, что общий том подключен и доступен файловой системе. Доступный том отображается в окне выбора слева. Если путь к требуемому тому известен, введите его ниже.
-	SV	<br/><br/>Om du vill ha tillgång till mediefiler som du har sparat på en annan dator eller på en delad nätverksvolym så kontrollerar du att den delade volymen har monterats och är tillgänglig på ditt filsystem. När volymen är tillgänglig visas den bland alternativen i fönstret till vänster. Om du vet sökvägen till volymen du vill ha tillgång till kan du ange den nedan.
+	SV	<br/><br/>Om du vill ha tillgång till mediefiler som du har sparat på en annan dator eller på en delad nätverksvolym så kontrollerar du att den delade volymen har monterats och är tillgänglig i ditt filsystem. När volymen är tillgänglig visas den bland alternativen i fönstret till vänster. Om du vet sökvägen till volymen du vill ha tillgång till kan du ange den nedan.
 	ZH_CN	<br/><br/>如果您想访问存储在其他计算机或共享网络卷上的任何媒体，请确保共享卷已挂载并可供您的文件系统使用。一旦卷可用，它将出现在左侧的选择窗口中。如果您知道要访问的卷的路径，可以在下面输入。
 
 SETUP_WIZARD_PLAYLISTDIR
@@ -10620,7 +10670,7 @@ SETUP_WIZARD_DONE_DESC
 	NO	Innstillingene er lagret. Nå er du klar til å ta i bruk Squeezebox.<br/><br/>Hvis du velger en lokal musikkilde, vil Lyrion Music Server nå begynne å indeksere samlingen din. Dette kan ta litt tid, men du vil snart ha tilgang til alle musikkfilene dine.<br/><br/>Du kan nå lukke dette vinduet, eller <a href="/">klikke her</a> for å gå videre til nettgrensesnittet til Lyrion Music Server.
 	PL	Ustawienia zostały zapisane. Możesz teraz korzystać z programu Squeezebox.<br/><br/>Jeżeli wybrano lokalne źródło muzyki, program Lyrion Music Server rozpocznie indeksowanie kolekcji. Prosimy o cierpliwość &mdash; wkrótce uzyskasz dostęp do wszystkich plików muzycznych.<br/><br/>Możesz teraz zamknąć to okno lub <a href="/">kliknąć tutaj</a>, aby przejść do programu Lyrion Music Server Remote Control.
 	RU	Ваши настройки сохранены. Теперь можно начать работу с программой Squeezebox.<br/><br/>Если выбран локальный источник музыкальных файлов, Lyrion Music Server начнет индексировать коллекцию. Пожалуйста, подождите: скоро все музыкальные файлы будут доступны.<br/><br/>Теперь можно закрыть это окно или <a href="/">щелкнуть здесь</a>, чтобы перейти к пульту ДУ Lyrion Music Server.
-	SV	Inställningarna har sparats. Nu kan du börja använda Squeezebox. <br/><br/>Om du har valt en lokal musikkälla kommer din samling nu att indexeras. Det kan ta en liten stund, men du får snart tillgång till dina musikfiler.<br/><br/>Nu kan du stänga det här fönstret eller <a href="/">klicka här</a> för att fortsätta till fjärrstyrningen av Lyrion Music Server.
+	SV	Inställningarna har sparats. Nu kan du börja använda Lyrion Music Server. <br/><br/>Om du har valt en lokal musikkälla kommer din samling nu att indexeras. Det kan ta en liten stund, men du får snart tillgång till dina musikfiler.<br/><br/>Nu kan du stänga det här fönstret eller <a href="/">klicka här</a> för att fortsätta till fjärrstyrningen av Lyrion Music Server.
 	ZH_CN	设置已保存。现在您可以开始使用 Squeezebox。<br/><br/>如果您选择了一个本地音乐源，Lyrion Music Server 将开始创建您的音乐收藏索引。请耐心等待；很快您就可以访问所有音乐文件了。<br/><br/>现在您可以关闭此窗口或 <a href="/">点击这里</a> 以继续使用 Lyrion Music Server Remote Control。
 
 SETUP_WIZARD_NEXT
@@ -10917,7 +10967,7 @@ PLAY_THIS_SONG
 	PL	Odtwórz ten utwór
 	PT	Tocar esta Música
 	RU	Воспроизвести эту песню
-	SV	Spela upp den här låten
+	SV	Spela upp det här spåret
 	ZH_CN	播放此曲
 
 REMOVE_THIS_SONG_FROM_PLAYLIST
@@ -10937,7 +10987,7 @@ REMOVE_THIS_SONG_FROM_PLAYLIST
 	PL	Usuń ten utwór z listy odtwarzania
 	PT	Remover esta Música da Playlist
 	RU	Удалить эту песню из плей-листа
-	SV	Ta bort den här låten från spellistan
+	SV	Ta bort det här spåret från spellistan
 	ZH_CN	将此曲从播放表中删除
 
 ADD_THIS_SONG_TO_PLAYLIST
@@ -10957,7 +11007,7 @@ ADD_THIS_SONG_TO_PLAYLIST
 	PL	Dodaj ten utwór
 	PT	Adicionar esta Música à Playlist
 	RU	Добавить эту песню
-	SV	Lägg till den här låten
+	SV	Lägg till det här spåret
 	ZH_CN	将此曲列入播放表中
 
 PAUSE
@@ -11552,7 +11602,7 @@ FIXED_VOLUME
 	NO	Fast volum
 	PL	Stała głośność
 	RU	Фиксированная громкость
-	SV	Fast enhet
+	SV	Fixerad volym
 	ZH_CN	固定音量
 
 FIXED_VOLUME_100
@@ -11569,7 +11619,7 @@ FIXED_VOLUME_100
 	NO	Fast volum 100 %
 	PL	Stała głośność 100%
 	RU	Фиксированный объем 100 %
-	SV	Fast enhet 100 %
+	SV	Volymen är fix 100 %
 	ZH_CN	固定音量 100%
 
 STEREOXL
@@ -11581,6 +11631,7 @@ BALANCE
 	EN	Balance
 	FR	Balance
 	HU	Balansz
+	SV	Balans
 	ZH_CN	平衡
 
 PITCH
@@ -11752,7 +11803,7 @@ LOW
 	NO	Lav
 	PL	Niski
 	RU	Низкий
-	SV	Dålig
+	SV	Låg
 	ZH_CN	低
 
 HIGH
@@ -11949,7 +12000,7 @@ SAVE_AS
 	PL	Zapisz jako
 	PT	Gravar
 	RU	Сохранить
-	SV	Spara
+	SV	Spara som
 	ZH_CN	保存
 
 RENAME
@@ -12288,7 +12339,7 @@ COMPOSERALBUMS
 	PL	Kompozytor Albumy
 	PT	Compositor Albums
 	RU	Композитор Альбомы
-	SV	Kompositör Album
+	SV	Kompositöralbum
 	ZH_CN	作曲 专辑
 
 CONDUCTOR
@@ -12348,17 +12399,20 @@ RELEASE_TYPE
 	EN	Release type
 	FR	Type de sortie
 	NL	Releasetype
+	SV	Utgåvetyp
 	ZH_CN	发行类型
 
 RELEASE_TYPE_SINGLE
 	CS	Singl
 	EN	Single
+	SV	Singel
 	ZH_CN	单曲
 
 RELEASE_TYPE_SINGLES
 	CS	Singly
 	DA	Singler
 	EN	Singles
+	SV	Singlar
 	ZH_CN	单曲
 
 RELEASE_TYPE_EP
@@ -12386,6 +12440,7 @@ RELEASE_TYPE_BOXSET
 	DA	Samling
 	EN	Box Set
 	FR	Coffret
+	SV	Box
 	ZH_CN	盒装集
 
 RELEASE_TYPE_BOXSETS
@@ -12393,6 +12448,7 @@ RELEASE_TYPE_BOXSETS
 	DA	Samlinger
 	EN	Box Sets
 	FR	Coffrets
+	SV	Boxar
 	ZH_CN	盒装集
 
 RELEASE_TYPE_BROADCAST
@@ -12401,6 +12457,7 @@ RELEASE_TYPE_BROADCAST
 	EN	Broadcast
 	FR	Radiodiffusion
 	NL	Radiouitzending
+	SV	Utsändning
 	ZH_CN	广播
 
 RELEASE_TYPE_BROADCASTS
@@ -12409,6 +12466,7 @@ RELEASE_TYPE_BROADCASTS
 	EN	Broadcasts
 	FR	Radiodiffusions
 	NL	Radiouitzendingen
+	SV	Utsändningar
 
 RELEASE_TYPE_DEMO
 	CS	Demo
@@ -12447,18 +12505,21 @@ RELEASE_TYPE_BONUS
 	DE	Bonus Alben
 	EN	Bonus Albums
 	FR	Album bonus
+	SV	Bonusalbum
 
 RELEASE_TYPE_COLLECTION
 	CS	Kolekce
 	DE	Sammlung
 	EN	Collection
 	NL	Collectie
+	SV	Samling
 
 RELEASE_TYPE_COLLECTIONS
 	CS	Kolekce
 	DE	Sammlungen
 	EN	Collections
 	NL	Collecties
+	SV	Samlingar
 
 RELEASE_TYPE_REMIX
 	CS	Remix
@@ -12505,14 +12566,17 @@ RELEASE_TYPE_SPOKENWORD
 	DE	Gesprochen
 	EN	Spokenword
 	NL	Gesproken Woord
+	SV	Talat
 
 RELEASE_TYPE_INTERVIEW
 	CS	Rozhovor
 	EN	Interview
+	SV	Intervju
 
 RELEASE_TYPE_INTERVIEWS
 	CS	Rozhovory
 	EN	Interviews
+	SV	Intervjuer
 
 RELEASE_TYPE_AUDIOBOOK
 	CS	Audiokniha
@@ -12520,6 +12584,7 @@ RELEASE_TYPE_AUDIOBOOK
 	EN	Audiobook
 	FR	Livre audio
 	NL	Luisterboek
+	SV	Hörbok
 
 RELEASE_TYPE_AUDIOBOOKS
 	CS	Audioknihy
@@ -12527,6 +12592,7 @@ RELEASE_TYPE_AUDIOBOOKS
 	EN	Audiobooks
 	FR	Livres audio
 	NL	Luisterboeken
+	SV	Hörböcker
 
 RELEASE_TYPE_OTHER
 	CS	Jiné
@@ -12536,6 +12602,7 @@ RELEASE_TYPE_OTHER
 	FR	Autre
 	HU	Egyéb
 	NL	Overig
+	SV	Övrigt
 	ZH_CN	其他
 
 DISC
@@ -12717,7 +12784,7 @@ PLS
 	NO	PLS-spilleliste
 	PL	Lista odtwarzania PLS
 	RU	Плей-лист PLS
-	SV	PLS-låtlista
+	SV	PLS-spellista
 	ZH_CN	PLS播放表
 
 MPC
@@ -12740,7 +12807,7 @@ WMAL
 	EN	WMA Lossless
 	FI	WMA (häviötön)
 	PL	Bezstratny WMA
-	SV	WMA (utan dataförluster)
+	SV	WMA (förlustfri)
 	ZH_CN	WMA 无损
 
 WMAP
@@ -12900,6 +12967,7 @@ ADDEDTIME
 	EN	Date Added
 	FR	Date d'ajout
 	HU	Hozzáadás dátuma
+	SV	Tillagd den
 	ZH_CN	日期已添加
 
 DATE
@@ -13074,7 +13142,7 @@ BYTES
 	NO	Byte
 	PL	Bajty
 	RU	Байты
-	SV	Byte
+	SV	Bytes
 	ZH_CN	字节
 
 SAMPLESIZE
@@ -14005,6 +14073,7 @@ BROWSE_WORKS
 	HU	Tallózás a művek között
 	NL	Door composities bladeren
 	PT	Examinar obras
+	SV	Bläddra efter verk
 	ZH_CN	浏览作品
 
 SUBTITLE
@@ -14032,6 +14101,7 @@ DISCSUBTITLE
 	EN	Set/Album Subtitle
 	FR	Ensemble/Album Sous-titres
 	NL	Set/Album Ondertitel
+	SV	Set/Album undertitel
 
 WORK
 	CS	Díla
@@ -14043,6 +14113,7 @@ WORK
 	HU	Művek
 	NL	Compositie
 	PT	Obra
+	SV	Verk
 	ZH_CN	作品
 
 WORKS
@@ -14055,6 +14126,7 @@ WORKS
 	HU	Művek
 	NL	Composities
 	PT	Obras
+	SV	Verk
 	ZH_CN	作品
 
 WORKS_CLASSICAL
@@ -14067,6 +14139,7 @@ WORKS_CLASSICAL
 	HU	Klasszikus művek
 	NL	Klassieke composities
 	PT	Obras Classicas
+	SV	Klassiska verk
 	ZH_CN	古典作品
 
 BROWSE_YEARS
@@ -14196,6 +14269,7 @@ BROWSE_BY_WORK
 	FR	Œuvres
 	HU	Művek
 	NL	Composities
+	SV	Verk
 	ZH_CN	作品
 
 BROWSE_BY_YEAR
@@ -14428,9 +14502,9 @@ LASTPLAYED
 	DE	Zuletzt wiedergegeben
 	EN	Last Played
 	FR	Dernier lu
-	SV	Spelad senast
 	HU	Legutóbb játszott
 	NL	Laatst gespeeld
+	SV	Spelad senast
 	ZH_CN	最近播放
 
 PLAYCOUNT
@@ -14460,7 +14534,7 @@ ALBUM_INFO
 	NO	Albuminformasjon
 	PL	Informacje o albumie
 	RU	Сведения об альбоме
-	SV	Information om album
+	SV	Albuminformation
 	ZH_CN	专辑信息
 
 ARTIST_INFO
@@ -14531,7 +14605,7 @@ SONG_INFO
 	PL	Informacje o utworze
 	PT	Informação da Música
 	RU	Информация о песне
-	SV	Låtinfo
+	SV	Låtinformation
 	ZH_CN	歌曲信息
 
 PLAYLIST_INFO
@@ -14602,7 +14676,7 @@ FILENAME_WARNING
 	NO	Ugyldige tegn i navnet, du må endre det.
 	PL	Nazwa zawiera niedozwolone znaki; zmień nazwę.
 	RU	Имя содержит недопустимые символы, измените его.
-	SV	Namnet innehåller otillåtna tecknet. Ändra namnet.
+	SV	Namnet innehåller otillåtna tecken. Ändra namnet.
 	ZH_CN	名称中有非法字符，请编辑。
 
 RENAME_WARNING
@@ -14906,7 +14980,7 @@ SERVER_STATUS_DESC
 	PL	Informacje na wszystkich zidentyfikowanych urządzeniach połączonych ze Lyrion Music Server
 	PT	Indetificação de todos os equipamentos identificados conectados ao Lyrion Music Server
 	RU	Информация обо всех найденных устройствах, подключенных к Lyrion Music Server
-	SV	Information om alla identifierade enheter som anslutits till Lyrion Music Server
+	SV	Information om alla identifierade spelare som anslutits till Lyrion Music Server
 	ZH_CN	有关连接到Lyrion Music Server的所有已识别设备的详细信息
 
 BASIC_SERVER_SETTINGS
@@ -15299,7 +15373,7 @@ SETUP_GROUP_DEBUG_DESC
 	NO	Lyrion Music Server har flere innstillinger for loggføring som kan brukes til å ta opp detaljert informasjon om serveren og søk. Hver loggføringskategori har en alvorlighetsgrad for loggføring. «Feilsøking» er mest detaljert, og «Av» er minst.
 	PL	Program Lyrion Music Server udostępnia różne opcje rejestrowania szczegółowych informacji o działaniu programu i mechanizmu przeszukiwania. Każda kategoria rejestrowania ma kategorię ważności. Opcja „Debuguj” zapewnia najbardziej, a „Wył.” najmniej dokładne informacje.
 	RU	В Lyrion Music Server предусмотрены различные настройки ведения журнала, с помощью которых можно записывать подробные сведения о работе сервера и сканера. У каждой категории ведения журнала есть уровень серьезности. Самый подробный уровень — "Отладка", наименее подробный — "Отключено".
-	SV	Det finns ett antal loggningsinställningar i Lyrion Music Server som du kan använda om du vill registrera information om serveraktivitet och sökningar. Du kan ange ange hur mycket som ska loggas i varje kategori. Inställningen Felsökning innebär den utförligaste loggningen och Av den minst utförliga.
+	SV	Det finns ett antal loggningsinställningar i Lyrion Music Server som du kan använda om du vill registrera information om serveraktivitet och sökningar. Du kan ange hur mycket eller lite som ska loggas i varje kategori. Inställningen Felsökning innebär den utförligaste loggningen och Av den minst utförliga.
 	ZH_CN	Lyrion Music Server具有多个日志设置，可用于记录有关服务器和扫描器操作的详细信息。每个日志类别都有一个日志严重性。调试是最详细的，关闭最少。
 
 DEBUGGING_SETTINGS
@@ -15751,7 +15825,7 @@ WEB_NO_COOKIES_WARNING
 	NO	Nettleseren din godtar ikke informasjonskapsler. Dette kan føre til uønsket oppførsel ved bruk av Lyrion Music Server. Aktiver informasjonskapsler i nettleseren før du fortsetter.
 	PL	Twoja przeglądarka nie akceptuje plików cookie. Może to wywołać nieoczekiwane skutki podczas sterowania programem Lyrion Music Server. Włącz najpierw obsługę plików cookie w przeglądarce.
 	RU	Браузер не принимает файлы cookie. Это может привести к непредвиденным результатам при управлении Lyrion Music Server. Перед продолжением работы разрешите использование файлов cookie в браузере.
-	SV	Din webbläsare accepterar inte cookies. Detta kan leda till problem när du använder Lyrion Music Server. Aktivera cookies i din webbläsare innan du fortsätter.
+	SV	Din webbläsare accepterar inte cookies. Detta kan leda till problem när du använder Lyrion Music Server. Tillåt cookies i din webbläsare, åtminstone för Lyrion Music Server, innan du fortsätter.
 	ZH_CN	您的浏览器不接受cookie。这可能导致您控制Lyrion Music Server时出现意外行为。在继续之前，请在您的浏览器中启用cookie。
 
 MUSIC_PLAYER
@@ -17180,6 +17254,7 @@ INFORMATION_MENU_PERL
 	FR	Versions de Perl et des modules
 	NL	Perl en Module versies
 	PT	Versões de Perl e Módulos
+	SV	Perl- och Modulversioner
 	ZH_CN	Perl和模块版本
 
 INFORMATION_MENU_LIBRARY
@@ -17411,7 +17486,7 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH
 	PL	Siła sygnału sieci bezprzewodowej
 	PT	Intensidade do sinal rede sem fios
 	RU	Уровень беспроводного сигнала
-	SV	Trådlös signalstyrka
+	SV	WiFi signalstyrka
 	ZH_CN	无线讯号强度
 
 INFORMATION_PLAYER_SIGNAL_STRENGTH_ABBR
@@ -17429,7 +17504,7 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH_ABBR
 	PL	Sygnał sieci bezprzewodowej
 	PT	Sinal rede sem fios
 	RU	Беспроводной сигнал
-	SV	Trådlös signal
+	SV	WiFi
 	ZH_CN	无线信号
 
 INFORMATION_CLIENTS
@@ -17485,7 +17560,7 @@ INFORMATION_PREFSDIR
 	PL	Folder preferencji
 	PT	Directório das preferências
 	RU	Папка "Предпочтения"
-	SV	Mappen Inställningar
+	SV	Mappen för inställningar
 	ZH_CN	偏好文件夹
 
 INFORMATION_PLUGINDIRS
@@ -17838,7 +17913,6 @@ INFORMATION_OPERATINGSYSTEM_ABBR
 	PL	System
 	PT	Sistema operativo
 	RU	ОС
-	SV	Operativsystem
 	ZH_CN	OS
 
 INFORMATION_INSTALLED
@@ -18346,7 +18420,7 @@ COMPILATIONS
 	PL	Kompilacja
 	PT	Compilações
 	RU	Сборка
-	SV	Samling
+	SV	Samlingar
 	ZH_CN	合辑
 
 APPEARANCES
@@ -18358,6 +18432,7 @@ APPEARANCES
 	HU	Megjelenések
 	NL	Optredens
 	PT	Aparições
+	SV	Medverkande
 	ZH_CN	演出
 
 COMPOSITIONS
@@ -18368,6 +18443,7 @@ COMPOSITIONS
 	FR	Compositions
 	NL	Composities
 	PT	Composições
+	SV	Kompositioner
 	ZH_CN	创作
 
 SETUP_VARIOUSARTISTS
@@ -18786,7 +18862,7 @@ SETUP_LARGETEXTFONT
 	NO	Stor tekst
 	PL	Czcionka dużego tekstu
 	RU	Шрифт крупного текста
-	SV	Teckensnitt för stor text
+	SV	Typsnitt för stor text
 	ZH_CN	大字体
 
 SETUP_LARGETEXTFONT_DESC
@@ -18804,7 +18880,7 @@ SETUP_LARGETEXTFONT_DESC
 	NO	Velg hvilken skrifttype du vil bruke for stor tekst.
 	PL	Wybierz czcionkę używaną do wyświetlania dużej ilości tekstu.
 	RU	Выберите тип шрифта для отображения крупного текста.
-	SV	Välj vilket teckensnitt som ska användas för att visa stor text.
+	SV	Välj vilket typsnitt som ska användas för att visa stor text.
 	ZH_CN	选择在显示较大文字时您想要使用的字体。
 
 SETUP_LARGETEXTFONT_0
@@ -19361,6 +19437,7 @@ SETUP_PRECACHEARTWORK_CUSTOM_SPECS
 	NL	Aangepaste specificaties pre-caching
 	NO	Egendefinerte spesifikasjoner for forhåndsbufring
 	PL	Dostosowanie ustawień bufora
+	SV	Anpassade inställningar för förhandsbuffring
 	ZH_CN	自定义预缓存规格
 
 SETUP_IMAGEPROXY
@@ -19384,6 +19461,7 @@ SETUP_IMAGEPROXY_DESC
 	FR	Pour obtenir des pochettes de la meilleure qualité et un affichage performant, les pochettes doivent être redimensionnées au préalabale par Lyrion Music Server. La tâche peut également être confiée à un processus dédié pour décharger le serveur.
 	HU	Annak érdekében, hogy a legjobb minőségű borítókat és teljesítményt érje el az eszközökön, a grafikai fájlokat átméretezi, mielőtt elküldi őket az ügyfélnek. Alapértelmezés szerint ezt maga a Lyrion Music Server kezeli. A segítő a nehézemelés egy részét a szerveralkalmazás által kezelt külön folyamatra terhelheti.
 	NL	Om de beste kwaliteit en prestaties te krijgen, worden de albumhoezen geschaald naar het juiste formaat voordat ze naar de client worden verstuurd. Standaard wordt dit door Lyrion Music Server zelf gedaan. Een hulpapplicatie kan een deel van het werk uitbesteden aan een apart proces dat door de serverapplicatie wordt beheerd.
+	SV	För att få bästa möjliga omslagskvalitet och prestanda på spelarna, anpassas storleken av omslagsbilderna innan de skickas till spelaren. Detta sker vanligtvis i Lyrion Music Server. Hjälpanvändningen kan avlasta servern genom att ta över denna uppgift i en separat process som styrs av servern.
 	ZH_CN	为了在设备上获得最佳质量的艺术品和性能，在发送给客户端之前，会调整艺术品文件的大小。默认情况下，这是由Lyrion Music Server本身处理的。助手可以将一些繁重的工作卸载到由服务器应用程序管理的单独过程中。
 
 SETUP_IMAGEPROXY_LOCAL
@@ -19406,6 +19484,7 @@ SETUP_IMAGEPROXY_HELPER
 	EN	Use Lyrion Music Server resizing helper to resize artwork
 	FR	Redimensionner les pochettes via un processus local dédié
 	NL	Gebruik de Lyrion Music Server hulpapplicatie om albumhoezen te schalen
+	SV	Använd hjälpprogram för att anpassa omslagsbildernas storlek.
 	ZH_CN	使用Lyrion Music Server调整助手调整专辑艺术大小
 
 SETUP_SERVERPRIORITY
@@ -19434,6 +19513,7 @@ SETUP_SHUFFLE_METHOD
 	FR	Méthode de mélange aléatoire
 	HU	Keverési módszer
 	NL	Methode voor willekeurig afspelen
+	SV	Blandningsmetod
 	ZH_CN	随机播放方法
 
 SETUP_USE_BALANCED_SHUFFLE
@@ -19444,6 +19524,7 @@ SETUP_USE_BALANCED_SHUFFLE
 	FR	Choisir un mélange plus équilibré, mais plus lent
 	HU	Használjon kiegyensúlyozottabb, de lassabb keverést
 	NL	Gebalanceerd, minder willekeurig
+	SV	Använd en mer balanserad, men långsammare blandningsmetod
 	ZH_CN	使用更平衡但速度更慢的随机播放
 
 SETUP_USE_FASTER_SHUFFLE
@@ -19454,6 +19535,7 @@ SETUP_USE_FASTER_SHUFFLE
 	FR	Choisir un mélange plus rapide mais moins équilibré
 	HU	Használjon gyorsabb, de kevésbé kiegyensúlyozott keverést
 	NL	Willekeurig, minder gebalanceerd
+	SV	Använd en snabbare, men mindre balanserad blandningmetod
 	ZH_CN	使用更快速但平衡性较差的随机播放
 
 SETUP_SERVERPRIORITY_DESC
@@ -19670,7 +19752,7 @@ AUDIO_SOURCE_BALANCED_AES
 	NO	Balansert AES/EBU
 	PL	Zbalansowane AES/EBU
 	RU	Сбалансированный AES/EBU
-	SV	Balanserat AES/EBU
+	SV	Balanserad AES/EBU
 	ZH_CN	平衡AES/EBU
 
 AUDIO_SOURCE_BNC_SPDIF
@@ -19861,7 +19943,7 @@ ROLLOFFSLOW_ENABLED
 	NO	Sakte dempingsfilter
 	PL	Filtr łagodnego tłumienia
 	RU	Слабо сглаживающий фильтр
-	SV	Slow Roll-Off-filter
+	SV	Långsamt roll-off-filter
 	ZH_CN	慢速滚降滤波器
 
 SETUP_POWEROFFDAC
@@ -20005,7 +20087,7 @@ DISABLEDAC_WHENOFF
 	NO	Deaktiver utsignal hvis avslått
 	PL	Deaktywuj wyjścia po wyłączeniu
 	RU	Отключить выходы при выкл.
-	SV	Avaktivera utgångar när de är av
+	SV	Avaktivera utgångar när den är av
 	ZH_CN	关机后撤销输出
 
 SETUP_ANALOGOUTMODE
@@ -20048,7 +20130,6 @@ ANALOGOUTMODE_SUBOUT
 	HU	Mélynyomó
 	NO	Basshøyttaler
 	RU	Сабвуфер
-	SV	Baselement
 	ZH_CN	低音扬声器
 
 ANALOGOUTMODE_HEADPHONE
@@ -20290,7 +20371,7 @@ DEBUG_FACTORYTEST
 	NO	Informasjon som brukes ved fabrikktesting
 	PL	Informacje używane podczas testów fabrycznych
 	RU	Информация для заводского тестирования
-	SV	Information som användes vid fabrikstestning
+	SV	Information som används vid fabrikstestning
 	ZH_CN	工厂测试使用的信息
 
 DEBUG_FAVORITES
@@ -20735,7 +20816,7 @@ DEBUG_OS_FILES
 	NO	Nivåinformasjon i filsystem
 	PL	Informacje o poziomie systemu plików
 	RU	Информация о файловой системе
-	SV	Information om filsystemnivå
+	SV	Information på filsystemnivå
 	ZH_CN	文件系统级别信息
 
 DEBUG_OS_PATHS
@@ -21504,7 +21585,7 @@ DISCOVERING_FILES_PROGRESS
 	NO	Ser etter musikkfiler/-kataloger
 	PL	Wykrywanie plików muzycznych i katalogów
 	RU	Поиск файлов/папок с музыкой
-	SV	Leta efter musikfiler/kataloger
+	SV	Letar efter musikfiler/kataloger
 	ZH_CN	发现音乐文件/目录
 
 DISCOVERING_DIRECTORY_PROGRESS
@@ -21521,7 +21602,7 @@ DISCOVERING_DIRECTORY_PROGRESS
 	NO	Finne filer/kataloger
 	PL	Wykrywanie plików i katalogów
 	RU	Поиск файлов/папок
-	SV	Leta efter filer/kataloger
+	SV	Letar efter filer/kataloger
 	ZH_CN	发现文件/目录
 
 DISCOVERING_PLAYLIST_PROGRESS
@@ -21538,7 +21619,7 @@ DISCOVERING_PLAYLIST_PROGRESS
 	NO	Finner spillelister
 	PL	Trwa wykrywanie list odtwarzania
 	RU	Выбор плей-листов
-	SV	Leta spellistor
+	SV	Letar efter spellistor
 	ZH_CN	发现播放列表
 
 DIRECTORY_DELETED_PROGRESS
@@ -21555,7 +21636,7 @@ DIRECTORY_DELETED_PROGRESS
 	NO	Fjerner slettede filer
 	PL	Kasowanie usuniętych plików
 	RU	Убрать удаленные файлы
-	SV	Ta bort borttagna filer
+	SV	Tar bort borttagna filer
 	ZH_CN	移除已删除的文件
 
 DIRECTORY_NEW_PROGRESS
@@ -21572,7 +21653,7 @@ DIRECTORY_NEW_PROGRESS
 	NO	Søker i nye musikkfiler
 	PL	Trwa przeszukiwanie nowych plików muzycznych
 	RU	Сканирование новых музыкальных файлов
-	SV	Söka igenom nya musikfiler
+	SV	Söker igenom nya musikfiler
 	ZH_CN	扫描新音乐文件
 
 DIRECTORY_MEDIA_PROGRESS
@@ -21589,7 +21670,7 @@ DIRECTORY_MEDIA_PROGRESS
 	NO	Søker i nye filer
 	PL	Trwa przeszukiwanie nowych plików
 	RU	Сканирование новых файлов
-	SV	Söka igenom nya mediefiler
+	SV	Söker igenom nya mediefiler
 	ZH_CN	扫描新媒体文件
 
 DIRECTORY_CHANGED_PROGRESS
@@ -21623,7 +21704,7 @@ PLAYLIST_DELETED_PROGRESS
 	NO	Fjerner slettede spillelister
 	PL	Kasowanie usuniętych list odtwarzania
 	RU	Убрать удаленные плей-листы
-	SV	Ta bort borttagna spellistor
+	SV	Tar bort borttagna spellistor
 	ZH_CN	移除已删除的播放列表
 
 PLAYLIST_NEW_PROGRESS
@@ -21640,7 +21721,7 @@ PLAYLIST_NEW_PROGRESS
 	NO	Søker i nye spillelister
 	PL	Trwa przeszukiwanie nowych list odtwarzania
 	RU	Сканирование новых плей-листов
-	SV	Söka igenom nya spellistor
+	SV	Söker igenom nya spellistor
 	ZH_CN	扫描新播放列表
 
 PLAYLIST_CHANGED_PROGRESS
@@ -21702,7 +21783,7 @@ MERGEVA_PROGRESS
 	NO	Slå sammen diverse artister
 	PL	Połącz różnych wykonawców
 	RU	Объединить неск. исполнителей
-	SV	Slå ihop Blandade artister
+	SV	Slår ihop Blandade artister
 	ZH_CN	合并不同艺术家
 
 CONTRIBUTOR_PICTURE_PROGRESS
@@ -21711,6 +21792,7 @@ CONTRIBUTOR_PICTURE_PROGRESS
 	EN	Looking for contributor pictures
 	FR	Recherche des photos d'artistes/contributeurs
 	NL	Naar afbeeldingen van uitvoerenden zoeken
+	SV	Letar efter bilder på medverkande
 	ZH_CN	查找贡献者图片
 
 UPDATESTANDALONEARTWORK_PROGRESS
@@ -21853,6 +21935,7 @@ RELEASETYPES_PROGRESS
 	FR	Actualiser les types de sorties des albums
 	HU	Az album kiadás típusainak frissítése
 	NL	Albumreleasetypes vernieuwen
+	SV	Uppdatera utgåvetyper för album
 	ZH_CN	更新专辑发行类型
 
 VIRTUALLIBRARIES_PROGRESS
@@ -21999,7 +22082,7 @@ PROGRESS_IMPORTER_NO_INFO
 	NO	Ingen framdriftsinformasjon er tilgjengelig for forrige søk.
 	PL	Informacje o postępie z poprzedniego przeszukiwania są niedostępne.
 	RU	Информация о ходе выполнения предыдущего сканирования недоступна.
-	SV	Det finns ingen förloppsinformation för den föregående sökningen tillgänglig.
+	SV	Det finns ingen tillgänglig information för den föregående sökningen.
 	ZH_CN	上一轮扫描的进度信息不可用。
 
 TOTAL_TIME
@@ -22154,7 +22237,7 @@ RESTARTING_PLEASE_WAIT
 	NO	Lyrion Music Server startes på nytt. Vent litt før du fortsetter ...
 	PL	Trwa ponowne uruchamianie programu Lyrion Music Server. Poczekaj chwilę, aby kontynuować...
 	RU	Lyrion Music Server перезапускается. Подождите...
-	SV	Lyrion Music Server startas om. Vänta en minut innan du fortsätter...
+	SV	Lyrion Music Server startas om. Vänta ett ögonblick innan du fortsätter...
 	ZH_CN	Lyrion Music Server正在重启。请等待一分钟后再继续...
 
 SETUP_VIEW_SCANNING
@@ -22242,7 +22325,7 @@ JIVE_PLAY_ALL_SONGS
 	NO	Spill av alle sanger
 	PL	Odtwórz wszystkie utwory
 	RU	Воспроизвести все песни
-	SV	Spela upp alla låtar
+	SV	Spela alla låtar
 	ZH_CN	播放所有歌曲
 
 JIVE_DELETE_PLAYLIST
@@ -22800,7 +22883,7 @@ SCANNER_REMOTE_NESTED_TOO_DEEP
 	NO	Kan ikke søke: Spillelisten ligger for langt nede
 	PL	Nie można przeszukiwać: zbyt wiele poziomów listy odtwarzania
 	RU	Сбой сканирования: плей-лист вложен слишком глубоко
-	SV	Det går inte att söka: Spellistans har placerats för djupt
+	SV	Det går inte att söka: Spellistans sökväg är för lång
 	ZH_CN	无法扫描：播放列表嵌套过深
 
 RECENT_SEARCHES
@@ -23340,7 +23423,7 @@ CLEANUP_ALL
 	NO	Slett alt ‒ Ikke gjør dette med mindre du vet hva du driver med!
 	PL	Usuń wszystkie - nie rób tego, jeśli nie masz całkowitej pewności!
 	RU	Очистить все — не выполняйте эту команду, если не уверены!
-	SV	Utplåna allt – Gör inte detta om du inte är helt säker på vad du gör!
+	SV	Ta bort ALLT – Gör inte detta om du inte är helt säker på vad du gör!
 	ZH_CN	删除所有内容——除非你很清楚你在做什么，否则不要这样做！
 
 CLEANUP_DRYRUN
@@ -23773,7 +23856,7 @@ SYNC_ABOUT
 	PL	Dodaj jeden lub więcej urządzeń Squeezebox, aby użyć funkcji synchronizacji i wykorzystać w pełni możliwości odtwarzania dźwięku w wielu pomieszczeniach. Więcej informacji można znaleźć w witrynie Lyrion.org.
 	PT	Adicione u ou mais Squeezeboxes para poder usar a função Sincronizar e aproveitar as possibilidade de ter audio em multiplas dependencias simultaneamente. Visite Lyrion.org para mais infromações.
 	RU	Добавьте еще один или несколько плееров Squeezebox, чтобы использовать функцию синхронизации и реализовать полный потенциал многокомнатной аудиосистемы. Дополнительные сведения см. на сайте Lyrion.org.
-	SV	Om du lägger till en eller flera ytterligare Squeezebox-enheter kan du använda synkroniseringsfunktionen och njuta fullt ut av ljud i flera rum. Du hittar mer information på Lyrion.org.
+	SV	Om du lägger till en eller flera ytterligare Squeezebox-enheter kan du använda synkroniseringsfunktionen och njuta fullt ut av systemets hela potential i flera rum. Du hittar mer information på Lyrion.org.
 	ZH_CN	添加一个或多个额外的Squeezebox以使用同步功能，并实现多房间音频的完全潜力。有关更多信息，请访问Lyrion.org。
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP
@@ -23935,6 +24018,7 @@ SERVER_WINDOWS_UPDATE_AVAILABLE
 	HU	<ul><li>A %s verzió – %s elérhető a telepítéshez.</li><li>Jelentkezzen be Lyrion Music Servert (%s) futtató számítógépére.</li><li>Végezze el a <code>% parancsot. s</code>, és kövesse az utasításokat.</li></ul>
 	NL	<ul><li>Versie %s - %s is beschikbaar voor installatie.</li><li>Log in op jouw computer met Lyrion Music Server (%s).</li><li>Voer <code>%s</code> uit en volg de instructies.</li></ul>
 	PT	ul><li>A versão %s - %s está disponível para ser instalada.</li><li>Faça login no computador onde tem instalado o Lyrion Music Server (%s).</li><li>Execute <code>%s</code> e siga as instruções.</li></ul>
+	SV	<ul><li>Version %s - %s är tillgänglig för installation.</li><li>Logga in på datorn där Lyrion Music Server körs (%s).</li><li>Utför <code>%s</code> och följ instruktionerna.</li></ul>
 	ZH_CN	<ul><li>版本 %s - %s 可供安装。</li><li>登录运行 Lyrion Music Server 的计算机 (%s)。</li><li>执行 <code>%s</code> 并按照说明操作。</li></ul>
 
 UPDATES_LATEST_CHANGES
@@ -23956,6 +24040,7 @@ MORE_ON_GITHUB
 	EN	Check out changes on Github...
 	FR	Consultez les modifications sur Github...
 	NL	Bekijk wijzigingen op Github...
+	SV	Kolla förändringarna på Github
 
 UPDATE
 	CS	Aktualizace
@@ -23984,6 +24069,7 @@ TRACKS_FROM_OTHER_ALBUMS
 	HU	Zeneszámok más albumokról
 	NL	Nummers van andere albums
 	PT	Pistas de outros albuns
+	SV	Spår från andra album
 	ZH_CN	来自其他专辑的曲目
 
 SETUP_YEARMENU
@@ -23995,6 +24081,7 @@ SETUP_YEARMENU
 	HU	Év menü
 	NL	Jaartallen Menu
 	PT	Menu Ano
+	SV	Årsmeny
 	ZH_CN	年份菜单
 
 SETUP_YEARMENU_DESC
@@ -24006,6 +24093,7 @@ SETUP_YEARMENU_DESC
 	HU	Az Év menü csak az album éveit jelenítse meg, vagy az album és a szám éveit?
 	NL	Moet het jaartallen menu alleen het jaartal van het album tonen, of zowel het jaartal van het album en het nummer?
 	PT	O menu Ano deverá mostar só o ano do album ou de ambos, do album e da pista?
+	SV	Skall Årsmenyn bara visa året för albumet, eller album- och spåråret?
 	ZH_CN	年份菜单应该只显示专辑年份，还是专辑和曲目年份？
 
 SETUP_YEARMENU_0
@@ -24017,6 +24105,7 @@ SETUP_YEARMENU_0
 	HU	Csak az album éveinek megjelenítése
 	NL	Toon alleen jaartal van het album
 	PT	Mostrar sómente o ano do album
+	SV	Visa bara albumsåret
 	ZH_CN	仅显示专辑年份
 
 SETUP_YEARMENU_1
@@ -24028,6 +24117,7 @@ SETUP_YEARMENU_1
 	HU	Az album és a zeneszám éveinek megjelenítése
 	NL	Toon jaartal van album en nummer
 	PT	Mostrar o ano do album e de cada pista
+	SV	Visa albums- och spåråret
 	ZH_CN	显示专辑和曲目年份
 
 SETUP_ALBUMLINKROLES
@@ -24040,6 +24130,7 @@ SETUP_ALBUMLINKROLES
 	HU	Előadói linkek az albumlistákban
 	NL	Artiestenlinks in albumlijsten
 	PT	Links de artistas nas listas de álbuns
+	SV	Artistlänkar i albumlistor
 	ZH_CN	专辑列表中的艺术家链接
 
 SETUP_ALBUMLINKROLES_DESC
@@ -24052,6 +24143,7 @@ SETUP_ALBUMLINKROLES_DESC
 	HU	Kiválaszthatja, hogy mely szerepek jelenjenek meg hivatkozásként az albumlistában. A zeneszkenner által azonosított album fő közreműködője mindig megjelenik. Az albumok/kiadások szerepkör szerinti böngészése során a böngészett szerepkörhöz tartozó közreműködők is megjelennek.
 	NL	Je kan kiezen welke rollen je als links in albumlijsten wilt weergeven. De belangrijkste uitvoerende zoals geïdentificeerd door de muziekscanner wordt altijd weergegeven. Bij het bladeren van albums/releases op rol worden ook de uitvoerenden voor de rol die wordt doorzocht weergegeven.
 	PT	Pode escolher quais as funções que serão apresentadas como links nas listas de álbuns. O principal contribuidor do álbum identificado pelo scanner de música será sempre mostrado. Além disso, ao navegar por álbuns/lançamentos por função, os Colaboradores para a função que está sendo navegada serão mostrados.
+	SV	Du kan väla vilka rollersom skall visas som länkar i albumlistor. Huvudartisten visas alltid. När du bläddrar i album- eller utgåvalistor baserat på roller, visas även de medverkande för den rollen.
 	ZH_CN	您可以选择在专辑列表中显示哪些角色作为链接。由音乐扫描器识别的主要专辑贡献者将始终显示。另外，当按角色浏览专辑/发行版时，将显示正在浏览的角色贡献者。
 
 SETUP_USERDEFINEDROLES
@@ -24063,6 +24155,7 @@ SETUP_USERDEFINEDROLES
 	HU	Felhasználó által meghatározott szerepkörök
 	ES	Roles definidos por el usuario
 	NL	Door de gebruiker gedefinieerde rollen
+	SV	Användardefinerade roller
 	ZH_CN	用户定义的角色
 
 SETUP_USERDEFINEDROLES_DESC
@@ -24074,6 +24167,7 @@ SETUP_USERDEFINEDROLES_DESC
 	ES	Informe a LMS sobre cualquier etiqueta de rol de colaborador personalizada utilizada en la biblioteca musical. Por ejemplo, SOLISTA, BATERISTA, PRODUCTOR, etc. Los cambios de etiqueta de rol activarán un nuevo escaneo de tu biblioteca de música.
 	HU	Mondja el az LMS-nek a zenei könyvtárban használt egyéni közreműködői szerepcímkéket. Például SZÓLISTA, DOBOS, PRODUCER stb. A szerepcímke módosításai elindítják a zenei könyvtár újraellenőrzését.
 	NL	Vertel LMS over alle uitvoerende rollen die je hebt getagged in jouw muziekbibliotheek. Bijvoorbeeld SOLOIST, DRUMMER, PRODUCER, enz. Wijzigingen in de roltag zorgen ervoor dat uw muziekbibliotheek opnieuw wordt gescand.
+	SV	Användardefinerade taggar för roller, som används i musikbiblioteket. Till exempel SOLOIST, DRUMMER, PRODUCER o.s.v. Ändringar här kommer att starta en omskanning av musikbiblioteket.
 	ZH_CN	告诉LMS在音乐库中使用的任何自定义贡献者角色标签。例如，SOLOIST、DRUMMER、PRODUCER等。角色标签的更改将触发对您的音乐库的重新扫描。
 
 SETUP_USERDEFINEDROLES_TAG
@@ -24085,6 +24179,7 @@ SETUP_USERDEFINEDROLES_TAG
 	ES	Role tag
 	HU	Szerepcímke
 	NL	Rol tag
+	SV	Roll-Tag
 	ZH_CN	角色标签
 
 SETUP_USERDEFINEDROLES_TEXT
@@ -24096,6 +24191,7 @@ SETUP_USERDEFINEDROLES_TEXT
 	ES	Mostrar texto
 	HU	Szöveg megjelenítése
 	NL	Tekst weergeven
+	SV	Namn
 	ZH_CN	显示文本
 
 SETUP_USERDEFINEDROLES_TEXT_PLURAL
@@ -24107,6 +24203,7 @@ SETUP_USERDEFINEDROLES_TEXT_PLURAL
 	ES	Mostrar texto (plural)
 	HU	Szöveg megjelenítése (többes számú)
 	NL	Tekst weergeven (meervoud)
+	SV	Namn
 	ZH_CN	显示文本（复数）
 
 SETUP_WORKSSCAN
@@ -24117,6 +24214,7 @@ SETUP_WORKSSCAN
 	FR	Recherche d'œuvres
 	HU	Művek beolvasása
 	NL	Scannen van composities
+	SV	Skanna verk
 	ZH_CN	作品扫描
 
 SETUP_WORKSSCAN_1
@@ -24127,6 +24225,7 @@ SETUP_WORKSSCAN_1
 	FR	Parcourir toute la bibliothèque à la recherche d'œuvres
 	HU	Szkennelje be a teljes könyvtárat művekért
 	NL	Scan de hele bibliotheek op composities
+	SV	Skanna efter verk i hela biblioteket
 	ZH_CN	扫描整个库以查找作品
 
 SETUP_WORKSSCAN_2
@@ -24137,6 +24236,7 @@ SETUP_WORKSSCAN_2
 	FR	Limiter la recherche des œuvres aux "Genres en lien avec des œuvres et des compositeurs" (ci-dessus)
 	HU	A művek beolvasásának korlátozása a „Saját műveim és zeneszerzői albumaim műfajaira” (fent)
 	NL	Beperk de compositiescan tot "Mijn genres voor composities en albums van componisten" (hierboven)
+	SV	Begränsa skanningen efter verk till "Genrer för verk och kompositörsalbum" (ovanför)
 	ZH_CN	将作品扫描限制为“我的作品和作曲家专辑类型”（上面）
 
 SETUP_WORKSSCAN_0
@@ -24147,6 +24247,7 @@ SETUP_WORKSSCAN_0
 	FR	Ne pas rechercher d'œuvres
 	HU	Ne keressen műveket
 	NL	Niet scannen op composities
+	SV	Skanna inte efter verk
 	ZH_CN	不扫描作品
 
 SETUP_MYCLASSICALGENRES
@@ -24158,6 +24259,7 @@ SETUP_MYCLASSICALGENRES
 	FR	Genres en lien avec des œuvres et des compositeurs
 	HU	Műfajaim művekhez és zeneszerzői albumokhoz
 	NL	Mijn genres voor composities en albums van componisten
+	SV	Genrer för verk och kompositörsalbum
 	ZH_CN	我的作品和作曲家专辑类型
 
 SETUP_MYCLASSICALGENRES_DESC
@@ -24168,6 +24270,7 @@ SETUP_MYCLASSICALGENRES_DESC
 	FR	Précisez les genres concernés par les œuvres et les compositeurs. Séparez-les par des virgules.
 	HU	Használja ezeket a műfajokat a művekhez és zeneszerzői albumokhoz. Vesszővel válassza el.
 	NL	Gebruik deze genres voor composities en albums van componisten. Scheid met komma's.
+	SV	Använd dessa genrer för verk och kompositörsalbum, separera listan med kommas
 	ZH_CN	使用这些作品和作曲家专辑类型。用逗号分隔。
 
 FIRST_N_ALBUMS
@@ -24178,4 +24281,5 @@ FIRST_N_ALBUMS
 	FR	(%s premiers albums)
 	HU	(első %s album)
 	NL	(eerste %s albums)
+	SV	(första %s albumen)
 	ZH_CN	(前%s张专辑)

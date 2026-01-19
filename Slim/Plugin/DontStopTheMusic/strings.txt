@@ -7,6 +7,7 @@ PLUGIN_DSTM
 	HU	Ne hagyja abba a zenét
 	NO	Ikke stopp musikken
 	NL	Don't Stop The Music
+	SV	Stoppa inte musiken
 
 PLUGIN_DSTM_DESC
 	CS	Nezastavuj přehrávání hudby se postará o to, aby vám ticho nezničilo plynulost. Jakmile se dostanete na konec seznamu skladeb, automaticky přidá podobnou hudbu, jakou jste poslouchali doposud.
@@ -18,6 +19,7 @@ PLUGIN_DSTM_DESC
 	NL	Don't Stop The Music zorgt ervoor dat er geen onverwachte stilte valt. Eenmaal aan het einde van de playlist worden automatisch nummers toegevoegd op basis van de gemaakte keuze. Deze voorkeuze vind je in het hoofdmenu onder Extra en kan voor elke muziekspeler afzonderlijk worden ingesteld.
 	NO	Ikke stopp musikken sørger for at stillheten ikke forstyrrer flyten din. Den vil automagisk legge til lignende musikk som du har hørt på, så snart enden på spillelista er nådd.
 	NL	Don't Stop The Music zorgt ervoor dat er geen stiltes vallen. Zodra je het einde van jouw afspeellijst hebt bereikt, wordt er automatisch muziek toegevoegd die lijkt op waar je naar hebt geluisterd.
+	SV	Stoppa inte musiken säkerställer att tystnad inte dödar ditt flyt. Pluginprogrammet lägger automatiskt till mer musik av samma typ som du har lyssnat till när slutet av din spellista nås. 
 
 PLUGIN_DSTM_HELP
 	CS	Vyberte, co chcete přehrát po skončení seznamu skladeb. Výběr se může lišit v závislosti na nainstalovaných a nakonfigurovaných Zásuvných modulech.
@@ -28,3 +30,4 @@ PLUGIN_DSTM_HELP
 	HU	Válaszd ki, hogy mit szeretnél lejátszani, ha egy lejátszási lista véget ér. A választás a telepített és konfigurált bővítményektől függően változhat.
 	NL	Selecteer wat je afgespeeld wilt hebben zodra jouw afspeellijst is afgelopen. De keuzemogelijkheid is afhankelijk van de geïnstalleerde plug-ins.
 	NO	Velg hva du vil skal spilles av når slutten på spillelista er nådd. Valget kan variere etter hvilke tilleggsmoduler du har installert og satt opp.
+	SV	Välj vad du vill spela när spellistan tar slut. Valet kan variera beroende på vilka pluginprogram som är installerade och konfigurerade.

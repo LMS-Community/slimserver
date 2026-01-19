@@ -24,3 +24,4 @@ PLUGIN_MY_APPS_NO_APPS
 	NL	Geen toepassing geïnstalleerd
 	NO	Ingen tjenester er installert
 	PL	Brak zainstalowanych aplikacji
+	SV	Inga program är installerade

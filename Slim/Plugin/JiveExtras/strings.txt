@@ -30,7 +30,7 @@ PLUGIN_JIVEEXTRAS_DESC
 	NO	Du kan tilpasse Squeezebox Controller ved å velge flere bilder til bakgrunnen samt lydeffekter, som så blir tilgjengelige fra innstillingsmenyen for Squeezebox Controller, Radio eller Touch.
 	PL	Urządzenie Squeezebox Controller można dostosować, wybierając dodatkowe obrazy tapet i efekty dźwiękowe, które będą dostępne w menu ustawień urządzenia Squeezebox Controller, Radio lub Touch.
 	RU	Можно настроить Squeezebox Controller, выбрав дополнительные обои и звуковые эффекты, которые станут доступны в меню настроек устройств Squeezebox Controller, Radio или Touch.
-	SV	Du kan anpassa Squeezebox Controller genom att välja fler bakgrunder och ljudeffekter som blir tillgängliga på inställningsmenyn för enheten (Squeezebox Controller, Squeezebox Radio eller Squeezebox Touch).
+	SV	Du kan anpassa Squeezebox Controller genom att välja mellan fler bakgrunder och ljudeffekter som är tillgängliga i inställningsmenyn för enheten (Squeezebox Controller, Squeezebox Radio eller Squeezebox Touch).
 
 PLUGIN_JIVEEXTRAS_WALLPAPERS
 	CS	Tapety
