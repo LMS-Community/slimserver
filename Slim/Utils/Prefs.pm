@@ -323,7 +323,7 @@ sub init {
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    0,                 }, 'startDelay'  );
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    0,                 }, 'playDelay'   );
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    0, 'high' =>  1000 }, 'packetLatency');
-	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>   10, 'high' =>  1000 }, 'minSyncAdjust');
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    5, 'high' =>  1000 }, 'minSyncAdjust');
 
 	$prefs->setValidate({ 'validator' => sub { $_[1] ne '' } }, 'playername');
 
