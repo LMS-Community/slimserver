@@ -13,6 +13,16 @@ inputs:
     description: The key ID to use to upload to S3
   AWS_SECRET_ACCESS_KEY:
     description: The secret to use to upload to S3
+  SIGNPATH_API_TOKEN:
+    description: The SignPath API token to use for code signing
+  SIGNPATH_ORG_ID:
+    description: The SignPath organization ID to use for code signing
+  SIGNPATH_PROJECT_SLUG:
+    description: The SignPath project slug to use for code signing
+  SIGNPATH_SIGNING_POLICY_SLUG:
+    description: The SignPath signing policy slug to use for code signing
+  SIGNPATH_ARTIFACT_CONFIG_SLUG:
+    description: The SignPath artifact config slug to use for code signing
 
 runs:
   using: composite
@@ -33,7 +43,7 @@ runs:
 
 
     - name: Check out LMS platform code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ${{ github.repository_owner }}/slimserver-platforms
         path: platforms
@@ -42,7 +52,7 @@ runs:
 
     - name: Check out pCP platform code
       if: ${{ startsWith(inputs.build-params, 'pcp') }}
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: picoreplayer/lms-update-script
         path: platforms/pcp
@@ -121,7 +131,7 @@ runs:
 
     - name: Cache s5cmd
       if: ${{ !startsWith(inputs.build-params, 'docker') }}
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         key: s5cmd-${{ runner.os }}
         path: ${{ runner.temp }}/s5cmd-bin
@@ -153,10 +163,34 @@ runs:
 
     - name: Archive artifacts
       if: ${{ !startsWith(inputs.build-params, 'docker') }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
+      id: upload-artifact
       with:
         name: ${{ inputs.build-params }}
         path: publish
+
+    - name: Prepare Windows release signing
+      if: ${{ startsWith(inputs.build-params, 'win64') && inputs.build-type == 'release' }}
+      uses: signpath/github-action-submit-signing-request@v2
+      with:
+        api-token: '${{ inputs.SIGNPATH_API_TOKEN }}'
+        organization-id: '${{ inputs.SIGNPATH_ORG_ID }}'
+        project-slug: '${{ inputs.SIGNPATH_PROJECT_SLUG }}'
+        signing-policy-slug: '${{ inputs.SIGNPATH_SIGNING_POLICY_SLUG }}'
+        artifact-configuration-slug: '${{ inputs.SIGNPATH_ARTIFACT_CONFIG_SLUG }}'
+        github-artifact-id: '${{ steps.upload-artifact.outputs.artifact-id }}'
+        wait-for-completion: true
+        output-artifact-directory: publish
+
+    - name: Calculate hash for signed Windows binary
+      if: ${{ startsWith(inputs.build-params, 'win64') && inputs.build-type == 'release' }}
+      shell: bash
+      run: |
+        cd publish
+        for f in LyrionMusicServer-*exe;
+        do
+          md5sum $f > $f.md5
+        done
 
     - name: Upload artifacts to R2
       if: ${{ !startsWith(inputs.build-params, 'docker') && github.repository_owner == 'LMS-Community' }}
