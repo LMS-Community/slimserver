@@ -1,0 +1,39 @@
+PLUGIN_YM_NAME
+	EN	Yandex Music
+	RU	Яндекс Музыка
+
+PLUGIN_YM_DESC
+	EN	Yandex Music account connection
+	RU	Подключение аккаунта Яндекс Музыки
+
+PLUGIN_YM_NOT_CONNECTED
+	EN	Yandex Music is not connected
+	RU	Яндекс Музыка не подключена
+
+PLUGIN_YM_CONNECT_IN_SETTINGS
+	EN	Open plugin settings to add your token
+	RU	Откройте настройки плагина, чтобы добавить токен
+
+PLUGIN_YM_CONNECTED
+	EN	Yandex Music connected
+	RU	Яндекс Музыка подключена
+
+PLUGIN_YM_CONNECTED_AS
+	EN	Connected as %s
+	RU	Подключено как %s
+
+PLUGIN_YM_INVALID_TOKEN
+	EN	Invalid Yandex Music token
+	RU	Некорректный токен Яндекс Музыки
+
+PLUGIN_YM_TOKEN_LABEL
+	EN	OAuth token
+	RU	OAuth-токен
+
+PLUGIN_YM_TOKEN_DESC
+	EN	Paste an OAuth token for api.music.yandex.net
+	RU	Вставьте OAuth-токен для api.music.yandex.net
+
+PLUGIN_YM_TOKEN_HELP
+	EN	Generate a Yandex Music OAuth token and save it here to connect your account.
+	RU	Сгенерируйте OAuth-токен Яндекс Музыки и сохраните его здесь для подключения аккаунта.
