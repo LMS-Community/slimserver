@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<extension>
+	<id>12c33cb1-3f2c-4caf-a7fd-73cdb8380e4d</id>
+	<name>PLUGIN_YM_NAME</name>
+	<version>1.0</version>
+	<description>PLUGIN_YM_DESC</description>
+	<creator>Lyrion Community</creator>
+	<category>music</category>
+	<defaultState>disabled</defaultState>
+</extension>

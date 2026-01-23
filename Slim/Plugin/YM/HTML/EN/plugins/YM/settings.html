@@ -1,0 +1,23 @@
+[% PROCESS settings/header.html %]
+
+[% WRAPPER setting title="PLUGIN_YM_TOKEN_LABEL" desc="PLUGIN_YM_TOKEN_DESC" %]
+		<input type="text" class="stdedit" name="pref_token" id="token" value="[% prefs.pref_token | html %]" size="60">
+	[% END %]
+
+	[% IF has_token %]
+		[% WRAPPER setting title="" desc="" %]
+			<input name="pref_logout" type="submit" class="stdclick" value="[% "SETUP_SIGNOUT" | string %]">
+		[% END %]
+	[% END %]
+
+	[% IF account_name %]
+		[% WRAPPER setting title="PLUGIN_YM_CONNECTED_AS" desc="" %]
+			<div>[% account_name | html %]</div>
+		[% END %]
+	[% END %]
+
+	[% WRAPPER setting title="" desc="" %]
+		<div>[% "PLUGIN_YM_TOKEN_HELP" | string %]</div>
+	[% END %]
+
+[% PROCESS settings/footer.html %]
