@@ -438,9 +438,12 @@ sub clientAnimationComplete {
 			return;
 		}
 
-		# Ensure scrolling is started by setting a timer to call update in 1.0 seconds
+		# Ensure scrolling is started by setting a timer to call update
+		my $delay = $prefs->client($display->client)->get('scrollStartDelay');
+		$delay = 1.0 unless defined $delay;
+		
 		$display->animateState(2);
-		Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + 1.0, \&Slim::Display::Display::update);
+		Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + $delay, \&Slim::Display::Display::update);
 	}
 
 	# process end of scroll once ANIC (from clients with native scrolling)
@@ -451,7 +454,8 @@ sub clientAnimationComplete {
 			if (($flags & ANIM_SCROLL_ONCE) && $scroll->{scrollonceend}) {
 				# schedule endAnimaton to kill off scrolling and display new screen
 				$display->animateState(6) unless ($display->animateState() == 5);
-				my $end = ($scroll->{pauseInt} > 0.5) ? $scroll->{pauseInt} : 0.5;
+				# Relaxing clamp from 0.5 to 0.1 to allow faster transitions
+				my $end = ($scroll->{pauseInt} > 0.1) ? $scroll->{pauseInt} : 0.1;
 				Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + $end, \&Slim::Display::Display::endAnimation);
 			}
 		}

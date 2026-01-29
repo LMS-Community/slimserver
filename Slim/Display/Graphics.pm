@@ -41,9 +41,13 @@ our $defaultPrefs = {
 	'idleBrightness'       => 2,
 	'powerOffBrightness'   => 1,
 	'powerOnBrightness'    => 4,
+	'scrollStartDelay'     => 1.0,
+	'scrollStep'           => 1,
 };
 
 $prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1, 'high' => 20 }, qw(scrollPixels scrollPixelsDouble));
+$prefs->setValidate({ 'validator' => 'floatlimit', 'low' => 0, 'high' => 5 }, 'scrollStartDelay');
+$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1, 'high' => 10 }, 'scrollStep');
 
 BEGIN {
 	Slim::Display::Lib::Fonts::init();
