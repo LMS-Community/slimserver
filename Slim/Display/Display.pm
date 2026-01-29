@@ -539,7 +539,7 @@ sub scrollInit {
 	my $pixels  = $cprefs->get($display->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');
 
 	my $now = Time::HiRes::time();
-	my $start = $now + ($ticker ? 0 : (($pause > 0.5) ? $pause : 0.5));
+	my $start = $now + ($ticker ? 0 : (($pause > 0.1) ? $pause : 0.1));
 
 	# Adjust scrolling params for ticker mode, we don't want the server scrolling at 30fps
 	if ($ticker) {
@@ -790,7 +790,7 @@ sub scrollUpdate {
 					if ($scroll->{scrollonceend}) {
 						# schedule endAnimaton to kill off scrolling and display new screen
 						$display->animateState(6) unless ($display->animateState() == 5);
-						my $end = ($scroll->{pauseInt} > 0.5) ? $scroll->{pauseInt} : 0.5;
+						my $end = ($scroll->{pauseInt} > 0.1) ? $scroll->{pauseInt} : 0.1;
 						Slim::Utils::Timers::setTimer($display, $timenow + $end, \&endAnimation);
 					}
 					return;
