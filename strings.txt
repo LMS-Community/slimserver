@@ -18614,6 +18614,15 @@ UNSYNC
 	SV	Avsluta synkronisering
 	ZH_CN	非同步
 
+SETUP_USETIT1ASWORK_DESC
+	EN	For files using ID3 tags, set this to match your tagger's behaviour. Some will use TIT1 for Work, some for Grouping (and in some it is configurable).
+
+SETUP_USETIT1ASWORK_1
+	EN	Treat MP3 tag TIT1 as Work and MP3 tag GRP1 as Grouping
+
+SETUP_USETIT1ASWORK_0
+	EN	Treat MP3 tag TIT1 as Grouping (create a user-defined tag of WORK if you also need Work)
+
 SETUP_USETPE2ASALBUMARTIST_DESC
 	CS	Formát MP3 tagů neposkytuje standardní způsob, jak definovat Interpreta alba. Některé nástroje pro MP3 tagy používají pro Interpreta alba pole TPE2 (iTunes, Winamp, Windows Media Player), jiné je mohou používat pro zamýšlený význam „Skupina/orchestr“. Zvolte význam, který má Lyrion Music Server používat. Změna tohoto nastavení spustí nové prohledání vaší hudební knihovny.
 	DA	MP3-mærkeformatet er en standardiseret metode til at definere en kunstner og dennes album. Nogle programmer til at håndtere mp3-mærker benytter feltet TPE2 til Albumkunstner (iTunes, Winamp, Windows Media Player) mens andre benytter det til den intenderede betydning af  Band/orkester. Du skal vælge hvilken model der skal bruges i Lyrion Music Server. Hvis du ændrer indstillingen, bliver hele musikbiblioteket gennemsøgt igen.
@@ -18635,7 +18644,7 @@ SETUP_USETPE2ASALBUMARTIST_1
 	CS	Považovat tag TPE2 MP3 za Interpreta alba
 	DA	Opfat TPE2 MP3-koder som Albumkunstner
 	DE	TPE2 MP3-Tag als Interpreten des Albums behandeln
-	EN	Treat TPE2 MP3 tag as Album Artist
+	EN	Treat TPE2 MP3 tag as Album Artist (create a user-defined tag of BAND if you also need band/orchestra)
 	ES	Tratar etiqueta TPE2 MP3 como artista de álbum
 	FI	Käsittele TPE2 MP3 -tagia levyartistina
 	FR	Traiter le tag MP3 TPE2 en tant qu'artiste de l'album

@@ -321,6 +321,14 @@ sub doTagMapping {
 		$tagMapping{TPE2} = 'BAND';
 	}
 
+	if ( $prefs->get('useTIT1AsWork') ) {
+		$tagMapping{TIT1} = 'WORK';
+	}
+	else {
+		$tagMapping{TIT1} = 'GROUPING';
+		delete $tagMapping{GRP1};
+	}
+
 	while ( my ($old, $new) = each %tagMapping ) {
 		if ( exists $tags->{$old} ) {
 			# Caller can set $no_overwrite if ID3 tags should not replace
