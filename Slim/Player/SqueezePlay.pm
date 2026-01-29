@@ -12,19 +12,9 @@ package Slim::Player::SqueezePlay;
 # GNU General Public License for more details.
 
 use strict;
-use vars qw(@ISA);
+use warnings;
 
-use Slim::Utils::Prefs;
-use Slim::Utils::Log;
-
-my $prefs = preferences('server');
-
-my $log = logger('network.protocol.slimproto');
-
-BEGIN {
-	require Slim::Player::Squeezebox2;
-	push @ISA, qw(Slim::Player::Squeezebox2);
-}
+use parent qw(Slim::Player::Squeezebox2);
 
 {
 

@@ -817,6 +817,9 @@ PAUSED
 SQUEEZEBOX_SERVER
 	EN	Lyrion Music Server
 
+LYRION_MUSIC_SERVER
+	EN	Lyrion Music Server
+
 ABOUT
 	CS	Lyrion Music Server V.%s, autor:
 	DA	Lyrion Music Server V.%s, skrevet af:

@@ -12,12 +12,9 @@ package Slim::Player::Receiver;
 # GNU General Public License for more details.
 
 use strict;
-use vars qw(@ISA);
+use warnings;
 
-BEGIN {
-	require Slim::Player::Squeezebox2;
-	push @ISA, qw(Slim::Player::Squeezebox2);
-}
+use parent qw(Slim::Player::Squeezebox2);
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Prefs;

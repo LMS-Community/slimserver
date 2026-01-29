@@ -8,6 +8,7 @@ package Slim::Web::HTTP;
 # version 2.
 
 use strict;
+use warnings;
 
 use AnyEvent::Handle;
 use CGI::Cookie;
@@ -405,7 +406,7 @@ sub processHTTP {
 			$response->header('Connection' => 'close');
 			$response->content_type('text/html');
 			$response->content_ref(filltemplatefile('html/errors/401.html', $params));
-			$response->www_authenticate(sprintf('Basic realm="%s"', string('SQUEEZEBOX_SERVER')));
+			$response->www_authenticate(sprintf('Basic realm="%s"', string('LYRION_MUSIC_SERVER')));
 
 			$httpClient->send_response($response);
 			closeHTTPSocket($httpClient);

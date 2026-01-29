@@ -7,6 +7,7 @@ package Slim::Control::Jive;
 # version 2.
 
 use strict;
+use warnings;
 
 use POSIX qw(strftime);
 use Scalar::Util qw(blessed);
@@ -1337,23 +1338,22 @@ sub replaygainSettingsQuery {
 
 sub sliceAndShip {
 	my ($request, $client, $menu) = @_;
-	my $numitems = scalar(@$menu);
+	my $numitems = @$menu;
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 
 	$request->addResult("count", $numitems);
-	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $numitems);
+	my ($valid, $start, $end) = $request->normalize($index, $quantity, $numitems);
 
 	if ($valid) {
-		my $cnt = 0;
 		$request->addResult('offset', $start);
 
+		my $cnt = 0;
 		for my $eachmenu (@$menu[$start..$end]) {
-			$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
-			$cnt++;
+			$request->setResultLoopHash('item_loop', $cnt++, $eachmenu);
 		}
 	}
-	$request->setStatusDone()
+	$request->setStatusDone();
 }
 
 # returns a single item for the homeMenu if radios is a valid command
