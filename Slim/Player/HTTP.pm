@@ -12,12 +12,9 @@
 package Slim::Player::HTTP;
 
 use strict;
-use vars qw(@ISA);
-use Slim::Player::Client;
+use warnings;
 
-use Slim::Display::NoDisplay;
-
-@ISA = qw(Slim::Player::Client);
+use parent qw(Slim::Player::Client);
 
 sub new {
 	my ($class, $id, $paddr, $tcpsock) = @_;

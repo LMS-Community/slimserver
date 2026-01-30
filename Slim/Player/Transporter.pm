@@ -14,12 +14,9 @@ package Slim::Player::Transporter;
 #
 
 use strict;
-use vars qw(@ISA);
+use warnings;
 
-BEGIN {
-	require Slim::Player::Squeezebox2;
-	push @ISA, qw(Slim::Player::Squeezebox2);
-}
+use parent qw(Slim::Player::Squeezebox2);
 
 use MIME::Base64;
 

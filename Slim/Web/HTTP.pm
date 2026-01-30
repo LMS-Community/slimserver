@@ -8,6 +8,7 @@ package Slim::Web::HTTP;
 # version 2.
 
 use strict;
+use warnings;
 
 use AnyEvent::Handle;
 use CGI::Cookie;

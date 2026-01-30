@@ -7,6 +7,7 @@ package Slim::Control::Jive;
 # version 2.
 
 use strict;
+use warnings;
 
 use POSIX qw(strftime);
 use Scalar::Util qw(blessed);

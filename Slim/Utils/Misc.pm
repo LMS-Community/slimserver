@@ -29,6 +29,7 @@ L<Slim::Utils::Misc> serves as a collection of miscellaneous utility
 =cut
 
 use strict;
+use warnings;
 use Exporter::Lite;
 
 our @EXPORT = qw(assert msg msgf errorMsg specified dumpFiltered);
