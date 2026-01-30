@@ -5,7 +5,7 @@ use warnings;
 
 use File::Next;
 use File::Slurp;
-use JSON;
+# use JSON;
 
 my %translations;
 my (@output, @invalid, $slug);

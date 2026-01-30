@@ -105,13 +105,30 @@ sub timeF {
 	my $format = shift || $prefs->get('timeFormat');
 	my $timeIsUTC = shift;
 
+	use feature 'state';
+	state $lastTime;
+	state $lastFormat;
+	state %cache;
+
+	if ( $ltime == ($lastTime || 0) && $format eq ($lastFormat || '') ) {
+		return $cache{$timeIsUTC || 0};
+	}
+
 	my @timeDigits = $timeIsUTC ? gmtime($ltime) : localtime($ltime);
 
 	# remove leading zero if another digit follows
 	my $time  = strftime($format, @timeDigits);
 	   $time =~ s/\|0?(\d+)/$1/;
 
-	return Slim::Utils::Unicode::utf8decode_locale($time);
+	my $formatted = Slim::Utils::Unicode::utf8decode_locale($time);
+
+	if ( $ltime != ($lastTime || 0) ) {
+		%cache = ();
+		$lastTime = $ltime;
+	}
+
+	$lastFormat = $format;
+	return $cache{$timeIsUTC || 0} = $formatted;
 }
 
 =head2 timeFormat( $time )

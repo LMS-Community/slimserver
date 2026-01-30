@@ -878,7 +878,8 @@ sub string {
 	# Check language override
 	if ( $display->client ) {
 		if ( my $lang = $display->client->languageOverride ) {
-			$strings = Slim::Utils::Strings::loadAdditional( $lang );
+			state %additionalStrings;
+			$strings = $additionalStrings{$lang} ||= Slim::Utils::Strings::loadAdditional( $lang );
 		}
 	}
 

@@ -58,8 +58,10 @@ require Slim::Utils::Unicode;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use feature 'state';
 
-my $prefs = preferences('server');
+state $log = logger('server');
+state $prefs = preferences('server');
 
 my $scannerlog = logger('scan.scanner');
 my $ospathslog = logger('os.paths');

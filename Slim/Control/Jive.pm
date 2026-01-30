@@ -19,7 +19,8 @@ use Slim::Player::Playlist;
 use Slim::Player::Client;
 #use Data::Dump;
 
-my $prefs   = preferences("server");
+use feature 'state';
+state $prefs = preferences("server");
 
 =head1 NAME
 
@@ -31,7 +32,7 @@ CLI commands used by Jive.
 
 =cut
 
-my $log = logger('player.jive');
+state $log = logger('player.jive');
 
 # additional top level menus registered by plugins
 my @appMenus           = (); # all available apps
@@ -1345,12 +1346,12 @@ sub sliceAndShip {
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $numitems);
 
 	if ($valid) {
-		my $cnt = 0;
 		$request->addResult('offset', $start);
 
-		for my $eachmenu (@$menu[$start..$end]) {
-			$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
-			$cnt++;
+		my $item_loop = $request->{'_results'}->{'item_loop'} ||= [];
+
+		for (my $i = $start; $i <= $end; $i++) {
+			push @$item_loop, $menu->[$i];
 		}
 	}
 	$request->setStatusDone()
