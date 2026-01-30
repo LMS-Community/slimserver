@@ -29,6 +29,8 @@ L<Slim::Utils::Misc> serves as a collection of miscellaneous utility
 =cut
 
 use strict;
+use warnings;
+use feature 'state';
 use Exporter::Lite;
 
 our @EXPORT = qw(assert msg msgf errorMsg specified dumpFiltered);
@@ -84,10 +86,6 @@ elsif ($^O =~/darwin/i) {
 my ($userAgentString, $legacyUserAgentString);
 my $tempdir;
 
-my %pathToFileCache = ();
-my %fileToPathCache = ();
-my %mediadirsCache  = ();
-my %fixPathCache    = ();
 my @findBinPaths    = ();
 
 my $MAX_CACHE_ENTRIES = $prefs->get('dbhighmem') ? 512 : 32;
@@ -224,8 +222,10 @@ sub pathFromFileURL {
 	my $url     = shift;
 	my $noCache = shift || 0;
 
-	if (!$noCache && $fileToPathCache{$url}) {
-		return $fileToPathCache{$url};
+	state $fileToPathCache = {};
+
+	if (!$noCache && $fileToPathCache->{$url}) {
+		return $fileToPathCache->{$url};
 	}
 
 	if ($url !~ /^file:\/\//i) {
@@ -275,8 +275,10 @@ sub pathFromFileURL {
 	}
 
 	if (!$noCache) {
-		%fileToPathCache = () if scalar keys %fileToPathCache > $MAX_CACHE_ENTRIES;
-		$fileToPathCache{$url} = $file;
+		if (scalar keys %$fileToPathCache > $MAX_CACHE_ENTRIES) {
+			%$fileToPathCache = ();
+		}
+		$fileToPathCache->{$url} = $file;
 	}
 
 	return $file;
@@ -291,8 +293,10 @@ sub pathFromFileURL {
 sub fileURLFromPath {
 	my $path = shift;
 
-	if ($pathToFileCache{$path}) {
-		return $pathToFileCache{$path};
+	state $pathToFileCache = {};
+
+	if ($pathToFileCache->{$path}) {
+		return $pathToFileCache->{$path};
 	}
 
 	return $path if (Slim::Music::Info::isURL($path));
@@ -325,11 +329,11 @@ sub fileURLFromPath {
 	my $file = $uri->as_string;
 	$file =~ s%/$%% if $addedSlash;
 
-	if (scalar keys %pathToFileCache > $MAX_CACHE_ENTRIES) {
-		%pathToFileCache = ();
+	if (scalar keys %$pathToFileCache > $MAX_CACHE_ENTRIES) {
+		%$pathToFileCache = ();
 	}
 
-	$pathToFileCache{$path} = $file;
+	$pathToFileCache->{$path} = $file;
 
 	return $file;
 }
@@ -452,13 +456,15 @@ sub fixPath {
 		return;
 	}
 
-	my $base = $_[1] && ( $fixPathCache{$_[1]} || Slim::Utils::Unicode::encode_locale($_[1]) );
+	state $fixPathCache = {};
 
-	if (scalar keys %fixPathCache > $MAX_CACHE_ENTRIES) {
-		%fixPathCache = ();
+	my $base = $_[1] && ( $fixPathCache->{$_[1]} || Slim::Utils::Unicode::encode_locale($_[1]) );
+
+	if (scalar keys %$fixPathCache > $MAX_CACHE_ENTRIES) {
+		%$fixPathCache = ();
 	}
 
-	$fixPathCache{$_[1]} ||= $base if $base;
+	$fixPathCache->{$_[1]} ||= $base if $base;
 
 	my $fixed;
 
@@ -1216,7 +1222,7 @@ sub userAgentString {
 		($osDetails->{'osArch'} || 'Unknown'),
 		$prefs->get('language'),
 		Slim::Utils::Unicode::currentLocale(),
-		'SqueezeCenter, Squeezebox Server, Lyrion Music Server',
+		'Lyrion Music Server',
 	);
 
 	if ($legacy) {
