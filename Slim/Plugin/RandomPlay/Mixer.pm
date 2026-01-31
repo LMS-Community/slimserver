@@ -59,6 +59,16 @@ sub findAndAdd {
 	# Add the items to the end
 	foreach my $id (@randomIds) {
 
+		# Avoid adding duplicate tracks to the playlist
+		my %playlistTracks = map { $_->track->id => 1 } @{ Slim::Player::Playlist::songs($client) };
+		if ( $playlistTracks{$id} ) {
+			if ( main::INFOLOG && $log->is_info ) {
+				$log->info("Skipping track #$id - already in playlist");
+			}
+			next;
+		}
+
+
 		if ( main::INFOLOG && $log->is_info ) {
 			$log->info(sprintf("%s %s: #%d",
 				$addOnly ? 'Adding' : 'Playing', $type, $id

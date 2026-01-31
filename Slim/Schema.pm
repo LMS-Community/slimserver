@@ -362,27 +362,8 @@ WARNING - All data in the database will be dropped!
 =cut
 
 sub wipeDB {
-	my $class = shift;
-
-	my $log = logger('scan.import');
-
-	main::INFOLOG && $log->is_info && $log->info("Start schema_clear");
-
-	my ($driver) = $class->sourceInformation;
-
-	eval {
-		Slim::Utils::SQLHelper->executeSQLFile(
-			$driver, $class->storage->dbh, "schema_clear.sql"
-		);
-
-		$class->migrateDB;
-	};
-
-	if ($@) {
-		logError("Failed to clear & migrate schema: [$@]");
-	}
-
-	main::INFOLOG && $log->is_info && $log->info("End schema_clear");
+	require Slim::Schema::Manager;
+	return Slim::Schema::Manager->wipeDB(shift);
 }
 
 =head2 optimizeDB()
@@ -392,39 +373,8 @@ Calls the schema_optimize.sql script for the current database driver.
 =cut
 
 sub optimizeDB {
-	my $class = shift;
-
-	my $log = logger('scan.import');
-
-	main::INFOLOG && $log->is_info && $log->info("Start schema_optimize");
-
-	my ($driver) = $class->sourceInformation;
-
-	my $progress = Slim::Utils::Progress->new({
-		'type'  => 'importer',
-		'name'  => 'dboptimize',
-		'total' => 2,
-		'bar'   => 1
-	});
-
-	eval {
-		Slim::Utils::SQLHelper->executeSQLFile(
-			$driver, $class->storage->dbh, "schema_optimize.sql"
-		);
-
-		$progress->update();
-		$class->forceCommit;
-
-		Slim::Utils::OSDetect->getOS()->sqlHelperClass()->optimizeDB();
-	};
-
-	$progress->final(2);
-
-	if ($@) {
-		logError("Failed to optimize schema: [$@]");
-	}
-
-	main::INFOLOG && $log->is_info && $log->info("End schema_optimize");
+	require Slim::Schema::Manager;
+	return Slim::Schema::Manager->optimizeDB(shift);
 }
 
 =head2 migrateDB()
@@ -435,73 +385,8 @@ data files handed to L<DBIx::Migration>.
 =cut
 
 sub migrateDB {
-	my $class = shift;
-
-	my $dbh = $class->storage->dbh;
-	my ($driver, $source, $username, $password) = $class->sourceInformation;
-
-	# Migrate to the latest schema version - see SQL/$driver/schema_\d+_up.sql
-	my $dbix = DBIx::Migration->new({
-		dbh   => $dbh,
-		dir   => catdir(scalar Slim::Utils::OSDetect::dirsFor('SQL'), $driver),
-		debug => $log->is_debug,
-	});
-
-	# Hide errors that aren't really errors
-	my $cur_handler = $dbh->{HandleError};
-	my $new_handler = sub {
-		return 1 if $_[0] =~ /no such table/;
-		goto $cur_handler;
-	};
-
-	local $dbh->{HandleError} = $new_handler;
-
-	my $old = $dbix->version || 0;
-
-	if ($dbix->migrate) {
-
-		my $new = $dbix->version || 0;
-
-		if ( main::INFOLOG && $log->is_info ) {
-			$log->info(sprintf("Connected to database $source - schema version: [%d]", $new));
-		}
-
-		if ($old != $new) {
-
-			if ( $log->is_warn ) {
-				$log->warn(sprintf("Migrated database from schema version: %d to version: %d", $old, $new));
-			}
-
-			return 1;
-
-		}
-
-	} else {
-
-		# this occurs if a user downgrades Lyrion Music Server to a version with an older schema and which does not include
-		# the required downgrade sql scripts - attempt to drop and create the database at current schema version
-
-		if ( $log->is_warn ) {
-			$log->warn(sprintf("Unable to downgrade database from schema version: %d - Attempting to recreate database", $old));
-		}
-
-		eval { $class->storage->dbh->do('DROP TABLE IF EXISTS dbix_migration') };
-
-		if ($dbix->migrate) {
-
-			if ( $log->is_warn ) {
-				$log->warn(sprintf("Successfully created database at schema version: %d", $dbix->version));
-			}
-
-			return 1;
-
-		}
-
-		logError(sprintf("Unable to create database - **** You may need to manually delete the database ****", $old));
-
-	}
-
-	return 0;
+	require Slim::Schema::Manager;
+	return Slim::Schema::Manager->migrateDB(shift);
 }
 
 =head2 rs( $class )
@@ -634,9 +519,8 @@ Returns commmon searchable types - constant values: contributor, album, track.
 
 # Return the common searchable types.
 sub searchTypes {
-	my $class = shift;
-
-	return qw(contributor album genre track);
+	require Slim::Schema::Service;
+	return Slim::Schema::Service->searchTypes(@_);
 }
 
 =head2 contentType( $urlOrObj )
@@ -649,73 +533,14 @@ database if we can get a simple file extension match.
 =cut
 
 sub contentType {
-	my ($self, $urlOrObj) = @_;
-
-	# Bug 15779 - if we have it in the cache then just use it
-	# This does not even check that $urlOrObj is actually a URL
-	# but there should be no practical chance of a key-space clash if it is not.
-	if (defined $contentTypeCache{$urlOrObj}) {
-		return $contentTypeCache{$urlOrObj};
-	}
-
-	my $defaultType = 'unk';
-	my $contentType = $defaultType;
-
-	# See if we were handed a track object already, or just a plain url.
-	my ($track, $url, $blessed) = _validTrackOrURL($urlOrObj);
-
-	# We can't get a content type on a undef url
-	if (!defined $url) {
-		return $defaultType;
-	}
-
-	# Try again for a cache hit - return immediately.
-	if (defined $contentTypeCache{$url}) {
-		return $contentTypeCache{$url};
-	}
-
-	# Track will be a blessed object if it's defined.
-	# If we have an object - return from that.
-	if ($track) {
-
-		$contentType = $track->content_type;
-
-	} else {
-
-		# Otherwise, try and pull the type from the path name and avoid going to the database.
-		$contentType = Slim::Music::Info::typeFromPath($url);
-	}
-
-	# Nothing from the path, and we don't have a valid track object - fetch one.
-	if ((!defined $contentType || $contentType eq $defaultType) && !$track) {
-
-		$track   = $self->objectForUrl($url);
-
-		if (isaTrack($track)) {
-
-			$contentType = $track->content_type;
-		}
-	}
-
-	# Nothing from the object we already have in the db.
-	if ((!defined $contentType || $contentType eq $defaultType) && $blessed) {
-
-		$contentType = Slim::Music::Info::typeFromPath($url);
-	}
-
-	# Only set the cache if we have a valid contentType
-	if (defined $contentType && $contentType ne $defaultType) {
-
-		$contentTypeCache{$url} = $contentType;
-	}
-
-	return $contentType;
+	require Slim::Schema::Service;
+	return Slim::Schema::Service->contentType(@_);
 }
 
 # The contentTypeCache can used above can erroneously be set to type inferred from url path - allow it to be cleared
 sub clearContentTypeCache {
-	my ($self, $urlOrObj) = @_;
-	delete $contentTypeCache{$urlOrObj};
+	require Slim::Schema::Service;
+	return Slim::Schema::Service->clearContentTypeCache(@_);
 }
 
 =head2 objectForUrl( $args )
