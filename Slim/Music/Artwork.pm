@@ -890,7 +890,7 @@ sub getResizeSpecs {
 	@specs = sort {
 		my ($sizeA) = $a =~ /^(\d+)/;
 		my ($sizeB) = $b =~ /^(\d+)/;
-		$b <=> $a;
+		$sizeB <=> $sizeA;
 	# XXX - this is duplicated from Slim::Web::Graphics->parseSpec, which is not loaded in scanner mode
 	} grep {
 		/^(?:([0-9X]+)x([0-9X]+))?(?:_(\w))?(?:_([\da-fA-F]+))?(?:\.(\w+))?$/

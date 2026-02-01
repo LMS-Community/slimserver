@@ -4460,9 +4460,9 @@ sub statusQuery {
 						if ( $tags =~ /2/ ) {
 							# build a hash containing an array of hash refs to the playlist_loop items for each identified album group in the play queue.
 							my $track = @{ $request->getResult('playlist_loop') }[$count];
-							my $albumTrack = $track->{'album_id'} * 10000 + $track->{'tracknum'}; # used to detect a new album or a repeat of tracks from the same album
+							my $albumTrack = $track->{'album_id'} * 10000 + ($track->{'tracknum'} || 0); # used to detect a new album or a repeat of tracks from the same album
 
-							my $group = "$track->{'work_id'}##$track->{'grouping'}##$track->{'performance'}";
+							my $group = sprintf("%s##%s##%s", $track->{'work_id'} // '', $track->{'grouping'} // '', $track->{'performance'} // '');
 
 							if ( $track->{'album_id'} != $lastAlbum || $albumTrack < $lastAlbumTrack ) {
 								++$albumNumber;
