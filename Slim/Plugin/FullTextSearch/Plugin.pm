@@ -28,7 +28,7 @@ use constant LARGE_RESULTSET => 500;
 =cut
 
 use constant SQL_CREATE_TRACK_ITEM => q{
-	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+	INSERT INTO fulltext (id, type, w10, w5, w3, w1)
 		SELECT tracks.urlmd5 || tracks.id, 'track',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(tracks.title, '')) || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, '')),
@@ -69,7 +69,7 @@ use constant SQL_CREATE_WORKTEMP => q{
 };
 
 use constant SQL_CREATE_WORK_ITEM => q{
-	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+	INSERT INTO fulltext (id, type, w10, w5, w3, w1)
 
 		SELECT 'YXLWORKSYYYYYYYYYYYYYYYYYYYYYYYY' || works.id, 'work',
 		-- weight 10
@@ -92,7 +92,7 @@ use constant SQL_CREATE_WORK_ITEM => q{
 };
 
 use constant SQL_CREATE_ALBUM_ITEM => q{
-	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+	INSERT INTO fulltext (id, type, w10, w5, w3, w1)
 		SELECT 'YXLALBUMSYYYYYYYYYYYYYYYYYYYYYYY' || albums.id, 'album',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(albums.title, '')) || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, '') || ' '
@@ -115,7 +115,7 @@ use constant SQL_CREATE_ALBUM_ITEM => q{
 };
 
 use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
-	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+	INSERT INTO fulltext (id, type, w10, w5, w3, w1)
 		SELECT 'YXLCONTRIBUTORSYYYYYYYYYYYYYYYYY' || contributors.id, 'contributor',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(contributors.name, '')) || ' ' || IFNULL(contributors.namesearch, '') || ' ' || IFNULL(contributors.customsearch, '')),
@@ -233,9 +233,24 @@ sub checkSingleTrack {
 
 	my $dbh = Slim::Schema->dbh;
 
-	$dbh->do( sprintf(SQL_CREATE_TRACK_ITEM,       'OR REPLACE', 'WHERE tracks.id=?'),       undef, $trackObj->id );
-	$dbh->do( sprintf(SQL_CREATE_ALBUM_ITEM,       'OR REPLACE', 'WHERE albums.id=?'),       undef, $trackObj->albumid )  if $trackObj->albumid;
-	$dbh->do( sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, 'OR REPLACE', 'WHERE contributors.id=?'), undef, $trackObj->artistid ) if $trackObj->artistid;
+	my $deletionSql = 'DELETE FROM fulltext WHERE id = ? || ?';
+	my @params = ($trackObj->urlmd5, $trackObj->id);
+
+	if ($trackObj->albumid) {
+		$deletionSql .= ' OR id=?';
+		push @params, sprintf('YXLALBUMSYYYYYYYYYYYYYYYYYYYYYYY%s', $trackObj->albumid);
+	}
+
+	if ($trackObj->artistid) {
+		$deletionSql .= ' OR id=?';
+		push @params, sprintf('YXLCONTRIBUTORSYYYYYYYYYYYYYYYYY%s', $trackObj->artistid);
+	}
+
+	$dbh->do($deletionSql, undef, @params);
+
+	$dbh->do( sprintf(SQL_CREATE_TRACK_ITEM,       'WHERE tracks.id=?'),       undef, $trackObj->id );
+	$dbh->do( sprintf(SQL_CREATE_ALBUM_ITEM,       'WHERE albums.id=?'),       undef, $trackObj->albumid )  if $trackObj->albumid;
+	$dbh->do( sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, 'WHERE contributors.id=?'), undef, $trackObj->artistid ) if $trackObj->artistid;
 }
 
 sub checkPlaylist {
@@ -326,7 +341,7 @@ sub parseSearchTerm {
 	# Check if the search string contains CJK (Chinese/Japanese/Korean) characters
 	# \p{Han} matches Chinese Han characters (covers both simplified and traditional Chinese, and Kanji)
 	# \p{Hiragana} matches Japanese Hiragana syllabary
-	# \p{Katakana} matches Japanese Katakana syllabary  
+	# \p{Katakana} matches Japanese Katakana syllabary
 	# \p{Hangul} matches Korean Hangul syllables
 	my $isCJK = ( $search =~ /\p{Han}|\p{Hiragana}|\p{Katakana}|\p{Hangul}/ );
 
@@ -335,10 +350,10 @@ sub parseSearchTerm {
 	while ($search =~ s/"(.+?)"//) {
 		my $quoted = $1;
 		if ( $isCJK ) {
-			# Since SQLite's full-text tokenizer does not use CJK punctuation for word segmentation, 
+			# Since SQLite's full-text tokenizer does not use CJK punctuation for word segmentation,
 			# we replace ASCII punctuation while preserving CJK punctuation.
 			#
-			# Punctuation characters; in the ‘C’ locale and ASCII character encoding, 
+			# Punctuation characters; in the ‘C’ locale and ASCII character encoding,
 			# this is ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~.
 			# https://www.gnu.org/software/grep/manual/html_node/Character-Classes-and-Bracket-Expressions.html
 			$quoted =~ s/[!"#\$%&'()*+,\-.\/:;<=>?@\[\\\]^_`{|}~]/ /g;
@@ -568,7 +583,7 @@ sub _rebuildIndex {
 	$progress && $progress->update(string('SONGS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
-	my $sql = sprintf(SQL_CREATE_TRACK_ITEM, '', '');
+	my $sql = sprintf(SQL_CREATE_TRACK_ITEM, '');
 
 #	main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($sql);
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
@@ -577,7 +592,7 @@ sub _rebuildIndex {
 	$scanlog->error("Create fulltext index for albums");
 	$progress && $progress->update(string('ALBUMS'));
 	Slim::Schema->forceCommit if main::SCANNER;
-	$sql = sprintf(SQL_CREATE_ALBUM_ITEM, '', '');
+	$sql = sprintf(SQL_CREATE_ALBUM_ITEM, '');
 
 #	main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($sql);
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
@@ -587,7 +602,7 @@ sub _rebuildIndex {
 	$progress && $progress->update(string('ARTISTS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
-	$sql = sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, '', '');
+	$sql = sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, '');
 
 #	main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($sql);
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
@@ -598,7 +613,7 @@ sub _rebuildIndex {
 	Slim::Schema->forceCommit if main::SCANNER;
 	$dbh->do(SQL_DROP_WORKTEMP) or $scanlog->error($dbh->errstr);
 	$dbh->do(SQL_CREATE_WORKTEMP) or $scanlog->error($dbh->errstr);
-	$sql = sprintf(SQL_CREATE_WORK_ITEM, '', '');
+	$sql = sprintf(SQL_CREATE_WORK_ITEM, '');
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 
