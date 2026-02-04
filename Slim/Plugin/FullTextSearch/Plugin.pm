@@ -57,14 +57,22 @@ use constant SQL_CREATE_TRACK_ITEM => q{
 		GROUP BY tracks.id;
 };
 
-use constant SQL_DROP_WORKTEMP => q{
-	DROP TABLE IF EXISTS worktemp;
+use constant SQL_CREATE_WORKTEMP => q{
+	CREATE TEMPORARY TABLE IF NOT EXISTS worktemp (
+		id integer,
+		w3 text
+		)
 };
 
-use constant SQL_CREATE_WORKTEMP => q{
-	CREATE TEMPORARY TABLE worktemp AS
+use constant SQL_CLEAR_WORKTEMP => q{
+	DELETE FROM worktemp;
+};
+
+use constant SQL_POPULATE_WORKTEMP => q{
+	INSERT INTO worktemp (id, w3)
 			SELECT tracks.id AS id, UNIQUE_TOKENS(CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track')) AS w3
-			FROM tracks JOIN contributor_track ON contributor_track.track = tracks.id %s
+			FROM tracks JOIN contributor_track ON contributor_track.track = tracks.id
+			%s
 			GROUP BY tracks.id;
 };
 
@@ -144,6 +152,15 @@ use constant SQL_CREATE_PLAYLIST_ITEM => CAN_FTS4
 		SELECT 'YXLPLAYLISTSYYYYYYYYYYYYYYYYYYYY' || tracks.id, 'playlist', ?, '', ?, ''
 		FROM tracks
 		WHERE tracks.id = ?
+};
+
+use constant SQL_DELETE_FOR_TRACK => q{
+	DELETE FROM fulltext
+		WHERE id = ? || ?
+			OR ( fulltext.type = 'contributor' AND REPLACE(fulltext.id, 'YXLCONTRIBUTORSYYYYYYYYYYYYYYYYY', '') IN (SELECT contributor FROM contributor_track WHERE track=?) )
+			OR ( fulltext.type = 'contributor' AND fulltext.w10 <> ? AND NOT EXISTS (SELECT * FROM contributor_track WHERE contributor = REPLACE(fulltext.id, 'YXLCONTRIBUTORSYYYYYYYYYYYYYYYYY', '')) )
+			OR ( fulltext.type = 'work' AND REPLACE(fulltext.id, 'YXLWORKSYYYYYYYYYYYYYYYYYYYYYYYY', '') IN (SELECT work FROM tracks WHERE id=?) )
+			OR ( fulltext.type = 'work' AND NOT EXISTS (SELECT * FROM works WHERE id = REPLACE(fulltext.id, 'YXLWORKSYYYYYYYYYYYYYYYYYYYYYYYY', '')) )
 };
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -233,29 +250,25 @@ sub checkSingleTrack {
 
 	my $dbh = Slim::Schema->dbh;
 
-	my $deletionSql = 'DELETE FROM fulltext WHERE id = ? || ?';
-	my @params = ($trackObj->urlmd5, $trackObj->id);
+	my $deletionSql = SQL_DELETE_FOR_TRACK;
+	my @params = ($trackObj->urlmd5, $trackObj->id, $trackObj->id, uc(Slim::Music::Info::variousArtistString()), $trackObj->id);
 
 	if ($trackObj->albumid) {
-		$deletionSql .= ' OR id=?';
-		push @params, sprintf('YXLALBUMSYYYYYYYYYYYYYYYYYYYYYYY%s', $trackObj->albumid);
+		$deletionSql .= q{ OR id = 'YXLALBUMSYYYYYYYYYYYYYYYYYYYYYYY' || ?};
+		push @params, $trackObj->albumid;
 	}
-
-#	if ($trackObj->artistid) {
-#		$deletionSql .= ' OR id=?';
-#		push @params, sprintf('YXLCONTRIBUTORSYYYYYYYYYYYYYYYYY%s', $trackObj->artistid);
-#	}
-	$deletionSql .= " OR ( fulltext.type = 'contributor' AND substr(fulltext.id,33) in (SELECT contributor FROM contributor_track WHERE track=?) )";
-	push @params, $trackObj->id;
-	$deletionSql .= " OR ( fulltext.type = 'contributor' AND fulltext.w10 <> ? AND NOT EXISTS (SELECT * FROM contributor_track WHERE contributor = substr(fulltext.id,33)) )";
-	push @params, uc(Slim::Music::Info::variousArtistString());
 
 	$dbh->do($deletionSql, undef, @params);
 
 	$dbh->do( sprintf(SQL_CREATE_TRACK_ITEM,       'WHERE tracks.id=?'),       undef, $trackObj->id );
-	$dbh->do( sprintf(SQL_CREATE_ALBUM_ITEM,       'WHERE albums.id=?'),       undef, $trackObj->albumid )  if $trackObj->albumid;
-#	$dbh->do( sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, 'WHERE contributors.id=?'), undef, $trackObj->artistid ) if $trackObj->artistid;
+	$dbh->do( sprintf(SQL_CREATE_ALBUM_ITEM,       'WHERE albums.id=?'),       undef, $trackObj->albumid ) if $trackObj->albumid;
 	$dbh->do( sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, 'WHERE contributors.id in (SELECT contributor FROM contributor_track WHERE track=?)'), undef, $trackObj->id );
+	if ($trackObj->work) {
+		$dbh->do( SQL_CREATE_WORKTEMP );
+		$dbh->do( SQL_CLEAR_WORKTEMP );
+		$dbh->do( sprintf(SQL_POPULATE_WORKTEMP, 'WHERE tracks.work=?'),   undef, $trackObj->get_column('work') );
+		$dbh->do( sprintf(SQL_CREATE_WORK_ITEM,  'WHERE tracks.work=?'), undef, $trackObj->get_column('work') );
+	}
 }
 
 sub checkPlaylist {
@@ -616,8 +629,9 @@ sub _rebuildIndex {
 	$scanlog->error("Create fulltext index for works");
 	$progress && $progress->update(string('WORKS'));
 	Slim::Schema->forceCommit if main::SCANNER;
-	$dbh->do(SQL_DROP_WORKTEMP) or $scanlog->error($dbh->errstr);
-	$sql = sprintf(SQL_CREATE_WORKTEMP, '');
+	$dbh->do(SQL_CREATE_WORKTEMP) or $scanlog->error($dbh->errstr);
+	$dbh->do(SQL_CLEAR_WORKTEMP) or $scanlog->error($dbh->errstr);
+	$sql = sprintf(SQL_POPULATE_WORKTEMP, '');
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
 	$sql = sprintf(SQL_CREATE_WORK_ITEM, '');
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
