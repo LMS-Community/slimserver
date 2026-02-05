@@ -372,20 +372,6 @@ sub rescan {
 				# No more paths to scan, notify API handlers and send a rescan done event
 				else {
 					markDone( undef, undef, $changes, $args );
-
-					if (main::SCANNER) {
-						Slim::Music::Import->setIsScanning(0);
-
-						if ( my $handler = $pluginHandlers->{onFinishedHandler} ) {
-							$handler->(0);
-						}
-
-						Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
-
-						if ( $args->{onFinished} ) {
-							$args->{onFinished}->();
-						}
-					}
 				}
 			}
 		}
