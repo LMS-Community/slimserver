@@ -265,9 +265,9 @@ sub checkSingleTrack {
 	$dbh->do( sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, 'WHERE contributors.id in (SELECT contributor FROM contributor_track WHERE track=?)'), undef, $trackObj->id );
 	if ($trackObj->work) {
 		$dbh->do( SQL_CREATE_WORKTEMP );
+		$dbh->do( sprintf(SQL_POPULATE_WORKTEMP, 'WHERE tracks.work=?'), undef, $trackObj->workid);
+		$dbh->do( sprintf(SQL_CREATE_WORK_ITEM,  'WHERE tracks.work=?'), undef, $trackObj->workid);
 		$dbh->do( SQL_CLEAR_WORKTEMP );
-		$dbh->do( sprintf(SQL_POPULATE_WORKTEMP, 'WHERE tracks.work=?'),   undef, $trackObj->get_column('work') );
-		$dbh->do( sprintf(SQL_CREATE_WORK_ITEM,  'WHERE tracks.work=?'), undef, $trackObj->get_column('work') );
 	}
 }
 
