@@ -59,7 +59,6 @@ use constant SCAN_WORKS_FOR_MY_CLASSICAL_GENRES => 2;
 my $log = logger('database.info');
 
 my $prefs = preferences('server');
-my $scanWorks = $prefs->get('worksScan') if main::SCANNER;
 
 # Singleton objects for Unknowns
 our ($_unknownArtist, $_unknownGenre, $_unknownAlbumId) = ('', '', undef);
@@ -3372,11 +3371,10 @@ sub canFulltextSearch {
 
 sub _workRequired {
 	my $genres = shift;
-	my $wantWorks = defined $scanWorks ? $scanWorks : $prefs->get('worksScan');
 
-	return $wantWorks == SCAN_WORKS_FOR_MY_CLASSICAL_GENRES
+	return $prefs->get('worksScan') == SCAN_WORKS_FOR_MY_CLASSICAL_GENRES
 		? Slim::Schema::Genre->isMyClassicalGenre($genres)
-		: $scanWorks;
+		: SCAN_WORKS_FOR_MY_CLASSICAL_GENRES;
 }
 
 =head1 SEE ALSO
