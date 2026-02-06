@@ -1191,6 +1191,13 @@ sub _cliQuery_done {
 							};
 						}
 
+						if ( $item->{type} && $item->{type} eq 'header' ) {
+							unless ($item->{items} || $item->{url}) {
+								$hash{'style'} ||= 'itemNoAction';
+								$hash{'action'} = 'none';
+							}	
+						}
+
 						elsif ( $item->{type} && $item->{type} eq 'search' ) {
 							#$itemParams->{search} = '__INPUT__';
 
