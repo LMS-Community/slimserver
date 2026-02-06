@@ -1170,7 +1170,7 @@ sub _cliQuery_done {
 							$hasImage = 1;
 						}
 
-						if ( $item->{type} && $item->{type} eq 'text' && !$item->{wrap} && !$item->{jive} ) {
+						if ( $item->{type} && ( ($item->{type} eq 'text' && !$item->{wrap} && !$item->{jive}) || ($item->{type} eq 'header' && !$item->{items} && !$item->{url}) ) ) {
 							$hash{'style'} ||= 'itemNoAction';
 							$hash{'action'} = 'none';
 						}
@@ -1189,13 +1189,6 @@ sub _cliQuery_done {
 									localservice => $item->{serviceId},
 								},
 							};
-						}
-
-						if ( $item->{type} && $item->{type} eq 'header' ) {
-							unless ($item->{items} || $item->{url}) {
-								$hash{'style'} ||= 'itemNoAction';
-								$hash{'action'} = 'none';
-							}	
 						}
 
 						elsif ( $item->{type} && $item->{type} eq 'search' ) {
