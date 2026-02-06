@@ -76,10 +76,15 @@ use constant SQL_POPULATE_WORKTEMP => q{
 			GROUP BY tracks.id;
 };
 
-use constant SQL_CREATE_WORK_ITEM => q{
+use constant ALBUMS_ID_PREFIX       => 'YXLALBUMSYYYYYYYYYYYYYYYYYYYYYYY';
+use constant CONTRIBUTORS_ID_PREFIX => 'YXLCONTRIBUTORSYYYYYYYYYYYYYYYYY';
+use constant PLAYLISTS_ID_PREFIX    => 'YXLPLAYLISTSYYYYYYYYYYYYYYYYYYYY';
+use constant WORKS_ID_PREFIX        => 'YXLWORKSYYYYYYYYYYYYYYYYYYYYYYYY';
+
+use constant SQL_CREATE_WORK_ITEM => qq{
 	INSERT INTO fulltext (id, type, w10, w5, w3, w1)
 
-		SELECT 'YXLWORKSYYYYYYYYYYYYYYYYYYYYYYYY' || works.id, 'work',
+		SELECT '@{[ WORKS_ID_PREFIX ]}' || works.id, 'work',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(works.title, '')) || ' ' || IFNULL(works.titlesearch, '') || ' ' || IFNULL(contributors.namesearch, '')),
 		-- weight 5
@@ -99,9 +104,9 @@ use constant SQL_CREATE_WORK_ITEM => q{
 		GROUP BY works.id;
 };
 
-use constant SQL_CREATE_ALBUM_ITEM => q{
+use constant SQL_CREATE_ALBUM_ITEM => qq{
 	INSERT INTO fulltext (id, type, w10, w5, w3, w1)
-		SELECT 'YXLALBUMSYYYYYYYYYYYYYYYYYYYYYYY' || albums.id, 'album',
+		SELECT '@{[ ALBUMS_ID_PREFIX ]}' || albums.id, 'album',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(albums.title, '')) || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, '') || ' '
 		|| IFNULL((SELECT GROUP_CONCAT(wt,' ') FROM (SELECT DISTINCT works.titlesearch wt FROM tracks JOIN works ON tracks.work = works.id WHERE tracks.album = albums.id) ), ' ') ),
@@ -122,9 +127,9 @@ use constant SQL_CREATE_ALBUM_ITEM => q{
 		GROUP BY albums.id;
 };
 
-use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
+use constant SQL_CREATE_CONTRIBUTOR_ITEM => qq{
 	INSERT INTO fulltext (id, type, w10, w5, w3, w1)
-		SELECT 'YXLCONTRIBUTORSYYYYYYYYYYYYYYYYY' || contributors.id, 'contributor',
+		SELECT '@{[ CONTRIBUTORS_ID_PREFIX ]}' || contributors.id, 'contributor',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(contributors.name, '')) || ' ' || IFNULL(contributors.namesearch, '') || ' ' || IFNULL(contributors.customsearch, '')),
 		-- weight 5
@@ -138,29 +143,29 @@ use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
 };
 
 use constant SQL_CREATE_PLAYLIST_ITEM => CAN_FTS4
-? q{
+? qq{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
 		-- w10: title, w3: url, w1: track metadata
-		SELECT 'YXLPLAYLISTSYYYYYYYYYYYYYYYYYYYY' || playlist_track.playlist, 'playlist', ?, '', ?, UNIQUE_TOKENS(GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1))
+		SELECT '@{[ PLAYLISTS_ID_PREFIX ]}' || playlist_track.playlist, 'playlist', ?, '', ?, UNIQUE_TOKENS(GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1))
 		FROM playlist_track
 			LEFT JOIN fulltext ON fulltext.id MATCH MD5(playlist_track.track) || '*'
 		WHERE playlist_track.playlist = ?
 }
-: q{
+: qq{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
 		-- w10: title, w3: url, w1: track metadata
-		SELECT 'YXLPLAYLISTSYYYYYYYYYYYYYYYYYYYY' || tracks.id, 'playlist', ?, '', ?, ''
+		SELECT '@{[ PLAYLISTS_ID_PREFIX ]}' || tracks.id, 'playlist', ?, '', ?, ''
 		FROM tracks
 		WHERE tracks.id = ?
 };
 
-use constant SQL_DELETE_FOR_TRACK => q{
+use constant SQL_DELETE_FOR_TRACK => qq{
 	DELETE FROM fulltext
 		WHERE id = ? || ?
-			OR ( fulltext.type = 'contributor' AND REPLACE(fulltext.id, 'YXLCONTRIBUTORSYYYYYYYYYYYYYYYYY', '') IN (SELECT contributor FROM contributor_track WHERE track=?) )
-			OR ( fulltext.type = 'contributor' AND fulltext.w10 <> ? AND NOT EXISTS (SELECT * FROM contributor_track WHERE contributor = REPLACE(fulltext.id, 'YXLCONTRIBUTORSYYYYYYYYYYYYYYYYY', '')) )
-			OR ( fulltext.type = 'work' AND REPLACE(fulltext.id, 'YXLWORKSYYYYYYYYYYYYYYYYYYYYYYYY', '') IN (SELECT work FROM tracks WHERE id=?) )
-			OR ( fulltext.type = 'work' AND NOT EXISTS (SELECT * FROM works WHERE id = REPLACE(fulltext.id, 'YXLWORKSYYYYYYYYYYYYYYYYYYYYYYYY', '')) )
+			OR ( fulltext.type = 'contributor' AND REPLACE(fulltext.id, '@{[ CONTRIBUTORS_ID_PREFIX ]}', '') IN (SELECT contributor FROM contributor_track WHERE track=?) )
+			OR ( fulltext.type = 'contributor' AND fulltext.w10 <> ? AND NOT EXISTS (SELECT * FROM contributor_track WHERE contributor = REPLACE(fulltext.id, '@{[ CONTRIBUTORS_ID_PREFIX ]}', '')) )
+			OR ( fulltext.type = 'work' AND REPLACE(fulltext.id, '@{[ WORKS_ID_PREFIX ]}', '') IN (SELECT work FROM tracks WHERE id=?) )
+			OR ( fulltext.type = 'work' AND NOT EXISTS (SELECT * FROM works WHERE id = REPLACE(fulltext.id, '@{[ WORKS_ID_PREFIX ]}', '')) )
 };
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -254,7 +259,7 @@ sub checkSingleTrack {
 	my @params = ($trackObj->urlmd5, $trackObj->id, $trackObj->id, uc(Slim::Music::Info::variousArtistString()), $trackObj->id);
 
 	if ($trackObj->albumid) {
-		$deletionSql .= q{ OR id = 'YXLALBUMSYYYYYYYYYYYYYYYYYYYYYYY' || ?};
+		$deletionSql .= qq{ OR id = '@{[ ALBUMS_ID_PREFIX ]}' || ?};
 		push @params, $trackObj->albumid;
 	}
 
