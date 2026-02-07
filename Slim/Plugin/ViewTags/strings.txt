@@ -6,6 +6,7 @@ PLUGIN_VIEW_TAGS
 	FR	Vue avancée des tags
 	HU	Speciális címkenézet
 	NL	Geavanceerde Tag Weergave
+	SV	Avancerad tag-vy
 
 PLUGIN_VIEW_TAGS_WCOM
 	CS	Obchodní informace (WCOM)
@@ -15,6 +16,7 @@ PLUGIN_VIEW_TAGS_WCOM
 	FR	Informations commerciales (WCOM)
 	HU	Kereskedelmi információ (WCOM)
 	NL	Commerciële Informatie (WCOM)
+	SV	Kommersiell information (WCOM)
 
 PLUGIN_VIEW_TAGS_WCOP
 	CS	Autorská práva/právní informace (WCOP, LICENSE)
@@ -24,6 +26,7 @@ PLUGIN_VIEW_TAGS_WCOP
 	FR	Droits d'auteur / informations juridiques (WCOP, LICENSE)
 	HU	Szerzői jogi/jogi információk (WCOP, LICENC)
 	NL	Copyright/Wettelijke Informatie (WCOP, LICENTIE)
+	SV	Upphovsrätt/Jrididsk information (WCOP, LICENS)
 
 PLUGIN_VIEW_TAGS_WOAF
 	CS	Oficiální webová stránka zvukového souboru (WOAF)
@@ -33,6 +36,7 @@ PLUGIN_VIEW_TAGS_WOAF
 	FR	Site Web de téléchargement officiel (WOAF)
 	HU	Hivatalos hangfájl weboldal (WOAF)
 	NL	Officiële Download Website (WOAF)
+	SV	Officiell download websida (WOAF)
 
 PLUGIN_VIEW_TAGS_WOAR
 	CS	Oficiální webové stránky interpreta (WOAR, WEBSITE)
@@ -42,6 +46,7 @@ PLUGIN_VIEW_TAGS_WOAR
 	FR	Site Web officiel de l'artiste (WOAR, WEBSITE)
 	HU	Az előadó hivatalos weboldala (WOAR, WEBSITE)
 	NL	Officiële Artiest Website (WOAR, WEBSITE)
+	SV	Officiell artistwebsida (WOAR, WEBSITE)
 
 PLUGIN_VIEW_TAGS_WOAS
 	CS	Oficiální webová stránka zdroje zvuku (WOAS)
@@ -51,6 +56,7 @@ PLUGIN_VIEW_TAGS_WOAS
 	FR	Site Web officiel de la source audio (WOAS)
 	HU	Hivatalos hangforrás weboldal (WOAS)
 	NL	Officiële Audiobron Website (WOAS)
+	SV	Officiell ursprungssida för ljudfilerna (WOAS)
 
 PLUGIN_VIEW_TAGS_WORS
 	CS	Domovská stránka rozhlasové stanice (WORS)
@@ -60,6 +66,7 @@ PLUGIN_VIEW_TAGS_WORS
 	FR	Site Web de la station de radio (WORS)
 	HU	A rádióállomás kezdőlapja (WORS)
 	NL	Radiostation Website (WORS)
+	SV	Websida för radiostation (WORS)
 
 PLUGIN_VIEW_TAGS_WPUB
 	CS	Webové stránky vydavatele (WPUB)
@@ -69,6 +76,7 @@ PLUGIN_VIEW_TAGS_WPUB
 	FR	Site Web de l'éditeur (WPUB)
 	HU	Kiadói weboldal (WPUB)
 	NL	Uitgevers Website (WPUB)
+	SV	Utgivarens websida (WPUB)
 
 PLUGIN_VIEW_TAGS_STD_URL
 	CS	Standardní tagy adres URL
@@ -78,6 +86,7 @@ PLUGIN_VIEW_TAGS_STD_URL
 	FR	Tags d'URL standards
 	HU	Szabványos URL-címkék
 	NL	Standaard URL tags
+	SV	Standard URL-taggar
 
 PLUGIN_VIEW_TAGS_CUSTOM_TAGS
 	CS	Další tagy pro zobrazení
@@ -87,15 +96,17 @@ PLUGIN_VIEW_TAGS_CUSTOM_TAGS
 	FR	Tags supplémentaires à afficher
 	HU	További megjelenítendő címkék
 	NL	Toon additionele tags
+	SV	Visa även följande taggar
 
 PLUGIN_VIEW_TAGS_CUSTOM_TAGS_DESC
-	CS	"Název tagu" se vztahuje na skutečný tag, jak je uložen v souboru, např. "WEBSITE". Zobrazí se v nabídce "Zobrazit tagy". "Zobrazovaný název" je uživatelsky přívětivější název, který se použije v uživatelském rozhraní. "Adresa URL" určuje, zda pole obsahuje adresu URL. V tomto případě mohou uživatelská rozhraní, která jsou schopná odkazovat na adresy URL, zobrazit obsah s odkazem.
+	CS	„Název tagu“ se vztahuje na skutečný tag, jak je uložen v souboru, např. „WEBSITE“. Zobrazí se v nabídce „Zobrazit tagy“. „Zobrazovaný název“ je uživatelsky přívětivější název, který se použije v uživatelském rozhraní. „Adresa URL“ určuje, zda pole obsahuje adresu URL. V tomto případě mohou uživatelská rozhraní, která jsou schopná odkazovat na adresy URL, zobrazit obsah s odkazem.
 	DA	"Mærkenavn" er det faktiske navn som er gemt i filen, f.eks. "WEBSITE". Dette vises også i "Vis mærker" menuen. "Mærkenavn at vise" er et mere brugervenligt navn, der vil blive vist i brugergrænsefladen. "URL" definerer, om den viste værdi skal vises som et link (hvis muligt).
 	DE	"Tag Name" ist der eigentliche Name, wie er in der Datei gespeichert ist, z.B. "WEBSITE". Dieser Name wird auch in "Tags anzeigen" eines Titels angezeigt. "Anzuzeigender Name" ist ein benutzerfreundlicherer Name, der in der Benutzeroberfläche angezeigt wird. "URL" definiert, ob der angezeigte Wert als Link dargestellt werden soll (wenn möglich).
 	EN	"Tag name" refers to the actual tag, as stored in the file, eg. "WEBSITE". The "View Tags" menu shows these. The "Name to be displayed" is a more user friendly name to be used in the UI. "URL" defines whether the field contains a URL. In this case UIs able to link to URLs can render the content with a link.
 	FR	Le "Nom du tag" fait référence à la balise réelle telle qu'elle est stockée dans le fichier (par exemple "WEBSITE"). Le menu "Afficher les tags" permet de consulter les tags. Le « Nom à afficher » est un nom plus parlant qui est utilisé dans l'interface utilisateur. "URL" précise si la balise contient un lien Web qu'il faut tenter de restituer sous cette forme.
 	HU	A "címke neve" a fájlban tárolt tényleges címkére utal, pl. "WEBOLDAL". A "Címkék megtekintése" menü ezeket mutatja. A „Megjelenítendő név” egy felhasználóbarátabb név, amelyet a felhasználói felületen kell használni. Az "URL" határozza meg, hogy a mező tartalmaz-e URL-t. Ebben az esetben az URL-ekre hivatkozni képes felhasználói felületek egy hivatkozással jeleníthetik meg a tartalmat.
 	NL	"Tag naam" verwijst naar de daadwerkelijke tag, zoals opgeslagen in het bestand, bijv. "WEBSITE". Het menu "Tags tonen" toont deze. De "Tag naam die wordt weergegeven" is een gebruiksvriendelijkere naam die in de gebruikersinterface wordt gebruikt. "URL" definieert of het veld een URL bevat. In dit geval kunnen UI's die naar URL's kunnen linken de inhoud weergeven met een link.
+	SV	"Tag namn" är det namnet som används i filen, t.ex "WEBSITE". Det namnet visas också i "Visa Taggar" menyn. "Tagnamn som visas" är ett mer användarvänligt namn som visas in användargränssnittet. "URL" bestämmer om det visade värdet visas som en länk eller inte.
 
 PLUGIN_VIEW_TAGS_TAG_NAME
 	CS	Název tagu
@@ -105,6 +116,7 @@ PLUGIN_VIEW_TAGS_TAG_NAME
 	FR	Nom du tag
 	HU	Címke neve
 	NL	Tag naam
+	SV	Tagnamn
 
 PLUGIN_VIEW_TAGS_TAG_HUMAN_READABLE
 	CS	Zobrazovaný název tagu
@@ -114,6 +126,7 @@ PLUGIN_VIEW_TAGS_TAG_HUMAN_READABLE
 	FR	Nom à afficher
 	HU	Megjelenítendő címkenév
 	NL	Tag naam die wordt weergegeven
+	SV	Tagnamn som visas
 
 PLUGIN_VIEW_TAGS_LEVEL
 	CS	Úroveň, na které se tyto tagy zobrazují
@@ -123,6 +136,7 @@ PLUGIN_VIEW_TAGS_LEVEL
 	FR	Niveau auquel afficher ces tags
 	HU	Szint, amelyen ezek a címkék megjelennek
 	NL	Niveau waarop deze tags worden getoond
+	SV	Nivå på vilken denna tag visas
 
 PLUGIN_VIEW_TAGS_TOPLEVEL
 	CS	Zobrazit tagy na nejvyšší úrovni
@@ -132,15 +146,17 @@ PLUGIN_VIEW_TAGS_TOPLEVEL
 	FR	Afficher les tags au niveau supérieur
 	HU	Címkék megjelenítése a legfelső szinten
 	NL	Toon tags op het hoogste niveau
+	SV	Visa taggen på översta nivån
 
 PLUGIN_VIEW_TAGS_MOREINFO
-	CS	Zobrazit tagy v "Další informace"
+	CS	Zobrazit tagy v „Další informace“
 	DA	Vis mærker i "Mere info"
 	DE	Tags in "Weitere Infos" anzeigen
 	EN	Show tags in "More Info"
 	FR	Afficher les tags dans "Plus d'infos"
 	HU	Címkék megjelenítése a "További információ" részben
 	NL	Toon tags in "Meer Info"
+	SV	Visa taggen i "Mer information"
 
 PLUGIN_VIEW_TAGS_URL
 	CS	Adresa URL

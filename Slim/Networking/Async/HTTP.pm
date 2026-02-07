@@ -590,7 +590,8 @@ sub _http_read_body {
 		# if here, we've reached the end of the body
 
 		# close and remove the socket if not keep-alive
-		if ( $self->response->headers->header('Connection') =~ /close/i || $self->request->headers->header('Connection') !~ /keep-alive/i ) {
+		if ( $self->response->headers->header('Connection') =~ /close/i || 
+		     ($self->request->headers->header('Connection') !~ /keep-alive/i && $self->request->protocol =~ m|HTTP/1.0|i) ) {
 			$self->fh->close if $self->fh;
 			$self->disconnect;
 			main::DEBUGLOG && $log->debug("closing mode");

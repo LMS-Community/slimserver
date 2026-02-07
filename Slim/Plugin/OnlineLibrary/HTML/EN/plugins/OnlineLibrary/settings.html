@@ -5,7 +5,7 @@
 			<table>
 				[% FOREACH libraryProvider = libraryProviders %]
 				<tr>
-					<td style="vertical-align: middle;">[% libraryProvider.1 %]</td>
+					<td style="vertical-align: middle; padding-right: 10px;">[% libraryProvider.1 %]</td>
 					<td>
 						<select name="pref_[% libraryProvider.0 %]">
 							<option [% IF libraryProvider.2 == 1 %]selected[% END %] value=1>[% "PLUGIN_ONLINE_LIBRARY_FULL_INTEGRATION" | string %]</option>

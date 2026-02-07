@@ -1,7 +1,26 @@
 # String file for SavePlaylist plugin
 
-SAVE_PLAYLIST_DESC
-	CS	Ukládání seznamů skladeb z UI přehrávače
+SAVE_PLAYLIST_NAME
+	CS	Uložení seznamu skladeb
+	DA	Gem afspilningsliste
+	DE	Wiedergabeliste speichern
+	EN	Save Playlist
+	ES	Guardar lista de reproducción
+	FI	Tallenna soittoluettelo
+	FR	Enregistrer la liste de lecture
+	HE	שמירת רשימת ההשמעה
+	HU	Lejátszási lista mentése
+	IT	Salva playlist
+	JA	プレイリストを保存する
+	NL	Afspeellijst opslaan
+	NO	Lagre spilleliste
+	PL	Zapisz listę odtwarzania
+	RU	Сохранить плей-лист
+	SV	Spara spellista
+	ZH_CN	保存播放表
+
+SAVE_PLAYLIST_NAME_DESC
+	CS	Ukládání seznamu skladeb z UI přehrávače
 	DA	Gem afspilningslister fra afspillerens brugerflade
 	DE	Wiedergabelisten über das Player-Interface abspeichern
 	EN	Save Playlists from the Player UI

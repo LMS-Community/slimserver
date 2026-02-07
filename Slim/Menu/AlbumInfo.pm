@@ -1,7 +1,7 @@
 package Slim::Menu::AlbumInfo;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -123,6 +123,11 @@ sub registerDefaultInfoProviders {
 	$class->registerInfoProvider( extid => (
 		after => 'compilation',
 		func  => \&infoExternalId,
+	) );
+
+	$class->registerInfoProvider( rescan => (
+		after => 'bottom',
+		func  => \&rescanAlbum,
 	) );
 }
 
@@ -565,6 +570,33 @@ sub addAlbum {
 		type        => $tags->{menuMode} ? 'text' : 'link',
 		playcontrol => $cmd,
 		name        => cstring($client, $add_string),
+	};
+}
+
+sub rescanAlbum {
+	my ( $client, $url, $album ) = @_;
+
+	return unless blessed($album) && !$album->extid;
+
+	return {
+		name        => cstring($client, 'RESCAN_ALBUM'),
+		type        => 'link',
+		passthrough => [ $album->id ],
+		url         => sub {
+			my ( $client, $callback, undef, $albumId ) = @_;
+
+			return unless $albumId;
+
+			Slim::Control::Request::executeRequest(undef, [ 'rescan', 'album', $albumId ]);
+
+			$callback->( {
+				type        => 'text',
+				nextWindow  => 'parent',
+				name        => $client->string('RESCAN_ALBUM'),
+				showBriefly => 1,
+			} );
+		},
+		favourites  => 0,
 	};
 }
 

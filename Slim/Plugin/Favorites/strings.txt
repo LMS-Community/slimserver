@@ -72,7 +72,7 @@ FAVORITES_DELETING
 	SV	Tar bort favorit...
 
 PLUGIN_FAVORITES_DESC
-	CS	Uložit a editovat vaše oblíbené položky
+	CS	Uložení a editace vašich oblíbených položek
 	DA	Gem og rediger dine favoritter
 	DE	Favoriten speichern und bearbeiten
 	EN	Save and edit your favorites
@@ -97,9 +97,10 @@ PLUGIN_FAVORITES_USE_DSTM
 	HU	Ne hagyd abba a zenét
 	NO	Ikke stopp musikken
 	NL	Don't Stop The Music
+	SV	Stoppa inte musiken
 
 PLUGIN_FAVORITES_USE_DSTM_DESC
-	CS	Zaregistrujte si oblíbené položky jako možnosti pro "Nezastavuj přehrávání hudby".
+	CS	Zaregistrujte si oblíbené položky jako možnosti pro „Nezastavuj přehrávání hudby“.
 	DA	Benyt favoritter som valg for "Don't Stop The Music".
 	DE	Favoriten als Option für "Musikwiedergabe nie anhalten" verwenden.
 	EN	Register favorites as options for "Don't Stop The Music".
@@ -108,6 +109,7 @@ PLUGIN_FAVORITES_USE_DSTM_DESC
 	HU	A kedvencek beállítása a „Ne hagyja abba a zenét” opcióként.
 	NO	Legg inn favoritter som valg for "Ikke stopp musikken".
 	NL	Gebruik favorieten als opties voor Don't Stop The Music.
+	SV	Använd favoriter som en option för Stoppa inte musiken
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	CS	Prohlížeč a editor seznamu skladeb OPML
@@ -126,7 +128,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	SV	Bläddring och redigering för opml-spellistor
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
-	CS	Zásuvný modul oblíbené položky vám také umožňuje procházet seznamy skladeb založené na opml, uložené na vašem serveru. K přidání tohoto režimu do složky "Doplňky" domovské stránky vašeho serveru zvolte níže uvedenou možnost.
+	CS	Zásuvný modul Oblíbené položky vám také umožňuje procházet seznamy skladeb založené na OPML, které jsou uložené na vašem serveru. K přidání tohoto režimu do složky „Doplňky“ domovské stránky vašeho serveru zvolte níže uvedenou možnost.
 	DA	Med udvidelsesmodulet Favoritter kan du gennemse og redigere opml-baserede afspilningslister som er gemt på din server. Marker denne mulighed hvis du vil føje den til menuen Ekstra i den webbaserede brugerflade.
 	DE	Das Favoriten Plugin erlaubt es auch, OPML basierte Wiedergabelisten auf dem Server zu durchsuchen und bearbeiten. Aktiviere die folgende Option, um diesen Modus unter "Extras" auf dem Server Web-Interface anzuzeigen.
 	EN	The favorites plugin will also allow you to browse opml based playlists and edit opml playlists stored on your server. Select the option below to add this mode under 'Extras' on the server home page.
@@ -541,6 +543,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB
 	NL	Gedrag bij lokale muziek
 	NO	Oppførsel med lokal musikksamling
 	PL	Sposób przeglądania ulubionych
+	SV	Funktion med lokal musik
 
 PLUGIN_FAVORITES_DONT_BROWSEDB_ON
 	CS	Při výběru neprohlížet položky, ale pouze je přehrát (staré chování)
@@ -553,6 +556,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB_ON
 	NL	Niet door bladeren op een geselecteerd item, maar speel af (oude gedrag)
 	NO	Spill av valgt oppføring, ikke bla videre (gammel oppførsel)
 	PL	Nie przeglądaj utworów, po prostu je odtwarzaj (klasyczne zachowanie)
+	SV	Bläddra inte i spåren när de har valts, bara spela dem (gamla funktionen) 
 
 PLUGIN_FAVORITES_DONT_BROWSEDB_OFF
 	CS	Když vyberete oblíbeného přispěvatele, žánr nebo album, přejít k jeho obsahu.
@@ -565,3 +569,4 @@ PLUGIN_FAVORITES_DONT_BROWSEDB_OFF
 	NL	Als je een favoriete uitvoerende, genre of album selecteert, blader door tot de inhoud ervan
 	NO	Når du velger en favorittutøver, -sjanger eller -album, bla videre til innholdet.
 	PL	Gdy wybierzesz ulubionego wykonawcę, gatunek lub album, wyświetl utwory im odpowiadające
+	SV	När en favorit väljs, så visa detaljerat innehåll (nya funktionen)

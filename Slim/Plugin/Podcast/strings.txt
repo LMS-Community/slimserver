@@ -108,6 +108,7 @@ PLUGIN_PODCAST_PLAY_FROM_BEGINNING
 	NL	Speel af vanaf het begin
 	NO	Spill av fra begynnelsen
 	PL	Odtwórz od początku
+	SV	Spela från början
 
 PLUGIN_PODCAST_PLAY_FROM_POSITION_X
 	CS	Přehrát z poslední pozice (%s)
@@ -119,6 +120,7 @@ PLUGIN_PODCAST_PLAY_FROM_POSITION_X
 	NL	Speel af vanaf laatste positie (%s)
 	NO	Spill videre fra siste posisjon (%s)
 	PL	Wznów od ostatniej pozycji (%s)
+	SV	Spela vidare från senaste positionen (%s)
 
 PLUGIN_PODCAST_SKIP_BACK_SECS
 	CS	Skok o několik sekund zpět
@@ -130,6 +132,7 @@ PLUGIN_PODCAST_SKIP_BACK_SECS
 	NL	Spring seconden terug
 	NO	Hopp sekunder tilbake
 	PL	Przewijanie do tyłu
+	SV	Hoppa tillbaka X sekunder
 
 PLUGIN_PODCAST_SKIP_BACK_DESC
 	CS	Kontextová nabídka podcastů nabízí možnost rychlého skoku zpět v rámci podcastu. Ve výchozím nastavení tato možnost přeskočí o 15 sekund zpět.
@@ -141,6 +144,7 @@ PLUGIN_PODCAST_SKIP_BACK_DESC
 	NL	In het contextmenu van de podcast kun je snel terugspringen in de podcast. Standaard spring je 15 seconden terug.
 	NO	Kontekstmenyen for podkaster tilbyr å kjapt hoppe tilbake i podkasten. Standardspranget er 15 sekunder. Angi hvor langt spranget skal være.
 	PL	Menu kontekstowe podcastu zawiera opcję do szybkiego przewinięcia do tyłu. Domyślnie ta opcja przewija o 15 sekund do tyłu.
+	SV	Det är möjligt att från podsändningens meny snabbt hoppa tillbaka. Standarden är att hoppa tillbak 15 sekunder. Ange här hur många sekunder du vill hoppa tillbaka.
 
 PLUGIN_PODCAST_SKIP_BACK
 	CS	Skok o %s sekund zpět
@@ -152,6 +156,7 @@ PLUGIN_PODCAST_SKIP_BACK
 	NL	Spring %s seconden terug
 	NO	Hopp %s sekunder tilbake
 	PL	Przewiń do tyłu o %s sekund
+	SV	Hoppa tillbaka %s sekunder 
 
 PLUGIN_PODCAST_RECENTLY_PLAYED
 	CS	Nedávno přehrávané
@@ -161,6 +166,7 @@ PLUGIN_PODCAST_RECENTLY_PLAYED
 	FR	Pistes récentes
 	HU	Nemrég játszott
 	NL	Recent afgespeeld
+	SV	Nyligen spelade
 
 PLUGIN_PODCAST_SEARCH
 	CS	Prohledat kanály
@@ -170,6 +176,7 @@ PLUGIN_PODCAST_SEARCH
 	FR	Rechercher des flux
 	HU	Hírcsatornák keresése
 	NL	Zoek feeds
+	SV	Sök efter podsändningar
 
 PLUGIN_PODCAST_PROVIDER
 	CS	Poskytovatel podcastů
@@ -179,6 +186,7 @@ PLUGIN_PODCAST_PROVIDER
 	FR	Fournisseur de Podcast
 	HU	Podcast szolgáltató
 	NL	Podcast aanbieder
+	SV	Podsändningsleverantör
 
 PLUGIN_PODCAST_PROVIDER_DESC
 	CS	Nastavit poskytovatele podcastových kanálů (agregátor).
@@ -188,6 +196,7 @@ PLUGIN_PODCAST_PROVIDER_DESC
 	FR	Configurez le fournisseur (concentrateur) de Podcasts
 	HU	Állítsa be a Podcast feed-szolgáltatót (összesítőt).
 	NL	Configureer de podcast feed aanbieder (aggregator)
+	SV	Välj podsändningsleverantör
 
 PLUGIN_PODCAST_SEARCH_FAILED
 	CS	Vyhledávání se nepodařilo
@@ -196,6 +205,7 @@ PLUGIN_PODCAST_SEARCH_FAILED
 	EN	Search failed
 	FR	Echec de recherche
 	NL	Zoeken mislukt
+	SV	Sökningen misslyckades
 
 PLUGIN_PODCAST_WHATSNEW
 	CS	Nové epizody za posledních %s dní
@@ -205,6 +215,7 @@ PLUGIN_PODCAST_WHATSNEW
 	FR	Nouveaux épisodes des %s derniers jours
 	HU	Új epizódok az elmúlt %s napból
 	NL	Nieuwe afleveringen van de laatste %s dagen
+	SV	Nya avsnitt från de senaste %s dagarna
 
 PLUGIN_PODCAST_AUTHOR
 	CS	Autor:
@@ -214,6 +225,7 @@ PLUGIN_PODCAST_AUTHOR
 	FR	Auteur :
 	HU	Szerző:
 	NL	Auteur:
+	SV	Upphovsman:
 
 PLUGIN_PODCAST_WHATSNEW_DESC
 	CS	Nastavte, kolik dní zpětně se mají hledat nové epizody, a maximální počet epizod na tok. Všimněte si, že ručně přidané kanály nemusí být poskytovatelem sledovány
@@ -223,6 +235,7 @@ PLUGIN_PODCAST_WHATSNEW_DESC
 	FR	Définit l'ancienneté maximale des nouveaux épisodes (en jours) et le nombre maximum par flux. Notez que les flux ajoutés manuellement peuvent ne pas être suivis par le fournisseur.
 	HU	Állítsa be, hogy hány napig nézzen vissza az új epizódok után, és adja meg az epizódok maximális számát folyamonként. Vegye figyelembe, hogy a manuálisan hozzáadott hírcsatornákat a szolgáltató nem követheti nyomon
 	NL	Stel het maximale aantal afleveringen en de hoeveelheid dagen die je wilt terugkijken voor het traceren van nieuwe afleveringen in. Houd er rekening mee dat handmatig toegevoegde feeds mogelijk niet worden bijgehouden door de aanbieder.
+	SV	Definiera det maximala antalet dagar för att söka efter nya avsnitt och det maximala antalet avsnitt per flöde. Observera att manuellt tillagda podsändningar kanske inte uppdateras av leverantören.
 
 PLUGIN_PODCAST_NEWSINCE
 	CS	Počet dnů historie
@@ -232,6 +245,7 @@ PLUGIN_PODCAST_NEWSINCE
 	FR	Nombre de jours d'historique
 	HU	A történelem napjainak száma
 	NL	Aantal dagen terug
+	SV	Antal dagars historik
 
 PLUGIN_PODCAST_MAXNEW
 	CS	Počet nových epizod na kanál
@@ -241,6 +255,7 @@ PLUGIN_PODCAST_MAXNEW
 	FR	Nombre de nouveaux épisodes par flux
 	HU	Új epizódok száma hírcsatornánként
 	NL	Aantal nieuwe afleveringen per feed
+	SV	Antal nya avsnitt per flöde
 
 PLUGIN_PODCAST_COUNTRY_DESC
 	CS	Omezit vyhledávání na zemi (volitelné)
@@ -250,6 +265,7 @@ PLUGIN_PODCAST_COUNTRY_DESC
 	FR	Limite la recherche à un pays (optionnel)
 	HU	Keresés korlátozása egy országra (opcionális)
 	NL	Zoekopdracht beperken tot een land (optioneel)
+	SV	Begränsa sökningen till et land (valfritt)
 
 PLUGIN_PODCAST_COUNTRY
 	CS	Země
@@ -259,24 +275,27 @@ PLUGIN_PODCAST_COUNTRY
 	HU	Ország
 	FR	Pays
 	NL	Land
+	SV	Land
 
 PLUGIN_PODCAST_SUBSCRIBE
-	CS	Přihlásit se k odběru "%s"
+	CS	Přihlásit se k odběru „%s“
 	DA	Abonnér på '%s'
 	DE	Podcast '%s' abonnieren
 	EN	Subscribe to '%s'
 	FR	S'abonner à '%s'
 	HU	Feliratkozás a következőre: '%s'
 	NL	Abonneren op '%s'
+	SV	Prenumerera på '%s'
 
 PLUGIN_PODCAST_UNSUBSCRIBE
-	CS	Odhlásit se z odběru "%s"
+	CS	Odhlásit se z odběru „%s“
 	DA	Afmeld '%s'
 	DE	Von Podcast '%s' abmelden
 	EN	Unsubscribe from '%s'
 	FR	Se désabonner de '%s'
 	HU	Leiratkozás a következőről: '%s'
 	NL	Afmelden van '%s'
+	SV	Avbeställ prenumerationen '%s'
 
 PLUGIN_PODCAST_DONE
 	CS	Přihlášeno/odhlášeno z kanálu...
@@ -286,3 +305,4 @@ PLUGIN_PODCAST_DONE
 	FR	Abonné/Désabonné ...
 	HU	Feliratkozott/leiratkozott a műsorról...
 	NL	Abonneren/Afmelden...
+	SV	Prenumerationsstatus uppdaterad

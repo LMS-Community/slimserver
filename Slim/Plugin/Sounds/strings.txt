@@ -31,10 +31,12 @@ PLUGIN_SOUNDS_ERROR
 	SV	Ljud och effekter: fel
 
 PLUGIN_SOUNDS_ALARMS
+	CS	Zvuky budíku
 	DE	Weckertöne
 	EN	Alarm Sounds
 	FR	Sons d'alarme
 	NL	Alarmgeluiden
+	SV	Alarmljud
 
 PLUGIN_SOUNDS_EFFECTS
 	CS	Zvukové efekty
@@ -98,7 +100,7 @@ PLUGIN_SOUNDS_BARN_FIRE
 	NO	Låvebrann
 	PL	Barn Fire
 	RU	Сарай в огне
-	SV	Barn Fire
+	SV	Ladan brinner
 
 PLUGIN_SOUNDS_BLUE_HENRY
 	CS	Blue Henry
@@ -130,7 +132,7 @@ PLUGIN_SOUNDS_BLUE_ORCHID
 	NO	Blue Orchid
 	PL	Błękitna orchidea
 	RU	Синяя орхидея
-	SV	Blue Orchid
+	SV	Blå Orchidé
 
 PLUGIN_SOUNDS_BONGO_TECH
 	CS	Bongo Tech
@@ -162,7 +164,7 @@ PLUGIN_SOUNDS_BRAINFLUID
 	NO	Hjernevæske
 	PL	Brainfluid
 	RU	Мозговая жидкость
-	SV	Brainfluid
+	SV	Hjärnvätska
 
 PLUGIN_SOUNDS_BUTTERY
 	CS	Buttery
@@ -290,7 +292,7 @@ PLUGIN_SOUNDS_JUNK_ARMOR
 	NO	Søppelrustning
 	PL	Junk Armor
 	RU	Ржавые доспехи
-	SV	Junk Armor
+	SV	Skrotrustning
 
 PLUGIN_SOUNDS_MELANCHOLY_DAY
 	CS	Melancholy Day
@@ -306,7 +308,7 @@ PLUGIN_SOUNDS_MELANCHOLY_DAY
 	NO	Melankolsk dag
 	PL	Melancholy Day
 	RU	Грустный день
-	SV	Melancholy Day
+	SV	Melankolisk dag
 
 PLUGIN_SOUNDS_SLICKBABY
 	CS	Slickbaby
@@ -837,7 +839,7 @@ PLUGIN_SOUNDS_STREAM_BIRDS
 	SV	Bäck och fågelkvitter
 
 PLUGIN_SOUNDS_STREAM
-	CS	Datový proud
+	CS	Potok
 	DA	Stream
 	DE	Stream
 	EN	Stream
@@ -1243,93 +1245,124 @@ PLUGIN_SOUNDS_ALARM_BUZZER
 	EN	Alarm Buzzer
 	FR	Sonnerie d'alarme
 	HU	Riasztócsengő
+	SV	Alarmsummer
 
 PLUGIN_SOUNDS_ALARM_ACCELERATING
+	CS	Zrychlující pípání
 	DE	Beschleunigendes Biepen
 	EN	Accelerating beep
 	FR	Bip accéléré
 	NL	Versnellende piep
+	SV	Accelererande pip
 
 PLUGIN_SOUNDS_ALARM_HIGH_BEEP
+	CS	Vysoké pípání
 	DE	Hohes Biepen
 	EN	High beep
 	FR	Bip aigu
 	NL	Hoge piep
+	SV	Högt pip
 
 PLUGIN_SOUNDS_ALARM_SIMPLE_CLOCK
+	CS	Jednoduché pípání
 	DE	Einfacher Signalton
 	EN	Simple beep
 	FR	Bip simple
 	NL	Eenvoudige piep
+	SV	Enkel signalton
 
 PLUGIN_SOUNDS_ALARM_BEDSIDE
+	CS	Čtyřnásobné pípání
 	DE	Vierfacher Signalton
 	EN	Quadrupel beep
 	FR	Bip quadruple
 	NL	Viervoudige piep
+	SV	Fyrfaldigt pip
 
 PLUGIN_SOUNDS_ALARM_ELECTRONIC_BEEP
+	CS	Elektronické pípání
 	DE	Elektronisches Piepen
 	EN	Electronical beep
 	FR	Bip électronique
 	NL	Elektronische piep
+	SV	Elektroniskt pip
 
 PLUGIN_SOUNDS_ALARM_DIGITAL
+	CS	Nízké pípání
 	DE	Tiefes Piepen
 	EN	Low beep
 	FR	Bip grave
 	NL	Lage piep
+	SV	Lågt pip
 
 PLUGIN_SOUNDS_ALARM_DISTORTED
+	CS	Zkreslené pípání
 	DE	Verzerrtes Piepen
 	EN	Distorted beep
 	FR	Bip distordu
 	NL	Vervormde piep
+	SV	Förvrängt pip
 
 PLUGIN_SOUNDS_ALARM_DUAL_TONE
+	CS	Střídavé pípání
 	DE	Wechselndes Piepen
 	EN	Alternating beep
 	FR	Bip alterné
 	NL	Afwisselende piep
+	SV	Växlande pip
 
 PLUGIN_SOUNDS_ALARM_ELECTRONICAL
+	CS	Elektronické pípání 2
 	DE	Elektronisches Piepen 2
 	EN	Electronical beep 2
 	FR	Bip électronique 2
 	NL	Elektronische piep 2
+	SV	Elektroniskt pip 2
 
 PLUGIN_SOUNDS_ALARM_FUTURISTIC
+	CS	Futuristický alarm
 	DE	Futuristischer Alarm
 	EN	Futuristic alarm
 	FR	Alarme futuriste
 	NL	Futuristisch alarm
+	SV	Futuristiskt alarm
 
 PLUGIN_SOUNDS_ALARM_PHONE
+	CS	Zvonící telefon
 	DE	Klingelndes Telefon
 	EN	Ringing phone
 	FR	Téléphone qui sonne
 	NL	Rinkelende telefoon
+	SV	Ringande telefon
 
 PLUGIN_SOUNDS_ALARM_RINGING
+	CS	Zvonící alarm
 	DE	Klingelnder Alarm
 	EN	Ringing alarm
 	FR	Alarme sonore
 	NL	Rinkelend alarm
+	SV	Ringande alarm
 
 PLUGIN_SOUNDS_ALARM_RINGTONE
+	CS	Vyzváněcí tón
 	DE	Klingelton
 	EN	Ringtone
 	FR	Sonnerie
 	NL	Beltoon
+	SV	Rington
 
 PLUGIN_SOUNDS_ALARM_TIC_TAC
+	CS	Tik-tak
 	DE	Tick-Tack
 	EN	Tic-Tac
 	FR	Tic-Tac
 	NL	Tik-Tak
+	SV	Tick-tack
 
 PLUGIN_SOUNDS_ALARM_TICKING
+	CS	Tikající hodiny
 	DE	Tickende Uhr
 	EN	Ticking clock
 	FR	Horloge qui tic-tac
 	NL	Tikkende klok
+	SV	Tickande klocka

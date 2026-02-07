@@ -1080,11 +1080,14 @@ sub _tagsToParams {
 sub _artists {
 	my ($client, $callback, $args, $pt) = @_;
 	my @searchTags = $pt->{'searchTags'} ? @{$pt->{'searchTags'}} : ();
+	my $sort       = $pt->{'sort'};
 	my $search     = $pt->{'search'};
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 	my $mode = $args->{'params'}->{'mode'};
 	my $roleIdParam = $args->{'params'}->{'role_id'};
+
+	$sort = 'sort:' . $sort if $sort && $sort !~ /^sort:/;
 
 	if (!$search && !scalar @searchTags && $args->{'search'}) {
 		push @searchTags, 'library_id:' . $library_id if $library_id;
@@ -1132,7 +1135,7 @@ sub _artists {
 	push @ptSearchTags, 'menu_roles:' . $roleIdParam if $roleIdParam;
 
 	_generic($client, $callback, $args, 'artists',
-		[@searchTags, ($search ? 'search:' . $search : undef)],
+		[@searchTags, ($sort ? $sort : ()), ($search ? 'search:' . $search : undef)],
 		sub {
 			my $results = shift;
 			my $items = $results->{'artists_loop'};
@@ -1466,7 +1469,7 @@ sub _albums {
 	my $library_id = $args->{'library_id'} || $pt->{'library_id'};
 	my $remote_library = $args->{'remote_library'} ||= $pt->{'remote_library'};
 
-	if (!$sort || $sort !~ /^sort:(?:random|new|changed)$/) {
+	if (!$sort || $sort !~ /^sort:(?:random|new|changed|popular)$/) {
 		$sort = $pt->{'orderBy'} || $args->{'orderBy'} || $sort;
 	}
 	$sort = 'sort:' . $sort if $sort && $sort !~ /^sort:/;
@@ -1501,7 +1504,7 @@ sub _albums {
 		if ($artistId && ($mapped = $mapArtistOrders{$1})) {
 			$sort = 'sort:' . $mapped;
 		}
-		$sort = undef unless grep {$_ eq $1} ('new', 'changed', 'random', values %orderByList);
+		$sort = undef unless grep {$_ eq $1} ('new', 'changed', 'random', 'popular', values %orderByList);
 	}
 
 	# Under certain circumstances (random albums in web UI or with remote streams) we are only

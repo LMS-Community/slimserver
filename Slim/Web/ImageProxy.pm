@@ -75,6 +75,7 @@ use strict;
 use HTTP::Status qw(
 	RC_MOVED_PERMANENTLY
 );
+use Image::Scale;
 use Tie::RegexpHash;
 use URI::Escape qw(uri_escape_utf8);
 
@@ -92,6 +93,8 @@ tie my %handlers, 'Tie::RegexpHash';
 my %externalHandlers;
 
 use constant ONE_YEAR => 86400 * 365;
+use constant ACCEPT_IMAGE_FORMATS => 'image/jpeg,image/png;q=0.9' . (Image::Scale->gif_version() ? ',image/gif;q=0.1' : '');
+use constant REDIRECT_IMAGE_TO_JPEG => 'https://api.lms-community.org/img2compatible/';
 
 my $log   = logger('artwork.imageproxy');
 my $prefs = preferences('server');
@@ -169,6 +172,7 @@ sub getImage {
 
 		my $pre_shrunk;
 		my %headers = (
+			'Accept'     => ACCEPT_IMAGE_FORMATS,
 			'User-Agent' => Slim::Utils::Misc::userAgentString('legacy')
 		);
 
@@ -195,6 +199,11 @@ sub getImage {
 			}
 		}
 
+		if (!$pre_shrunk && $url =~ /^https?:.*\.webp(?:$|\?)/i) {
+			main::DEBUGLOG && $log->debug("Redirect WEBP images to JPEG conversion service");
+			$url = urlToCloudResizer($url);
+		}
+
 		$queue{$url} ||= [];
 
 		# we're going to queue up requests, so we don't need to download
@@ -217,16 +226,14 @@ sub getImage {
 			# no need to do the http request if we're already fetching it
 			return if scalar @{ $queue{$url} } > 1;
 
-			my $http = Slim::Networking::SimpleAsyncHTTP->new(
+			Slim::Networking::SimpleAsyncHTTP->new(
 				\&_gotArtwork,
 				\&_gotArtworkError,
 				{
 					timeout => 30,
 					cache   => 1,
 				},
-			);
-
-			$http->get( $url, %headers );
+			)->get( $url, %headers );
 		}
 	};
 
@@ -242,6 +249,7 @@ sub getImage {
 sub _gotArtwork {
 	my $http = shift;
 	my $url  = $http->url;
+	my $params = $http->params || {};
 
 	if (main::DEBUGLOG && $log->is_debug) {
 		$log->debug('Received artwork of type ' . $http->headers->content_type . ' and ' . ($http->headers->content_length || length(${$http->contentRef})) . ' bytes length' );
@@ -260,8 +268,28 @@ sub _gotArtwork {
 			return _gotArtworkError($http);
 		}
 	}
+	elsif ($http->headers->content_type =~ /webp/) {
+		if ($params->{originalUrl}) {
+			# external image proxy already did the resizing
+			$log->error("WEBP images are not supported, returning 500");
+			return _gotArtworkError($http);
+		}
 
-	_resizeFromFile($http->url, $http->contentRef, $http);
+		main::INFOLOG && $log->is_info && $log->info("WEBP images are not supported, try to convert to JPG");
+		Slim::Networking::SimpleAsyncHTTP->new(
+			\&_gotArtwork,
+			\&_gotArtworkError,
+			{
+				timeout => 30,
+				cache   => 1,
+				originalUrl => $url,
+			},
+		)->get(urlToCloudResizer($url));
+
+		return;
+	}
+
+	_resizeFromFile($params->{originalUrl} || $url, $http->contentRef, $http);
 }
 
 sub _gotArtworkError {
@@ -494,6 +522,10 @@ sub getRightSize {
 			return $sizes->{$_} if $_ >= $min;
 		}
 	}
+}
+
+sub urlToCloudResizer {
+	return REDIRECT_IMAGE_TO_JPEG . uri_escape_utf8($_[0]);
 }
 
 1;

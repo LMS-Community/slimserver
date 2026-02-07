@@ -53,6 +53,7 @@ $prefs->init({
 });
 
 $prefs->setChange( \&initMenus, 'additionalMenuItems' );
+$serverPrefs->setChange( \&initMenus, 'useUnifiedArtistsList' );
 # subs to subscribe must be unique - wrap the actual sub
 Slim::Control::Request::subscribe( sub { _delayedInitMenus(@_) }, [['client'], ['new', 'reconnect']] );
 Slim::Control::Request::subscribe( sub { _delayedInitMenus(@_) }, [['library'], ['changed']] );
@@ -271,6 +272,47 @@ sub initMenus {
 
 	if (main::STATISTICS) {
 		push @additionalStaticMenuItems, {
+			name         => 'PLUGIN_EXTENDED_BROWSEMODES_TOP_ARTISTS',
+			params       => {
+				mode   => 'myMusicArtistsPopular',
+				sort   => 'popular',
+				wantMetadata => 1,
+			},
+			feed         => 'artists',
+			id           => 'myMusicTopArtists',
+			icon         => 'plugins/ExtendedBrowseModes/html/topartists_MTL_svg_artistpopular.png',
+			weight       => 55,
+			static       => 1,
+			nocache      => 1,
+		},{
+			name         => 'PLUGIN_EXTENDED_BROWSEMODES_NEW_ARTISTS',
+			params       => {
+				mode   => 'myMusicArtistsNew',
+				sort   => 'new',
+				role_id => $serverPrefs->get('useUnifiedArtistsList') ? undef : 'ALBUMARTIST',
+				wantMetadata => 1,
+			},
+			feed         => 'artists',
+			id           => 'myMusicNewArtists',
+			icon         => 'plugins/ExtendedBrowseModes/html/newartists_MTL_svg_artistnew.png',
+			weight       => 56,
+			static       => 1,
+			nocache      => 1,
+		},{
+			name         => 'PLUGIN_EXTENDED_BROWSEMODES_ARTISTS_RECENTLY_PLAYED',
+			params       => {
+				mode   => 'myMusicArtistsRecentlyPlayed',
+				sort   => 'recentlyplayed',
+				role_id => $serverPrefs->get('useUnifiedArtistsList') ? undef : 'ALBUMARTIST',
+				wantMetadata => 1,
+			},
+			feed         => 'artists',
+			id           => 'myMusicRecentlyPlayedArtists',
+			icon         => 'plugins/ExtendedBrowseModes/html/recentartists_MTL_svg_artistrecent.png',
+			weight       => 57,
+			static       => 1,
+			nocache      => 1,
+		},{
 			name         => 'PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS',
 			params       => {
 				mode   => 'toptracks',
@@ -307,6 +349,18 @@ sub initMenus {
 			id           => 'myMusicRecentlyChangeAlbums',
 			icon         => 'html/images/newmusic.png',
 			weight       => 51,
+			static       => 1,
+		},{
+			name         => 'PLUGIN_EXTENDED_BROWSEMODES_POPULAR_ALBUMS',
+			params       => {
+				mode => 'albumsmyMusicAlbumsPopular',
+				sort => 'popular',
+				wantMetadata => 1,
+			},
+			feed         => 'albums',
+			id           => 'myMusicPopularAlbums',
+			icon         => 'plugins/ExtendedBrowseModes/html/popularalbums_MTL_svg_popularalbum.png',
+			weight       => 52,
 			static       => 1,
 		};
 	}
@@ -361,6 +415,8 @@ sub registerBrowseMode {
 
 	my %params = map {
 		my $v = Slim::Plugin::ExtendedBrowseModes::Libraries->valueToId($item->{params}->{$_}, $_);
+		# artists query is expecting the "ALBUMARTIST" as a literal, or some role filtering will fail
+		$v = $item->{params}->{$_} if $_ eq 'role_id' && $v == 5;
 		{ $_ => $v };
 	} keys %{ $item->{params} || {} };
 

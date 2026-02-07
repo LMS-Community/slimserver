@@ -1,6 +1,6 @@
 <h2><a name="v9.1.0" id="v9.1.0"></a>Version 9.1.0</h2>
 <ul>
-	<li><a href="#v9.0.3">Upstream fixes from Lyrion Music Server 9.0.x</a></li>
+	<li><a href="#v9.0.4">Upstream fixes from Lyrion Music Server 9.0.x</a></li>
 	<br />
 
 	<li>New Features:</li>
@@ -8,12 +8,14 @@
 		<li>Optionally navigate playlists by folders, allowing you to organise your playlists hierarchically.</li>
 		<li>Implement an artist portrait picture handler. This will read images from folders where you've stored them under the artist's name, or from the artist folder in a typical artist/album/track hierarchy.</li>
 		<li>Add a plugin to try to fetch artwork for radio stations which don't provide track artwork.</li>
+		<li>Add new scan modes "album" and "track" to re-scan individual albums or tracks. Album scan is available from an album's Info menu.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1425">#1425</a> - Add playlist drag and drop support to the Classic skin (thanks @oreillymj)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1426">#1426</a> - add support for ListenBrainz to AudioScrobbler plugin (thanks @vysmaty & AI)</li>
 		<li>Allow GETting the JSONRPC.js handler with a "request" parameter to simplify access by limited clients.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/issues/1294">#1294</a> - Bring back list view in the Manage Plugins section. The view can be toggled between grid an list view.</li>
-		<li><a href="https://github.com/LMS-Community/slimserver/issues/1422">#1422</a> - Add new sort orders "playcount" and "recentlyplayed" to "albums" query.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1422">#1422</a> - Add new sort orders "playcount", "popular", and "recentlyplayed" to "albums" and "artists" queries.</li>
 		<li>Provide a hook which would allow a plugin or other to register a method to display track artwork for radio stations which don't provide their own.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1468">#1468</a> - Add support for SUBTITLE to Advanced Search.</li>
 	</ul>
 	<br />
 
@@ -21,13 +23,17 @@
 	<ul>
 		<li>Improve support for 3rd party player icons, add some for piCorePlayer, SqueezeAMP, WiiM players.</li>
 		<li>Update downloader now validates the installers checksum.</li>
+		<li>Updated Czech translation - thanks @mipa87!</li>
 		<li>Updated French translation - thanks @Franck-Berry!</li>
 		<li>Updated Chinese translation - thanks @xdsnet!</li>
+		<li>Updated Swedish translation - thanks @JohanSaaw!</li>
 		<li>Improve cache purging reliability to avoid unnecessary growth.</li>
 		<li>Update the custom user agent string: pretending to be iTunes probably caused more problems than it solved.</li>
 		<li>Enable log rotation on Docker based systeme.</li>
 		<li>Don't re-encode lossy streams when bitrate limiting if original stream is of lower or equal bitrate already (thanks @ralphy!)</li>
 		<li>Add prefs folder to search list for custom types/convert/strings files (macOS/Windows).</li>
+		<li>Use online service to convert WEBP images to JPEG if needed (only works with online images).</li>
+		<li>Change the minimum sync adjustment to 5ms (from 10ms)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1216">#1216</a> - Reset playing position to first track once a playlist or album has ended (@ml-1)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1245">#1245</a> - Added a Simple WebSocket client capability for 3rd Party Plugins to support this protocol (@expectingtofly)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1356">#1356</a> - Use ORIGINALDATE tag with Flac (@jbylsma)</li>
@@ -35,13 +41,18 @@
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1364">#1364</a> - store/return playqueue entry context flag ("addedFromWork")</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1377">#1377</a> - Provide new /time/tz endpoint for Squeezeplay to fetch the local timezone (@mw9)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1399">#1399</a> - Use artwork appropriate for a Work if multiple album covers</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1487">#1487</a> - Improve CJK search support (@xxbin)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1489">#1489</a> - Allow Replay Gain to be modified in a plugin's onStream() protocol handler routine (@SamInPgh)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1490">#1490</a> - Fix incorrect ICY stream title sent during track change (@maniac103)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1494">#1494</a> - Use metadata from the library for remote tracks when possible (@SamInPgh)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1500">#1500</a> - Fix FLAC transcoding to MP3 for embedded cuesheets and when seeking in a stream (@jbylsma)</li>
 	</ul>
 	<br />
 
 	<li>Platform Support:</li>
 	<ul>
-		<li>Make piCorePlayer a first class citizan: add Slim::Utils::OS::pCP to support it</li>
 		<li>Make Docker a first class citizan: add Slim::Utils::OS::Docker instead of a Custom.pm</li>
+		<li>Add support for Perl 5.42 on x86_64 Linux.</li>
 		<li>Remove Win32 legacy support files, code, control panels, build pipeline, etc.</li>
 		<li>Remove legacy Mac installer from build pipeline.</li>
 		<li>Remove code dealing with Perl &lt; 5.10.</li>
@@ -51,12 +62,14 @@
 		<li>Upgrade DBD::SQLite to v1.75 for Perl 5.40 (Linux x86_64, aarch64), 5.38 (Linux x86_64), 5.36 (Linux x86_64, aarch64, armv7), 5.34 (Linux x86_64, aarch64; macOS), 5.32 (Linux x86_64, aarch64, armv7).</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/73">#73</a> - Add a note about setting the hostname in a Docker container (thanks @hartzell!)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/86">#86</a> - Add more tags to Docker images to better support automated updates (thanks @stavros-k!)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/101">#101</a> - Add package opus-tools to docker image (thanks @terual!)</li>
 	</ul>
 	<br />
 
 	<li>Bug Fixes:</li>
 	<ul>
 		<li>The AudioScrobbler failed to report tracks from online music services when they were integrated with the local library.</li>
+		<li>Let the image proxy tell the upstream server what image formats we support, because we don't support WEBP.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1287">#1287</a> - fix method name for spdr protocol handler.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1359">#1359</a> - Update UPnP ConnectionManager.pm to add checks for Wav and Opus (@BoringName15).</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1362">#1362</a> - Update UPnP AVTransport.pm to move LMS event registration (@BoringName15).</li>
@@ -64,7 +77,10 @@
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1414">#1414</a> - Make sure custom image proxy handlers are always called (fixes incompatibility with Radio Now Playing's SVG handler).</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1442">#1442</a> - Avoid log flood when player discovery JSON is empty (@mikecappella).</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1444">#1444</a> - Fix search using terms with quotes in the Default skin (@darrell-k).</li>
-		<li><a href="https://github.com/LMS-Community/slimserver/pull/1445">#1445</a> - Fix search result count (@darrell-k).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1444">#1444</a> - Fix search using terms with quotes in the Default skin (@darrell-k).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1460">#1460</a> - Don't close HTTP when 1.1, unless explicit asked (@philippe44).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1471">#1471</a> - Consider all of a track's genres for scrobbling exclusion (@jbylsma).</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1486">#1486</a> - Replay gain is sometimes not applied to remote tracks (@SamInPgh).</li>
 		<li></li>
 	</ul>
 	<br />
@@ -74,6 +90,7 @@
 		<li>Remove more left-overs from removed picture/video scanning.</li>
 		<li>Remove more left-overs from removed MySqueezebox integration.</li>
 		<li>Remove support for MySQL. Existing configurations using it will log an error.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1458">#1458</a> - Add devcontainer configuration with Dockerfile and docker-compose setup (@LMSSonos).</li>
 	</ul>
 	<br />
 </ul>
@@ -89,13 +106,16 @@
 
 	<li>Server Changes:</li>
 	<ul>
+		<li>Updated Czech translation - thanks @mipa87!</li>
 		<li></li>
 	</ul>
 	<br />
 
 	<li>Platform Support:</li>
 	<ul>
+		<li>Add Homebrew's binary path to OSX search paths.</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/issues/1441">#1441</a> - Install procps package Docker image in support of plugins which need the tools to manage their helper processes.</li>
+		<li>Make piCorePlayer a first class citizan: add Slim::Utils::OS::pCP to support it</li>
 	</ul>
 	<br />
 

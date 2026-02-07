@@ -71,6 +71,9 @@ sub _amap {
     $after_work = sub {
         my ($output, $err, $index) = @_;
 
+        # prevent handling the same output twice - some misbehaving actions might call us twice!
+        return if defined $outputs->[$index];
+
         $cb_count++;
         $inflight--;
 

@@ -13,7 +13,7 @@ use Slim::Utils::Strings qw(cstring);
 use Slim::Menu::SystemInfo;
 
 sub name {
-	return 'SERVER_STATUS';
+	return 'INFORMATION';
 }
 
 sub page {

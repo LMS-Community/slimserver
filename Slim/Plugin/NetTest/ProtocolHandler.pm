@@ -93,13 +93,13 @@ sub sysread {
 	return length $_[1];
 }
 
-sub currentrate { 
+sub currentrate {
 	my $self = shift;
 
 	return ${*$self}{'rate'};
 }
 
-sub testrate { 
+sub testrate {
 	my $self = shift;
 
 	return ${*$self}{'testrate'};
@@ -108,7 +108,7 @@ sub testrate {
 sub getMetadataFor {
 	my ($self, $client, $url) = @_;
 
-	my $fd = $client->controller()->songStreamController() ? $client->controller()->songStreamController()->streamHandler() : undef;
+	my $fd = ($client && $client->controller()->songStreamController()) ? $client->controller()->songStreamController()->streamHandler() : undef;
 
 	if ($fd && $fd->isa(__PACKAGE__)) {
 		return {

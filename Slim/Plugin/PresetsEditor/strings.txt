@@ -6,15 +6,17 @@ PLUGIN_PRESETS_EDITOR
 	FR	Editeur de présélections
 	HU	Előbeállítás szerkesztő
 	NL	Voorinstelling Aanpassen
+	SV	Redigera förinställningar
 
 PLUGIN_PRESETS_EDITOR_DESC
-	CS	Tento zásuvný modul umožňuje vizuálně upravovat konfiguraci tlačítek předvoleb Squeezeboxu.
+	CS	Tento zásuvný modul umožňuje vizuálně upravovat konfiguraci předvoleb tlačítek Squeezeboxu.
 	DA	Dette plugin giver dig mulighed for at konfigurere de forudindstillede knapper på din Squeezebox.
 	DE	Dieses Plugin erlaubt es ihnen, die Preset-Tasten ihrer Squeezebox zu konfigurieren.
 	EN	This plugin allows you to visually edit the configuration of your Squeezebox preset keys.
 	FR	Ce plugin vous permet de modifier visuellement la configuration de vos touches de présélection Squeezebox.
 	HU	Ez a beépülő modul lehetővé teszi a Squeezebox előre beállított konfigurációjának vizuális szerkesztését.
 	NL	Met deze plug-in kan je de voorinstelling van de knoppen van de Squeezebox spelers wijzigen.
+	SV	Detta pluginprogram gör det möjligt att visuellt programmera vilka förinställningar som skall ligga på spelarnas knappar.
 
 PLUGIN_PRESETS_EDITOR_NEED_WEBUI
 	CS	Chcete-li používat Editor předvoleb, musíte povolit webové uživatelské rozhraní.
@@ -24,3 +26,4 @@ PLUGIN_PRESETS_EDITOR_NEED_WEBUI
 	FR	Vous devez activer l'interface utilisateur Web pour utiliser l'éditeur de présélections.
 	HU	A Előbeállítás szerkesztő használatához engedélyeznie kell a webes felhasználói felületet.
 	NL	Je dient de web gebruikers interface in te schakelen om deze plug-in te kunnen gebruiken.
+	SV	För att kunna använda förinställningsredigeraren måste webgränssnittet aktiveras.

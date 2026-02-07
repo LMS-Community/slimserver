@@ -15,7 +15,7 @@ PLUGIN_DIGITAL_INPUT
 	NO	Digitale innganger
 	PL	Wejścia cyfrowe
 	RU	Цифровые входы
-	SV	Digital ingångar
+	SV	Digitala ingångar
 
 PLUGIN_DIGITAL_INPUT_DESC
 	CS	Digitální vstup pro Transporter
