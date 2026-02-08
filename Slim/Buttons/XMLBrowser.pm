@@ -860,6 +860,9 @@ sub gotOPML {
 				);
 
 			}
+			elsif ( $item->{'type'} && $item->{'type'} eq 'header' ) {
+				$client->bumpRight();
+			}	 
 			elsif ( Slim::Control::XMLBrowser::hasDescription($item) ) {
 
 				displayItemDescription($client, $item, $opml);
@@ -977,6 +980,9 @@ sub overlaySymbol {
 	elsif ( Slim::Control::XMLBrowser::hasAudio($item) ) {
 		$overlay = $client->symbols('notesymbol');
 	}
+	elsif ( $item->{type} && $item->{type} eq 'header' ) { 
+		 $overlay = $client->symbols('rightarrow') if exists $item->{items};
+	}	 
 	elsif ( !$item->{type} || $item->{type} ne 'text' ) {
 		$overlay = $client->symbols('rightarrow');
 	}
