@@ -323,6 +323,7 @@ sub doTagMapping {
 
 	if ( $prefs->get('useTIT1AsWork') ) {
 		$tagMapping{TIT1} = 'WORK';
+		$tagMapping{GRP1} = 'GROUPING';
 	}
 	else {
 		$tagMapping{TIT1} = 'GROUPING';

@@ -18615,21 +18615,21 @@ UNSYNC
 	ZH_CN	非同步
 
 SETUP_USETIT1ASWORK_DESC
-	DE	Bei Dateien mit ID3-Tags passen Sie diese Einstellung an das Verhalten Ihres Taggers an. Manche verwenden TIT1 für die Arbeitskennzeichnung, andere für die Gruppierung (und bei manchen ist dies konfigurierbar).
+	DE	Bei Dateien mit ID3-Tags passen Sie diese Einstellung an das Verhalten Ihres Taggers an. Manche verwenden TIT1 für den Werkstitel, andere für die Gruppierung (und bei manchen ist dies konfigurierbar).
 	EN	For files using ID3 tags, set this to match your tagger's behaviour. Some will use TIT1 for Work, some for Grouping (and in some it is configurable).
 	ES	Para archivos que usan etiquetas ID3, configure esto para que coincida con el comportamiento de su etiquetador. Algunos usarán TIT1 para Trabajo, otros para Agrupación (y en algunos casos es configurable).
 	FR	Pour les fichiers utilisant des tags ID3, configurez ce paramètre en fonction du comportement de votre logiciel de taggage. Certains utilisent TIT1 pour le travail, d'autres pour le regroupement (et dans certains cas, ce paramètre est configurable).
 	NL	Voor bestanden die ID3-tags gebruiken, moet u dit aanpassen aan het gedrag van uw tagger. Sommige gebruiken TIT1 voor Werk, andere voor Groepering (en in sommige gevallen is dit configureerbaar).
 
 SETUP_USETIT1ASWORK_1
-	DE	Behandle das MP3-Tag TIT1 als Arbeit und das MP3-Tag GRP1 als Gruppierung.
+	DE	Behandle das MP3-Tag TIT1 als Werk und das MP3-Tag GRP1 als Gruppierung.
 	EN	Treat MP3 tag TIT1 as Work and MP3 tag GRP1 as Grouping
 	ES	Trate la etiqueta MP3 TIT1 como Trabajo y la etiqueta MP3 GRP1 como Agrupación
 	FR	Traiter le tag MP3 TIT1 comme une œuvre et le tag MP3 GRP1 comme un groupement.
 	NL	Behandel MP3-tag TIT1 als Werk en MP3-tag GRP1 als Groepering
 
 SETUP_USETIT1ASWORK_0
-	DE	Behandeln Sie das MP3-Tag TIT1 als Gruppierung (erstellen Sie ein benutzerdefiniertes Tag WORK, falls Sie auch Work benötigen).
+	DE	Behandeln Sie das MP3-Tag TIT1 als Gruppierung (erstellen Sie ein benutzerdefiniertes Tag WORK, falls Sie auch Werk benötigen).
 	EN	Treat MP3 tag TIT1 as Grouping (create a user-defined tag of WORK if you also need Work)
 	ES	Trate la etiqueta MP3 TIT1 como Agrupación (cree una etiqueta definida por el usuario de WORK si también necesita Trabajo)
 	FR	Traitez le tag MP3 TIT1 comme un groupement (créez une tag personnalisée WORK si vous avez également besoin de Work).
