@@ -28,7 +28,7 @@ use constant LARGE_RESULTSET => 500;
 =cut
 
 use constant SQL_CREATE_TRACK_ITEM => q{
-	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+	INSERT INTO fulltext (id, type, w10, w5, w3, w1)
 		SELECT tracks.urlmd5 || tracks.id, 'track',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(tracks.title, '')) || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, '')),
@@ -57,21 +57,34 @@ use constant SQL_CREATE_TRACK_ITEM => q{
 		GROUP BY tracks.id;
 };
 
-use constant SQL_DROP_WORKTEMP => q{
-	DROP TABLE IF EXISTS worktemp;
+use constant SQL_CREATE_WORKTEMP => q{
+	CREATE TEMPORARY TABLE IF NOT EXISTS worktemp (
+		id integer,
+		w3 text
+		)
 };
 
-use constant SQL_CREATE_WORKTEMP => q{
-	CREATE TEMPORARY TABLE worktemp AS
+use constant SQL_CLEAR_WORKTEMP => q{
+	DELETE FROM worktemp;
+};
+
+use constant SQL_POPULATE_WORKTEMP => q{
+	INSERT INTO worktemp (id, w3)
 			SELECT tracks.id AS id, UNIQUE_TOKENS(CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track')) AS w3
 			FROM tracks JOIN contributor_track ON contributor_track.track = tracks.id
+			%s
 			GROUP BY tracks.id;
 };
 
-use constant SQL_CREATE_WORK_ITEM => q{
-	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
+use constant ALBUMS_ID_PREFIX       => 'YXLALBUMSYYYYYYYYYYYYYYYYYYYYYYY';
+use constant CONTRIBUTORS_ID_PREFIX => 'YXLCONTRIBUTORSYYYYYYYYYYYYYYYYY';
+use constant PLAYLISTS_ID_PREFIX    => 'YXLPLAYLISTSYYYYYYYYYYYYYYYYYYYY';
+use constant WORKS_ID_PREFIX        => 'YXLWORKSYYYYYYYYYYYYYYYYYYYYYYYY';
 
-		SELECT 'YXLWORKSYYYYYYYYYYYYYYYYYYYYYYYY' || works.id, 'work',
+use constant SQL_CREATE_WORK_ITEM => qq{
+	INSERT INTO fulltext (id, type, w10, w5, w3, w1)
+
+		SELECT '@{[ WORKS_ID_PREFIX ]}' || works.id, 'work',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(works.title, '')) || ' ' || IFNULL(works.titlesearch, '') || ' ' || IFNULL(contributors.namesearch, '')),
 		-- weight 5
@@ -91,9 +104,9 @@ use constant SQL_CREATE_WORK_ITEM => q{
 		GROUP BY works.id;
 };
 
-use constant SQL_CREATE_ALBUM_ITEM => q{
-	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
-		SELECT 'YXLALBUMSYYYYYYYYYYYYYYYYYYYYYYY' || albums.id, 'album',
+use constant SQL_CREATE_ALBUM_ITEM => qq{
+	INSERT INTO fulltext (id, type, w10, w5, w3, w1)
+		SELECT '@{[ ALBUMS_ID_PREFIX ]}' || albums.id, 'album',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(albums.title, '')) || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, '') || ' '
 		|| IFNULL((SELECT GROUP_CONCAT(wt,' ') FROM (SELECT DISTINCT works.titlesearch wt FROM tracks JOIN works ON tracks.work = works.id WHERE tracks.album = albums.id) ), ' ') ),
@@ -114,9 +127,9 @@ use constant SQL_CREATE_ALBUM_ITEM => q{
 		GROUP BY albums.id;
 };
 
-use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
-	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
-		SELECT 'YXLCONTRIBUTORSYYYYYYYYYYYYYYYYY' || contributors.id, 'contributor',
+use constant SQL_CREATE_CONTRIBUTOR_ITEM => qq{
+	INSERT INTO fulltext (id, type, w10, w5, w3, w1)
+		SELECT '@{[ CONTRIBUTORS_ID_PREFIX ]}' || contributors.id, 'contributor',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(contributors.name, '')) || ' ' || IFNULL(contributors.namesearch, '') || ' ' || IFNULL(contributors.customsearch, '')),
 		-- weight 5
@@ -130,20 +143,29 @@ use constant SQL_CREATE_CONTRIBUTOR_ITEM => q{
 };
 
 use constant SQL_CREATE_PLAYLIST_ITEM => CAN_FTS4
-? q{
+? qq{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
 		-- w10: title, w3: url, w1: track metadata
-		SELECT 'YXLPLAYLISTSYYYYYYYYYYYYYYYYYYYY' || playlist_track.playlist, 'playlist', ?, '', ?, UNIQUE_TOKENS(GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1))
+		SELECT '@{[ PLAYLISTS_ID_PREFIX ]}' || playlist_track.playlist, 'playlist', ?, '', ?, UNIQUE_TOKENS(GROUP_CONCAT(w10 || ' ' || w5 || ' ' || w3 || ' ' || w1))
 		FROM playlist_track
 			LEFT JOIN fulltext ON fulltext.id MATCH MD5(playlist_track.track) || '*'
 		WHERE playlist_track.playlist = ?
 }
-: q{
+: qq{
 	INSERT %s INTO fulltext (id, type, w10, w5, w3, w1)
 		-- w10: title, w3: url, w1: track metadata
-		SELECT 'YXLPLAYLISTSYYYYYYYYYYYYYYYYYYYY' || tracks.id, 'playlist', ?, '', ?, ''
+		SELECT '@{[ PLAYLISTS_ID_PREFIX ]}' || tracks.id, 'playlist', ?, '', ?, ''
 		FROM tracks
 		WHERE tracks.id = ?
+};
+
+use constant SQL_DELETE_FOR_TRACK => qq{
+	DELETE FROM fulltext
+		WHERE id = ? || ?
+			OR ( fulltext.type = 'contributor' AND REPLACE(fulltext.id, '@{[ CONTRIBUTORS_ID_PREFIX ]}', '') IN (SELECT contributor FROM contributor_track WHERE track=?) )
+			OR ( fulltext.type = 'contributor' AND fulltext.w10 <> ? AND NOT EXISTS (SELECT * FROM contributor_track WHERE contributor = REPLACE(fulltext.id, '@{[ CONTRIBUTORS_ID_PREFIX ]}', '')) )
+			OR ( fulltext.type = 'work' AND REPLACE(fulltext.id, '@{[ WORKS_ID_PREFIX ]}', '') IN (SELECT work FROM tracks WHERE id=?) )
+			OR ( fulltext.type = 'work' AND NOT EXISTS (SELECT * FROM works WHERE id = REPLACE(fulltext.id, '@{[ WORKS_ID_PREFIX ]}', '')) )
 };
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -233,9 +255,25 @@ sub checkSingleTrack {
 
 	my $dbh = Slim::Schema->dbh;
 
-	$dbh->do( sprintf(SQL_CREATE_TRACK_ITEM,       'OR REPLACE', 'WHERE tracks.id=?'),       undef, $trackObj->id );
-	$dbh->do( sprintf(SQL_CREATE_ALBUM_ITEM,       'OR REPLACE', 'WHERE albums.id=?'),       undef, $trackObj->albumid )  if $trackObj->albumid;
-	$dbh->do( sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, 'OR REPLACE', 'WHERE contributors.id=?'), undef, $trackObj->artistid ) if $trackObj->artistid;
+	my $deletionSql = SQL_DELETE_FOR_TRACK;
+	my @params = ($trackObj->urlmd5, $trackObj->id, $trackObj->id, uc(Slim::Music::Info::variousArtistString()), $trackObj->id);
+
+	if ($trackObj->albumid) {
+		$deletionSql .= qq{ OR id = '@{[ ALBUMS_ID_PREFIX ]}' || ?};
+		push @params, $trackObj->albumid;
+	}
+
+	$dbh->do($deletionSql, undef, @params);
+
+	$dbh->do( sprintf(SQL_CREATE_TRACK_ITEM,       'WHERE tracks.id=?'),       undef, $trackObj->id );
+	$dbh->do( sprintf(SQL_CREATE_ALBUM_ITEM,       'WHERE albums.id=?'),       undef, $trackObj->albumid ) if $trackObj->albumid;
+	$dbh->do( sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, 'WHERE contributors.id in (SELECT contributor FROM contributor_track WHERE track=?)'), undef, $trackObj->id );
+	if ($trackObj->work) {
+		$dbh->do( SQL_CREATE_WORKTEMP );
+		$dbh->do( sprintf(SQL_POPULATE_WORKTEMP, 'WHERE tracks.work=?'), undef, $trackObj->workid);
+		$dbh->do( sprintf(SQL_CREATE_WORK_ITEM,  'WHERE tracks.work=?'), undef, $trackObj->workid);
+		$dbh->do( SQL_CLEAR_WORKTEMP );
+	}
 }
 
 sub checkPlaylist {
@@ -326,7 +364,7 @@ sub parseSearchTerm {
 	# Check if the search string contains CJK (Chinese/Japanese/Korean) characters
 	# \p{Han} matches Chinese Han characters (covers both simplified and traditional Chinese, and Kanji)
 	# \p{Hiragana} matches Japanese Hiragana syllabary
-	# \p{Katakana} matches Japanese Katakana syllabary  
+	# \p{Katakana} matches Japanese Katakana syllabary
 	# \p{Hangul} matches Korean Hangul syllables
 	my $isCJK = ( $search =~ /\p{Han}|\p{Hiragana}|\p{Katakana}|\p{Hangul}/ );
 
@@ -335,10 +373,10 @@ sub parseSearchTerm {
 	while ($search =~ s/"(.+?)"//) {
 		my $quoted = $1;
 		if ( $isCJK ) {
-			# Since SQLite's full-text tokenizer does not use CJK punctuation for word segmentation, 
+			# Since SQLite's full-text tokenizer does not use CJK punctuation for word segmentation,
 			# we replace ASCII punctuation while preserving CJK punctuation.
 			#
-			# Punctuation characters; in the ‘C’ locale and ASCII character encoding, 
+			# Punctuation characters; in the ‘C’ locale and ASCII character encoding,
 			# this is ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~.
 			# https://www.gnu.org/software/grep/manual/html_node/Character-Classes-and-Bracket-Expressions.html
 			$quoted =~ s/[!"#\$%&'()*+,\-.\/:;<=>?@\[\\\]^_`{|}~]/ /g;
@@ -568,7 +606,7 @@ sub _rebuildIndex {
 	$progress && $progress->update(string('SONGS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
-	my $sql = sprintf(SQL_CREATE_TRACK_ITEM, '', '');
+	my $sql = sprintf(SQL_CREATE_TRACK_ITEM, '');
 
 #	main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($sql);
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
@@ -577,7 +615,7 @@ sub _rebuildIndex {
 	$scanlog->error("Create fulltext index for albums");
 	$progress && $progress->update(string('ALBUMS'));
 	Slim::Schema->forceCommit if main::SCANNER;
-	$sql = sprintf(SQL_CREATE_ALBUM_ITEM, '', '');
+	$sql = sprintf(SQL_CREATE_ALBUM_ITEM, '');
 
 #	main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($sql);
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
@@ -587,7 +625,7 @@ sub _rebuildIndex {
 	$progress && $progress->update(string('ARTISTS'));
 	Slim::Schema->forceCommit if main::SCANNER;
 
-	$sql = sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, '', '');
+	$sql = sprintf(SQL_CREATE_CONTRIBUTOR_ITEM, '');
 
 #	main::DEBUGLOG && $scanlog->is_debug && $scanlog->debug($sql);
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
@@ -596,9 +634,11 @@ sub _rebuildIndex {
 	$scanlog->error("Create fulltext index for works");
 	$progress && $progress->update(string('WORKS'));
 	Slim::Schema->forceCommit if main::SCANNER;
-	$dbh->do(SQL_DROP_WORKTEMP) or $scanlog->error($dbh->errstr);
 	$dbh->do(SQL_CREATE_WORKTEMP) or $scanlog->error($dbh->errstr);
-	$sql = sprintf(SQL_CREATE_WORK_ITEM, '', '');
+	$dbh->do(SQL_CLEAR_WORKTEMP) or $scanlog->error($dbh->errstr);
+	$sql = sprintf(SQL_POPULATE_WORKTEMP, '');
+	$dbh->do($sql) or $scanlog->error($dbh->errstr);
+	$sql = sprintf(SQL_CREATE_WORK_ITEM, '');
 	$dbh->do($sql) or $scanlog->error($dbh->errstr);
 	main::idleStreams() unless main::SCANNER;
 

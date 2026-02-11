@@ -2,7 +2,7 @@ package Slim::Player::ReplayGain;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -113,12 +113,12 @@ sub findTracksByIndex {
 		return $class->trackAlbumMatch($client, -$current_index);
 	}
 
-	# Get the track objects
+	# Get the track objects from the library or, if not available, from metadata
 	my $current_url   = Slim::Player::Playlist::track($client, $current_index);
-	my $current_track = Slim::Schema->objectForUrl({ 'url' => $current_url, 'create' => 1, 'readTags' => 1 });
+	my $current_track = Slim::Schema->libraryObjectForUrl({ 'url' => $current_url, 'create' => 1, 'readTags' => 1 });
 
 	my $compare_url   = Slim::Player::Playlist::track($client, $compare_index);
-	my $compare_track = Slim::Schema->objectForUrl({ 'url' => $compare_url, 'create' => 1, 'readTags' => 1 });
+	my $compare_track = Slim::Schema->libraryObjectForUrl({ 'url' => $compare_url, 'create' => 1, 'readTags' => 1 });
 
 	return ($current_track, $compare_track);
 }
@@ -132,29 +132,29 @@ sub trackAlbumMatch {
 	my $offset = shift;
 
 	my ($current_track, $compare_track) = $class->findTracksByIndex($client, $offset);
-	return if (!$current_track || !$compare_track);
+	return if (!$current_track || !$compare_track);  # Unknown
 
 	if (!blessed($current_track) || !blessed($compare_track)) {
 
 		logError("Couldn't find object for track: [$current_track] or [$compare_track] !");
 
-		return 0;
+		return;  # Unknown
 	}
 
 	if (!$current_track->can('album') || !$compare_track->can('album')) {
 
 		logError("Couldn't a find valid object for track: [$current_track] or [$compare_track] !");
 
-		return 0;
+		return;  # Unknown
 	}
 
-	# For remote tracks, get metadata from the protocol handler
-	if ( $current_track->remote ) {
-		if ( !$compare_track->remote ) {
-			# Other track is not remote, fail
-			return;
-		}
+	if ( $current_track->remote != $compare_track->remote ) {
+		# One is remote, the other isn't.
+		return 0;  # No match
+	}
 
+	if ( $current_track->remote && !$current_track->albumid) {  # both tracks are remote
+																# ..get metadata from the protocol handler
 		my $current_meta = {};
 		my $compare_meta = {};
 
@@ -173,24 +173,23 @@ sub trackAlbumMatch {
 			&& $compare_meta->{album}
 			&& $current_meta->{album} eq $compare_meta->{album}
 		) {
-			# Album metadata matches
-			return 1;
+			return 1;  # Metadata matches
 		}
 		else {
-			return;
+			return 0;  # No match
 		}
 	}
 
 	# Check for album and tracknum matches as expected
-	if ($compare_track->albumid && $current_track->albumid &&
+	if ( $compare_track->albumid && $current_track->albumid &&
 		($compare_track->albumid == $current_track->albumid) &&
 		defined $current_track->tracknum && defined $compare_track->tracknum &&
-		(($current_track->tracknum + $offset) == $compare_track->tracknum)) {
-
-		return 1;
+		(($current_track->tracknum + $offset) == $compare_track->tracknum)
+	) {
+		return 1;  # Metadata matches
 	}
 
-	return 0;
+	return 0;  # No match
 }
 
 # Identify whether the sample rates match between two tracks in a
@@ -202,29 +201,29 @@ sub trackSampleRateMatch {
 	my $offset = shift;
 
 	my ($current_track, $compare_track) = $class->findTracksByIndex($client, $offset);
-	return if (!$current_track || !$compare_track);
+	return if (!$current_track || !$compare_track);  # Unknown
 
 	if (!blessed($current_track) || !blessed($compare_track)) {
 
 		logError("Couldn't find object for track: [$current_track] or [$compare_track] !");
 
-		return 0;
+		return;  # Unknown
 	}
 
 	if (!$current_track->can('samplerate') || !$compare_track->can('samplerate')) {
 
 		logError("Couldn't a find valid object for track: [$current_track] or [$compare_track] !");
 
-		return 0;
+		return;  # Unknown
 	}
 
-	# For remote tracks, get metadata from the protocol handler
-	if ( $current_track->remote ) {
-	  if ( !$compare_track->remote ) {
-			# Other track is not remote, fail
-			return;
-		}
+	if ( $current_track->remote != $compare_track->remote ) {
+		# One is remote, the other isn't.
+		return 0;  # No match
+	}
 
+	if ( $current_track->remote && !$current_track->albumid) {  # both tracks are remote
+																# ..get metadata from the protocol handler
 		my $current_meta = {};
 		my $compare_meta = {};
 
@@ -247,7 +246,7 @@ sub trackSampleRateMatch {
 			return 1;
 		}
 		else {
-			return;
+			return 0;  # No match
 		}
 	}
 
@@ -257,10 +256,10 @@ sub trackSampleRateMatch {
 	if ($compare_rate && $current_rate &&
 		($compare_rate == $current_rate)) {
 
-		return 1;
+		return 1;  # Match
 	}
 
-	return 0;
+	return 0;  # No match
 }
 
 # Bug 5119
