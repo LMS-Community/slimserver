@@ -191,6 +191,7 @@ sub init {
 		'variousArtistAutoIdentification' => 1,
 		'useUnifiedArtistsList' => 0,
 		'useTPE2AsAlbumArtist'  => 1,
+		'useTIT1AsWork'         => 1,
 		'variousArtistsString'  => undef,
 		'releaseTypesToIgnore'  => [],
 		'ignoreReleaseTypes'    => 0,
@@ -409,7 +410,7 @@ sub init {
 
 	$prefs->setChange(
 		sub { Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]) },
-		qw(splitList groupdiscs useTPE2AsAlbumArtist cleanupReleaseTypes worksScan)
+		qw(splitList groupdiscs useTPE2AsAlbumArtist useTIT1AsWork cleanupReleaseTypes worksScan)
 	);
 
 	$prefs->setChange( sub {

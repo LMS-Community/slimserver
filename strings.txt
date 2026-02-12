@@ -18614,6 +18614,27 @@ UNSYNC
 	SV	Avsluta synkronisering
 	ZH_CN	非同步
 
+SETUP_USETIT1ASWORK_DESC
+	DE	Bei Dateien mit ID3-Tags passen Sie diese Einstellung an das Verhalten Ihres Taggers an. Manche verwenden TIT1 für den Werkstitel, andere für die Gruppierung (und bei manchen ist dies konfigurierbar).
+	EN	For files using ID3 tags, set this to match your tagger's behaviour. Some will use TIT1 for Work, some for Grouping (and in some it is configurable).
+	ES	Para archivos que usan etiquetas ID3, configure esto para que coincida con el comportamiento de su etiquetador. Algunos usarán TIT1 para Trabajo, otros para Agrupación (y en algunos casos es configurable).
+	FR	Pour les fichiers utilisant des tags ID3, configurez ce paramètre en fonction du comportement de votre logiciel de taggage. Certains utilisent TIT1 pour l'œuvre, d'autres pour le regroupement (et dans certains cas, ce paramètre est configurable).
+	NL	Voor bestanden die ID3-tags gebruiken, moet u dit aanpassen aan het gedrag van uw tagger. Sommige gebruiken TIT1 voor Werk, andere voor Groepering (en in sommige gevallen is dit configureerbaar).
+
+SETUP_USETIT1ASWORK_1
+	DE	Behandle das MP3-Tag TIT1 als Werk und das MP3-Tag GRP1 als Gruppierung.
+	EN	Treat MP3 tag TIT1 as Work and MP3 tag GRP1 as Grouping
+	ES	Trate la etiqueta MP3 TIT1 como Trabajo y la etiqueta MP3 GRP1 como Agrupación
+	FR	Traiter le tag MP3 TIT1 comme une œuvre et le tag MP3 GRP1 comme un groupement.
+	NL	Behandel MP3-tag TIT1 als Werk en MP3-tag GRP1 als Groepering
+
+SETUP_USETIT1ASWORK_0
+	DE	Behandle das MP3-Tag TIT1 als Gruppierung (erstellen Sie ein benutzerdefiniertes Tag WORK, falls Sie auch Werk benötigen).
+	EN	Treat MP3 tag TIT1 as Grouping (create a user-defined tag of WORK if you also need Work)
+	ES	Trate la etiqueta MP3 TIT1 como Agrupación (cree una etiqueta definida por el usuario de WORK si también necesita Trabajo)
+	FR	Traitez le tag MP3 TIT1 comme un groupement (créez une tag personnalisée WORK si vous avez également besoin de d'œuvre).
+	NL	Behandel MP3-tag TIT1 als Groepering (maak een door de gebruiker gedefinieerde tag WORK aan als je Work ook nodig hebt).
+
 SETUP_USETPE2ASALBUMARTIST_DESC
 	CS	Formát MP3 tagů neposkytuje standardní způsob, jak definovat Interpreta alba. Některé nástroje pro MP3 tagy používají pro Interpreta alba pole TPE2 (iTunes, Winamp, Windows Media Player), jiné je mohou používat pro zamýšlený význam „Skupina/orchestr“. Zvolte význam, který má Lyrion Music Server používat. Změna tohoto nastavení spustí nové prohledání vaší hudební knihovny.
 	DA	MP3-mærkeformatet er en standardiseret metode til at definere en kunstner og dennes album. Nogle programmer til at håndtere mp3-mærker benytter feltet TPE2 til Albumkunstner (iTunes, Winamp, Windows Media Player) mens andre benytter det til den intenderede betydning af  Band/orkester. Du skal vælge hvilken model der skal bruges i Lyrion Music Server. Hvis du ændrer indstillingen, bliver hele musikbiblioteket gennemsøgt igen.
@@ -18635,7 +18656,7 @@ SETUP_USETPE2ASALBUMARTIST_1
 	CS	Považovat tag TPE2 MP3 za Interpreta alba
 	DA	Opfat TPE2 MP3-koder som Albumkunstner
 	DE	TPE2 MP3-Tag als Interpreten des Albums behandeln
-	EN	Treat TPE2 MP3 tag as Album Artist
+	EN	Treat TPE2 MP3 tag as Album Artist (create a user-defined tag of BAND if you also need band/orchestra)
 	ES	Tratar etiqueta TPE2 MP3 como artista de álbum
 	FI	Käsittele TPE2 MP3 -tagia levyartistina
 	FR	Traiter le tag MP3 TPE2 en tant qu'artiste de l'album

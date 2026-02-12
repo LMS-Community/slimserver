@@ -105,6 +105,13 @@
 			<label for="pref_useTPE2AsAlbumArtist1" class="stdlabel">[% 'SETUP_USETPE2ASALBUMARTIST_1' | getstring %]</label><br/>
 		[% END %]
 
+		[% WRAPPER settingGroup desc="SETUP_USETIT1ASWORK_DESC"%]
+			<input type="radio" name="pref_useTIT1AsWork" id="pref_useTIT1AsWork1" value="1" [% IF prefs.pref_useTIT1AsWork %]checked="checked"[% END %] />
+			<label for="pref_useTIT1AsWork1" class="stdlabel">[% 'SETUP_USETIT1ASWORK_1' | getstring %]</label><br/>
+			<input type="radio" name="pref_useTIT1AsWork" id="pref_useTIT1AsWork0" value="0" [% IF NOT prefs.pref_useTIT1AsWork %]checked="checked"[% END %] />
+			<label for="pref_useTIT1AsWork0" class="stdlabel">[% 'SETUP_USETIT1ASWORK_0' | getstring %]</label><br/>
+		[% END %]
+
 		[% WRAPPER settingGroup title="SETUP_MYCLASSICALGENRES" desc="SETUP_MYCLASSICALGENRES_DESC" %]
 			<input type="text" class="stdedit" name="pref_myClassicalGenres" id="myClassicalGenres" value="[% prefs.pref_myClassicalGenres | html %]" size="40" placeholder="[% "GENRES" | string | html %]"><br/>
 		[% END %]
