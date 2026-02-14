@@ -3374,7 +3374,7 @@ sub _workRequired {
 
 	return $prefs->get('worksScan') == SCAN_WORKS_FOR_MY_CLASSICAL_GENRES
 		? Slim::Schema::Genre->isMyClassicalGenre($genres)
-		: SCAN_WORKS_FOR_MY_CLASSICAL_GENRES;
+		: $prefs->get('worksScan');
 }
 
 =head1 SEE ALSO
