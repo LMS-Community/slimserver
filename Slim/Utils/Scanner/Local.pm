@@ -1199,33 +1199,38 @@ sub markDone {
 	if ( !main::SCANNER ) {
 		Slim::Music::Artwork->updateStandaloneArtwork( sub {
 
-			# Precache artwork, when done send rescan done event
-			Slim::Music::Artwork->precacheAllArtwork( sub {
-				# Update the last rescan time if any changes were made
-				if ($changes) {
-					main::DEBUGLOG && $log->is_debug && $log->debug("Scanner made $changes changes, updating last rescan timestamp");
-					Slim::Music::Import->setLastScanTime();
-					Slim::Music::Import->setLastScanTimeIsDST();
-				}
+			# Update parent directory artwork for multi-disc albums (box sets)
+			Slim::Music::Artwork->updateParentDirectoryArtwork( sub {
 
-				# Persist the count of "changes since last optimization"
-				# so for example adding 50 tracks, then 50 more would trigger optimize
-				$changes += _getChangeCount();
-				if ( $changes >= OPTIMIZE_THRESHOLD ) {
-					main::DEBUGLOG && $log->is_debug && $log->debug("Scan change count reached $changes, optimizing database");
-					Slim::Schema->optimizeDB() if main::SCANNER;		# in the standalone scanner optimize will always be run at the end
-					_setChangeCount(0);
-				}
-				else {
-					_setChangeCount($changes);
-				}
+				# Precache artwork, when done send rescan done event
+				Slim::Music::Artwork->precacheAllArtwork( sub {
+					# Update the last rescan time if any changes were made
+					if ($changes) {
+						main::DEBUGLOG && $log->is_debug && $log->debug("Scanner made $changes changes, updating last rescan timestamp");
+						Slim::Music::Import->setLastScanTime();
+						Slim::Music::Import->setLastScanTimeIsDST();
+					}
 
-				Slim::Music::Import->setIsScanning(0);
-				Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
+					# Persist the count of "changes since last optimization"
+					# so for example adding 50 tracks, then 50 more would trigger optimize
+					$changes += _getChangeCount();
+					if ( $changes >= OPTIMIZE_THRESHOLD ) {
+						main::DEBUGLOG && $log->is_debug && $log->debug("Scan change count reached $changes, optimizing database");
+						Slim::Schema->optimizeDB() if main::SCANNER;		# in the standalone scanner optimize will always be run at the end
+						_setChangeCount(0);
+					}
+					else {
+						_setChangeCount($changes);
+					}
 
-				if ( $args->{onFinished} ) {
-					$args->{onFinished}->();
-				}
+					Slim::Music::Import->setIsScanning(0);
+					Slim::Control::Request::notifyFromArray( undef, [ 'rescan', 'done' ] );
+
+					if ( $args->{onFinished} ) {
+						$args->{onFinished}->();
+					}
+				} );
+
 			} );
 
 		} );
