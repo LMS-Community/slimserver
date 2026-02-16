@@ -266,10 +266,31 @@ sub artworkRequest {
 			}
 		}
 
+		# Check albums.cover for parent directory artwork (e.g., box set covers)
+		# This overrides track artwork when set, allowing album-level artwork
+		if ( $id =~ /^[0-9a-f]{8}$/ ) {
+			$log->error("Graphics: Checking albums.cover for coverid $id");
+			my $album_cover_sth = Slim::Schema->dbh->prepare_cached( qq{
+				SELECT cover FROM albums WHERE artwork = ? AND cover IS NOT NULL AND cover != ''
+			} );
+			$album_cover_sth->execute($id);
+			my ($album_cover) = $album_cover_sth->fetchrow_array;
+			$album_cover_sth->finish;
+			
+			$log->error("Graphics: album_cover query returned: " . ($album_cover // 'undef'));
+			
+			if ($album_cover && -e $album_cover) {
+				$log->error("Graphics: Using album cover: $album_cover");
+				$cover = $album_cover;
+			} elsif ($album_cover) {
+				$log->error("Graphics: album_cover file doesn't exist: $album_cover");
+			}
+		}
+
 		if ($fullpath) {
 			# happy path - nothing to do here
 		}
-		elsif ( !$url || !$cover ) {
+		elsif ( !$cover ) {
 			# Invalid ID or no cover available, use generic CD image
 			if ($id =~ /^-/) {
 				$path = 'html/images/radio_';
