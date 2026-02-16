@@ -387,7 +387,7 @@ sub parseSearchTerm {
 		push @quoted, '"' . $quoted . '"';
 	}
 
-	my @tokens = grep /\w+/, split(/[\s[:punct:]]/, $search);
+	my @tokens = grep /\-?\w/, split(/(?[ ( [:punct:] - [-] ) + \s ])|\b\-/, $search);
 	my $noOfTokens = scalar(@tokens) + scalar(@quoted);
 
 	my @tokens = map {
