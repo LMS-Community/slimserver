@@ -94,7 +94,7 @@ my %externalHandlers;
 
 use constant ONE_YEAR => 86400 * 365;
 use constant ACCEPT_IMAGE_FORMATS => 'image/jpeg,image/png;q=0.9' . (Image::Scale->gif_version() ? ',image/gif;q=0.1' : '');
-use constant REDIRECT_IMAGE_TO_JPEG => 'https://api.lms-community.org/img2compatible/';
+use constant REDIRECT_IMAGE_TO_COMPATIBLE => 'https://api.lms-community.org/img/compatible/';
 
 my $log   = logger('artwork.imageproxy');
 my $prefs = preferences('server');
@@ -525,7 +525,7 @@ sub getRightSize {
 }
 
 sub urlToCloudResizer {
-	return REDIRECT_IMAGE_TO_JPEG . uri_escape_utf8($_[0]);
+	return REDIRECT_IMAGE_TO_COMPATIBLE . uri_escape_utf8($_[0]);
 }
 
 1;
