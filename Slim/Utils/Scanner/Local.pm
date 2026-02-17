@@ -1088,10 +1088,14 @@ sub changed {
 			$track->update;
 
 			# Make sure album.artwork points to this track, so the album
-			# uses the newest available artwork
-			if ( my $coverid = $track->coverid ) {
-				if ( $album->artwork ne $coverid ) {
-					$album->artwork($coverid);
+			# uses the newest available artwork. Skip this when albums.cover
+			# is set, because box-set parent artwork should remain authoritative.
+			my $albumHasParentCover = $album && defined $album->cover && length $album->cover;
+			if ( !$albumHasParentCover ) {
+				if ( my $coverid = $track->coverid ) {
+					if ( $album->artwork ne $coverid ) {
+						$album->artwork($coverid);
+					}
 				}
 			}
 

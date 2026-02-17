@@ -1372,11 +1372,11 @@ sub _createOrUpdateAlbum {
 		$albumHash->{title} = $title;
 	}
 
-	# Link album cover to track cover
-	# Future TODO: if an album has multiple images i.e. Ghosts,
-	# prefer cover.jpg instead of embedded artwork for album?
-	# Would require an additional cover column in the albums table
-	if ( $trackColumns->{coverid} || ($trackColumns->{cover} && $trackColumns->{cover} =~ /^https?/) ) {
+	# Link album cover to track cover unless a parent-level cover has been set
+	# When albums.cover is populated (box-set parent artwork), keep using that coverid
+	# so targeted rescans do not overwrite the album artwork with embedded track art
+	my $hasParentCover = defined $albumHash->{cover} && length $albumHash->{cover};
+	if ( !$hasParentCover && ($trackColumns->{coverid} || ($trackColumns->{cover} && $trackColumns->{cover} =~ /^https?/) ) ) {
 		$albumHash->{artwork} = $trackColumns->{coverid} || $trackColumns->{cover};
 	}
 
