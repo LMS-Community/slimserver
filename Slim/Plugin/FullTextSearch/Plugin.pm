@@ -2,6 +2,7 @@ package Slim::Plugin::FullTextSearch::Plugin;
 
 use strict;
 use Tie::Cache::LRU::Expires;
+no warnings 'experimental::regex_sets';
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
