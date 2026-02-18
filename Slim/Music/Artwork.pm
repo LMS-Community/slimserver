@@ -216,7 +216,8 @@ sub findStandaloneArtwork {
 
 sub updateStandaloneArtwork {
 	my $class = shift;
-	my $cb    = shift; # optional callback when done (main process async mode)
+	my ($cb, $opts) = _extractArtworkTaskArgs(@_);
+	$opts ||= {};
 
 	my $dbh = Slim::Schema->dbh;
 
@@ -245,6 +246,13 @@ sub updateStandaloneArtwork {
 			tracks.url LIKE '$singledir%'
 			AND ($where)
 		};
+	}
+
+	my @bind;
+	if ( my @albumFilter = _sanitizeAlbumIds( $opts->{albums} ) ) {
+		my $placeholders = join(',', ('?') x @albumFilter);
+		$where .= " AND tracks.album IN ($placeholders)";
+		push @bind, @albumFilter;
 	}
 
 	# Find all tracks with un-cached artwork:
@@ -281,7 +289,7 @@ sub updateStandaloneArtwork {
 
 	my ($count) = $dbh->selectrow_array( qq{
 		SELECT COUNT(*) FROM ( $sql ) AS t1
-	} );
+	}, undef, @bind );
 
 	$log->error("Starting updateStandaloneArtwork for $count albums");
 
@@ -299,7 +307,7 @@ sub updateStandaloneArtwork {
 	} );
 
 	my $sth = $dbh->prepare($sql);
-	$sth->execute;
+	$sth->execute(@bind);
 
 	my ($trackid, $url, $cover, $coverid, $albumid, $album_title, $album_artwork, $album_cover);
 	$sth->bind_columns(\$trackid, \$url, \$cover, \$coverid, \$albumid, \$album_title, \$album_artwork, \$album_cover);
@@ -426,7 +434,8 @@ discs retain their own track-level artwork.
 
 sub updateParentDirectoryArtwork {
 	my $class = shift;
-	my $cb    = shift; # optional callback when done
+	my ($cb, $opts) = _extractArtworkTaskArgs(@_);
+	$opts ||= {};
 
 	my $dbh = Slim::Schema->dbh;
 	my $log = logger('scan.artwork');
@@ -435,6 +444,14 @@ sub updateParentDirectoryArtwork {
 
 	# Find multi-disc albums (disc count > 1). They might span multiple directories
 	# or keep everything in a single folder with disc-specific artwork.
+	my @bind;
+	my $albumFilterSql = '';
+	if ( my @albumFilter = _sanitizeAlbumIds( $opts->{albums} ) ) {
+		my $placeholders = join(',', ('?') x @albumFilter);
+		$albumFilterSql = "AND albums.id IN ($placeholders)";
+		push @bind, @albumFilter;
+	}
+
 	my $sql = qq{
 		SELECT 
 			albums.id AS album_id,
@@ -450,6 +467,7 @@ sub updateParentDirectoryArtwork {
 		FROM albums
 		JOIN tracks ON tracks.album = albums.id
 		WHERE tracks.url LIKE 'file://%'
+		$albumFilterSql
 		GROUP BY albums.id
 		HAVING COUNT(DISTINCT tracks.disc) > 1
 	};
@@ -460,7 +478,7 @@ sub updateParentDirectoryArtwork {
 
 	my @albums_to_check;
 	my $sth = $dbh->prepare($sql);
-	$sth->execute;
+	$sth->execute(@bind);
 
 	while (my $row = $sth->fetchrow_hashref) {
 		push @albums_to_check, $row;
@@ -1246,6 +1264,39 @@ sub precacheAllArtwork {
 		# Run async in main process
 		Slim::Utils::Scheduler::add_ordered_task($work);
 	}
+}
+
+sub _extractArtworkTaskArgs {
+	my @args = @_;
+	my $cb;
+	my $opts = {};
+	for my $arg (@args) {
+		next unless ref $arg;
+		if ( ref $arg eq 'CODE' && !$cb ) {
+			$cb = $arg;
+			next;
+		}
+		if ( ref $arg eq 'HASH' ) {
+			$opts = $arg;
+		}
+	}
+	return ( $cb, $opts );
+}
+
+sub _sanitizeAlbumIds {
+	my $candidates = shift;
+	return () unless $candidates && ref $candidates eq 'ARRAY';
+
+	my %seen;
+	my @valid;
+	for my $id (@$candidates) {
+		next unless defined $id;
+		next unless $id =~ /^\d+$/;
+		next if $seen{$id}++;
+		push @valid, $id;
+	}
+
+	return @valid;
 }
 
 sub getResizeSpecs {

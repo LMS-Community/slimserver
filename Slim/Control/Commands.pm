@@ -38,6 +38,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Scanner::Local;
+use Slim::Music::Artwork;
 
 my $log = logger('control.command');
 
@@ -2779,6 +2780,21 @@ sub rescanCommand {
 			types     => 'audio',
 			recursive => 0,
 		} ) if scalar @paths;
+
+		my %albumIds;
+		for my $track (@tracks) {
+			next unless blessed($track);
+			my $album = eval { $track->album };
+			next unless $album && blessed($album);
+			my $albumId = $album->id;
+			next unless defined $albumId;
+			$albumIds{$albumId} = 1;
+		}
+
+		my @albumIds = keys %albumIds;
+		if ( @albumIds ) {
+			Slim::Music::Artwork->updateParentDirectoryArtwork( undef, { albums => \@albumIds } );
+		}
 	}
 	else {
 		# In-process scan
