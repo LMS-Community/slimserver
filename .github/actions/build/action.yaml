@@ -65,9 +65,9 @@ runs:
       run: |
         if [ "${{ inputs.build-type }}" = "release" ]; then
           echo "LMS_TAG=--tag=rc" >> $GITHUB_OUTPUT
-        elif [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "9.1" ]; then
+        elif [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "9.2" ]; then
           echo "LMS_TAG=--tag=dev,${{ steps.getversion.outputs.LMS_FULL_VERSION }}-dev" >> $GITHUB_OUTPUT
-        elif [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "9.0" ]; then
+        elif [ "${{ steps.getversion.outputs.LMS_VERSION }}" = "9.1" ]; then
           echo "LMS_TAG=--tag=stable,${{ steps.getversion.outputs.LMS_FULL_VERSION }}-stable" >> $GITHUB_OUTPUT
         else
           echo "UNKNOWN DOCKER TARGET TAG"

@@ -10,7 +10,7 @@ on:
         description: 'The branch from which to build from'
         required: true
         # TODO - make this dynamic, or something like https://dev.to/mrmike/github-action-handling-input-default-value-5f2g?
-        default: public/9.0
+        default: public/9.2
       build_type:
         type: choice
         description: 'Is this a nightly or a release build?'
