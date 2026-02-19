@@ -97,32 +97,32 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
-	CS	© 2001-2026 Lyrion verze 9.1.0
-	DA	© 2001-2026 Lyrion - version 9.1.0
-	EN	© 2001-2026 Lyrion Version 9.1.0
-	ES	© 2001-2026 Lyrion Versión 9.1.0
-	FI	© 2001-2026 Lyrionin versio 9.1.0
-	IT	© 2001-2026 Lyrion versione 9.1.0
-	NL	© 2001-2026 Lyrion versie 9.1.0
-	NO	© 2001–2026 Lyrion versjon 9.1.0
-	PL	© 2001-2026 Lyrion wersja 9.1.0
-	PT	© 2001-2026 Lyrion wersão 9.1.0
-	RU	© Lyrion, 2001-2026. Версия 9.1.0
-	SV	© 2001–2026 Lyrion Version 9.1.0
+	CS	© 2001-2026 Lyrion verze 9.1.1
+	DA	© 2001-2026 Lyrion - version 9.1.1
+	EN	© 2001-2026 Lyrion Version 9.1.1
+	ES	© 2001-2026 Lyrion Versión 9.1.1
+	FI	© 2001-2026 Lyrionin versio 9.1.1
+	IT	© 2001-2026 Lyrion versione 9.1.1
+	NL	© 2001-2026 Lyrion versie 9.1.1
+	NO	© 2001–2026 Lyrion versjon 9.1.1
+	PL	© 2001-2026 Lyrion wersja 9.1.1
+	PT	© 2001-2026 Lyrion wersão 9.1.1
+	RU	© Lyrion, 2001-2026. Версия 9.1.1
+	SV	© 2001–2026 Lyrion Version 9.1.1
 
 VERSION
-	CS	Verze 9.1.0 / r%s
-	EN	Version 9.1.0 / r%s
-	ES	Versión 9.1.0 / r%s
-	FI	Versio 9.1.0 / r%s
-	HU	Versio 9.1.0 / r%s
-	IT	Versione 9.1.0/r%s
-	NL	Versie 9.1.0 / r%s
-	NO	Versjon 9.1.0 / r%s
-	PL	Wersja 9.1.0 / r%s
-	PT	Versão 9.1.0 / r%s
-	RU	Версия 9.1.0 / r%s
-	ZH_CN	版本 9.1.0 / r%s
+	CS	Verze 9.1.1 / r%s
+	EN	Version 9.1.1 / r%s
+	ES	Versión 9.1.1 / r%s
+	FI	Versio 9.1.1 / r%s
+	HU	Versio 9.1.1 / r%s
+	IT	Versione 9.1.1/r%s
+	NL	Versie 9.1.1 / r%s
+	NO	Versjon 9.1.1 / r%s
+	PL	Wersja 9.1.1 / r%s
+	PT	Versão 9.1.1 / r%s
+	RU	Версия 9.1.1 / r%s
+	ZH_CN	版本 9.1.1 / r%s
 
 LOADING_SQUEEZEBOX_SERVER
 	CS	Načítání Lyrion Music Serveru...
