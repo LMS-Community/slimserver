@@ -597,6 +597,8 @@ sub alarmSettingsQuery {
 	my @menu = ();
 	return \@menu unless $client;
 
+	my $playerTZ = $prefs->client($client)->get('timezone');
+
 	# All Alarms On/Off
 
 	my $val = $prefs->client($client)->get('alarmsEnabled');
@@ -649,6 +651,7 @@ sub alarmSettingsQuery {
 				params => {
 					time => '__TAGGEDINPUT__',
 					enabled => 1,
+					(defined $playerTZ ? (timezone => $playerTZ) : ()),
 				},
 			},
 		},
@@ -709,6 +712,7 @@ sub alarmUpdateMenu {
 	}
 
 	my $alarm = Slim::Utils::Alarm->getAlarm($client, $params->{id});
+	my $playerTZ = $prefs->client($client)->get('timezone');
 	my @menu = ();
 
 	my $enabled = $alarm->enabled();
@@ -755,6 +759,7 @@ sub alarmUpdateMenu {
 				params => {
 					id   => $params->{id},
 					time => '__TAGGEDINPUT__',
+					(defined $playerTZ ? (timezone => $playerTZ) : ()),
 				},
 			},
 		},

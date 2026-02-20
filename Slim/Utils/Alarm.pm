@@ -43,6 +43,7 @@ Two types of alarm are implemented - daily alarms and calendar alarms.  Daily al
 =cut
 
 #use Data::Dumper;
+use POSIX qw(tzset);
 use Time::HiRes;
 use URI::Escape qw(uri_unescape);
 
@@ -122,6 +123,7 @@ sub new {
 		_playlist => undef,
 		_title => undef,
 		_volume => undef, # Use default volume
+		_timezone => undef, # Olson timezone name e.g. 'America/New_York'. undef = use server timezone
 		_active => 0,
 		_snoozeActive => 0,
 		_nextDue => undef,
@@ -296,6 +298,25 @@ sub time {
 	return $self->{_time};
 }
 
+=head3 timezone( [ $timezone ] )
+
+Sets/returns the Olson timezone name for this alarm (e.g. 'America/New_York').  When set, the alarm
+will fire at the stored time-of-day in this timezone rather than the server's local timezone.
+When undef (the default), the server's local timezone is used.
+
+=cut
+
+sub timezone {
+	my $self = shift;
+	my $timezone = shift;
+
+	if (defined $timezone) {
+		$self->{_timezone} = $timezone;
+	}
+
+	return $self->{_timezone};
+}
+
 =head3 id( )
 
 Returns the unique id for this alarm.
@@ -442,8 +463,23 @@ sub findNextTime {
 	my $client = $self->client;
 
 	if (defined $self->{_days}) {
-		# Convert base time into a weekday number and time
-		my ($sec, $min, $hour, $mday, $mon, $year, $wday)  = localtime($baseTime);
+		# Convert base time into a weekday number and time, using the alarm's
+		# timezone if set, otherwise the server's local timezone.
+		my ($sec, $min, $hour, $mday, $mon, $year, $wday);
+		if (defined $self->{_timezone}) {
+			my $oldTZ = $ENV{TZ};
+			$ENV{TZ} = $self->{_timezone};
+			POSIX::tzset();
+			($sec, $min, $hour, $mday, $mon, $year, $wday) = localtime($baseTime);
+			if (defined $oldTZ) {
+				$ENV{TZ} = $oldTZ;
+			} else {
+				delete $ENV{TZ};
+			}
+			POSIX::tzset();
+		} else {
+			($sec, $min, $hour, $mday, $mon, $year, $wday) = localtime($baseTime);
+		}
 
 		# Find the first enabled alarm starting at baseTime's day num
 		my $day = $wday;
@@ -1073,6 +1109,7 @@ sub _createSaveable {
 		_title => $self->{_title},
 		_volume => $self->{_volume},
 		_comment => $self->{_comment},
+		_timezone => $self->{_timezone},
 		_id => $self->{_id},
 		_createTime => $self->{_createTime},
 	};
@@ -1340,6 +1377,7 @@ sub loadAlarms {
 		$alarm->{_title} = $prefAlarm->{_title};
 		$alarm->{_volume} = $prefAlarm->{_volume};
 		$alarm->{_comment} = $prefAlarm->{_comment};
+		$alarm->{_timezone} = $prefAlarm->{_timezone};
 		$alarm->{_id} = $prefAlarm->{_id};
 		# Fix up createTime for alarms that pre-date its introduction
 		my $needsSaving = 0;
