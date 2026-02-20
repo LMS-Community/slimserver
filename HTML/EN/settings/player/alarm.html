@@ -103,6 +103,11 @@
 
 [% PROCESS settings/header.html %]
 
+	<input type="hidden" name="alarmtimezone" id="alarmtimezone" value="" />
+	<script>
+		document.getElementById('alarmtimezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	</script>
+
 	[% WRAPPER setting title="ALARM_ALL_ALARMS" desc="ALARM_ALARMS_ENABLED_DESC" %]
 		<select class="stdedit" name="pref_alarmsEnabled" id="pref_alarmsEnabled">
 

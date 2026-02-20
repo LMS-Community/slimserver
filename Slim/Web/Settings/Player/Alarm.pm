@@ -160,6 +160,7 @@ sub saveAlarm {
 	}
 
 	$alarm->time($t);
+	$alarm->timezone( $paramRef->{'alarmtimezone'} ) if $paramRef->{'alarmtimezone'};
 	$alarm->enabled( $paramRef->{'alarm_enable' . $id} );
 	$alarm->repeat( $paramRef->{'alarm_repeat' . $id} );
 	$alarm->shufflemode( $paramRef->{'alarm_shufflemode' . $id} );
