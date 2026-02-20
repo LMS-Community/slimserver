@@ -31,9 +31,11 @@ sub handler {
 
 	if ($params->{'saveSettings'} && $params->{'pref_time'}) {
 		$prefs->set('time', Slim::Utils::DateTime::prettyTimeToSecs($params->{'pref_time'}));
+		$prefs->set('timezone', $params->{'pref_timezone'}) if $params->{'pref_timezone'};
 	}
 
-	$params->{'prefs'}->{'pref_time'} = Slim::Utils::DateTime::secsToPrettyTime($prefs->get('time'));
+	$params->{'prefs'}->{'pref_time'}     = Slim::Utils::DateTime::secsToPrettyTime($prefs->get('time'));
+	$params->{'prefs'}->{'pref_timezone'} = $prefs->get('timezone');
 
 	my $scanTypes = Slim::Music::Import->getScanTypes();
 	$params->{'scanTypes'} = { map { $_ => $scanTypes->{$_}->{name} } grep /\d.+/, keys %$scanTypes };

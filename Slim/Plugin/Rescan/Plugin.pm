@@ -12,6 +12,7 @@ package Slim::Plugin::Rescan::Plugin;
 # version 2.
 
 use strict;
+use POSIX qw(tzset);
 use Time::HiRes;
 
 use base qw(Slim::Plugin::Base);
@@ -57,9 +58,10 @@ sub initPlugin {
 	}
 
 
-	Slim::Control::Request::addDispatch(['rescanplugin', 'rescan'],   [0, 0, 0, \&executeRescan]);
-	Slim::Control::Request::addDispatch(['rescanplugin', 'menu'],     [0, 1, 0, \&jiveRescanMenu]);
-	Slim::Control::Request::addDispatch(['rescanplugin', 'typemenu'], [0, 1, 0, \&jiveRescanTypeMenu]);
+	Slim::Control::Request::addDispatch(['rescanplugin', 'rescan'],    [0, 0, 0, \&executeRescan]);
+	Slim::Control::Request::addDispatch(['rescanplugin', 'menu'],      [0, 1, 0, \&jiveRescanMenu]);
+	Slim::Control::Request::addDispatch(['rescanplugin', 'typemenu'],  [0, 1, 0, \&jiveRescanTypeMenu]);
+	Slim::Control::Request::addDispatch(['rescanplugin', 'settimer'],  [0, 0, 0, \&jiveSetTimer]);
 
 	Slim::Control::Jive::registerPluginMenu([{
 		text    => $class->getDisplayName,
@@ -76,9 +78,23 @@ sub initPlugin {
 	setTimer();
 }
 
+sub jiveSetTimer {
+	my $request = shift;
+
+	my $time     = $request->getParam('time');
+	my $timezone = $request->getParam('timezone');
+
+	$prefs->set('time', $time) if defined $time;
+	$prefs->set('timezone', $timezone) if defined $timezone;
+
+	$request->setStatusDone();
+}
+
 sub jiveRescanMenu {
 	my $request = shift;
 	my $client  = $request->client();
+
+	my $playerTZ = Slim::Utils::Prefs::preferences('server')->client($client)->get('timezone');
 
 	$request->addResult('offset', 0);
 
@@ -96,10 +112,10 @@ sub jiveRescanMenu {
 		actions => {
 			do => {
 				player => 0,
-				cmd    => [ 'pref', 'plugin.rescan:time' ],
+				cmd    => [ 'rescanplugin', 'settimer' ],
 				params => {
-					value => '__TAGGEDINPUT__',
-					enabled => 1,
+					time => '__TAGGEDINPUT__',
+					(defined $playerTZ ? (timezone => $playerTZ) : ()),
 				},
 			},
 		},
@@ -562,7 +578,18 @@ sub setTimer {
 
 sub checkScanTimer {
 
-	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+	my $tz = $prefs->get('timezone');
+	my ($sec, $min, $hour);
+	if (defined $tz) {
+		my $oldTZ = $ENV{TZ};
+		$ENV{TZ} = $tz;
+		POSIX::tzset();
+		($sec, $min, $hour) = (localtime(time))[0..2];
+		defined $oldTZ ? ($ENV{TZ} = $oldTZ) : delete $ENV{TZ};
+		POSIX::tzset();
+	} else {
+		($sec, $min, $hour) = (localtime(time))[0..2];
+	}
 
 	Slim::Utils::Timers::killTimers(undef, \&checkScanTimer);
 
