@@ -2757,11 +2757,17 @@ sub rescanCommand {
 
 		my $dbh = Slim::Schema->dbh;
 		my $sth = $dbh->prepare_cached('DELETE FROM scanned_files WHERE url = ?');
+		my %albumIds;
 		my @paths = Slim::Utils::Misc::uniq(
 			map {
 				# reset the track's timestamp so changes are certainly picked up
 				$_->timestamp(0);
 				$_->update;
+
+				if ( my $album = $_->album ) {
+					my $albumId = $album->id;
+					$albumIds{$albumId} = 1 if defined $albumId;
+				}
 
 				# delete entry in scanned_files - otherwise rescan doesn't handle deletions for non-recursive scans
 				$sth->execute($_->url);
@@ -2781,19 +2787,9 @@ sub rescanCommand {
 			recursive => 0,
 		} ) if scalar @paths;
 
-		my %albumIds;
-		for my $track (@tracks) {
-			next unless blessed($track);
-			my $album = eval { $track->album };
-			next unless $album && blessed($album);
-			my $albumId = $album->id;
-			next unless defined $albumId;
-			$albumIds{$albumId} = 1;
-		}
-
 		my @albumIds = keys %albumIds;
 		if ( @albumIds ) {
-			Slim::Music::Artwork->updateParentDirectoryArtwork( undef, { albums => \@albumIds } );
+			Slim::Music::Artwork->updateDiscSetArtwork( albums => \@albumIds );
 		}
 	}
 	else {

@@ -474,8 +474,8 @@ sub runScanPostProcessing {
 
 	# update parent directory artwork for multi-disc albums (box sets)
 	# This should run on ALL scans, including fresh/wipe scans
-	$importsRunning{'updateParentDirectoryArtwork'} = Time::HiRes::time();
-	Slim::Music::Artwork->updateParentDirectoryArtwork();
+	$importsRunning{'updateDiscSetArtwork'} = Time::HiRes::time();
+	Slim::Music::Artwork->updateDiscSetArtwork();
 
 	# Pre-cache resized artwork
 	$importsRunning{'precacheArtwork'} = Time::HiRes::time();

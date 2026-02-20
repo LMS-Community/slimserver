@@ -92,7 +92,7 @@ Box Set Album/
 
 What happens:
 
-- `updateParentDirectoryArtwork()` can set the album-level cover from `Box Set Album/folder.jpg`.
+- `updateDiscSetArtwork()` can set the album-level cover from `Box Set Album/folder.jpg`.
 - Disc folders can still have their own `folder.jpg` / disc-specific names.
 
 #### Layout 2: Everything in one directory + disc-specific filenames

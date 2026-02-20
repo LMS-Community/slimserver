@@ -1095,7 +1095,7 @@ sub changed {
 			# uses the newest available artwork. Skip this when albums.cover
 			# is set, because box-set parent artwork should remain authoritative.
 			my $albumHasParentCover = $album && defined $album->cover && length $album->cover;
-			if ( !$albumHasParentCover ) {
+			if ( $album && !$albumHasParentCover ) {
 				if ( $coverid && $album->artwork ne $coverid ) {
 					$album->artwork($coverid);
 				}
@@ -1203,10 +1203,10 @@ sub markDone {
 
 	# Done with all tasks
 	if ( !main::SCANNER ) {
-		Slim::Music::Artwork->updateStandaloneArtwork( sub {
+		Slim::Music::Artwork->updateStandaloneArtwork( cb => sub {
 
 			# Update parent directory artwork for multi-disc albums (box sets)
-			Slim::Music::Artwork->updateParentDirectoryArtwork( sub {
+			Slim::Music::Artwork->updateDiscSetArtwork( cb => sub {
 
 				# Precache artwork, when done send rescan done event
 				Slim::Music::Artwork->precacheAllArtwork( sub {

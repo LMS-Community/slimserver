@@ -164,7 +164,7 @@ sub init {
 
 	my $update = $class->migrateDB;
 
-	$class->_ensurePersistentDBSchema;
+	$class->_ensurePersistentDBSchema if main::STATISTICS;
 
 	# Load the DBIx::Class::Schema classes we've defined.
 	# If you add a class to the schema, you must add it here as well.
@@ -507,6 +507,8 @@ sub migrateDB {
 
 sub _ensurePersistentDBSchema {
 	my $class = shift;
+
+	return unless main::STATISTICS;
 
 	my ($driver) = $class->sourceInformation;
 	return unless lc($driver || '') eq 'sqlite';
