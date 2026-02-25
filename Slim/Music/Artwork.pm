@@ -455,22 +455,23 @@ sub updateDiscSetArtwork {
 			albums.artwork,
 			albums.cover,
 			albums.discc,
-			tracks.url
+			GROUP_CONCAT(DISTINCT tracks.url) AS directories
 		$baseSql
+		GROUP BY albums.id, albums.title, albums.artwork, albums.cover, albums.discc
 		ORDER BY albums.id
 	};
 
 	my $sth = $dbh->prepare($dataSql);
 	$sth->execute(@bind);
 
-	my ($album_id, $album_title, $album_artwork, $album_cover, $album_discs, $track_url);
+	my ($album_id, $album_title, $album_artwork, $album_cover, $album_discs, $directory_blob);
 	$sth->bind_columns(
 		\$album_id,
 		\$album_title,
 		\$album_artwork,
 		\$album_cover,
 		\$album_discs,
-		\$track_url,
+		\$directory_blob,
 	);
 
 	my $progress = Slim::Utils::Progress->new({
@@ -480,78 +481,42 @@ sub updateDiscSetArtwork {
 		bar   => 1,
 	});
 
-	my $current_album;
-	my %current_dirs;
-
-	my $process_album = sub {
-		return unless $current_album;
-
-		my @paths = keys %current_dirs;
-		return unless @paths;
-
-		my $commonParent;
-		if (@paths == 1) {
-			$commonParent = $paths[0];
-		}
-		else {
-			$commonParent = _findCommonParent(\@paths);
-		}
-
-		return unless $commonParent && -d $commonParent;
-
-		# Look for artwork in the common parent directory
-		my $parentArtwork = _findArtworkInDirectory($commonParent);
-
-		return unless $parentArtwork;
-
-		# Generate a coverid for the parent artwork
-		my @stat = stat($parentArtwork);
-		my $mtime = $stat[9] || 0;
-		my $size = $stat[7] || 0;
-		my $coverid = __PACKAGE__->generateImageId({
-			image => $parentArtwork,
-			url   => Slim::Utils::Misc::fileURLFromPath($parentArtwork),
-			mtime => $mtime,
-			size  => $size,
-		});
-
-		unless ($coverid) {
-			$log->warn("Failed to generate coverid for '$parentArtwork'");
-			return;
-		}
-
-		$log->info("Found parent artwork for '$current_album->{album_title}': $parentArtwork (coverid: $coverid)");
-		$sth_update_albums->execute($coverid, $parentArtwork, $current_album->{album_id});
-	};
-
 	my $work = sub {
 		if ( $sth->fetch ) {
-			if ( !$current_album || $album_id != $current_album->{album_id} ) {
-				$process_album->();
-				%current_dirs = ();
-				$current_album = undef;
+			next unless ($album_discs || 0) > 1;
 
-				next unless ($album_discs || 0) > 1;
+			$progress->update($album_title);
 
-				$current_album = {
-					album_id    => $album_id,
-					album_title => $album_title,
-				};
-				$progress->update($album_title);
+			my @paths = _albumDirectoriesToPaths($directory_blob);
+			return 1 unless @paths;
+
+			my $commonParent = @paths == 1 ? $paths[0] : _findCommonParent(\@paths);
+			return 1 unless $commonParent && -d $commonParent;
+
+			my $parentArtwork = _findArtworkInDirectory($commonParent);
+			return 1 unless $parentArtwork;
+
+			my @stat = stat($parentArtwork);
+			my $mtime = $stat[9] || 0;
+			my $size = $stat[7] || 0;
+			my $coverid = __PACKAGE__->generateImageId({
+				image => $parentArtwork,
+				url   => Slim::Utils::Misc::fileURLFromPath($parentArtwork),
+				mtime => $mtime,
+				size  => $size,
+			});
+
+			unless ($coverid) {
+				$log->warn("Failed to generate coverid for '$parentArtwork'");
+				return 1;
 			}
 
-			next unless $current_album;
-
-			my $path = Slim::Utils::Misc::pathFromFileURL($track_url);
-			if ( $path ) {
-				my $dir = eval { Path::Class::file($path)->dir->stringify };
-				$current_dirs{$dir} = 1 if $dir;
-			}
+			$log->info("Found parent artwork for '$album_title': $parentArtwork (coverid: $coverid)");
+			$sth_update_albums->execute($coverid, $parentArtwork, $album_id);
 
 			return 1;
 		}
 
-		$process_album->();
 		$sth->finish;
 		$progress->final;
 		$cb && $cb->();
@@ -565,6 +530,27 @@ sub updateDiscSetArtwork {
 	else {
 		Slim::Utils::Scheduler::add_ordered_task($work);
 	}
+}
+
+sub _albumDirectoriesToPaths {
+	my ($blob) = @_;
+	return () unless defined $blob && length $blob;
+
+	my @urls = split /,(?=file:\/\/)/, $blob;
+	my @paths;
+
+	for my $url (@urls) {
+		next unless $url =~ /^file:\/\//;
+		my $path = Slim::Utils::Misc::pathFromFileURL($url);
+		next unless $path;
+
+		my $dir = eval { Path::Class::file($path)->dir->stringify };
+		next unless $dir;
+
+		push @paths, $dir;
+	}
+
+	return Slim::Utils::Misc::uniq(@paths);
 }
 
 sub _findPreferredArtworkFile {
