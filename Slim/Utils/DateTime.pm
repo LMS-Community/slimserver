@@ -9,6 +9,7 @@ package Slim::Utils::DateTime;
 use strict;
 
 use Date::Parse;
+use DateTime::TimeZone;
 use HTTP::Status qw(RC_INTERNAL_SERVER_ERROR);
 use JSON::XS::VersionOneAndTwo;
 use POSIX qw(strftime);
@@ -539,6 +540,39 @@ sub getTZOffsetHHMM {
 }
 
 sub isDST { (localtime(time()))[8] ? 1 : 0 }
+
+=head2 localtimeInTZ( $epoch, $tzName )
+
+Returns a list equivalent to C<localtime($epoch)> but computed in the named
+Olson timezone (e.g. C<"America/New_York">) rather than the server's local
+timezone.  Falls back to C<localtime> and logs a warning if the timezone name
+is unrecognised.
+
+=cut
+
+{
+	# Minimal object satisfying the DateTime::TimeZone->offset_for_datetime
+	# interface: needs utc_rd_as_seconds() and utc_year().
+	package Slim::Utils::DateTime::_EpochDT;
+	sub new      { bless { epoch => $_[1] }, $_[0] }
+	sub utc_rd_as_seconds { $_[0]->{epoch} + 62135596800 }
+	sub utc_year { (gmtime($_[0]->{epoch}))[5] + 1900 }
+}
+
+my %_tzCache;
+
+sub localtimeInTZ {
+	my ($epoch, $tzName) = @_;
+
+	my $tz = $_tzCache{$tzName} ||= eval { DateTime::TimeZone->new(name => $tzName) };
+	unless ($tz) {
+		$log->warn("Unknown timezone '$tzName', falling back to server timezone");
+		return localtime($epoch);
+	}
+
+	my $offset = $tz->offset_for_datetime( Slim::Utils::DateTime::_EpochDT->new($epoch) );
+	return gmtime($epoch + $offset);
+}
 
 =head1 SEE ALSO
 

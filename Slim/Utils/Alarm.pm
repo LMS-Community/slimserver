@@ -43,7 +43,6 @@ Two types of alarm are implemented - daily alarms and calendar alarms.  Daily al
 =cut
 
 #use Data::Dumper;
-use POSIX qw(tzset);
 use Time::HiRes;
 use URI::Escape qw(uri_unescape);
 
@@ -467,16 +466,7 @@ sub findNextTime {
 		# timezone if set, otherwise the server's local timezone.
 		my ($sec, $min, $hour, $mday, $mon, $year, $wday);
 		if (defined $self->{_timezone}) {
-			my $oldTZ = $ENV{TZ};
-			$ENV{TZ} = $self->{_timezone};
-			POSIX::tzset();
-			($sec, $min, $hour, $mday, $mon, $year, $wday) = localtime($baseTime);
-			if (defined $oldTZ) {
-				$ENV{TZ} = $oldTZ;
-			} else {
-				delete $ENV{TZ};
-			}
-			POSIX::tzset();
+			($sec, $min, $hour, $mday, $mon, $year, $wday) = Slim::Utils::DateTime::localtimeInTZ($baseTime, $self->{_timezone});
 		} else {
 			($sec, $min, $hour, $mday, $mon, $year, $wday) = localtime($baseTime);
 		}

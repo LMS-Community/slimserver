@@ -12,7 +12,7 @@ package Slim::Plugin::Rescan::Plugin;
 # version 2.
 
 use strict;
-use POSIX qw(tzset);
+use Slim::Utils::DateTime;
 use Time::HiRes;
 
 use base qw(Slim::Plugin::Base);
@@ -581,12 +581,7 @@ sub checkScanTimer {
 	my $tz = $prefs->get('timezone');
 	my ($sec, $min, $hour);
 	if (defined $tz) {
-		my $oldTZ = $ENV{TZ};
-		$ENV{TZ} = $tz;
-		POSIX::tzset();
-		($sec, $min, $hour) = (localtime(time))[0..2];
-		defined $oldTZ ? ($ENV{TZ} = $oldTZ) : delete $ENV{TZ};
-		POSIX::tzset();
+		($sec, $min, $hour) = (Slim::Utils::DateTime::localtimeInTZ(time, $tz))[0..2];
 	} else {
 		($sec, $min, $hour) = (localtime(time))[0..2];
 	}
