@@ -950,7 +950,7 @@ sub requestString {
 		"$type $path HTTP/1.0",
 		"Accept: */*",
 		"Cache-Control: no-cache",
-		"User-Agent: " . Slim::Utils::Misc::userAgentString(),
+		"User-Agent: " . Slim::Utils::Misc::userAgentString('legacy'),
 		"Icy-MetaData: $want_icy",
 		"Connection: close",
 		"Host: $host",
