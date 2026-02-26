@@ -13,10 +13,14 @@ package Slim::Networking::Async::DNS;
 use strict;
 
 use AnyEvent::DNS;
+use List::Util qw(max);
 use Tie::Cache::LRU;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+
+use constant DEFAULT_CACHE_TTL => 3600; # 1 hour
+use constant MIN_CACHE_TTL     => 300;  # 5 minutes
 
 # Cached lookups
 tie my %cache, 'Tie::Cache::LRU', 100;
@@ -46,15 +50,19 @@ sub resolve {
 			$args->{cb}->( $addr, @{ $args->{pt} || [] } );
 			return;
 		}
-		else {
-			delete $cache{ $host };
-		}
 	}
 
 	AnyEvent::DNS::resolver->resolve( $host => 'a', sub {
 		my $res = shift;
 
-		if ( !$res ) {
+		if ( !$res && (my $cached = $cache{ $host }) ) {
+			my $addr = $cached->{addr};
+			main::DEBUGLOG && $log->is_debug && $log->debug( "Lookup failed - falling back to cached DNS response $addr for $host" );
+
+			$args->{cb}->( $addr, @{ $args->{pt} || [] } );
+			return;
+		}
+		elsif ( !$res ) {
 			# Lookup failed
 			main::DEBUGLOG && $log->is_debug && $log->debug("Lookup failed for $host");
 
@@ -71,17 +79,15 @@ sub resolve {
 		}
 
 		my $addr = $res->[3];
-		my $ttl	 = $res->[4];
+		my $ttl	= max( $res->[4] || DEFAULT_CACHE_TTL, MIN_CACHE_TTL );
 
 		main::DEBUGLOG && $log->is_debug && $log->debug( "Got DNS response $addr for $host (ttl $ttl)" );
 
 		# cache lookup for ttl
-		if ( $ttl ) {
-			$cache{$host} = {
-				addr    => $addr,
-				expires => AnyEvent->now + $ttl,
-			};
-		}
+		$cache{$host} = {
+			addr    => $addr,
+			expires => AnyEvent->now + $ttl,
+		};
 
 		$args->{cb}->( $addr, @{ $args->{pt} || [] } );
 	} );
