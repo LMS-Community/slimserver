@@ -133,6 +133,17 @@ sub handler {
 	# Get the non-calendar alarms for this client
 	$paramRef->{'prefs'}->{'alarms'} = [Slim::Utils::Alarm->getAlarms($client, 1)];
 
+	# Build tz_abbr map for stamped alarms
+	my %alarmTzAbbrs;
+	for my $alarm ( @{ $paramRef->{'prefs'}->{'alarms'} } ) {
+		my $alarmTZ = $alarm->timezone;
+		if ($alarmTZ) {
+			my $tzAbbr = Slim::Utils::DateTime::tzAbbr($alarm->nextDue || time, $alarmTZ);
+			$alarmTzAbbrs{$alarm->id} = $tzAbbr if $tzAbbr;
+		}
+	}
+	$paramRef->{'alarmTzAbbrs'} = \%alarmTzAbbrs;
+
 	return $class->SUPER::handler($client, $paramRef);
 }
 

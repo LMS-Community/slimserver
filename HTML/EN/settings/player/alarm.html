@@ -28,6 +28,7 @@
 			<div class="prefHead" style="font-weight:normal;">[% "ALARM_SET" | string %]</div>
 			<div class="prefs" style="max-height:14px">
 				<input type="text" class="stdedit timeControl" name="alarmtime[% alarm.id %]" id="alarmtime[% alarm.id %]" value="[% alarm.timeStr | html %]" size="15">
+			[% IF alarm.id == newAlarmID %]<span id="browsertz_display" style="font-size:smaller;color:#888;"></span>[% ELSIF alarmTzAbbrs.${alarm.id} %]&nbsp;<span style="font-size:smaller;">[% alarmTzAbbrs.${alarm.id} | html %]</span>[% END %]
 			&nbsp;</div>
 		</div>
 
@@ -105,7 +106,12 @@
 
 	<input type="hidden" name="alarmtimezone" id="alarmtimezone" value="" />
 	<script>
-		document.getElementById('alarmtimezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+		var _alarmTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+		document.getElementById('alarmtimezone').value = _alarmTZ;
+		document.addEventListener('DOMContentLoaded', function() {
+			var el = document.getElementById('browsertz_display');
+			if (el) el.textContent = _alarmTZ;
+		});
 	</script>
 
 	[% WRAPPER setting title="ALARM_ALL_ALARMS" desc="ALARM_ALARMS_ENABLED_DESC" %]
