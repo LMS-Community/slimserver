@@ -24,6 +24,7 @@ if ( main::WEBUI ) {
 use Scalar::Util qw(blessed);
 
 use Slim::Control::Request;
+use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);

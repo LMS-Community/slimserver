@@ -434,7 +434,7 @@ sub handler {
 					push @errors, $error;
 
 					if ($result->{'errorNeedClient'}) {
-						$log->error('errorNeedsClient: ', join(', ', $conn->[HTTP_CLIENT]->peerhost, $request->[0], @{$request->[1]}));
+						$log->warn('errorNeedsClient: ', join(', ', $conn->[HTTP_CLIENT]->peerhost, $request->[0], @{$request->[1]}));
 						# Force reconnect because client not connected.
 						# We should not need to force a new handshake, just a reconnect.
 						# Any successful subscribes will have the acknowledgements in the $events queue

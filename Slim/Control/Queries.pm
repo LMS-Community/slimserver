@@ -5150,6 +5150,10 @@ sub worksQuery {
 
 	}
 
+	push @{$w}, "NOT EXISTS (SELECT 1 FROM tracks t2 WHERE tracks.album=t2.album AND tracks.work=t2.work
+			AND (tracks.performance IS NULL AND t2.performance IS NULL OR tracks.performance=t2.performance)
+			AND tracks.id > t2.id)";
+
 	if (defined $libraryID) {
 		push @{$w}, 'EXISTS (SELECT 1 FROM library_album WHERE library_album.album = albums.id AND library_album.library = ?)';
 		push @{$p}, $libraryID;

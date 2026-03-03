@@ -14099,7 +14099,7 @@ DISCSUBTITLE
 	CS	Podtitul sady/alba
 	DE	Satz/Album Untertitel
 	EN	Set/Album Subtitle
-	FR	Ensemble/Album Sous-titres
+	FR	Titre secondaire du coffret/album
 	NL	Set/Album Ondertitel
 	SV	Set/Album undertitel
 
@@ -18625,14 +18625,14 @@ SETUP_USETIT1ASWORK_1
 	DE	Behandle das MP3-Tag TIT1 als Werk und das MP3-Tag GRP1 als Gruppierung.
 	EN	Treat MP3 tag TIT1 as Work and MP3 tag GRP1 as Grouping
 	ES	Trate la etiqueta MP3 TIT1 como Trabajo y la etiqueta MP3 GRP1 como Agrupación
-	FR	Traiter le tag MP3 TIT1 comme une œuvre et le tag MP3 GRP1 comme un groupement.
+	FR	Traiter le tag MP3 TIT1 en tant qu'œuvre et le tag MP3 GRP1 en tant que regroupement.
 	NL	Behandel MP3-tag TIT1 als Werk en MP3-tag GRP1 als Groepering
 
 SETUP_USETIT1ASWORK_0
 	DE	Behandle das MP3-Tag TIT1 als Gruppierung (erstellen Sie ein benutzerdefiniertes Tag WORK, falls Sie auch Werk benötigen).
 	EN	Treat MP3 tag TIT1 as Grouping (create a user-defined tag of WORK if you also need Work)
 	ES	Trate la etiqueta MP3 TIT1 como Agrupación (cree una etiqueta definida por el usuario de WORK si también necesita Trabajo)
-	FR	Traitez le tag MP3 TIT1 comme un groupement (créez une tag personnalisée WORK si vous avez également besoin de d'œuvre).
+	FR	Traiter le tag MP3 TIT1 en tant que regroupement (créez un tag personnalisé WORK si vous avez également besoin de l'œuvre).
 	NL	Behandel MP3-tag TIT1 als Groepering (maak een door de gebruiker gedefinieerde tag WORK aan als je Work ook nodig hebt).
 
 SETUP_USETPE2ASALBUMARTIST_DESC
@@ -18659,7 +18659,7 @@ SETUP_USETPE2ASALBUMARTIST_1
 	EN	Treat TPE2 MP3 tag as Album Artist (create a user-defined tag of BAND if you also need band/orchestra)
 	ES	Tratar etiqueta TPE2 MP3 como artista de álbum
 	FI	Käsittele TPE2 MP3 -tagia levyartistina
-	FR	Traiter le tag MP3 TPE2 en tant qu'artiste de l'album
+	FR	Traiter le tag MP3 TPE2 en tant qu'artiste de l'album (créez un tag personnalisé BAND si vous avez également besoin du groupe/orchestre)
 	HU	Kezelje a TPE2 MP3 címkét album előadójaként
 	IT	Considera il tag MP3 TPE2 come artista dell'album
 	NL	TPE2 MP3-label als albumartiest behandelen

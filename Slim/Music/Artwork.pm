@@ -666,7 +666,7 @@ sub precacheAllArtwork {
 	}
 	. ($force ? '' : ' AND    tracks.cover_cached IS NULL')
 	. qq{
-		GROUP BY tracks.cover
+		GROUP BY tracks.cover, tracks.album
  	};
 
 	my $sth_update_tracks = $dbh->prepare( qq{
@@ -816,7 +816,7 @@ sub precacheAllArtwork {
 			FROM   tracks
 			WHERE  tracks.album = ?
 			AND    tracks.coverid IS NOT NULL
-			ORDER BY tracks.disc, tracks.tracknum
+			ORDER BY CASE WHEN CAST(CAST(tracks.cover AS INTEGER) AS TEXT) = tracks.cover THEN '1' ELSE '0' END, tracks.disc, tracks.tracknum
 			LIMIT 1
 	 	});
 
