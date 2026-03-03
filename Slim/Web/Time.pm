@@ -82,35 +82,7 @@ sub tzAPIsuccess {
 	$log->info("TimeZone query: Retrieved TimeZone \"$tz\"");
 	my $savedTz = $tz;
 
-	# Sanity check on TimeZone string.
-
-	# A TimeZone identifier is, essentially, a POSIX path with some
-	# additional (more and less voluntary) restrictions. These are
-	# indicated in the "theory" section of the tz distribution:
-	#   https://github.com/eggert/tz/blob/main/theory.html
-
-	# Identifier components should contain only A-Z, a-z, '-', and '_'.
-	# And we need '/' to join the components together.
-	# Examples: 'America/Argentina/Buenos_Aires', 'Europe/Zurich'.
-	# Note:
-	#  Some "legacy" and "etc" TimeZones may also contain 0-9 and '+', but
-	#  we do not expect or support such oddities.
-
-	if (
-		$tz =~ m{[^A-Za-z_\-/]}  # reject if any characters outside that range
-		|| $tz =~ m{^/}          # leading '/' not allowed
-		|| $tz =~ m{/$}          # trailing '/' not allowed
-		|| $tz =~ m{//}          # no component to be empty
-		|| $tz =~ m{ ^- | /- }x  # no component to start with a hyphen
-		|| $tz eq 'Factory'      # reserved for SqueezeOS use
-		|| $tz eq 'Etc/Unknown'  # reserved - never a valid TimeZone
-	) {
-		$tz = ''
-	}
-
-	# Note:
-	#  We do not guarantee to purge all invalid TimeZones with the above
-	#  sanity checks.
+	$tz = '' unless Slim::Utils::DateTime::validateTZName($tz);
 
 	# All done, cache the result for re-use next time, and return result
 	# to SqueezeOS.

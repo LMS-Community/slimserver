@@ -32,6 +32,7 @@ use strict;
 
 use File::Basename qw(basename);
 use File::Spec::Functions qw(catdir);
+use POSIX qw(tzname);
 use Storable ();
 use JSON::XS::VersionOneAndTwo;
 use Digest::MD5 qw(md5_hex);
@@ -44,6 +45,7 @@ use Tie::Cache::LRU::Expires;
 use Slim::Music::VirtualLibraries;
 use Slim::Utils::Misc qw( specified );
 use Slim::Utils::Alarm;
+use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
@@ -242,7 +244,13 @@ sub alarmsQuery {
 			$request->addResultLoop($loopname, $cnt, 'time', $alarm->time());
 			$request->addResultLoop($loopname, $cnt, 'volume', $alarm->volume());
 			$request->addResultLoop($loopname, $cnt, 'url', $alarm->playlist() || 'CURRENT_PLAYLIST');
-			$request->addResultLoop($loopname, $cnt, 'timezone', $alarm->timezone()) if defined $alarm->timezone();
+			my $alarmTZ = $alarm->timezone();
+			$request->addResultLoop($loopname, $cnt, 'timezone', $alarmTZ) if defined $alarmTZ;
+			my $tzEpoch = $alarm->nextDue() || time;
+			my $tzAbbr = defined $alarmTZ
+				? Slim::Utils::DateTime::tzAbbr($tzEpoch, $alarmTZ)
+				: (POSIX::tzname())[ (localtime($tzEpoch))[8] ];
+			$request->addResultLoop($loopname, $cnt, 'tz_abbr', $tzAbbr) if $tzAbbr;
 			$cnt++;
 		}
 	}

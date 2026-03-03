@@ -160,7 +160,8 @@ sub saveAlarm {
 	}
 
 	$alarm->time($t);
-	$alarm->timezone( $paramRef->{'alarmtimezone'} ) if $paramRef->{'alarmtimezone'};
+	my $alarmTZ = $paramRef->{'alarmtimezone'};
+	$alarm->timezone($alarmTZ) if $alarmTZ && Slim::Utils::DateTime::validateTZName($alarmTZ);
 	$alarm->enabled( $paramRef->{'alarm_enable' . $id} );
 	$alarm->repeat( $paramRef->{'alarm_repeat' . $id} );
 	$alarm->shufflemode( $paramRef->{'alarm_shufflemode' . $id} );

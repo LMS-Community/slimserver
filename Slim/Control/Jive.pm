@@ -13,6 +13,7 @@ use Scalar::Util qw(blessed);
 use URI;
 
 use Slim::Menu::BrowseLibrary;
+use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Player::Playlist;
@@ -741,8 +742,13 @@ sub alarmUpdateMenu {
 	};
 	push @menu, $onOff;
 
+	my $alarmTZ = $alarm->timezone;
+	my $tzAbbr  = defined $alarmTZ
+		? Slim::Utils::DateTime::tzAbbr($alarm->nextDue || time, $alarmTZ)
+		: undef;
+
 	my $setTime = {
-		text           => $client->string("ALARM_SET_TIME"),
+		text           => $client->string("ALARM_SET_TIME") . ($tzAbbr ? " ($tzAbbr)" : ''),
 		input   => {
 			initialText  => $params->{time}, # this will need to be formatted correctly
 			title => $client->string('ALARM_SET_TIME'),
@@ -989,7 +995,12 @@ sub getCurrentAlarms {
 		for (0..6) {
 			push @days, $_ if $alarm->day($_);
 		}
-		my $name = $client->string('ALARM_ALARM') . " $count: " . $alarm->displayStr;
+		my $alarmTZ = $alarm->timezone;
+		my $tzAbbr = defined $alarmTZ
+			? Slim::Utils::DateTime::tzAbbr($alarm->nextDue || time, $alarmTZ)
+			: undef;
+		my $name = $client->string('ALARM_ALARM') . " $count: " . $alarm->displayStr
+			. ($tzAbbr ? " $tzAbbr" : '');
 		my $daysString = join(',', @days);
 		my $thisAlarm = {
 			text           => $name,

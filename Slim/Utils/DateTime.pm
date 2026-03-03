@@ -9,10 +9,9 @@ package Slim::Utils::DateTime;
 use strict;
 
 use Date::Parse;
-use DateTime::TimeZone;
 use HTTP::Status qw(RC_INTERNAL_SERVER_ERROR);
 use JSON::XS::VersionOneAndTwo;
-use POSIX qw(strftime);
+use POSIX qw(strftime tzset tzname);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -541,37 +540,137 @@ sub getTZOffsetHHMM {
 
 sub isDST { (localtime(time()))[8] ? 1 : 0 }
 
+=head2 validateTZName( $tzName )
+
+Returns true if C<$tzName> looks like a valid Olson timezone identifier
+(e.g. C<"America/New_York">, C<"Europe/Berlin">).  Rejects anything outside
+the expected character set, degenerate paths, and reserved names.
+
+=cut
+
+sub validateTZName {
+	my $tzName = shift;
+
+	return 0 unless defined $tzName && length $tzName;
+
+	return !(
+		$tzName =~ m{[^A-Za-z_\-/]}   # only A-Za-z _ - / allowed
+		|| $tzName =~ m{^/}            # no leading slash
+		|| $tzName =~ m{/$}            # no trailing slash
+		|| $tzName =~ m{//}            # no empty component
+		|| $tzName =~ m{ ^- | /- }x   # no component starting with hyphen
+		|| $tzName eq 'Factory'        # reserved for SqueezeOS use
+		|| $tzName eq 'Etc/Unknown'    # never a valid timezone
+	);
+}
+
+{
+	# Minimal object satisfying the DateTime::TimeZone interface for
+	# offset_for_datetime() and short_name_for_datetime().
+	# Needs utc_rd_as_seconds(), utc_rd_values(), and utc_year().
+	package Slim::Utils::DateTime::_EpochDT;
+	sub new             { bless { epoch => $_[1] }, $_[0] }
+	sub utc_rd_as_seconds { $_[0]->{epoch} + 62135596800 }
+	sub utc_year        { (gmtime($_[0]->{epoch}))[5] + 1900 }
+	sub utc_rd_values   {
+		my $s = $_[0]->{epoch} + 62135596800;
+		return (int($s / 86400), $s % 86400);
+	}
+}
+
+# DateTime::TimeZone is optional: Strawberry Perl bundles it; on Linux/macOS
+# it may or may not be installed.  $_dttAvailable is undef until first use.
+my ($_dttAvailable, %_tzCache);
+
+sub _tzObj {
+	my ($tzName) = @_;
+
+	if (!defined $_dttAvailable) {
+		$_dttAvailable = eval { require DateTime::TimeZone; 1 } ? 1 : 0;
+		if (!$_dttAvailable) {
+			$log->info('DateTime::TimeZone not available; alarm timezone support will use POSIX::tzset fallback (Linux/macOS only)');
+		}
+	}
+	return unless $_dttAvailable;
+
+	# Use exists to cache undef for unrecognised names, avoiding repeated
+	# DateTime::TimeZone->new calls and repeated warnings.
+	unless (exists $_tzCache{$tzName}) {
+		$_tzCache{$tzName} = eval { DateTime::TimeZone->new(name => $tzName) };
+		$log->warn("Unrecognised timezone '$tzName'") unless $_tzCache{$tzName};
+	}
+	return $_tzCache{$tzName};
+}
+
 =head2 localtimeInTZ( $epoch, $tzName )
 
 Returns a list equivalent to C<localtime($epoch)> but computed in the named
 Olson timezone (e.g. C<"America/New_York">) rather than the server's local
-timezone.  Falls back to C<localtime> and logs a warning if the timezone name
-is unrecognised.
+timezone.
+
+Tries DateTime::TimeZone first (works everywhere including Windows).  Falls
+back to C<localtime> if the name is unrecognised (already warned by C<_tzObj>).
+If DateTime::TimeZone is not installed, uses POSIX::tzset instead (Linux/macOS
+only, safe in LMS's single-threaded event loop).
 
 =cut
-
-{
-	# Minimal object satisfying the DateTime::TimeZone->offset_for_datetime
-	# interface: needs utc_rd_as_seconds() and utc_year().
-	package Slim::Utils::DateTime::_EpochDT;
-	sub new      { bless { epoch => $_[1] }, $_[0] }
-	sub utc_rd_as_seconds { $_[0]->{epoch} + 62135596800 }
-	sub utc_year { (gmtime($_[0]->{epoch}))[5] + 1900 }
-}
-
-my %_tzCache;
 
 sub localtimeInTZ {
 	my ($epoch, $tzName) = @_;
 
-	my $tz = $_tzCache{$tzName} ||= eval { DateTime::TimeZone->new(name => $tzName) };
-	unless ($tz) {
-		$log->warn("Unknown timezone '$tzName', falling back to server timezone");
+	if (my $tz = _tzObj($tzName)) {
+		my $offset = $tz->offset_for_datetime( Slim::Utils::DateTime::_EpochDT->new($epoch) );
+		return gmtime($epoch + $offset);
+	}
+
+	if ($_dttAvailable) {
+		# DateTime::TimeZone available but $tzName unrecognised — _tzObj already warned.
 		return localtime($epoch);
 	}
 
-	my $offset = $tz->offset_for_datetime( Slim::Utils::DateTime::_EpochDT->new($epoch) );
-	return gmtime($epoch + $offset);
+	# POSIX::tzset fallback — Linux/macOS only; safe in LMS's cooperative
+	# single-threaded event loop.  Save/restore via 'local' + explicit tzset.
+	main::DEBUGLOG && $log->debug("localtimeInTZ: using POSIX::tzset fallback for '$tzName'");
+	my @result;
+	{
+		local $ENV{TZ} = ':' . $tzName;
+		POSIX::tzset();
+		@result = localtime($epoch);
+	}
+	POSIX::tzset();    # re-initialize with the now-restored $ENV{TZ}
+	return @result;
+}
+
+=head2 tzAbbr( $epoch, $tzName )
+
+Returns the timezone abbreviation (e.g. C<"CET">, C<"CEST">, C<"EST">) for
+the named Olson timezone at the given epoch.  Uses the same fallback chain as
+L</localtimeInTZ>.
+
+=cut
+
+sub tzAbbr {
+	my ($epoch, $tzName) = @_;
+
+	if (my $tz = _tzObj($tzName)) {
+		return $tz->short_name_for_datetime( Slim::Utils::DateTime::_EpochDT->new($epoch) );
+	}
+
+	if ($_dttAvailable) {
+		# DateTime::TimeZone available but $tzName unrecognised — _tzObj already warned.
+		return undef;
+	}
+
+	# POSIX::tzset fallback — Linux/macOS only
+	main::DEBUGLOG && $log->debug("tzAbbr: using POSIX::tzset fallback for '$tzName'");
+	my $abbr;
+	{
+		local $ENV{TZ} = ':' . $tzName;
+		POSIX::tzset();
+		$abbr = (POSIX::tzname())[ (localtime($epoch))[8] ];
+	}
+	POSIX::tzset();
+	return $abbr;
 }
 
 =head1 SEE ALSO

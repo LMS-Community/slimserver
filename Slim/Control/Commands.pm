@@ -33,6 +33,7 @@ use Digest::MD5 qw(md5_hex);
 use JSON::XS::VersionOneAndTwo;
 
 use Slim::Utils::Alarm;
+use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -189,7 +190,9 @@ sub alarmCommand {
 			$alarm->shufflemode($params->{shufflemode}) if defined $params->{shufflemode};
 			$alarm->enabled($params->{enabled}) if defined $params->{enabled};
 			$alarm->repeat($params->{repeat}) if defined $params->{repeat};
-			$alarm->timezone($params->{timezone}) if defined $params->{timezone};
+			if (defined $params->{timezone} && Slim::Utils::DateTime::validateTZName($params->{timezone})) {
+				$alarm->timezone($params->{timezone});
+			}
 
 			# handle dow tag, if defined
 			if ( defined $params->{dow} ) {
