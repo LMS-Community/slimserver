@@ -588,7 +588,11 @@ sub _tzObj {
 	if (!defined $_dttAvailable) {
 		$_dttAvailable = eval { require DateTime::TimeZone; 1 } ? 1 : 0;
 		if (!$_dttAvailable) {
-			$log->info('DateTime::TimeZone not available; alarm timezone support will use POSIX::tzset fallback (Linux/macOS only)');
+			if ($^O eq 'MSWin32') {
+				$log->warn('DateTime::TimeZone not available; timezone-aware functions will fall back to server timezone');
+			} else {
+				$log->info('DateTime::TimeZone not available; using POSIX::tzset fallback');
+			}
 		}
 	}
 	return unless $_dttAvailable;
@@ -610,8 +614,9 @@ timezone.
 
 Tries DateTime::TimeZone first (works everywhere including Windows).  Falls
 back to C<localtime> if the name is unrecognised (already warned by C<_tzObj>).
-If DateTime::TimeZone is not installed, uses POSIX::tzset instead (Linux/macOS
-only, safe in LMS's single-threaded event loop).
+If DateTime::TimeZone is not installed, uses POSIX::tzset on Linux/macOS
+(safe in LMS's single-threaded event loop) or falls back to server
+C<localtime> on Windows.
 
 =cut
 
@@ -630,6 +635,7 @@ sub localtimeInTZ {
 
 	# POSIX::tzset fallback — Linux/macOS only; safe in LMS's cooperative
 	# single-threaded event loop.  Save/restore via 'local' + explicit tzset.
+	return localtime($epoch) if $^O eq 'MSWin32';
 	main::DEBUGLOG && $log->debug("localtimeInTZ: using POSIX::tzset fallback for '$tzName'");
 	my @result;
 	{
@@ -662,6 +668,7 @@ sub tzAbbr {
 	}
 
 	# POSIX::tzset fallback — Linux/macOS only
+	return undef if $^O eq 'MSWin32';
 	main::DEBUGLOG && $log->debug("tzAbbr: using POSIX::tzset fallback for '$tzName'");
 	my $abbr;
 	{
