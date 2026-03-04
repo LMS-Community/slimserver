@@ -35,6 +35,10 @@ my $log = logger('network.http');
 # 'init' is called by 'Slim::Web::HTTP:init'
 sub init {
 	Slim::Web::Pages->addRawFunction(qr{^/time/tz$}, \&tzAPIrequest);
+
+	# Proactively populate the geolocation cache so it is available as a
+	# fallback for alarm timezone stamping (getServerTZName step 3).
+	Slim::Utils::DateTime::getTZName(sub {});
 }
 
 # Holds the Timezone string retrieved from a successful API call.

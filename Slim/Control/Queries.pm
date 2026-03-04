@@ -248,7 +248,7 @@ sub alarmsQuery {
 			$request->addResultLoop($loopname, $cnt, 'timezone', $alarmTZ) if defined $alarmTZ;
 			my $tzEpoch = $alarm->nextDue() || time;
 			my $tzAbbr = defined $alarmTZ
-				? Slim::Utils::DateTime::tzAbbr($tzEpoch, $alarmTZ)
+				? Slim::Utils::DateTime::tzAbbr($tzEpoch, $alarmTZ) // $alarmTZ
 				: (POSIX::tzname())[ (localtime($tzEpoch))[8] ];
 			$request->addResultLoop($loopname, $cnt, 'tz_abbr', $tzAbbr) if $tzAbbr;
 			$cnt++;

@@ -527,6 +527,64 @@ sub getTZName {
 	});
 }
 
+=head2 getServerTZName()
+
+Returns the Olson timezone name for this server using a layered fallback:
+
+=over 4
+
+=item 1. DateTime::TimeZone->new(name => 'local') — works everywhere DTT is installed
+
+=item 2. $ENV{TZ} / /etc/localtime symlink — Linux/macOS without DTT
+
+=item 3. Cached geolocation result from the C</time/tz> API — last resort
+
+=back
+
+Returns C<undef> if none of the above succeeds.  Result is cached after first
+successful detection.
+
+=cut
+
+my $_serverTZName;
+
+sub getServerTZName {
+	return $_serverTZName if defined $_serverTZName;
+
+	# 1. DateTime::TimeZone (works everywhere DTT is installed, including Windows)
+	if (eval { require DateTime::TimeZone; 1 }) {
+		my $tz = eval { DateTime::TimeZone->new(name => 'local') };
+		if ($tz) {
+			my $name = eval { $tz->name() };
+			return ($_serverTZName = $name) if $name && validateTZName($name);
+		}
+	}
+
+	# 2. OS — Linux/macOS only
+	unless ($^O eq 'MSWin32') {
+		# $ENV{TZ} may be set explicitly (strip optional leading colon)
+		if (defined $ENV{TZ}) {
+			(my $tz = $ENV{TZ}) =~ s/^://;
+			return ($_serverTZName = $tz) if validateTZName($tz);
+		}
+
+		# /etc/localtime symlink
+		if (-l '/etc/localtime') {
+			my $link = readlink('/etc/localtime') // '';
+			if (my ($tz) = $link =~ m{zoneinfo/(.+)$}) {
+				return ($_serverTZName = $tz) if validateTZName($tz);
+			}
+		}
+	}
+
+	# 3. Geolocation cache from /time/tz API — last resort
+	if ($tzInfo && validateTZName($tzInfo->{timezone} // '')) {
+		return ($_serverTZName = $tzInfo->{timezone});
+	}
+
+	return undef;
+}
+
 sub getTZOffsetHHMM {
 	my $cb = shift || sub { $_[0] };
 

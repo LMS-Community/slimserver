@@ -652,7 +652,7 @@ sub alarmSettingsQuery {
 				params => {
 					time => '__TAGGEDINPUT__',
 					enabled => 1,
-					(defined $playerTZ ? (timezone => $playerTZ) : ()),
+					do { my $tz = $playerTZ // Slim::Utils::DateTime::getServerTZName(); $tz ? (timezone => $tz) : () },
 				},
 			},
 		},
@@ -744,7 +744,7 @@ sub alarmUpdateMenu {
 
 	my $alarmTZ = $alarm->timezone;
 	my $tzAbbr  = defined $alarmTZ
-		? Slim::Utils::DateTime::tzAbbr($alarm->nextDue || time, $alarmTZ)
+		? Slim::Utils::DateTime::tzAbbr($alarm->nextDue || time, $alarmTZ) // $alarmTZ
 		: undef;
 
 	my $setTime = {
@@ -997,7 +997,7 @@ sub getCurrentAlarms {
 		}
 		my $alarmTZ = $alarm->timezone;
 		my $tzAbbr = defined $alarmTZ
-			? Slim::Utils::DateTime::tzAbbr($alarm->nextDue || time, $alarmTZ)
+			? Slim::Utils::DateTime::tzAbbr($alarm->nextDue || time, $alarmTZ) // $alarmTZ
 			: undef;
 		my $name = $client->string('ALARM_ALARM') . " $count: " . $alarm->displayStr
 			. ($tzAbbr ? " $tzAbbr" : '');

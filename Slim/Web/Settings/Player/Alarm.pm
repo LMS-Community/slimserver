@@ -138,7 +138,7 @@ sub handler {
 	for my $alarm ( @{ $paramRef->{'prefs'}->{'alarms'} } ) {
 		my $alarmTZ = $alarm->timezone;
 		if ($alarmTZ) {
-			my $tzAbbr = Slim::Utils::DateTime::tzAbbr($alarm->nextDue || time, $alarmTZ);
+			my $tzAbbr = Slim::Utils::DateTime::tzAbbr($alarm->nextDue || time, $alarmTZ) // $alarmTZ;
 			$alarmTzAbbrs{$alarm->id} = $tzAbbr if $tzAbbr;
 		}
 	}
