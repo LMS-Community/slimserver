@@ -192,7 +192,7 @@ sub alarmCommand {
 			$alarm->repeat($params->{repeat}) if defined $params->{repeat};
 			if (defined $params->{timezone} && Slim::Utils::DateTime::validateTZName($params->{timezone})) {
 				$alarm->timezone($params->{timezone});
-			} elsif (!defined $alarm->timezone) {
+			} elsif ($params->{cmd} eq 'add' && !defined $alarm->timezone) {
 				my $serverTZ = Slim::Utils::DateTime::getServerTZName();
 				$alarm->timezone($serverTZ) if $serverTZ;
 			}

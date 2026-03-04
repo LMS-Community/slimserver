@@ -646,10 +646,12 @@ sub _tzObj {
 	if (!defined $_dttAvailable) {
 		$_dttAvailable = eval { require DateTime::TimeZone; 1 } ? 1 : 0;
 		if (!$_dttAvailable) {
+			my $reason = $@ ? " ($@)" : '';
+			$reason =~ s/\s+$//;
 			if ($^O eq 'MSWin32') {
-				$log->warn('DateTime::TimeZone not available; timezone-aware functions will fall back to server timezone');
+				$log->warn("DateTime::TimeZone not available; timezone-aware functions will fall back to server timezone$reason");
 			} else {
-				$log->info('DateTime::TimeZone not available; using POSIX::tzset fallback');
+				$log->info("DateTime::TimeZone not available; using POSIX::tzset fallback$reason");
 			}
 		}
 	}
@@ -659,7 +661,9 @@ sub _tzObj {
 	# DateTime::TimeZone->new calls and repeated warnings.
 	unless (exists $_tzCache{$tzName}) {
 		$_tzCache{$tzName} = eval { DateTime::TimeZone->new(name => $tzName) };
-		$log->warn("Unrecognised timezone '$tzName'") unless $_tzCache{$tzName};
+		if (!$_tzCache{$tzName}) {
+			$log->warn($@ ? "DateTime::TimeZone error for '$tzName': $@" : "Unrecognised timezone '$tzName'");
+		}
 	}
 	return $_tzCache{$tzName};
 }

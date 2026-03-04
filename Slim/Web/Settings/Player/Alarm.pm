@@ -170,9 +170,17 @@ sub saveAlarm {
 		$t = Slim::Utils::DateTime::prettyTimeToSecs($h % 24 . ":$m");
 	}
 
+	my $oldTime = $alarm->time();
 	$alarm->time($t);
 	my $alarmTZ = $paramRef->{'alarmtimezone'};
-	$alarm->timezone($alarmTZ) if $alarmTZ && Slim::Utils::DateTime::validateTZName($alarmTZ);
+	if ($id eq NEWALARMID || $t != $oldTime) {
+		if ($alarmTZ && Slim::Utils::DateTime::validateTZName($alarmTZ)) {
+			$alarm->timezone($alarmTZ);
+		} elsif ($id eq NEWALARMID) {
+			my $serverTZ = Slim::Utils::DateTime::getServerTZName();
+			$alarm->timezone($serverTZ) if $serverTZ;
+		}
+	}
 	$alarm->enabled( $paramRef->{'alarm_enable' . $id} );
 	$alarm->repeat( $paramRef->{'alarm_repeat' . $id} );
 	$alarm->shufflemode( $paramRef->{'alarm_shufflemode' . $id} );

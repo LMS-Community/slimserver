@@ -32,7 +32,6 @@ use strict;
 
 use File::Basename qw(basename);
 use File::Spec::Functions qw(catdir);
-use POSIX qw(tzname);
 use Storable ();
 use JSON::XS::VersionOneAndTwo;
 use Digest::MD5 qw(md5_hex);
@@ -249,8 +248,8 @@ sub alarmsQuery {
 			my $tzEpoch = $alarm->nextDue() || time;
 			my $tzAbbr = defined $alarmTZ
 				? Slim::Utils::DateTime::tzAbbr($tzEpoch, $alarmTZ) // $alarmTZ
-				: (POSIX::tzname())[ (localtime($tzEpoch))[8] ];
-			$request->addResultLoop($loopname, $cnt, 'tz_abbr', $tzAbbr) if $tzAbbr;
+				: '';
+			$request->addResultLoop($loopname, $cnt, 'tz_abbr', $tzAbbr);
 			$cnt++;
 		}
 	}

@@ -485,7 +485,7 @@ sub findNextTime {
 					my $relAlarmTime = $self->{_time} + $i * 86400;
 					my $absAlarmTime = $baseTime - $baseTimeSecs + $relAlarmTime;
 
-					main::DEBUGLOG && $isDebug && $log->debug(sub {'Potential next time found: ' . _timeStr($absAlarmTime)});
+					main::DEBUGLOG && $isDebug && $log->debug(sub {'Potential next time found: ' . _timeStr($absAlarmTime, $self->{_timezone}) . ' (' . ($self->{_timezone} // 'server TZ') . ')'});
 
 					# Make sure this isn't the alarm that's just sounded or another alarm with the
 					# same time.
@@ -1438,7 +1438,7 @@ sub scheduleNext {
 		}
 
 		if (defined $nextAlarm) {
-			main::DEBUGLOG && $isDebug && $log->debug(sub {'Next alarm is at ' . _timeStr($nextAlarm->{'_nextDue'})});
+			main::DEBUGLOG && $isDebug && $log->debug(sub {'Next alarm is at ' . _timeStr($nextAlarm->{'_nextDue'}, $nextAlarm->{_timezone}) . ' (' . ($nextAlarm->{_timezone} // 'server TZ') . ')'});
 
 			if ($nextAlarm->{_nextDue} <= $now) {
 				# The alarm is for this minute or the past, expectation here is that a client-side fallback (ip3K and squeezeplay-based both) will handle this failure
@@ -1943,12 +1943,15 @@ sub _checkTime {
 # Format a given time in a human readable way.  Used for debug only.
 sub _timeStr {
 	my $time = shift;
+	my $tz   = shift;
 
 	if ($time < 86400) {
 		my ($sec, $min, $hour, $mday, $mon, $year, $wday)  = gmtime($time);
 		return "$hour:$min:$sec";
 	} else {
-		my ($sec, $min, $hour, $mday, $mon, $year, $wday)  = localtime($time);
+		my ($sec, $min, $hour, $mday, $mon, $year, $wday) = $tz
+			? Slim::Utils::DateTime::localtimeInTZ($time, $tz)
+			: localtime($time);
 		return "$hour:$min:$sec $mday/" . ($mon + 1) . '/' . ($year + 1900);
 	}
 
