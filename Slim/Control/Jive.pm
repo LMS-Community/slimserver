@@ -999,8 +999,7 @@ sub getCurrentAlarms {
 		my $tzAbbr = defined $alarmTZ
 			? Slim::Utils::DateTime::tzAbbr($alarm->nextDue || time, $alarmTZ) // $alarmTZ
 			: undef;
-		my $name = $client->string('ALARM_ALARM') . " $count: " . $alarm->displayStr
-			. ($tzAbbr ? " $tzAbbr" : '');
+		my $name = $client->string('ALARM_ALARM') . " $count: " . $alarm->displayStr($tzAbbr);
 		my $daysString = join(',', @days);
 		my $thisAlarm = {
 			text           => $name,

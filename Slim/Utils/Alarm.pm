@@ -956,9 +956,11 @@ Returns a short, single-line string describing this alarm.  e.g. 09:00 Mo Sa Sj
 =cut
 
 sub displayStr {
-	my $self = shift;
+	my $self   = shift;
+	my $tzAbbr = shift;
 
 	my $displayStr = $self->timeStr();
+	$displayStr .= " $tzAbbr" if $tzAbbr;
 
 	if (! $self->everyDay) {
 		foreach my $day (1 .. 6, 0) {
