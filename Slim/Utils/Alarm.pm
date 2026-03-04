@@ -122,7 +122,7 @@ sub new {
 		_playlist => undef,
 		_title => undef,
 		_volume => undef, # Use default volume
-		_timezone => undef, # Olson timezone name e.g. 'America/New_York'. undef = use server timezone
+		_timezone => undef, # Olson timezone name e.g. 'America/New_York'. undef = use server time (localtime)
 		_active => 0,
 		_snoozeActive => 0,
 		_nextDue => undef,
@@ -300,8 +300,8 @@ sub time {
 =head3 timezone( [ $timezone ] )
 
 Sets/returns the Olson timezone name for this alarm (e.g. 'America/New_York').  When set, the alarm
-will fire at the stored time-of-day in this timezone rather than the server's local timezone.
-When undef (the default), the server's local timezone is used.
+will fire at the stored time-of-day in this timezone rather than server time.
+When undef (the default), server time is used (localtime()).
 
 =cut
 
@@ -463,7 +463,7 @@ sub findNextTime {
 
 	if (defined $self->{_days}) {
 		# Convert base time into a weekday number and time, using the alarm's
-		# timezone if set, otherwise the server's local timezone.
+		# timezone if set, otherwise server time (localtime).
 		my ($sec, $min, $hour, $mday, $mon, $year, $wday);
 		if (defined $self->{_timezone}) {
 			($sec, $min, $hour, $mday, $mon, $year, $wday) = Slim::Utils::DateTime::localtimeInTZ($baseTime, $self->{_timezone});
@@ -485,7 +485,7 @@ sub findNextTime {
 					my $relAlarmTime = $self->{_time} + $i * 86400;
 					my $absAlarmTime = $baseTime - $baseTimeSecs + $relAlarmTime;
 
-					main::DEBUGLOG && $isDebug && $log->debug(sub {'Potential next time found: ' . _timeStr($absAlarmTime, $self->{_timezone}) . ' (' . ($self->{_timezone} // 'server TZ') . ')'});
+					main::DEBUGLOG && $isDebug && $log->debug(sub {'Potential next time found: ' . _timeStr($absAlarmTime, $self->{_timezone}) . ' (' . ($self->{_timezone} // 'server time') . ')'});
 
 					# Make sure this isn't the alarm that's just sounded or another alarm with the
 					# same time.
@@ -1440,7 +1440,7 @@ sub scheduleNext {
 		}
 
 		if (defined $nextAlarm) {
-			main::DEBUGLOG && $isDebug && $log->debug(sub {'Next alarm is at ' . _timeStr($nextAlarm->{'_nextDue'}, $nextAlarm->{_timezone}) . ' (' . ($nextAlarm->{_timezone} // 'server TZ') . ')'});
+			main::DEBUGLOG && $isDebug && $log->debug(sub {'Next alarm is at ' . _timeStr($nextAlarm->{'_nextDue'}, $nextAlarm->{_timezone}) . ' (' . ($nextAlarm->{_timezone} // 'server time') . ')'});
 
 			if ($nextAlarm->{_nextDue} <= $now) {
 				# The alarm is for this minute or the past, expectation here is that a client-side fallback (ip3K and squeezeplay-based both) will handle this failure
