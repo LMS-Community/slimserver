@@ -1033,7 +1033,7 @@ sub getMetadataFor {
 
 	# Check for an alternate metadata provider for this URL
 	my $provider = Slim::Formats::RemoteMetadata->getProviderFor($url);
-	if ( $provider ) {
+	if ( $client && $provider ) {
 		my $metadata = eval { $provider->( $client, $url ) };
 		if ( $@ ) {
 			my $name = main::DEBUGLOG ? Slim::Utils::PerlRunTime::realNameForCodeRef($provider) : 'unk';
@@ -1073,7 +1073,7 @@ sub getMetadataFor {
 
 	my ($artist, $title);
 	# Radio tracks, return artist and title if the metadata looks like Artist - Title
-	if ( my $currentTitle = Slim::Music::Info::getCurrentTitle( $client, $url ) ) {
+	if ( $client && (my $currentTitle = Slim::Music::Info::getCurrentTitle( $client, $url ) ) ) {
 		my @dashes = $currentTitle =~ /( - )/g;
 		if ( scalar @dashes == 1 ) {
 			($artist, $title) = split /\s+-\s+/, $currentTitle;
@@ -1092,8 +1092,8 @@ sub getMetadataFor {
 	my $cover = $cache->get( "remote_image_$url" );
 
 	# Item may be a playlist, so get the real URL playing
-	if ( Slim::Music::Info::isPlaylist($url) ) {
-		if (my $cur = $client->currentTrackForUrl($url)) {
+	if ( $client && (Slim::Music::Info::isPlaylist($url) ) ) {
+		if ( my $cur = $client->currentTrackForUrl($url)) {
 			$url = $cur->url;
 		}
 	}
