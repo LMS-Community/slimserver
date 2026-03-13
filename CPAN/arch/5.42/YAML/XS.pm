@@ -1,7 +1,7 @@
 use strict; use warnings;
 
 package YAML::XS;
-our $VERSION = '0.89';
+our $VERSION = 'v0.903.0'; # VERSION
 
 use base 'Exporter';
 
@@ -54,7 +54,7 @@ sub LoadFile {
         $IN = $filename;
     }
     else {
-        open $IN, $filename
+        open $IN, '<', $filename
           or die "Can't open '$filename' for input:\n$!";
     }
     return YAML::XS::LibYAML::Load(do { local $/; local $_ = <$IN> });
