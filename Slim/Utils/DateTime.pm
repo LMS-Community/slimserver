@@ -513,7 +513,7 @@ sub getTimeZoneInformation {
 		{
 			timeout => 5,
 		}
-	)->get(TIME_INFO_URL);
+	)->get(TIME_INFO_URL, 'X-LMS-Plugin-ID' => __PACKAGE__);
 }
 
 sub getTZName {
