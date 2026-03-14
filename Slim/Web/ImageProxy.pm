@@ -202,6 +202,7 @@ sub getImage {
 		if (!$pre_shrunk && $url =~ /^https?:.*\.webp(?:$|\?)/i) {
 			main::DEBUGLOG && $log->debug("Redirect WEBP images to JPEG conversion service");
 			$url = urlToCloudResizer($url);
+			$headers{'X-LMS-Plugin-ID'} = __PACKAGE__;
 		}
 
 		$queue{$url} ||= [];
@@ -284,7 +285,10 @@ sub _gotArtwork {
 				cache   => 1,
 				originalUrl => $url,
 			},
-		)->get(urlToCloudResizer($url));
+		)->get(urlToCloudResizer($url),
+			'Accept'          => ACCEPT_IMAGE_FORMATS,
+			'X-LMS-Plugin-ID' => __PACKAGE__,
+		);
 
 		return;
 	}
