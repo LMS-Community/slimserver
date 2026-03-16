@@ -1815,12 +1815,25 @@ sub _newTrack {
 	}
 
 	if ( $columnValueHash{cover} ) {
-		# Generate coverid value based on artwork, mtime, filesize
+		# Generate coverid value based on artwork, mtime, filesize:
+		# if cover is embedded in the file (ie it's a number, the size of the embedded image) use the track URL,
+		# if cover is external use the URL of the image.
+		# This avoids generating multiple cover ids for the same image. I'm not sure if they would ever get cached
+		# because Slim::Music::Artwork would consolidate them, but this seems cleaner.
+		my ($coverUrl, $mtime, $size);
+		if ( $columnValueHash{cover} =~ /^\d+$/ ) {
+			$coverUrl = $url;
+			$mtime = $columnValueHash{timestamp};
+			$size  = $columnValueHash{filesize};
+		}
+		else {
+			$coverUrl = Slim::Utils::Misc::fileURLFromPath($columnValueHash{cover});
+		}
 		$columnValueHash{coverid} = Slim::Schema::Track->generateCoverId( {
 			cover => $columnValueHash{cover},
-			url   => $url,
-			mtime => $columnValueHash{timestamp},
-			size  => $columnValueHash{filesize},
+			url   => $coverUrl,
+			mtime => $mtime,
+			size  => $size,
 		} );
 	}
 
@@ -2011,6 +2024,7 @@ sub updateOrCreateBase {
 			grouping => 1,
 			discsubtitle => 1,
 			musicbrainz_id => 1,
+			cover => 1,
 		};
 		# Some taggers will not supply blank tags so create the attributes for columns which need to be nulled.
 		foreach my $col (keys %$nullableColumns) {
