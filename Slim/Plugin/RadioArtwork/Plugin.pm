@@ -233,7 +233,7 @@ sub getHeaders {
 	my ($class, $args, $client, $url, $titleInfo) = @_;
 
 	my $headers =  {
-		'X-LMS-Plugin-ID' => $class,
+		Slim::Utils::Misc::apiHeaders($class),
 	};
 
 	if ($url && (my $parsed = URI->new($url))) {

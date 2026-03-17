@@ -513,7 +513,7 @@ sub getTimeZoneInformation {
 		{
 			timeout => 5,
 		}
-	)->get(TIME_INFO_URL);
+	)->get(TIME_INFO_URL, Slim::Utils::Misc::apiHeaders(__PACKAGE__));
 }
 
 sub getTZName {
