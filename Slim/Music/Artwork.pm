@@ -237,7 +237,7 @@ sub updateStandaloneArtwork {
 			albums.discc AS disc_count,
 			albums.artwork AS album_artwork,
 			-- This is the Sqlite equivalent of dirname()
-			rtrim(tracks.url, replace(tracks.url, '/', '')) AS dirname,
+			RTRIM(tracks.url, REPLACE(tracks.url, '/', '')) AS dirname,
 			tracks.disc
 		FROM  tracks
 		JOIN  albums ON (tracks.album = albums.id)
