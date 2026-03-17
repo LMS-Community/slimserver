@@ -26,9 +26,10 @@
 
 		<div class="settingGroup">
 			<div class="prefHead" style="font-weight:normal;">[% "ALARM_SET" | string %]</div>
-			<div class="prefs" style="max-height:14px">
+			<div class="prefs" style="display: flex; align-items: center; gap: 6px;">
 				<input type="text" class="stdedit timeControl" name="alarmtime[% alarm.id %]" id="alarmtime[% alarm.id %]" value="[% alarm.timeStr | html %]" size="15">
-			&nbsp;</div>
+				[% IF playerTimezone %]<span>([% playerTimezone | html %])</span>[% ELSIF serverTZName %]<span>([% serverTZName | html %])</span>[% END %]
+			</div>
 		</div>
 
 		[% alarmTitle = "ALARM_SET_DAYS" | string %]

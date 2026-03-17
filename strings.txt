@@ -4289,6 +4289,22 @@ DECODER
 #
 # Player settings
 
+SETUP_PLAYER_TIMEZONE
+	EN	Player Timezone
+	NL	Tijdzone muziekspeler
+
+SETUP_PLAYER_TIMEZONE_DESC
+	EN	The player timezone. Used for clock display and alarms.
+	NL	De tijdzone van de muziekspeler. Gebruikt voor de weergave van de klok en wekkers.
+
+SETUP_PLAYER_TIMEZONE_DESC_MANAGED
+	EN	Change the timezone via the settings on the device.
+	NL	Verander de tijdzone middels het menu op de speler.
+
+SETUP_PLAYER_TIMEZONE_SERVER
+	EN	Server timezone
+	NL	Servertijdzone
+
 SETUP_PLAYERNAME
 	CS	Název přehrávače
 	DA	Afspillerens navn

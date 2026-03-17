@@ -11,7 +11,7 @@ use strict;
 use Date::Parse;
 use HTTP::Status qw(RC_INTERNAL_SERVER_ERROR);
 use JSON::XS::VersionOneAndTwo;
-use POSIX qw(strftime);
+use POSIX qw(strftime tzset tzname);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -62,8 +62,9 @@ Encoding is the current locale.
 sub longDateF {
 	my $time = shift || time();
 	my $format = shift || $prefs->get('longdateFormat');
+	my $tz = shift;
 
-	my $date = strftime($format, localtime($time));
+	my $date = strftime($format, $tz ? localtimeInTZ($time, $tz) : localtime($time));
 	   $date =~ s/\|0*//;
 
 	return Slim::Utils::Unicode::utf8decode_locale($date);
@@ -81,8 +82,9 @@ Encoding is the current locale.
 sub shortDateF {
 	my $time = shift || time();
 	my $format = shift || $prefs->get('shortdateFormat');
+	my $tz = shift;
 
-	my $date = strftime($format, localtime($time));
+	my $date = strftime($format, $tz ? localtimeInTZ($time, $tz) : localtime($time));
 	   $date =~ s/\|0*//;
 
 	return Slim::Utils::Unicode::utf8decode_locale($date);
@@ -104,8 +106,9 @@ sub timeF {
 	my $ltime = shift || time();
 	my $format = shift || $prefs->get('timeFormat');
 	my $timeIsUTC = shift;
+	my $tz = shift;
 
-	my @timeDigits = $timeIsUTC ? gmtime($ltime) : localtime($ltime);
+	my @timeDigits = $timeIsUTC ? gmtime($ltime) : ($tz ? localtimeInTZ($ltime, $tz) : localtime($ltime));
 
 	# remove leading zero if another digit follows
 	my $time  = strftime($format, @timeDigits);
@@ -527,6 +530,118 @@ sub getTZName {
 	});
 }
 
+=head2 getTimezoneNames()
+
+Returns a sorted array ref of known Olson timezone names.  Uses
+C<DateTime::TimeZone-E<gt>all_names()> when available, otherwise parses
+C<zone1970.tab> (or C<zone.tab>) from C</usr/share/zoneinfo/>.  Returns an
+empty array ref when neither source is available.
+
+=cut
+
+my $_tzNames;
+my ($_dttAvailable, %_tzCache);
+
+sub getTimezoneNames {
+	return $_tzNames if defined $_tzNames;
+
+	_initDTT();
+	if ($_dttAvailable) {
+		return ($_tzNames = [ DateTime::TimeZone->all_names() ]);
+	}
+
+	# Parse zone1970.tab (or zone.tab) — same canonical list as DateTime::TimeZone.
+	# Format: CC<TAB>coordinates<TAB>TZ[<TAB>comments]
+	for my $tabfile (qw(/usr/share/zoneinfo/zone1970.tab /usr/share/zoneinfo/zone.tab)) {
+		next unless -f $tabfile;
+		my @names;
+		open(my $fh, '<', $tabfile) or next;
+		while (my $line = <$fh>) {
+			next if $line =~ /^#/;
+			my $tz = (split /\t/, $line)[2];
+			next unless defined $tz;
+			chomp $tz;
+			push @names, $tz if validateTZName($tz);
+		}
+		close $fh;
+		return ($_tzNames = [ sort @names ]) if @names;
+	}
+
+	return ($_tzNames = []);
+}
+
+=head2 validateTZName( $tzName )
+
+Returns true if C<$tzName> looks like a valid Olson timezone identifier
+(e.g. C<"Europe/Amsterdam">, C<"America/New_York">).  Rejects anything outside
+the expected character set, degenerate paths, and reserved names.
+
+=cut
+
+sub validateTZName {
+	my $tzName = shift;
+
+	return 0 unless defined $tzName && length $tzName;
+
+	return !(
+		$tzName =~ m{[^A-Za-z_\-/]}   # only A-Za-z _ - / allowed
+		|| $tzName =~ m{^/}            # no leading slash
+		|| $tzName =~ m{/$}            # no trailing slash
+		|| $tzName =~ m{//}            # no empty component
+		|| $tzName =~ m{ ^- | /- }x   # no component starting with hyphen
+		|| $tzName eq 'Factory'        # reserved for SqueezeOS use
+		|| $tzName eq 'Etc/Unknown'    # never a valid timezone
+	);
+}
+
+=head2 getServerTZName()
+
+Returns the Olson timezone name for this server.  Tries
+C<DateTime::TimeZone>, then C<$ENV{TZ}> / C</etc/localtime> symlink, then
+the cached geolocation result from the C</time/tz> API.  Returns C<undef> if
+none succeed.  Result is cached after the first successful detection.
+
+=cut
+
+my $_serverTZName;
+
+sub getServerTZName {
+	return $_serverTZName if defined $_serverTZName;
+
+	# 1. DateTime::TimeZone (works everywhere DTT is installed)
+	if (eval { require DateTime::TimeZone; 1 }) {
+		my $tz = eval { DateTime::TimeZone->new(name => 'local') };
+		if ($tz) {
+			my $name = eval { $tz->name() };
+			return ($_serverTZName = $name) if $name && validateTZName($name);
+		}
+	}
+
+	# 2. OS — $ENV{TZ} or /etc/localtime symlink
+	if (!main::ISWINDOWS) {
+		# $ENV{TZ} may be set explicitly (strip optional leading colon)
+		if (defined $ENV{TZ}) {
+			(my $tz = $ENV{TZ}) =~ s/^://;
+			return ($_serverTZName = $tz) if validateTZName($tz);
+		}
+
+		# /etc/localtime symlink
+		if (-l '/etc/localtime') {
+			my $link = readlink('/etc/localtime') // '';
+			if (my ($tz) = $link =~ m{zoneinfo/(.+)$}) {
+				return ($_serverTZName = $tz) if validateTZName($tz);
+			}
+		}
+	}
+
+	# 3. Geolocation cache from /time/tz API — last resort
+	if ($tzInfo && validateTZName($tzInfo->{timezone} // '')) {
+		return ($_serverTZName = $tzInfo->{timezone});
+	}
+
+	return undef;
+}
+
 sub getTZOffsetHHMM {
 	my $cb = shift || sub { $_[0] };
 
@@ -539,6 +654,117 @@ sub getTZOffsetHHMM {
 }
 
 sub isDST { (localtime(time()))[8] ? 1 : 0 }
+
+{
+	# Minimal DateTime::TimeZone-compatible object built from a plain epoch.
+	# Implements the interface required by offset_for_datetime().
+	package Slim::Utils::DateTime::_EpochDT;
+	sub new             { bless { epoch => $_[1] }, $_[0] }
+	sub utc_rd_as_seconds { $_[0]->{epoch} + 62135596800 }
+	sub utc_year        { (gmtime($_[0]->{epoch}))[5] + 1900 }
+	sub utc_rd_values   {
+		my $s = $_[0]->{epoch} + 62135596800;
+		return (int($s / 86400), $s % 86400);
+	}
+}
+
+sub _initDTT {
+	return if defined $_dttAvailable;
+	$_dttAvailable = eval { require DateTime::TimeZone; 1 } ? 1 : 0;
+	if (!$_dttAvailable) {
+		my $reason = $@ ? " ($@)" : '';
+		$reason =~ s/\s+$//;
+		if (!main::ISWINDOWS && eval { POSIX::tzset(); 1 }) {
+			$log->info("DateTime::TimeZone not available; using POSIX::tzset fallback for timezone-aware time functions$reason");
+		} else {
+			$log->warn("DateTime::TimeZone not available; falling back to server timezone$reason");
+		}
+	}
+}
+
+sub _tzObj {
+	my ($tzName) = @_;
+
+	_initDTT();
+	return if !$_dttAvailable;
+
+	# Cache undef for unrecognised names to avoid repeated warnings.
+	if (!exists $_tzCache{$tzName}) {
+		$_tzCache{$tzName} = eval { DateTime::TimeZone->new(name => $tzName) };
+		if (!$_tzCache{$tzName}) {
+			$log->warn($@ ? "DateTime::TimeZone error for '$tzName': $@" : "Unrecognised timezone '$tzName'");
+		}
+	}
+	return $_tzCache{$tzName};
+}
+
+=head2 localtimeInTZ( $epoch, $tzName )
+
+Returns a list equivalent to C<localtime($epoch)> but computed in the named
+Olson timezone (e.g. C<"Europe/Amsterdam">) rather than the server's local
+timezone.  Falls back to server C<localtime> if the timezone is unrecognised
+or unavailable.
+
+=cut
+
+sub localtimeInTZ {
+	my ($epoch, $tzName) = @_;
+
+	if (my $tz = _tzObj($tzName)) {
+		my $offset = $tz->offset_for_datetime( Slim::Utils::DateTime::_EpochDT->new($epoch) );
+		return gmtime($epoch + $offset);
+	}
+
+	if ($_dttAvailable) {
+		# DateTime::TimeZone available but $tzName unrecognised — already warned.
+		return localtime($epoch);
+	}
+
+	# POSIX::tzset fallback.  Save/restore $ENV{TZ} via 'local'.
+	return localtime($epoch) if main::ISWINDOWS;
+	main::DEBUGLOG && $log->debug("localtimeInTZ: using POSIX::tzset fallback for '$tzName'");
+	my @result;
+	{
+		local $ENV{TZ} = ':' . $tzName;
+		POSIX::tzset();
+		@result = localtime($epoch);
+	}
+	POSIX::tzset();    # re-initialize with the now-restored $ENV{TZ}
+	return @result;
+}
+
+=head2 tzAbbr( $epoch, $tzName )
+
+Returns the timezone abbreviation (e.g. C<"CET">, C<"CEST">, C<"EST">) for
+the named Olson timezone at the given epoch.  Uses the same fallback chain as
+L</localtimeInTZ>.
+
+=cut
+
+sub tzAbbr {
+	my ($epoch, $tzName) = @_;
+
+	if (my $tz = _tzObj($tzName)) {
+		return $tz->short_name_for_datetime( Slim::Utils::DateTime::_EpochDT->new($epoch) );
+	}
+
+	if ($_dttAvailable) {
+		# DateTime::TimeZone available but $tzName unrecognised — already warned.
+		return undef;
+	}
+
+	# POSIX::tzset fallback.  Save/restore $ENV{TZ} via 'local'.
+	return undef if main::ISWINDOWS;
+	main::DEBUGLOG && $log->debug("tzAbbr: using POSIX::tzset fallback for '$tzName'");
+	my $abbr;
+	{
+		local $ENV{TZ} = ':' . $tzName;
+		POSIX::tzset();
+		$abbr = (POSIX::tzname())[ (localtime($epoch))[8] ];
+	}
+	POSIX::tzset();    # re-initialize with the now-restored $ENV{TZ}
+	return $abbr;
+}
 
 =head1 SEE ALSO
 

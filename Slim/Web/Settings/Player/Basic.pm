@@ -9,6 +9,7 @@ package Slim::Web::Settings::Player::Basic;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string cstring);
@@ -95,6 +96,15 @@ sub handler {
 
 	if ($paramRef->{'saveSettings'}) {
 
+		if (!$client->playerManagesTZ) {
+			my $tz = $paramRef->{'pref_timezone'};
+			if (defined $tz && $tz eq '') {
+				$prefs->client($client)->set('timezone', undef);
+			} elsif (defined $tz && Slim::Utils::DateTime::validateTZName($tz)) {
+				$prefs->client($client)->set('timezone', $tz);
+			}
+		}
+
 		for my $pref (@prefs) {
 
 			my $i = 0;
@@ -127,6 +137,11 @@ sub handler {
 		$paramRef->{'visualModeOptions'}     = getVisualModes($client);
 		$paramRef->{'saveropts'}             = Slim::Buttons::Common::validSavers($client);
 	}
+
+	$paramRef->{'playerTimezone'}  = $prefs->client($client)->get('timezone');
+	$paramRef->{'playerManagesTZ'} = $client->playerManagesTZ;
+	$paramRef->{'timezoneNames'}   = $paramRef->{'playerManagesTZ'} ? [] : Slim::Utils::DateTime::getTimezoneNames();
+	$paramRef->{'serverTZName'}    = Slim::Utils::DateTime::getServerTZName();
 
 	$paramRef->{'playerinfo'} = Slim::Menu::SystemInfo::infoCurrentPlayer( $client );
 	$paramRef->{'playerinfo'} = $paramRef->{'playerinfo'}->{web}->{items};

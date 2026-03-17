@@ -442,8 +442,12 @@ sub findNextTime {
 	my $client = $self->client;
 
 	if (defined $self->{_days}) {
-		# Convert base time into a weekday number and time
-		my ($sec, $min, $hour, $mday, $mon, $year, $wday)  = localtime($baseTime);
+		# Convert base time into a weekday number and time, using the player's
+		# timezone if set, otherwise server time.
+		my $tz = $prefs->client($client)->get('timezone');
+		my ($sec, $min, $hour, $mday, $mon, $year, $wday) = defined $tz
+			? Slim::Utils::DateTime::localtimeInTZ($baseTime, $tz)
+			: localtime($baseTime);
 
 		# Find the first enabled alarm starting at baseTime's day num
 		my $day = $wday;
@@ -459,12 +463,12 @@ sub findNextTime {
 					my $relAlarmTime = $self->{_time} + $i * 86400;
 					my $absAlarmTime = $baseTime - $baseTimeSecs + $relAlarmTime;
 
-					main::DEBUGLOG && $isDebug && $log->debug(sub {'Potential next time found: ' . _timeStr($absAlarmTime)});
+					main::DEBUGLOG && $isDebug && $log->debug(sub {'Potential next time found: ' . _timeStr($absAlarmTime, $tz)});
 
 					# Make sure this isn't the alarm that's just sounded or another alarm with the
 					# same time.
 					my $lastAlarmTime = $client->alarmData->{lastAlarmTime};
-					main::DEBUGLOG && $isDebug && defined $lastAlarmTime && $log->debug(sub {'Last alarm due: ' . _timeStr($lastAlarmTime)});
+					main::DEBUGLOG && $isDebug && defined $lastAlarmTime && $log->debug(sub {'Last alarm due: ' . _timeStr($lastAlarmTime, $tz)});
 					if (! defined $lastAlarmTime || $absAlarmTime != $lastAlarmTime) {
 						$self->{_nextDue} = $absAlarmTime;
 						return $absAlarmTime;
@@ -1175,6 +1179,14 @@ sub init {
 	my $client = shift;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug('Alarm initing...');
+
+	# Reschedule alarms when a player's timezone pref changes.
+	$prefs->setChange(sub {
+		my $client = $_[2];
+		return unless $client;
+		main::DEBUGLOG && $log->is_debug && $log->debug('Timezone changed for ' . $client->name . ' - rescheduling alarms');
+		Slim::Utils::Alarm->scheduleNext($client);
+	}, 'timezone');
 }
 
 # Subscribe to commands that should stop the alarm
@@ -1410,7 +1422,8 @@ sub scheduleNext {
 		}
 
 		if (defined $nextAlarm) {
-			main::DEBUGLOG && $isDebug && $log->debug(sub {'Next alarm is at ' . _timeStr($nextAlarm->{'_nextDue'})});
+			my $nextTZ = $prefs->client($nextAlarm->client)->get('timezone');
+			main::DEBUGLOG && $isDebug && $log->debug(sub {'Next alarm is at ' . _timeStr($nextAlarm->{'_nextDue'}, $nextTZ) . ' (' . ($nextTZ // 'server time') . ')'});
 
 			if ($nextAlarm->{_nextDue} <= $now) {
 				# The alarm is for this minute or the past, expectation here is that a client-side fallback (ip3K and squeezeplay-based both) will handle this failure
@@ -1914,16 +1927,17 @@ sub _checkTime {
 
 # Format a given time in a human readable way.  Used for debug only.
 sub _timeStr {
-	my $time = shift;
+	my ($time, $tz) = @_;
 
 	if ($time < 86400) {
 		my ($sec, $min, $hour, $mday, $mon, $year, $wday)  = gmtime($time);
 		return "$hour:$min:$sec";
 	} else {
-		my ($sec, $min, $hour, $mday, $mon, $year, $wday)  = localtime($time);
+		my ($sec, $min, $hour, $mday, $mon, $year, $wday) = $tz
+			? Slim::Utils::DateTime::localtimeInTZ($time, $tz)
+			: localtime($time);
 		return "$hour:$min:$sec $mday/" . ($mon + 1) . '/' . ($year + 1900);
 	}
-
 }
 
 # Return the number of seconds over which alarms should fade in for a given client,
