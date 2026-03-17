@@ -36,7 +36,7 @@ sub postinitPlugin {
 	Slim::Utils::Timers::setTimer($serverId, time() + REPORT_DELAY, \&_report);
 }
 
-sub getServerid { $serverId }
+sub getServerId { $serverId }
 
 sub _report {
 	Slim::Utils::Timers::killTimers($serverId, \&_report);
