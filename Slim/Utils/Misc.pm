@@ -1233,14 +1233,13 @@ sub apiHeaders {
 	my ($module) = @_;
 
 	if (!$apiHeaders) {
-		$apiHeaders = {
-			'X-LMS-Plugin-ID' => $module,
-		};
-
+		$apiHeaders = {};
 		if (Slim::Utils::PluginManager->isConfiguredEnabled('Analytics')) {
 			$apiHeaders->{'X-LMS-ID'} = Slim::Plugin::Analytics::Plugin::getServerId();
 		}
 	}
+
+	$apiHeaders->{'X-LMS-Plugin-ID'} = $module;
 
 	return %$apiHeaders
 }
