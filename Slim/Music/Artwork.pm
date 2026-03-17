@@ -59,6 +59,10 @@ my %findArtCache;
 
 # Public class methods
 sub findStandaloneArtwork {
+	# PR https://github.com/LMS-Community/slimserver/pull/1536
+	# new parameter $commonParent flag introduced. If this is passed $dirurl should be the parent directory and we don't need
+	# to have received anything in $trackAttributes or $deferredAttributes as track-based variable cover art format is bypassed.
+
 	my ( $class, $trackAttributes, $deferredAttributes, $dirurl, $commonParent ) = @_;
 
 	my $discNumber = $trackAttributes->{disc};
@@ -139,7 +143,6 @@ sub findStandaloneArtwork {
 
 		if ( !$art ) {
 			# Find all image files in the file directory
-			$parentDir = $commonParent if $commonParent;
 
 			my $types = qr/\.(?:jpe?g|png|gif)$/i;
 
@@ -289,9 +292,9 @@ sub updateStandaloneArtwork {
 	my $work = sub {
 		if ( $sth->fetch ) {
 
-			my $newCoverId;
-			my $newCover;
-			my $newAlbumCover;
+			my $newCoverId = undef;
+			my $newCover = undef;
+			my $newAlbumCover = undef;
 			my $urlDir  = dirname(Slim::Utils::Misc::pathFromFileURL($url)) if $url =~ /^file:/;
 
 			$progress->update( $album_title );
@@ -316,7 +319,7 @@ sub updateStandaloneArtwork {
 						$commonParent = _findCommonParent(\@paths);
 					}
 
-					if ( my $parentArtwork = Slim::Music::Artwork->findStandaloneArtwork(undef, undef, Slim::Utils::Misc::fileURLFromPath($urlDir), $commonParent) ) {
+					if ( my $parentArtwork = Slim::Music::Artwork->findStandaloneArtwork(undef, undef, Slim::Utils::Misc::fileURLFromPath($commonParent), 1) ) {
 						my $parentUrl = Slim::Utils::Misc::fileURLFromPath($parentArtwork);
 						$newAlbumCover = Slim::Music::Artwork->generateImageId({
 							image => $parentArtwork,
@@ -832,7 +835,7 @@ sub precacheAllArtwork {
 						$commonParent = _findCommonParent(\@paths);
 					}
 					my $urlDir = dirname(Slim::Utils::Misc::pathFromFileURL($url));
-					if ( $parentArtwork = Slim::Music::Artwork->findStandaloneArtwork(undef, undef, Slim::Utils::Misc::fileURLFromPath($urlDir), $commonParent) ) {
+					if ( $parentArtwork = Slim::Music::Artwork->findStandaloneArtwork(undef, undef, Slim::Utils::Misc::fileURLFromPath($commonParent), 1) ) {
 						$parentArtworkId = Slim::Music::Artwork->generateImageId({
 							image => $parentArtwork,
 							url   => Slim::Utils::Misc::fileURLFromPath($parentArtwork),
@@ -997,7 +1000,8 @@ sub getResizeSpecs {
 
 sub _findCommonParent {
 	my $paths = shift;
-	return undef unless ref $paths eq 'ARRAY' && @$paths >= 2;
+	return undef if ref $paths ne 'ARRAY';
+	return $paths->[0] if scalar @$paths == 1;
 
 	my @split_paths = map {
 		my $normalized = canonpath($_);

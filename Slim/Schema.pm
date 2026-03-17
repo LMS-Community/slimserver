@@ -1820,20 +1820,11 @@ sub _newTrack {
 		# if cover is external use the URL of the image.
 		# This avoids generating multiple cover ids for the same image. I'm not sure if they would ever get cached
 		# because Slim::Music::Artwork would consolidate them, but this seems cleaner.
-		my ($coverUrl, $mtime, $size);
-		if ( $columnValueHash{cover} =~ /^\d+$/ ) {
-			$coverUrl = $url;
-			$mtime = $columnValueHash{timestamp};
-			$size  = $columnValueHash{filesize};
-		}
-		else {
-			$coverUrl = Slim::Utils::Misc::fileURLFromPath($columnValueHash{cover});
-		}
 		$columnValueHash{coverid} = Slim::Schema::Track->generateCoverId( {
 			cover => $columnValueHash{cover},
-			url   => $coverUrl,
-			mtime => $mtime,
-			size  => $size,
+			url   => $columnValueHash{cover} =~ /^\d+$/ ? $url : Slim::Utils::Misc::fileURLFromPath($columnValueHash{cover}),
+			mtime => $columnValueHash{timestamp},
+			size  => $columnValueHash{filesize},
 		} );
 	}
 

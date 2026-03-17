@@ -728,24 +728,15 @@ sub coverid {
 	if ( !defined $val ) {
 		# Initialize coverid value
 		if ( $self->cover ) {
-			my ($coverUrl, $mtime, $size);
 			# if cover is embedded in the file (ie it's a number, the size of the embedded image) use the track URL,
 			# if cover is external use the URL of the image.
 			# This avoids generating multiple cover ids for the same image. I'm not sure if they would ever get cached
 			# because Slim::Music::Artwork would consolidate them, but this seems cleaner.
-			if ( $self->cover =~ /^\d+$/ ) {
-				$coverUrl = $self->url;
-				$mtime = $self->timestamp;
-				$size  = $self->filesize;
-			}
-			else {
-				$coverUrl = Slim::Utils::Misc::fileURLFromPath($self->cover);
-			}
 			$val = $self->generateCoverId( {
 				cover => $self->cover,
-				url   => $coverUrl,
-				mtime => $mtime,
-				size  => $size,
+				url   => $self->cover =~ /^\d+$/ ? $self->url : Slim::Utils::Misc::fileURLFromPath($self->cover),
+				mtime => $self->timestamp,
+				size  => $self->filesize,
 			} );
 			$self->_coverid($val);
 			$self->update;
