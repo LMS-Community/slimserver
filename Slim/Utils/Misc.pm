@@ -1238,7 +1238,7 @@ sub apiHeaders {
 		};
 
 		if (Slim::Utils::PluginManager->isConfiguredEnabled('Analytics')) {
-			$apiHeaders->{'X-LMS-ID'} = Slim::Plugin::Analytics::Plugin::getServerid();
+			$apiHeaders->{'X-LMS-ID'} = Slim::Plugin::Analytics::Plugin::getServerId();
 		}
 	}
 
