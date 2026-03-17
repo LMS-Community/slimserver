@@ -81,7 +81,7 @@ elsif ($^O =~/darwin/i) {
 }
 
 # Cache our user agent string.
-my ($userAgentString, $legacyUserAgentString);
+my ($userAgentString, $legacyUserAgentString, $apiHeaders);
 my $tempdir;
 
 my %pathToFileCache = ();
@@ -1227,6 +1227,22 @@ sub userAgentString {
 	}
 
 	return $ua;
+}
+
+sub apiHeaders {
+	my ($module) = @_;
+
+	if (!$apiHeaders) {
+		$apiHeaders = {
+			'X-LMS-Plugin-ID' => $module,
+		};
+
+		if (Slim::Utils::PluginManager->isConfiguredEnabled('Analytics')) {
+			$apiHeaders->{'X-LMS-ID'} = Slim::Plugin::Analytics::Plugin::getServerid();
+		}
+	}
+
+	return %$apiHeaders
 }
 
 =head2 assert ( $exp, $msg )
