@@ -618,7 +618,8 @@ sub getServerTZName {
 	return $_serverTZName if defined $_serverTZName;
 
 	# 1. DateTime::TimeZone (works everywhere DTT is installed)
-	if (eval { require DateTime::TimeZone; 1 }) {
+	_initDTT();
+	if ($_dttAvailable) {
 		my $tz = eval { DateTime::TimeZone->new(name => 'local') };
 		if ($tz) {
 			my $name = eval { $tz->name() };
