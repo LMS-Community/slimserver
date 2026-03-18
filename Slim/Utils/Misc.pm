@@ -1232,14 +1232,25 @@ sub userAgentString {
 sub apiHeaders {
 	my ($module) = @_;
 
-	if (!$apiHeaders) {
-		$apiHeaders = {};
-		if (Slim::Utils::PluginManager->isConfiguredEnabled('Analytics')) {
-			$apiHeaders->{'X-LMS-ID'} = Slim::Plugin::Analytics::Plugin::getServerId();
+	# we might be called before
+	eval {
+		if (!$apiHeaders) {
+			$apiHeaders = {};
+			if (Slim::Utils::PluginManager->isConfiguredEnabled('Analytics')) {
+				$apiHeaders->{'X-LMS-ID'} = Slim::Plugin::Analytics::Plugin::getServerId();
+			}
 		}
-	}
 
-	$apiHeaders->{'X-LMS-Plugin-ID'} = $module;
+		$apiHeaders->{'X-LMS-Plugin-ID'} = $module;
+	};
+
+	# we might be called before the analytics module was available - return empty to force re-initialization
+	if ($@) {
+		$apiHeaders = undef;
+		return {
+			'X-LMS-Plugin-ID' => $module,
+		};
+	}
 
 	return %$apiHeaders
 }
