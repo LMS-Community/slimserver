@@ -1938,6 +1938,7 @@ sub _timeStr {
 			: localtime($time);
 		return "$hour:$min:$sec $mday/" . ($mon + 1) . '/' . ($year + 1900);
 	}
+
 }
 
 # Return the number of seconds over which alarms should fade in for a given client,

@@ -573,8 +573,17 @@ sub getTimezoneNames {
 =head2 validateTZName( $tzName )
 
 Returns true if C<$tzName> looks like a valid Olson timezone identifier
-(e.g. C<"Europe/Amsterdam">, C<"America/New_York">).  Rejects anything outside
-the expected character set, degenerate paths, and reserved names.
+(e.g. C<"Europe/Amsterdam">, C<"America/New_York">).
+
+A TimeZone identifier is, essentially, a POSIX path with some additional (more
+and less voluntary) restrictions. These are indicated in the "theory" section
+of the tz distribution: L<https://github.com/eggert/tz/blob/main/theory.html>
+
+Identifier components should contain only A-Z, a-z, '-', and '_'. And we need
+'/' to join the components together.  Some "legacy" and "etc" TimeZones may
+also contain 0-9 and '+', but we do not expect or support such oddities.
+
+Note: we do not guarantee to purge all invalid TimeZones with these checks.
 
 =cut
 
@@ -584,13 +593,13 @@ sub validateTZName {
 	return 0 unless defined $tzName && length $tzName;
 
 	return !(
-		$tzName =~ m{[^A-Za-z_\-/]}   # only A-Za-z _ - / allowed
-		|| $tzName =~ m{^/}            # no leading slash
-		|| $tzName =~ m{/$}            # no trailing slash
-		|| $tzName =~ m{//}            # no empty component
-		|| $tzName =~ m{ ^- | /- }x   # no component starting with hyphen
-		|| $tzName eq 'Factory'        # reserved for SqueezeOS use
-		|| $tzName eq 'Etc/Unknown'    # never a valid timezone
+		$tzName =~ m{[^A-Za-z_\-/]}  # reject if any characters outside that range
+		|| $tzName =~ m{^/}          # leading '/' not allowed
+		|| $tzName =~ m{/$}          # trailing '/' not allowed
+		|| $tzName =~ m{//}          # no component to be empty
+		|| $tzName =~ m{ ^- | /- }x  # no component to start with a hyphen
+		|| $tzName eq 'Factory'      # reserved for SqueezeOS use
+		|| $tzName eq 'Etc/Unknown'  # reserved - never a valid TimeZone
 	);
 }
 
