@@ -22,12 +22,14 @@ package Slim::Web::Time;
 use strict;
 
 use HTTP::Status qw(RC_OK RC_NO_CONTENT RC_INTERNAL_SERVER_ERROR);
+use Time::HiRes;
 use JSON::XS::VersionOneAndTwo;
 
-use Slim::Web::HTTP;
-use Slim::Web::Pages;
 use Slim::Utils::DateTime;
 use Slim::Utils::Log;
+use Slim::Utils::Timers;
+use Slim::Web::HTTP;
+use Slim::Web::Pages;
 
 my $log = logger('network.http');
 
@@ -37,8 +39,11 @@ sub init {
 	Slim::Web::Pages->addRawFunction(qr{^/time/tz$}, \&tzAPIrequest);
 
 	# Proactively populate the geolocation cache so it is available as a
-	# fallback for getServerTZName() step 3.
-	Slim::Utils::DateTime::getTZName(sub {});
+	# fallback for getServerTZName() step 3.  Delayed to ensure the network
+	# stack is ready before making the API call.
+	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 60, sub {
+		Slim::Utils::DateTime::getTZName(sub {});
+	});
 }
 
 # Holds the Timezone string retrieved from a successful API call.

@@ -11,7 +11,7 @@ use strict;
 use Date::Parse;
 use HTTP::Status qw(RC_INTERNAL_SERVER_ERROR);
 use JSON::XS::VersionOneAndTwo;
-use POSIX qw(strftime tzset tzname);
+use POSIX qw(strftime);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -64,7 +64,7 @@ sub longDateF {
 	my $format = shift || $prefs->get('longdateFormat');
 	my $tz = shift;
 
-	my $date = strftime($format, $tz ? localtimeInTZ($time, $tz) : localtime($time));
+	my $date = strftime($format, localtimeInTZ($time, $tz));
 	   $date =~ s/\|0*//;
 
 	return Slim::Utils::Unicode::utf8decode_locale($date);
@@ -84,7 +84,7 @@ sub shortDateF {
 	my $format = shift || $prefs->get('shortdateFormat');
 	my $tz = shift;
 
-	my $date = strftime($format, $tz ? localtimeInTZ($time, $tz) : localtime($time));
+	my $date = strftime($format, localtimeInTZ($time, $tz));
 	   $date =~ s/\|0*//;
 
 	return Slim::Utils::Unicode::utf8decode_locale($date);
@@ -108,7 +108,7 @@ sub timeF {
 	my $timeIsUTC = shift;
 	my $tz = shift;
 
-	my @timeDigits = $timeIsUTC ? gmtime($ltime) : ($tz ? localtimeInTZ($ltime, $tz) : localtime($ltime));
+	my @timeDigits = $timeIsUTC ? gmtime($ltime) : localtimeInTZ($ltime, $tz);
 
 	# remove leading zero if another digit follows
 	my $time  = strftime($format, @timeDigits);
@@ -720,6 +720,8 @@ or unavailable.
 sub localtimeInTZ {
 	my ($epoch, $tzName) = @_;
 
+	return localtime($epoch) unless $tzName;
+
 	if (my $tz = _tzObj($tzName)) {
 		my $offset = $tz->offset_for_datetime( Slim::Utils::DateTime::_EpochDT->new($epoch) );
 		return gmtime($epoch + $offset);
@@ -753,6 +755,8 @@ L</localtimeInTZ>.
 
 sub tzAbbr {
 	my ($epoch, $tzName) = @_;
+
+	return undef unless $tzName;
 
 	if (my $tz = _tzObj($tzName)) {
 		return $tz->short_name_for_datetime( Slim::Utils::DateTime::_EpochDT->new($epoch) );

@@ -49,7 +49,7 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 	[% WRAPPER setting title="SETUP_PLAYER_TIMEZONE" desc="SETUP_PLAYER_TIMEZONE_DESC" %]
 		[% IF playerManagesTZ %]
 			<div class="prefDesc">[% "SETUP_PLAYER_TIMEZONE_DESC_MANAGED" | string %]</div>
-			<span>[% IF playerTimezone %][% playerTimezone | html %][% ELSIF serverTZName %][% serverTZName | html %] ([% "SETUP_PLAYER_TIMEZONE_SERVER" | string %])[% ELSE %]—[% END %]</span>
+			<span>[% IF playerTimezone %][% playerTimezone | html %][% ELSE %]—[% END %]</span>
 		[% ELSIF timezoneNames.size %]
 			<select class="stdedit" name="pref_timezone" id="player_timezone">
 				<option value=""[% IF !playerTimezone %] selected[% END %]>[% "SETUP_PLAYER_TIMEZONE_SERVER" | string %][% IF serverTZName %] ([% serverTZName | html %])[% END %]</option>

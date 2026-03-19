@@ -112,8 +112,6 @@ sub handler {
 
 	$paramRef->{'playlistOptions'} = Slim::Utils::Alarm->getPlaylists($client);
 	$paramRef->{'newAlarmID'}      = NEWALARMID;
-	$paramRef->{'playerTimezone'}  = $prefs->client($client)->get('timezone');
-	$paramRef->{'serverTZName'}    = Slim::Utils::DateTime::getServerTZName();
 
 	$paramRef->{'timeFormat'} = $prefs->get('timeFormat');
 	# need to remove seconds

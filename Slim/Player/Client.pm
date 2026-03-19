@@ -1417,7 +1417,7 @@ sub timeF {
 		undef,
 		preferences('plugin.datetime')->client($_[0])->get('timeFormat'),
 		undef,
-		preferences('server')->client($_[0])->get('timezone'),
+		$_[0] && preferences('server')->client($_[0])->get('timezone'),
 	);
 }
 
@@ -1425,7 +1425,7 @@ sub longDateF {
 	return Slim::Utils::DateTime::longDateF(
 		undef,
 		preferences('plugin.datetime')->client($_[0])->get('dateFormat'),
-		preferences('server')->client($_[0])->get('timezone'),
+		$_[0] && preferences('server')->client($_[0])->get('timezone'),
 	);
 }
 
@@ -1433,7 +1433,7 @@ sub shortDateF {
 	return Slim::Utils::DateTime::shortDateF(
 		undef,
 		undef,
-		preferences('server')->client($_[0])->get('timezone'),
+		$_[0] && preferences('server')->client($_[0])->get('timezone'),
 	);
 }
 

@@ -445,9 +445,7 @@ sub findNextTime {
 		# Convert base time into a weekday number and time, using the player's
 		# timezone if set, otherwise server time.
 		my $tz = $prefs->client($client)->get('timezone');
-		my ($sec, $min, $hour, $mday, $mon, $year, $wday) = defined $tz
-			? Slim::Utils::DateTime::localtimeInTZ($baseTime, $tz)
-			: localtime($baseTime);
+		my ($sec, $min, $hour, $mday, $mon, $year, $wday) = Slim::Utils::DateTime::localtimeInTZ($baseTime, $tz);
 
 		# Find the first enabled alarm starting at baseTime's day num
 		my $day = $wday;
@@ -1933,9 +1931,7 @@ sub _timeStr {
 		my ($sec, $min, $hour, $mday, $mon, $year, $wday)  = gmtime($time);
 		return "$hour:$min:$sec";
 	} else {
-		my ($sec, $min, $hour, $mday, $mon, $year, $wday) = $tz
-			? Slim::Utils::DateTime::localtimeInTZ($time, $tz)
-			: localtime($time);
+		my ($sec, $min, $hour, $mday, $mon, $year, $wday) = Slim::Utils::DateTime::localtimeInTZ($time, $tz);
 		return "$hour:$min:$sec $mday/" . ($mon + 1) . '/' . ($year + 1900);
 	}
 

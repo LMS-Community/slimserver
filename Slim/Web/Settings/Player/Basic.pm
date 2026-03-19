@@ -16,6 +16,7 @@ use Slim::Utils::Strings qw(string cstring);
 
 use constant DATE_TIME_SCREENSAVER_PLUGIN => 'DateTime';
 
+my $log   = logger('server');
 my $prefs = preferences('server');
 
 sub name {
@@ -102,6 +103,9 @@ sub handler {
 				$prefs->client($client)->set('timezone', undef);
 			} elsif (defined $tz && Slim::Utils::DateTime::validateTZName($tz)) {
 				$prefs->client($client)->set('timezone', $tz);
+			} elsif (defined $tz) {
+				$log->warn("Ignoring invalid timezone '$tz' for player " . $client->name);
+				$paramRef->{'warning'} = sprintf(string('SETTINGS_INVALIDVALUE'), $tz, string('SETUP_PLAYER_TIMEZONE'));
 			}
 		}
 
