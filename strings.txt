@@ -4291,7 +4291,7 @@ DECODER
 
 SETUP_PLAYER_TIMEZONE
 	EN	Player Timezone
-	NL	Tijdzone muziekspeler
+	NL	Tijdzone van de muziekspeler
 
 SETUP_PLAYER_TIMEZONE_DESC
 	EN	The player timezone. Used for clock display and alarms.
@@ -4303,7 +4303,7 @@ SETUP_PLAYER_TIMEZONE_DESC_MANAGED
 
 SETUP_PLAYER_TIMEZONE_SERVER
 	EN	Server timezone
-	NL	Servertijdzone
+	NL	Tijdzone van de server
 
 SETUP_PLAYERNAME
 	CS	Název přehrávače
