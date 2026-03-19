@@ -58,7 +58,7 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 				[%- END -%]
 			</select>
 		[% ELSE %]
-			<input type="text" class="stdedit" name="pref_timezone" id="player_timezone" value="[% playerTimezone | html %]" size="30" placeholder="e.g. Europe/Amsterdam">
+			<input type="text" class="stdedit" name="pref_timezone" id="player_timezone" value="[% playerTimezone | html %]" size="30"[% IF serverTZName %] placeholder="[% serverTZName | html %]"[% END %]>
 		[% END %]
 	[% END %]
 

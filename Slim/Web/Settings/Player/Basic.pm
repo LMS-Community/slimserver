@@ -105,7 +105,7 @@ sub handler {
 				$prefs->client($client)->set('timezone', $tz);
 			} elsif (defined $tz) {
 				$log->warn("Ignoring invalid timezone '$tz' for player " . $client->name);
-				$paramRef->{'warning'} = sprintf(string('SETTINGS_INVALIDVALUE'), $tz, string('SETUP_PLAYER_TIMEZONE'));
+				$paramRef->{'warning'} = '<span style="color:red">' . sprintf(string('SETTINGS_INVALIDVALUE'), $tz, string('SETUP_PLAYER_TIMEZONE')) . '</span>';
 			}
 		}
 

@@ -552,19 +552,21 @@ sub getTimezoneNames {
 
 	# Parse zone1970.tab (or zone.tab) — same canonical list as DateTime::TimeZone.
 	# Format: CC<TAB>coordinates<TAB>TZ[<TAB>comments]
-	for my $tabfile (qw(/usr/share/zoneinfo/zone1970.tab /usr/share/zoneinfo/zone.tab)) {
-		next unless -f $tabfile;
-		my @names;
-		open(my $fh, '<', $tabfile) or next;
-		while (my $line = <$fh>) {
-			next if $line =~ /^#/;
-			my $tz = (split /\t/, $line)[2];
-			next unless defined $tz;
-			chomp $tz;
-			push @names, $tz if validateTZName($tz);
+	if (!main::ISWINDOWS) {
+		for my $tabfile (qw(/usr/share/zoneinfo/zone1970.tab /usr/share/zoneinfo/zone.tab)) {
+			next unless -f $tabfile;
+			my @names;
+			open(my $fh, '<', $tabfile) or next;
+			while (my $line = <$fh>) {
+				next if $line =~ /^#/;
+				my $tz = (split /\t/, $line)[2];
+				next unless defined $tz;
+				chomp $tz;
+				push @names, $tz if validateTZName($tz);
+			}
+			close $fh;
+			return ($_tzNames = [ sort @names ]) if @names;
 		}
-		close $fh;
-		return ($_tzNames = [ sort @names ]) if @names;
 	}
 
 	return ($_tzNames = []);
@@ -592,6 +594,14 @@ sub validateTZName {
 
 	return 0 unless defined $tzName && length $tzName;
 
+	# When the list is already cached, use it for an exact match — more
+	# accurate than the regex approximation below.
+	if (defined $_tzNames && @$_tzNames) {
+		return scalar grep { $_ eq $tzName } @$_tzNames;
+	}
+
+	# Fall back to regex (used when the list hasn't been built yet, e.g. at
+	# startup or on Windows where zone1970.tab is not available).
 	return !(
 		$tzName =~ m{[^A-Za-z_\-/]}  # reject if any characters outside that range
 		|| $tzName =~ m{^/}          # leading '/' not allowed
