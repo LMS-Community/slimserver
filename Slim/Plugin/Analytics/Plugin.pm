@@ -22,10 +22,8 @@ my $log;
 my $serverId;
 
 # delay init, as we want to be sure we're enabled before trying to read the display name
-sub postinitPlugin {
-	$serverId ||= sha1_base64(preferences('server')->get('server_uuid'));
-	# replace / with +, as / would be interpreted as a path part
-	$serverId =~ s/\//+/g;
+sub postinitPlugin { if (!main::SCANNER) {
+	$serverId = getServerId();
 
 	$log = Slim::Utils::Log->addLogCategory({
 		'category'     => 'plugin.analytics',
@@ -34,11 +32,19 @@ sub postinitPlugin {
 	});
 
 	Slim::Utils::Timers::setTimer($serverId, time() + REPORT_DELAY, \&_report);
+} }
+
+sub getServerId {
+	if (!$serverId) {
+		$serverId = sha1_base64(preferences('server')->get('server_uuid'));
+		# replace / with +, as / would be interpreted as a path part
+		$serverId =~ s/\//+/g;
+	}
+
+	return $serverId;
 }
 
-sub getServerId { $serverId }
-
-sub _report {
+sub _report { if (!main::SCANNER) {
 	Slim::Utils::Timers::killTimers($serverId, \&_report);
 
 	my $osDetails = Slim::Utils::OSDetect::details();
@@ -110,14 +116,14 @@ sub _report {
 		'Content-Type' => 'application/json',
 		to_json($data),
 	);
-}
+} }
 
-sub _scheduleReport {
+sub _scheduleReport { if (!main::SCANNER) {
 	Slim::Utils::Timers::killTimers($serverId, \&_report);
 	Slim::Utils::Timers::setTimer($serverId, time() + REPORT_INTERVAL, \&_report);
-}
+} }
 
-sub _getClients {
+sub _getClients { if (!main::SCANNER) {
 	my ($seen) = @_;
 	my @clients;
 
@@ -144,7 +150,7 @@ sub _getClients {
 	}
 
 	return @clients;
-}
+} }
 
 my %playerTypes = (
 	'04' => 'slimp3',
@@ -191,9 +197,9 @@ my %playerTypes = (
 	'33' => 'baby',
 	'34' => 'baby',
 	'35' => 'baby',
-);
+) if !main::SCANNER;
 
-sub _guessPlayerType {
+sub _guessPlayerType { if (!main::SCANNER) {
 	my ($mac, $name) = @_;
 
 	# most likely...
@@ -231,6 +237,6 @@ sub _guessPlayerType {
 	}
 
 	return $playerType;
-}
+} }
 
 1;
