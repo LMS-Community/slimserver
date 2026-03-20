@@ -4290,19 +4290,27 @@ DECODER
 # Player settings
 
 SETUP_PLAYER_TIMEZONE
+	DE	Player-Zeitzone
 	EN	Player Timezone
+	FR	Fuseau horaire de la platine
 	NL	Tijdzone van de muziekspeler
 
 SETUP_PLAYER_TIMEZONE_DESC
+	DE	Die Zeitzone des Players. Wird für die Uhr- und Weckeranzeige verwendet.
 	EN	The player timezone. Used for clock display and alarms.
+	FR	Le fuseau horaire de la platine. Utilisé pour l'affichage de l'horloge et des alarmes.
 	NL	De tijdzone van de muziekspeler. Gebruikt voor de weergave van de klok en wekkers.
 
 SETUP_PLAYER_TIMEZONE_DESC_MANAGED
+	DE	Ändern Sie die Zeitzone über die Einstellungen des Geräts.
 	EN	Change the timezone via the settings on the device.
+	FR	Modifiez le fuseau horaire via les paramètres de l'appareil.
 	NL	Verander de tijdzone middels het menu op de speler.
 
 SETUP_PLAYER_TIMEZONE_SERVER
+	DE	Zeitzone des Servers
 	EN	Server timezone
+	FR	Fuseau horaire du serveur
 	NL	Tijdzone van de server
 
 SETUP_PLAYERNAME
