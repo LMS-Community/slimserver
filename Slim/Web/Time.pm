@@ -22,14 +22,14 @@ package Slim::Web::Time;
 use strict;
 
 use HTTP::Status qw(RC_OK RC_NO_CONTENT RC_INTERNAL_SERVER_ERROR);
-use Time::HiRes;
 use JSON::XS::VersionOneAndTwo;
+use Time::HiRes;
 
+use Slim::Web::HTTP;
+use Slim::Web::Pages;
 use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Timers;
-use Slim::Web::HTTP;
-use Slim::Web::Pages;
 
 my $log = logger('network.http');
 

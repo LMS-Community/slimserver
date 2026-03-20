@@ -539,23 +539,21 @@ empty array ref when neither source is available.
 
 =cut
 
-my $_tzNames;
+my ($_tzHash, $_tzNames);
 my ($_dttAvailable, %_tzCache);
 
 sub getTimezoneNames {
 	return $_tzNames if defined $_tzNames;
 
 	_initDTT();
+	my @names;
 	if ($_dttAvailable) {
-		return ($_tzNames = [ DateTime::TimeZone->all_names() ]);
-	}
-
-	# Parse zone1970.tab (or zone.tab) — same canonical list as DateTime::TimeZone.
-	# Format: CC<TAB>coordinates<TAB>TZ[<TAB>comments]
-	if (!main::ISWINDOWS) {
+		@names = DateTime::TimeZone->all_names();
+	} elsif (!main::ISWINDOWS) {
+		# Parse zone1970.tab (or zone.tab) — same canonical list as DateTime::TimeZone.
+		# Format: CC<TAB>coordinates<TAB>TZ[<TAB>comments]
 		for my $tabfile (qw(/usr/share/zoneinfo/zone1970.tab /usr/share/zoneinfo/zone.tab)) {
 			next unless -f $tabfile;
-			my @names;
 			open(my $fh, '<', $tabfile) or next;
 			while (my $line = <$fh>) {
 				next if $line =~ /^#/;
@@ -565,11 +563,13 @@ sub getTimezoneNames {
 				push @names, $tz if validateTZName($tz);
 			}
 			close $fh;
-			return ($_tzNames = [ sort @names ]) if @names;
+			last if @names;
 		}
 	}
 
-	return ($_tzNames = []);
+	$_tzHash  = { map { $_ => 1 } @names };
+	$_tzNames = [ sort keys %$_tzHash ];
+	return $_tzNames;
 }
 
 =head2 validateTZName( $tzName )
@@ -594,11 +594,9 @@ sub validateTZName {
 
 	return 0 unless defined $tzName && length $tzName;
 
-	# When the list is already cached, use it for an exact match — more
+	# When the hash is already cached, use it for an exact match — more
 	# accurate than the regex approximation below.
-	if (defined $_tzNames && @$_tzNames) {
-		return scalar grep { $_ eq $tzName } @$_tzNames;
-	}
+	return $_tzHash->{$tzName} if defined $_tzHash;
 
 	# Fall back to regex (used when the list hasn't been built yet, e.g. at
 	# startup or on Windows where zone1970.tab is not available).
