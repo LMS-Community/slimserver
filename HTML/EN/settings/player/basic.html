@@ -46,6 +46,21 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 		<input type="text" class="stdedit" name="pref_playername" id="playername" value="[% prefs.pref_playername | html %]" size="20" maxlength="32">
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_PLAYER_TIMEZONE" desc="SETUP_PLAYER_TIMEZONE_DESC" %]
+		[% IF playerManagesTZ %]
+			<div class="prefDesc">[% "SETUP_PLAYER_TIMEZONE_DESC_MANAGED" | string %]</div>
+			<span>[% IF playerTimezone %][% playerTimezone | html %][% ELSE %]—[% END %]</span>
+		[% ELSIF timezoneNames.size %]
+			<select class="stdedit" name="pref_timezone" id="player_timezone">
+				<option value=""[% IF !playerTimezone %] selected[% END %]>[% "SETUP_PLAYER_TIMEZONE_SERVER" | string %][% IF serverTZName %] ([% serverTZName | html %])[% END %]</option>
+				[% FOREACH tz = timezoneNames %]
+					<option[% IF playerTimezone == tz %] selected[% END %] value="[% tz | html %]">[% tz | html %]</option>
+				[%- END -%]
+			</select>
+		[% ELSE %]
+			<input type="text" class="stdedit" name="pref_timezone" id="player_timezone" value="[% playerTimezone | html %]" size="30"[% IF serverTZName %] placeholder="[% serverTZName | html %]"[% END %]>
+		[% END %]
+	[% END %]
 
 	[% IF prefs.pref_titleFormat; WRAPPER setting title="SETUP_TITLEFORMAT" desc="SETUP_PLAYER_TITLEFORMATS_DESC" %]
 		[% FOREACH format = prefs.pref_titleFormat %]

@@ -14,6 +14,7 @@
 
 		[% WRAPPER settingGroup title="PLUGIN_RESCAN_TIMER_SET" desc="" %]
 			<input type="text" class="stdedit" name="pref_time" id="time" value="[% prefs.pref_time | html %]" size="10" />
+			[% IF serverTZName %]<span>([% serverTZName | html %])</span>[% END %]
 		[% END %]
 
 		[% WRAPPER settingGroup title="PLUGIN_RESCAN_TIMER_TYPE" desc="" %]

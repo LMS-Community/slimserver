@@ -1409,23 +1409,32 @@ sub syncedWithNames {
 
 }
 
+sub playerManagesTZ { 0 }
+
 # return formatted date/time strings - overwritten in SN to respect timezone
 sub timeF {
 	return Slim::Utils::DateTime::timeF(
 		undef,
-		preferences('plugin.datetime')->client($_[0])->get('timeFormat')
+		preferences('plugin.datetime')->client($_[0])->get('timeFormat'),
+		undef,
+		$_[0] && preferences('server')->client($_[0])->get('timezone'),
 	);
 }
 
 sub longDateF {
 	return Slim::Utils::DateTime::longDateF(
 		undef,
-		preferences('plugin.datetime')->client($_[0])->get('dateFormat')
+		preferences('plugin.datetime')->client($_[0])->get('dateFormat'),
+		$_[0] && preferences('server')->client($_[0])->get('timezone'),
 	);
 }
 
 sub shortDateF {
-	return Slim::Utils::DateTime::shortDateF();
+	return Slim::Utils::DateTime::shortDateF(
+		undef,
+		undef,
+		$_[0] && preferences('server')->client($_[0])->get('timezone'),
+	);
 }
 
 sub maxSupportedSamplerate {

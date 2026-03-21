@@ -34,6 +34,8 @@ sub handler {
 	}
 
 	$params->{'prefs'}->{'pref_time'} = Slim::Utils::DateTime::secsToPrettyTime($prefs->get('time'));
+	my $tz = Slim::Utils::DateTime::getServerTZName();
+	$params->{'serverTZName'} = $tz if $tz && $tz =~ /^(UTC|GMT|Etc\/UTC|Etc\/GMT)$/;
 
 	my $scanTypes = Slim::Music::Import->getScanTypes();
 	$params->{'scanTypes'} = { map { $_ => $scanTypes->{$_}->{name} } grep /\d.+/, keys %$scanTypes };
