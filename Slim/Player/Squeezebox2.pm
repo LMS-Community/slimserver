@@ -46,6 +46,7 @@ our $defaultPrefs = {
 	'transitionSmart'    => 1,
 	'replayGainMode'     => 0,
 	'remoteReplayGain'   => -5,
+	'localReplayGain'    => 0,
 	'disableDac'         => 0,
 	'minSyncAdjust'      => 10,	# ms
 	'outputChannels'     => 0,
@@ -53,6 +54,7 @@ our $defaultPrefs = {
 };
 
 $prefs->setValidate({ 'validator' => 'numlimit', 'low' => -20, 'high' => 20 }, 'remoteReplayGain');
+$prefs->setValidate({ 'validator' => 'numlimit', 'low' => -15, 'high' => 15 }, 'localReplayGain');
 $prefs->setValidate({ 'validator' => 'numlimit', 'low' => -25, 'high' => 25 }, 'balance');
 $prefs->setChange( sub { $_[2]->volume($_[2]->volume); }, 'balance');
 
