@@ -5642,7 +5642,7 @@ SETUP_REPLAYGAIN_REMOTE_DESC
 SETUP_REPLAYGAIN_LOCAL
 	CS	;
 	DA	;
-	DE	;
+	DE	Anpassung für lokale Musikdateien
 	EN	Default Adjustment for Local Tracks
 	FR	;
 	HU	;
@@ -5655,7 +5655,7 @@ SETUP_REPLAYGAIN_LOCAL
 SETUP_REPLAYGAIN_LOCAL_DESC
 	CS	;
 	DA	;
-	DE	;
+	DE	Nicht alle lokale Musikdateien enthalten "Replay Gain" Informationen. Wenn einer der Lautstärken-Normalisierung-Modi "Titel-Normalisierung" oder "Intelligente Normalisierung" verwendet wird, kann es beim Abspielen eines Mix von Musikdateien mit und ohne "Replay Gain" Informationen zu großen Lautstärkeunterschieden kommen. Definiere einen Standardwert, der bei Musikdateien ohne "Replay Gain" Informationen angewandt wird, um diese Unterschiede auszugleichen.
 	EN	All local tracks may not contain "Replay Gain" information. When using "Track gain" or "Smart gain" mode to play a mixture of tracks that do and do not contain this information, large volume changes may occur between tracks. Define a default adjustment value which should be applied to tracks without "Replay Gain" information in order to mitigate this behavior.
 	FR	;
 	HU	;
