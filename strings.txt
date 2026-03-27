@@ -5640,30 +5640,30 @@ SETUP_REPLAYGAIN_REMOTE_DESC
 	ZH_CN	远程流媒体服务通常不支持任何形式的音量调整。如果您在播放远程曲目与本地曲目混合时，这可能会导致不希望的音量变化。定义一个默认值，该值应适用于任何未定义音量调整值的远程流。
 
 SETUP_REPLAYGAIN_LOCAL
-	CS	;
-	DA	;
+	CS	Výchozí úprava pro místní skladby
+	DA	Tilpasning af volumen for lokale musikfiler
 	DE	Anpassung für lokale Musikdateien
 	EN	Default Adjustment for Local Tracks
-	FR	;
-	HU	;
-	NL	;
-	NO	;
-	PL	;
-	SV	;
-	ZH_CN	;
+	FR	Ajustement du volume pour les morceaux locaux
+	HU	A helyi számok alapértelmezett beállítása
+	NL	Aanpassing voor lokale muziekbestanden
+	NO	Standardvolum for lokale musikkfiler
+	PL	Domyślna wartość dla lokalnych utworów
+	SV	Standardanpassning av volymen för lokala spår
+	ZH_CN	本地曲目默认调整
 
 SETUP_REPLAYGAIN_LOCAL_DESC
-	CS	;
-	DA	;
+	CS	Ne všechny místní skladby obsahují informace „Replay Gain“. Při použití režimu „Zesílení skladby“ nebo „Inteligentní zesílení“ při přehrávání směsi skladeb, které tyto informace obsahují i neobsahují, může docházet k velkým změnám hlasitosti mezi skladbami. Definujte výchozí hodnotu úpravy, která se použije na skladby bez informací „Replay Gain“, aby se toto chování zmírnilo.
+	DA	Ikke alle lokale musikfiler indeholder oplysninger om "Replay Gain". Hvis du bruger "Forstærkning af nummer" eller "Dynamisk forstærkning" til at afspille en blanding af numre med og uden disse oplysninger, kan der forekomme store ændringer i lydstyrken mellem numrene. Definér en standardværdi for justering, som skal anvendes på numre uden "Replay Gain"-oplysninger for at mindske dette.
 	DE	Nicht alle lokale Musikdateien enthalten "Replay Gain" Informationen. Wenn einer der Lautstärken-Normalisierung-Modi "Titel-Normalisierung" oder "Intelligente Normalisierung" verwendet wird, kann es beim Abspielen eines Mix von Musikdateien mit und ohne "Replay Gain" Informationen zu großen Lautstärkeunterschieden kommen. Definiere einen Standardwert, der bei Musikdateien ohne "Replay Gain" Informationen angewandt wird, um diese Unterschiede auszugleichen.
 	EN	All local tracks may not contain "Replay Gain" information. When using "Track gain" or "Smart gain" mode to play a mixture of tracks that do and do not contain this information, large volume changes may occur between tracks. Define a default adjustment value which should be applied to tracks without "Replay Gain" information in order to mitigate this behavior.
-	FR	;
-	HU	;
-	NL	;
-	NO	;
-	PL	;
-	SV	;
-	ZH_CN	;
+	FR	Tous les morceaux locaux ne contiennent pas forcément d'informations de "Replay Gain". Lors de l'utilisation du mode "gain morceau" ou "gain intelligent" pour lire un mélange de morceaux avec et sans ces informations, d'importantes variations de volume peuvent se produire entre les morceaux. Définissez une valeur d'ajustement par défaut à appliquer aux morceaux sans informations de "Replay Gain" afin d'atténuer ce comportement.
+	HU	Nem minden helyi műsorszám tartalmaz „Replay Gain” információt. Ha a „Track gain” vagy az „intelligens” erősítés módot használja olyan műsorszámok vegyes lejátszásához, amelyek tartalmazzák ezt az információt, illetve amelyek nem, nagy hangerőkülönbségek léphetnek fel a számok között. Adjon meg egy alapértelmezett korrekciós értéket, amelyet a „Replay Gain” információ nélküli műsorszámokra kell alkalmazni ennek mérséklésére.
+	NL	Niet alle lokale muziekbestanden bevatten 'Replay Gain'-informatie. Wanneer je 'volumeaanpassing van nummers' of 'slimme' aanpassingsselectie gebruikt om een mix van nummers met en zonder deze informatie af te spelen, kunnen er grote volumeverschillen tussen nummers ontstaan. Stel een standaardwaarde in die moet worden toegepast op nummers zonder 'Replay Gain'-informatie om dit effect te beperken.
+	NO	Ikke alle lokale musikkfiler inneholder «Replay Gain»-informasjon. Hvis du bruker «Track gain» eller «Smart gain» når du spiller av en blanding av spor med og uten denne informasjonen, kan det oppstå store volumendringer mellom sporene. Sett en standardjustering som skal brukes på spor uten «Replay Gain»-informasjon for å redusere dette.
+	PL	Nie wszystkie lokalne utwory zawierają informacje „Replay Gain”. Podczas korzystania z opcji „Wzmocnienie utworu” lub „Inteligentne” dotyczącej wzmocnienia do odtwarzania mieszanki utworów z tymi informacjami i bez nich mogą wystąpić duże zmiany głośności między utworami. Ustal domyślną wartość korekty, która będzie stosowana do utworów bez informacji „Replay Gain”, aby ograniczyć to zjawisko.
+	SV	Alla lokala spår innehåller inte information om "Replay Gain". När du använder "Volymutjämning av spår" eller "Smart volymjustering" för att spela en blandning av spår med och utan denna information kan stora volymskillnader uppstå mellan spåren. Ange ett standardvärde för volymjustering som ska användas för spår utan "Replay Gain"-information för att minska detta.
+	ZH_CN	并非所有本地曲目都包含“回放增益”信息。当使用“曲目增益”或“智能”增益模式播放同时包含和不包含此信息的曲目时，曲目之间可能会出现较大的音量变化。定义一个默认调整值，该值应应用于没有“回放增益”信息的曲目，以减轻这种情况。
 
 REPLAYGAIN_DISABLED
 	CS	Žádná úprava hlasitosti
