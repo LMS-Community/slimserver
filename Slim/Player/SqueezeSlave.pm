@@ -34,7 +34,7 @@ our $defaultPrefs = {
 };
 
 $prefs->setValidate({ 'validator' => 'numlimit', 'low' => -20, 'high' => 20 }, 'remoteReplayGain');
-$prefs->setValidate({ 'validator' => 'numlimit', 'low' => -20, 'high' => 20 }, 'localReplayGain');
+$prefs->setValidate({ 'validator' => 'numlimit', 'low' => -10, 'high' => 10 }, 'localReplayGain');
 
 sub initPrefs {
 	my $client = shift;
