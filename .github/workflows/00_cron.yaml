@@ -10,7 +10,7 @@ jobs:
     if: ${{ github.repository_owner == 'LMS-Community' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         with:
           script: |
             const repoStatus = await github.request('GET https://raw.githubusercontent.com/LMS-Community/lms-server-repository/refs/heads/master/servers.json');

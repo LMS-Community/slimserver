@@ -171,7 +171,7 @@ jobs:
         # we only sign for release builds - no need to do this for nightlies
         if: ${{ inputs.build-type == 'release' }}
         # needs to be run here as the above build action can't run upload twice
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         id: upload-artifact
         with:
           name: win64-signed
@@ -207,7 +207,7 @@ jobs:
     steps:
       # no easy way to avoid another checkout?
       - name: Check out LMS code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: server
           ref: ${{ inputs.branch }}
