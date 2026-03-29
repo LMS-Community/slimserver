@@ -39,7 +39,6 @@ sub fetchGainMode {
 	return undef if !$rgmode;
 
 	if (!blessed($track) || !$track->can('replay_gain')) {
-
 		return 0;
 	}
 
@@ -50,18 +49,18 @@ sub fetchGainMode {
 
 	# only support track gain for remote streams
 	if ( $track->remote ) {
-		return preventClipping( $track->replay_gain() || $prefs->client($client)->get('remoteReplayGain'), $track->replay_peak() );
+		# Only use the default remote gain value if the track gain value is undefined, as 0 is a valid gain value
+		return preventClipping( $track->replay_gain() // $prefs->client($client)->get('remoteReplayGain'), $track->replay_peak() );
 	}
-
+	
 	# Mode 1 is use track gain
 	if ($rgmode == 1) {
-		return preventClipping( $track->replay_gain(), $track->replay_peak() );
+		return preventClipping( $track->replay_gain() // $prefs->client($client)->get('localReplayGain'), $track->replay_peak() );
 	}
 
 	my $album = $track->album();
 
 	if (!blessed($album) || !$album->can('replay_gain')) {
-
 		return 0;
 	}
 
@@ -70,13 +69,14 @@ sub fetchGainMode {
 		return preventClipping( $album->replay_gain(), $album->replay_peak() );
 	}
 
-	# Mode 3 is determine dynamically whether to use album or track
+	# Mode 3 is determine dynamically whether to use album or track (smart gain)
 	if (defined $album->replay_gain() && ($class->trackAlbumMatch($client, -1) || $class->trackAlbumMatch($client, 1))) {
-
+		# use album gain
 		return preventClipping( $album->replay_gain(), $album->replay_peak() );
 	}
-
-	return preventClipping( $track->replay_gain(), $track->replay_peak() );
+	
+	# use track gain
+	return preventClipping( $track->replay_gain() // $prefs->client($client)->get('localReplayGain'), $track->replay_peak() );
 }
 
 sub findTracksByIndex {
