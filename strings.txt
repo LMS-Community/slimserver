@@ -4290,24 +4290,28 @@ DECODER
 # Player settings
 
 SETUP_PLAYER_TIMEZONE
+	CS	Časová zóna přehrávače
 	DE	Player-Zeitzone
 	EN	Player Timezone
 	FR	Fuseau horaire de la platine
 	NL	Tijdzone van de muziekspeler
 
 SETUP_PLAYER_TIMEZONE_DESC
+	CS	Časová zóna přehrávače. Používá se pro zobrazení hodin a budíků.
 	DE	Die Zeitzone des Players. Wird für die Uhr- und Weckeranzeige verwendet.
 	EN	The player timezone. Used for clock display and alarms.
 	FR	Le fuseau horaire de la platine. Utilisé pour l'affichage de l'horloge et des alarmes.
 	NL	De tijdzone van de muziekspeler. Gebruikt voor de weergave van de klok en wekkers.
 
 SETUP_PLAYER_TIMEZONE_DESC_MANAGED
+	CS	Změňte časovou zónu přes nastavení zařízení.
 	DE	Ändern Sie die Zeitzone über die Einstellungen des Geräts.
 	EN	Change the timezone via the settings on the device.
 	FR	Modifiez le fuseau horaire via les paramètres de l'appareil.
 	NL	Verander de tijdzone middels het menu op de speler.
 
 SETUP_PLAYER_TIMEZONE_SERVER
+	CS	Časová zóna serveru
 	DE	Zeitzone des Servers
 	EN	Server timezone
 	FR	Fuseau horaire du serveur
@@ -6956,7 +6960,7 @@ SETUP_PLAYLISTRESCAN
 	ZH_CN	重新扫描播放表而已。
 
 RESCAN_ALBUM
-	CS	Znovu naskenovat album
+	CS	Znovu prohledat album
 	DE	Album neu einlesen
 	EN	Rescan Album
 	FR	Réanalyser l'album
@@ -18665,6 +18669,7 @@ UNSYNC
 	ZH_CN	非同步
 
 SETUP_USETIT1ASWORK_DESC
+	CS	Pro soubory s ID3 tagy nastavte tuto možnost tak, aby odpovídala chování vašeho tagovacího programu. Některé používají TIT1 pro Dílo, jiné pro Seskupení (a u některých je to konfigurovatelné).
 	DE	Bei Dateien mit ID3-Tags passen Sie diese Einstellung an das Verhalten Ihres Taggers an. Manche verwenden TIT1 für den Werkstitel, andere für die Gruppierung (und bei manchen ist dies konfigurierbar).
 	EN	For files using ID3 tags, set this to match your tagger's behaviour. Some will use TIT1 for Work, some for Grouping (and in some it is configurable).
 	ES	Para archivos que usan etiquetas ID3, configure esto para que coincida con el comportamiento de su etiquetador. Algunos usarán TIT1 para Trabajo, otros para Agrupación (y en algunos casos es configurable).
@@ -18672,6 +18677,7 @@ SETUP_USETIT1ASWORK_DESC
 	NL	Voor bestanden die ID3-tags gebruiken, moet u dit aanpassen aan het gedrag van uw tagger. Sommige gebruiken TIT1 voor Werk, andere voor Groepering (en in sommige gevallen is dit configureerbaar).
 
 SETUP_USETIT1ASWORK_1
+	CS	Považovat MP3 tag TIT1 za Dílo a MP3 tag GRP1 za Seskupení
 	DE	Behandle das MP3-Tag TIT1 als Werk und das MP3-Tag GRP1 als Gruppierung.
 	EN	Treat MP3 tag TIT1 as Work and MP3 tag GRP1 as Grouping
 	ES	Trate la etiqueta MP3 TIT1 como Trabajo y la etiqueta MP3 GRP1 como Agrupación
@@ -18679,6 +18685,7 @@ SETUP_USETIT1ASWORK_1
 	NL	Behandel MP3-tag TIT1 als Werk en MP3-tag GRP1 als Groepering
 
 SETUP_USETIT1ASWORK_0
+	CS	Považovat MP3 tag TIT1 za Seskupení (vytvořte uživatelský tag WORK, pokud potřebujete i Dílo)
 	DE	Behandle das MP3-Tag TIT1 als Gruppierung (erstellen Sie ein benutzerdefiniertes Tag WORK, falls Sie auch Werk benötigen).
 	EN	Treat MP3 tag TIT1 as Grouping (create a user-defined tag of WORK if you also need Work)
 	ES	Trate la etiqueta MP3 TIT1 como Agrupación (cree una etiqueta definida por el usuario de WORK si también necesita Trabajo)
@@ -18703,7 +18710,7 @@ SETUP_USETPE2ASALBUMARTIST_DESC
 	ZH_CN	MP3标签格式没有提供标准的方式来定义专辑艺术家。一些MP3标签工具使用TPE2字段来存储专辑艺术家（例如iTunes，Winamp，Windows Media Player），而其他工具则将其用于表示乐队/乐队。选择Lyrion Music Server应使用的含义。更改此设置将重新扫描音乐库。
 
 SETUP_USETPE2ASALBUMARTIST_1
-	CS	Považovat tag TPE2 MP3 za Interpreta alba
+	CS	Považovat tag TPE2 MP3 za Interpreta alba (vytvořte uživatelský tag BAND, pokud potřebujete i Skupinu/orchestr)
 	DA	Opfat TPE2 MP3-koder som Albumkunstner
 	DE	TPE2 MP3-Tag als Interpreten des Albums behandeln
 	EN	Treat TPE2 MP3 tag as Album Artist (create a user-defined tag of BAND if you also need band/orchestra)
