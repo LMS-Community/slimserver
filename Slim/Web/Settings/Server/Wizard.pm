@@ -213,7 +213,8 @@ sub handler {
 	}
 
 	$paramRef->{plugins} = $wzData->{plugins};
-	$paramRef->{pluginsJSON} = to_json($paramRef->{plugins});
+	# use utf8(0) to get Unicode string instead of UTF-8 bytes for HTML template
+	$paramRef->{pluginsJSON} = JSON::XS->new->utf8(0)->encode($wzData->{plugins});
 
 	$serverPrefs->set('dontTriggerScanOnPrefChange', $scanOnChange) if $scanOnChange;
 
