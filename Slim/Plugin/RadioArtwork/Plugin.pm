@@ -71,7 +71,7 @@ sub initPlugin {
 
 	$killWords = $prefs->get('killWords') || {};
 
-	Slim::Utils::Timers::setTimer( $class, Time::HiRes::time() + 5, \&updateKillWords );
+	Slim::Utils::Timers::setTimer( $class, Time::HiRes::time() + rand(5), \&updateKillWords );
 }
 
 sub handleTrackCover {
@@ -267,8 +267,9 @@ sub updateKillWords {
 			main::INFOLOG && $log->is_info && $log->info("Received list of kill words");
 			main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($json));
 
-			if ($json && ref $json eq 'ARRAY' && scalar @$json) {
-				$killWords = { map { $_ => 1 } @$json };
+			if ($json && ref $json eq 'HASH' && scalar @{$json->{killWords} || []}) {
+				$killWords = { map { $_ => 1 } @{$json->{killWords}} };
+				warn Data::Dump::dump($killWords);
 				$prefs->set('killWords', $killWords);
 			}
 		},
