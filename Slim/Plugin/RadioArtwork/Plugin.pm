@@ -225,6 +225,9 @@ sub lookupArtwork {
 			delete $queue{$artworkLookupUrl};
 			$log->error("HTTP error looking up artwork for $artworkLookupUrl");
 			main::INFOLOG && $log->error(Data::Dump::dump(shift));
+		},
+		{
+			cache => 1,
 		}
 	)->get($artworkLookupUrl, %$headers);
 }
