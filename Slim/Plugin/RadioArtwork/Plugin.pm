@@ -269,7 +269,6 @@ sub updateKillWords {
 
 			if ($json && ref $json eq 'HASH' && scalar @{$json->{killWords} || []}) {
 				$killWords = { map { $_ => 1 } @{$json->{killWords}} };
-				warn Data::Dump::dump($killWords);
 				$prefs->set('killWords', $killWords);
 			}
 		},
