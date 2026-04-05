@@ -162,6 +162,7 @@ sub useCachedIfAvailable {
 	if (defined $cached) {
 		main::INFOLOG && $log->is_info && $log->info("Using cached title cover: $cached");
 
+		$args->{imageUrl} = $cached;
 		$class->gotArtwork($args, $client, $url, $titleInfo);
 
 		return 1;
