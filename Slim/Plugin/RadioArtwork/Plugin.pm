@@ -45,10 +45,13 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 my $prefs = preferences('plugin.radioartwork');
 
-use constant COVER_SEARCH_URL => 'https://api.lms-community.org/music/track/%s/%s/cover';
+use constant API_BASE_URL     => 'https://api.lms-community.org/music/';
+use constant COVER_SEARCH_URL => API_BASE_URL . 'track/%s/%s/cover';
+use constant KILLWORDS_URL    => API_BASE_URL . 'metadata/killwords';
 use constant FALLBACK_ARTWORK => 'https://i1.sndcdn.com/artworks-x8zI2HVC2pnkK7F5-4xKLyA-t1080x1080.jpg';
 
 my %queue;
+my $killWords = {};
 
 sub initPlugin {
 	my ($class) = @_;
@@ -63,7 +66,12 @@ sub initPlugin {
 
 	$prefs->init({
 		ignoreStations => [],
+		killWords => {},
 	});
+
+	$killWords = $prefs->get('killWords') || {};
+
+	Slim::Utils::Timers::setTimer( $class, Time::HiRes::time() + 5, \&updateKillWords );
 }
 
 sub handleTrackCover {
@@ -128,6 +136,16 @@ sub validateRequest {
 
 	$artist = $class->artistCleanup($artist);
 	$title  = $class->titleCleanup($title);
+
+	if (!$artist || !$title) {
+		main::INFOLOG && $log->is_info && $log->info("Title info not available after cleanup: title \"$title\", artist \"$artist\"");
+		return;
+	}
+
+	if ($killWords->{lc($title)} || $killWords->{lc($artist)}) {
+		main::INFOLOG && $log->is_info && $log->info("Title or artist contains kill word(s), not looking up artwork for $titleInfo");
+		return;
+	}
 
 	my $artworkLookupUrl = sprintf(COVER_SEARCH_URL, uri_escape_utf8($title), uri_escape_utf8($artist));
 
@@ -231,6 +249,36 @@ sub lookupArtwork {
 			cache => 1,
 		}
 	)->get($artworkLookupUrl, %$headers);
+}
+
+sub updateKillWords {
+	my $class = shift;
+
+	my $headers = $class->getHeaders();
+
+	Slim::Networking::SimpleAsyncHTTP->new(
+		sub {
+			my $response = shift;
+
+			my $json = eval { from_json($response->content) };
+
+			$log->warn($@) if $@;
+
+			main::INFOLOG && $log->is_info && $log->info("Received list of kill words");
+			main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($json));
+
+			if ($json && ref $json eq 'ARRAY' && scalar @$json) {
+				$killWords = { map { $_ => 1 } @$json };
+				$prefs->set('killWords', $killWords);
+			}
+		},
+		sub {
+			$log->error("Error updating kill words: " . Data::Dump::dump(shift));
+		},
+		{
+			cache => 1,
+		}
+	)->get(KILLWORDS_URL, %$headers);
 }
 
 sub getHeaders {
