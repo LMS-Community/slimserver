@@ -1,36 +1,93 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/debian
 {
-	"name": "Lyrion Debian devcontainer",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	//"image": "mcr.microsoft.com/devcontainers/base:bookworm",
-	"dockerComposeFile": "docker-compose.yml",
-	"service": "lyrion-devcontainer",
-	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [
-		9000,
-		3483,
-		9090
-	],
-	"portsAttributes": {
-		"9000": {
-			"label": "web interface",
-			"protocol": "http"
-		},
-		"3483": {
-			"label": "SlimProto"
-		},
-		"9090": {
-			"label": "CLI"
-		}
-	},
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "/workspaces/slimserver/.devcontainer/post-create.sh"
-	// Configure tool-specific properties.
-	// "customizations": {},
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+    "name": "Lyrion Debian",
+
+    // You can use "Docker Compose file" or "Dockerfile" to build the container, but not both.
+    // ----------------------------------------------------
+    // 1) Docker Compose file
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "lyrion-devcontainer",
+    // ----------------------------------------------------
+    // 2) Dockerfile
+    // Solves cross-drive path problem with Podman and podman compose on Windows:
+    // When Dev Containers adds features, it generates a temporary Dockerfile on the C: drive. When workspace is on D: drive, podman compose can't resolve relative paths across drives.
+    // "build": {
+    //     "dockerfile": "Dockerfile",
+    //     "context": "."
+    // },
+    // "runArgs": [
+    //     "--network=lyrion_bridge",
+    //     "--hostname=lyrion-devcontainer"
+    // ],
+    // ----------------------------------------------------
+
+    "containerEnv": {
+        "AUTO_START_LMS": "false" // Set to "true" to automatically start Lyrion Media Server when the container starts
+    },
+
+    // Dev Containers mounts the opened repository under /workspaces/<repo> by default.
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+    // Features to add to the dev container. More info: https://containers.dev/features.
+    // "features": {},
+
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    "forwardPorts": [
+        9000,
+        3483,
+        9090
+    ],
+    "portsAttributes": {
+        "9000": {
+            "label": "Web interface",
+            "protocol": "http"
+        },
+        "3483": {
+            "label": "SlimProto"
+        },
+        "9090": {
+            "label": "CLI"
+        }
+    },
+
+    // initializeCommand runs on the HOST before the container starts (Windows or Unix).
+    // bash must be available: Git Bash / WSL2 on Windows, or native bash on Unix.
+    "initializeCommand": "bash .devcontainer/initialize.sh",
+
+    "postCreateCommand": "bash .devcontainer/post-create.sh",
+
+    "postStartCommand": "bash .devcontainer/post-start.sh",
+
+    // Configure tool-specific properties.
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "EditorConfig.EditorConfig",
+                "richterger.perl"
+            ],
+            "settings": {
+                "perl.enable": true, // Set to false to disable the Perl extension and language server features
+                "perl.env": {
+                    "PERL5OPT": "-Mlib=/workspaces/slimserver/.vscode -MPerlLanguageServerBootstrap",
+                    "PERL5LIB": "/workspaces/slimserver:/workspaces/slimserver/lib:/workspaces/slimserver/CPAN:/workspaces/slimserver/CPAN/arch/5.40:/workspaces/slimserver/CPAN/arch/5.40/x86_64-linux-thread-multi:/workspaces/slimserver/CPAN/arch/5.40/x86_64-linux-thread-multi/auto"
+                },
+                "perl.perlCmd": "/usr/bin/perl",
+                "perl.logLevel": 0,
+                "perl.pathMap": [],
+                "perl.perlInc": [
+                    "/workspaces/slimserver/.vscode",
+                    "/workspaces/slimserver",
+                    "/workspaces/slimserver/lib",
+                    "/workspaces/slimserver/CPAN/arch/5.40",
+                    "/workspaces/slimserver/CPAN/arch/5.40/x86_64-linux-thread-multi",
+                    "/workspaces/slimserver/CPAN/arch/5.40/x86_64-linux-thread-multi/auto",
+                    "/workspaces/slimserver/CPAN"
+                ]
+            }
+        }
+    }
+
+    // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    // "remoteUser": "root"
 }

@@ -1,21 +1,25 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+# Downloads Slim/Utils/OS/Custom.pm from slimserver-platforms.
 
-# get current git branch
-BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+set -euo pipefail
 
-URL_BRANCH="https://raw.githubusercontent.com/LMS-Community/slimserver-platforms/${BRANCH}/Docker/Slim-Utils-OS-Custom.pm"
-URL_HEAD="https://raw.githubusercontent.com/LMS-Community/slimserver-platforms/HEAD/Docker/Slim-Utils-OS-Custom.pm"
-TARGET_FILE="/workspaces/slimserver/Slim/Utils/OS/Custom.pm"
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+BRANCH="$(git -c safe.directory="$REPO_ROOT" rev-parse --abbrev-ref HEAD 2>/dev/null || echo HEAD)"
+BASE_URL="https://raw.githubusercontent.com/LMS-Community/slimserver-platforms"
+TARGET_FILE="$REPO_ROOT/Slim/Utils/OS/Custom.pm"
 
-echo "Detected branch: ${BRANCH}"
-echo "Trying branch-specific file..."
+echo "[INFO] Post-create setup"
+git config --global --add safe.directory "$REPO_ROOT" 2>/dev/null || true
 
-# Try downloading branch version
-if curl -fSL "$URL_BRANCH" -o "$TARGET_FILE"; then
-    echo "Downloaded branch version from: $URL_BRANCH"
+mkdir -p "$(dirname "$TARGET_FILE")"
+
+echo "[INFO] Downloading Custom.pm for branch: $BRANCH"
+if curl -fsSL "${BASE_URL}/${BRANCH}/Docker/Slim-Utils-OS-Custom.pm" -o "$TARGET_FILE" 2>/dev/null; then
+	echo "[INFO] Downloaded from branch '$BRANCH'"
+elif curl -fsSL "${BASE_URL}/HEAD/Docker/Slim-Utils-OS-Custom.pm" -o "$TARGET_FILE" 2>/dev/null; then
+	echo "[INFO] Downloaded from fallback 'HEAD'"
 else
-    echo "Branch file not found, falling back to HEAD..."
-    curl -fSL "$URL_HEAD" -o "$TARGET_FILE"
-    echo "Downloaded latest version from: $URL_HEAD"
+	echo "[ERROR] Failed to download Custom.pm" >&2
+	exit 1
 fi
+

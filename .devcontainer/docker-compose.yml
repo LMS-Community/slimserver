@@ -1,16 +1,15 @@
-version: '3.11'
-
 services:
   lyrion-devcontainer:
-    # add this line so we can connect to the host machine
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-     - lyrion-dev-volume:/workspace
-
+      - ../..:/workspaces:cached
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
+    networks:
+      - lyrion_bridge
 
-volumes:
-  lyrion-dev-volume:
+networks:
+  lyrion_bridge:
+    external: true

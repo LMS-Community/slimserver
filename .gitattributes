@@ -1,0 +1,2 @@
+# Normalize all text files to LF in this repository (fix issues with line endings with Dev Containers on Windows)
+* text=auto eol=lf
