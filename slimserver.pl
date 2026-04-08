@@ -1041,6 +1041,9 @@ sub cleanup {
 
 	$::stop = 1;
 
+	main::DEBUGLOG && $log->is_debug && $log->debug("Shutting down plugins");
+	Slim::Utils::PluginManager->shutdownPlugins();
+
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'} && Slim::Schema->storage) {
 
@@ -1054,9 +1057,6 @@ sub cleanup {
 		main::DEBUGLOG && $log->is_debug && $log->debug("Disconnecting from database.");
 		Slim::Schema->disconnect;
 	}
-
-	main::DEBUGLOG && $log->is_debug && $log->debug("Shutting down plugins");
-	Slim::Utils::PluginManager->shutdownPlugins();
 
 	main::DEBUGLOG && $log->is_debug && $log->debug("Write out prefs changes.");
 	$prefs->remove('serverUpdateAvailable');
