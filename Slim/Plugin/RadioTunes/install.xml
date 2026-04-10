@@ -4,7 +4,7 @@
 	<name>PLUGIN_RADIOTUNES_NAME</name>
 	<module>Slim::Plugin::RadioTunes::Plugin</module>
 	<icon>plugins/RadioTunes/html/icon.png</icon>
-	<version>1.0</version>
+	<version>1.1</version>
 	<description>PLUGIN_RADIOTUNES_DESC</description>
 	<creator>Lyrion Community</creator>
 	<category>radio</category>
