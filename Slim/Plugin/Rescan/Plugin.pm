@@ -578,9 +578,9 @@ sub checkScanTimer {
 
 	if ($prefs->get('scheduled')) {
 
-		my $scantime = $prefs->get('time');
+		my $scantime = $prefs->get('time') || 0;
 
-		if ($scantime && $time == $scantime) {
+		if ($time == $scantime) {
 
 			# alarm is done, so reset to find the beginning of a minute
 			if ($time == $scantime + 60) {
