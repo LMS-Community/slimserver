@@ -2842,6 +2842,7 @@ sub _preCheckAttributes {
 			MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID
 			MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS RELEASETYPE
 			ALBUM_EXTID ARTIST_EXTID WORK WORKSORT
+			ARTISTS ALBUMARTISTS TRACKARTISTS
 		))
 	{
 
@@ -3126,34 +3127,109 @@ sub _mergeAndCreateContributors {
 			$attributes->{'TRACKARTISTSORT'} = delete $attributes->{'ARTISTSORT'};
 			$attributes->{'MUSICBRAINZ_TRACKARTIST_ID'} = delete $attributes->{'MUSICBRAINZ_ARTIST_ID'} if $attributes->{'MUSICBRAINZ_ARTIST_ID'};
 
+			# Issue #1555 - carry the plural ARTISTS tag across too, so the
+			# per-role plural lookup below finds it under TRACKARTISTS.
+			$attributes->{'TRACKARTISTS'} = delete $attributes->{'ARTISTS'} if $attributes->{'ARTISTS'};
+
 			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Contributor '%s' of role 'ARTIST' transformed to role 'TRACKARTIST'",
-				$attributes->{'TRACKARTIST'},
+				ref($attributes->{'TRACKARTIST'}) eq 'ARRAY'
+					? join(' / ', @{$attributes->{'TRACKARTIST'}})
+					: $attributes->{'TRACKARTIST'},
 			));
 		}
 	}
 
 	my %contributors = ();
 
+	# Issue #1555 - roles for which a plural Picard tag (ARTISTS,
+	# ALBUMARTISTS, TRACKARTISTS) is the authoritative individual-contributor
+	# list. The singular tag remains the display string; the plural tag,
+	# when present as a non-empty arrayref after trimming, supersedes
+	# splitList parsing of the singular for contributor-row creation.
+	my %pluralRoles = map { $_ => 1 } qw(ARTIST ALBUMARTIST TRACKARTIST);
+
 	for my $tag (Slim::Schema::Contributor->contributorRoles) {
 
-		my $contributor = $attributes->{$tag} || next;
+		my $contributor = $attributes->{$tag};
+		my $brainzID    = $attributes->{"MUSICBRAINZ_${tag}_ID"};
+		my $sortBy      = $attributes->{$tag . 'SORT'};
+		my $usedPlural  = 0;
 
-		# Bug 17322, strip leading/trailing spaces from name
-		$contributor =~ s/^ +//;
-		$contributor =~ s/ +$//;
+		# Issue #1555 - prefer the plural Picard tag as the individual
+		# contributor list when it is a non-empty arrayref with at least
+		# one non-blank name. Trim, drop empty-name slots, and drop the
+		# corresponding MBID slot so positional alignment is preserved.
+		# Empty-string MBID slots (for contributors without an MBID,
+		# Picard convention) are kept; Contributor->add's `if ($mbid)`
+		# guard handles them. A scalar plural value is treated as "not
+		# plural" and falls through to the legacy singular path.
+		#
+		# Sort alignment: Picard has no standard plural sort tag, but a
+		# user script can overwrite the singular ALBUMARTISTSORT /
+		# ARTISTSORT tag with a multi-value list aligned to the plural
+		# names (using %_albumartists_sort% / %_artists_sort%). Accept
+		# that if the sort tag is an arrayref of matching length after
+		# empty-slot filtering. Otherwise pass undef so Contributor->add
+		# falls back to sort-by-name rather than polluting the first
+		# contributor with the joined singular sort string.
+		if ($pluralRoles{$tag}) {
+			my $plural = $attributes->{$tag . 'S'};
+			if (ref($plural) eq 'ARRAY' && @$plural) {
+				my $pluralMbid = $attributes->{"MUSICBRAINZ_${tag}_ID"};
+				my $pluralSort = $attributes->{$tag . 'SORT'};
+				my @mbids      = ref($pluralMbid) eq 'ARRAY' ? @$pluralMbid : ();
+				my @sorts      = ref($pluralSort) eq 'ARRAY' ? @$pluralSort : ();
+				my (@names, @alignedMbids, @alignedSorts);
+				for (my $i = 0; $i < @$plural; $i++) {
+					my $name = $plural->[$i];
+					next unless defined $name;
+					$name =~ s/^\s+//; $name =~ s/\s+$//;
+					next if $name eq '';
+					push @names, $name;
+					push @alignedMbids, $mbids[$i] if @mbids;
+					push @alignedSorts, $sorts[$i] if @sorts;
+				}
+				if (@names) {
+					$contributor = \@names;
+					$brainzID    = @mbids ? \@alignedMbids : $brainzID;
+					$sortBy      = (@sorts && @alignedSorts == @names) ? \@alignedSorts : undef;
+					$usedPlural  = 1;
+					main::DEBUGLOG && $isDebug && $log->debug(sprintf(
+						"-- Using plural %sS (%d entries) as contributor source for role '%s'%s",
+						$tag, scalar @names, $tag,
+						$sortBy ? ' with aligned sort' : '',
+					));
+				}
+			}
+		}
+
+		# Skip unless we have a source of contributor names for this role.
+		# Empty string, undef, or an empty plural array all skip.
+		next unless $usedPlural || (defined $contributor && (ref $contributor || $contributor ne ''));
+
+		# Bug 17322, strip leading/trailing spaces from name. splitTag
+		# already trims arrayref elements, so the regex strip is scalar
+		# only.
+		unless (ref $contributor) {
+			$contributor =~ s/^ +//;
+			$contributor =~ s/ +$//;
+		}
 
 		# Is ARTISTSORT/TSOP always right for non-artist
 		# contributors? I think so. ID3 doesn't have
 		# "BANDSORT" or similar at any rate.
 		push @{ $contributors{$tag} }, Slim::Schema::Contributor->add({
 			'artist'   => $contributor,
-			'brainzID' => $attributes->{"MUSICBRAINZ_${tag}_ID"},
-			'sortBy'   => $attributes->{$tag.'SORT'},
+			'brainzID' => $brainzID,
+			'sortBy'   => $sortBy,
 			# only store EXTID for track artist, as we don't have it for other roles
 			'extid'    => $tag eq 'ARTIST' && $attributes->{'ARTIST_EXTID'},
 		});
 
-		main::DEBUGLOG && $isDebug && $log->is_debug && $log->debug(sprintf("-- Track has contributor '$contributor' of role '$tag'"));
+		main::DEBUGLOG && $isDebug && $log->is_debug && $log->debug(sprintf(
+			"-- Track has contributor '%s' of role '$tag'",
+			ref($contributor) eq 'ARRAY' ? join(' / ', @$contributor) : $contributor,
+		));
 	}
 
 	# Bug 15553, Primary contributor can only be Album Artist or Artist,
