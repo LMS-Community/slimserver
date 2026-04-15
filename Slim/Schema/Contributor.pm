@@ -33,6 +33,7 @@ my @allAlbumLinkRoles;
 my @inArtistsRoles;
 
 my $prefs = preferences('server');
+my $log   = logger('scan.scanner');
 
 initializeRoles();
 
@@ -248,6 +249,20 @@ sub add {
 	my @brainzIDList;
 	if ($brainzID) {
 		@brainzIDList = Slim::Music::Info::splitTag($brainzID);
+
+		# Issue #1555 - if the MBID count differs from the name count, the
+		# positional pairing below would bind an MBID to a joined-display name
+		# (e.g. "Artist A & Artist B" with 2 MBIDs, or "Artist A ft. Artist B"
+		# with 1 name after splitTag and 2 MBIDs), poisoning the contributor
+		# row. Drop the ambiguous MBIDs rather than mis-bind them.
+		if (@brainzIDList && scalar(@brainzIDList) != scalar(@artistList)) {
+			main::INFOLOG && $log->is_info && $log->info(
+				"Ignoring MBID list for '$artist': name count ("
+				. scalar(@artistList) . ") differs from MBID count ("
+				. scalar(@brainzIDList) . ")"
+			);
+			@brainzIDList = ();
+		}
 	}
 
 	# Using native DBI here to improve performance during scanning
@@ -355,8 +370,6 @@ sub isInLibrary {
 # from this contributor still exists in the database.  If not, delete the contributor.
 sub rescan {
 	my ( $class, $ids, $albumId ) = @_;
-
-	my $log = logger('scan.scanner');
 
 	my $dbh = Slim::Schema->dbh;
 
