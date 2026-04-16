@@ -630,14 +630,7 @@ sub infoAlbum {
 	my $item;
 	$filter ||= {};
 
-	if ( $remoteMeta->{album} ) {
-		$item = {
-			type =>  'text',
-			name =>  $remoteMeta->{album},
-			label => 'ALBUM',
-		};
-	}
-	elsif ( my $album = $track->album ) {
+	if ( my $album = $track->album ) {
 		my $id = $album->id;
 
 		my $library_id = $filter->{library_id} || Slim::Music::VirtualLibraries->getLibraryIdForClient($client);
@@ -674,6 +667,13 @@ sub infoAlbum {
 			name    => $album->name,
 			label   => 'ALBUM',
 			itemActions => \%actions,
+		};
+	}
+	elsif ( $remoteMeta->{album} ) {
+		$item = {
+			type =>  'text',
+			name =>  $remoteMeta->{album},
+			label => 'ALBUM',
 		};
 	}
 
