@@ -48,19 +48,46 @@ Both modes mount your project to `/workspaces/slimserver` in the container and p
 
 ## Running Lyrion
 
+Lyrion always uses `/config` for its data:
+
+| Path            | Purpose     |
+| --------------- | ----------- |
+| `/config/prefs` | Preferences |
+| `/config/cache` | Cache       |
+| `/config/logs`  | Logs        |
+
 ### Manual Start
 
-1. Open a terminal in VS Code (should be in `/workspaces/slimserver`).
-2. Run `perl slimserver.pl` [^2].
+1. Wait for everything to initialize (Extensions, Perl Language Server, etc.).
+2. Open a terminal in VS Code (should be in `/workspaces/slimserver`).
+3. Run:
 
-[^2]: You can set a different port than `9000` with `--httpport <port>` but this will require additional configuration changes.
+   ```bash
+   bash .devcontainer/start-lyrion.sh
+   ```
 
-3. Wait for the server to start, in the terminal you should see something like:
+   The script waits until Lyrion is reachable and prints the URL.
+
+   Alternatively, start it directly with Perl:
+
+   ```bash
+   perl slimserver.pl \
+       --prefsdir /config/prefs \
+       --logdir   /config/logs \
+       --cachedir /config/cache \
+       --httpport 9000
    ```
-   Server done init: http://172.18.0.1:9000
-   ```
-4. Open the **Ports** tab and click the **Forwarded Address** `Web interface` to access Lyrion web UI [^3].
-   [^3]: For local Dev Containers you can also open [http://localhost:9000](http://localhost:9000) directly.
+
+4. Open the **Ports** tab and click the **Forwarded Address** `Web interface` to access Lyrion web UI [^2].
+   [^2]: For local Dev Containers you can also open [http://localhost:9000](http://localhost:9000) directly.
+
+### Manual Stop
+
+```bash
+bash .devcontainer/stop-lyrion.sh
+# or force-kill
+FORCE=1 bash .devcontainer/stop-lyrion.sh
+```
 
 ### Auto-Start (`AUTO_START_LMS=true`)
 
@@ -74,19 +101,44 @@ The Dev Container can start Lyrion automatically. This is disabled by default.
    ```
 2. Rebuild the container.
 3. Lyrion will start automatically and listen on port `9000`.
-4. To stop Lyrion without restarting the container:
 
-   ```bash
-   bash .devcontainer/stop-lyrion.sh
-   # or force-kill
-   FORCE=1 bash .devcontainer/stop-lyrion.sh
-   ```
+Optional startup variables:
 
-## SoftSqueeze [^4]
+- `LMS_HTTP_PORT` — HTTP port (default: `9000`)
+- `LMS_WAIT_TIMEOUT` — seconds to wait for startup (default: `90`)
+- `LMS_EXTRA_ARGS` / `EXTRA_ARGS` — additional arguments passed to `slimserver.pl` (same as [`EXTRA_ARGS`](https://github.com/LMS-Community/slimserver-platforms/blob/public/9.2/Docker/README.md#passing-additional-launch-arguments) in the official Docker image)
 
-[^4]: Not supported in Codespaces. SoftSqueeze runs as a separate optional container.
+## SoftSqueeze [^3]
+
+[^3]: Not supported in Codespaces. SoftSqueeze runs as a separate optional container.
 
 Use the standalone guide in [.devcontainer/softsqueeze/SOFTSQUEEZE.md](.devcontainer/softsqueeze/SOFTSQUEEZE.md) for setup, runtime requirements, and troubleshooting.
+
+## Mounting Music and Playlist Folders
+
+The Dev Container supports these folders:
+
+- `/config` — preferences, cache, logs
+- `/music` — music library
+- `/playlist` — playlists
+
+Mounts are **disabled by default** — the container works out of the box in GitHub Codespaces and local Dev Containers without any configuration. `/config`, `/music`, and `/playlist` are created inside the container by the image.
+
+> [!NOTE]
+> Without mounts, `/config` is **ephemeral** — its contents are lost when the container is rebuilt. Mount a host folder to persist preferences, cache, and logs across rebuilds.
+
+To mount host folders, uncomment and adjust the `mounts` key in [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json) before (re)building the container. The `mounts` key works in **both** Dockerfile and Docker Compose mode:
+
+```jsonc
+"mounts": [
+   { "type": "bind", "source": "/path/to/your/config",   "target": "/config" },
+   { "type": "bind", "source": "/path/to/your/music",    "target": "/music" },
+   { "type": "bind", "source": "/path/to/your/playlist", "target": "/playlist" }
+]
+```
+
+> [!NOTE]
+> After mounting, add `/music` and `/playlist` to LMS via **Settings > Basic Settings > Media Folders** in the web UI.
 
 ## Debugging
 
@@ -95,7 +147,7 @@ Use the standalone guide in [.devcontainer/softsqueeze/SOFTSQUEEZE.md](.devconta
 1. Set a breakpoint.
 2. Press **F5**.
 3. Select **LMS: Debug slimserver.pl**.
-4. LMS will launch in debug mode on port 9000.
+4. LMS will launch in debug mode on port 9000, using `/config` for all data.
 
 Configuration is in [.vscode/launch.json](.vscode/launch.json).
 
@@ -109,17 +161,13 @@ Configuration is in [.vscode/launch.json](.vscode/launch.json).
 ### Remove Runtime Folders
 
 ```bash
-# For preview
+# Preview what would be deleted
 bash .devcontainer/clean-folders.sh
-# For actual cleanup
+# Actually delete
 FORCE=1 bash .devcontainer/clean-folders.sh
 ```
 
-This removes:
-
-- `Cache/`
-- `Logs/`
-- `prefs/`
+This removes `/config/prefs`, `/config/logs`, and `/config/cache`.
 
 ## Troubleshooting
 

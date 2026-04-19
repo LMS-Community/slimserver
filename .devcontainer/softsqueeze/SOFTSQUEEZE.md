@@ -33,13 +33,6 @@ LMS works normally even when SoftSqueeze is not running.
     docker compose -f .devcontainer/softsqueeze/docker-compose.yml down
     ```
 
-> [!TIP]
-> If it fails to start, try running the command without `bash` to use your default shell environment:
->
-> ```bash
-> .devcontainer/softsqueeze/softsqueeze.sh start
-> ```
-
 3. Open noVNC in your browser [http://localhost:6080/vnc.html](http://localhost:6080/vnc.html) and connect to the VNC server.
 
 4. SoftSqueeze should appear in VNC and register in LMS as a player.
@@ -77,6 +70,9 @@ LMS_HOST=192.168.1.100 bash .devcontainer/softsqueeze/softsqueeze.sh start
 ```
 
 Or edit the environment section in [`.devcontainer/softsqueeze/docker-compose.yml`](docker-compose.yml).
+
+> [!TIP]
+> SoftSqueeze is not limited to the Dev Container's LMS instance. You can connect it to **any Lyrion Music Server** reachable over the network by setting `LMS_HOST` to the external server's IP address or hostname.
 
 > [!TIP]
 > If SoftSqueeze cannot connect after changing host settings, set host back to:

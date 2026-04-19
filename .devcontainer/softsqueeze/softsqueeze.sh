@@ -6,7 +6,10 @@ set -euo pipefail
 readonly SCRIPT_NAME="$(basename "$0")"
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
+COMPOSE_FILE_FOR_ENGINE="$COMPOSE_FILE"
 ENGINE=""
+
+source "$SCRIPT_DIR/../engine-utils.sh"
 
 log_info() {
 	echo "[INFO] $*"
@@ -20,21 +23,22 @@ compose_run() {
 	"$ENGINE" compose "$@"
 }
 
-if command -v podman >/dev/null 2>&1; then
-	ENGINE="podman"
-elif command -v docker >/dev/null 2>&1; then
-	ENGINE="docker"
-else
-	log_error "Missing container engine (podman or docker)."
+ENGINE="$(find_compose_engine || true)"
+
+if [[ -z "$ENGINE" ]]; then
+	log_error "No container engine with 'compose' support found (podman or docker)."
+	log_error "On Windows / Git Bash try running the script directly (without 'bash' prefix)."
 	exit 1
 fi
 
 log_info "Using container engine: $ENGINE"
 
-if ! compose_run version >/dev/null 2>&1; then
-	log_error "'$ENGINE compose' is not available."
-	log_error "Install a version of $ENGINE with Compose support."
-	exit 1
+if [[ "$ENGINE" == *.exe ]]; then
+	if command -v cygpath >/dev/null 2>&1; then
+		COMPOSE_FILE_FOR_ENGINE="$(cygpath -w "$COMPOSE_FILE")"
+	elif command -v wslpath >/dev/null 2>&1; then
+		COMPOSE_FILE_FOR_ENGINE="$(wslpath -w "$COMPOSE_FILE")"
+	fi
 fi
 
 # Default to Dev Container hostname on shared lyrion_bridge network.
@@ -43,7 +47,7 @@ export LMS_HOST="${LMS_HOST:-lyrion-devcontainer}"
 case "${1:-start}" in
 	start)
 		log_info "Building and starting SoftSqueeze container..."
-		if compose_run -f "$COMPOSE_FILE" up -d --build; then
+		if compose_run -f "$COMPOSE_FILE_FOR_ENGINE" up -d --build; then
 			log_info "SoftSqueeze started successfully."
 			log_info "Access points:"
 			log_info "  noVNC:  http://localhost:6080/vnc.html"
@@ -56,7 +60,7 @@ case "${1:-start}" in
 		;;
 	stop)
 		log_info "Stopping SoftSqueeze container..."
-		if compose_run -f "$COMPOSE_FILE" down; then
+		if compose_run -f "$COMPOSE_FILE_FOR_ENGINE" down; then
 			log_info "SoftSqueeze stopped."
 		else
 			log_error "Failed to stop SoftSqueeze."
@@ -65,11 +69,11 @@ case "${1:-start}" in
 		;;
 	status)
 		log_info "SoftSqueeze container status:"
-		compose_run -f "$COMPOSE_FILE" ps
+		compose_run -f "$COMPOSE_FILE_FOR_ENGINE" ps
 		;;
 	logs)
 		log_info "Tailing SoftSqueeze logs (Ctrl+C to exit)..."
-		compose_run -f "$COMPOSE_FILE" logs -f
+		compose_run -f "$COMPOSE_FILE_FOR_ENGINE" logs -f
 		;;
 	*)
 		log_error "Invalid command: ${1:-start}"

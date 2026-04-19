@@ -11,17 +11,16 @@
             "program": "${workspaceFolder}/slimserver.pl",
             "cwd": "${workspaceFolder}",
             "args": [
-                "--httpport",
-                "9000",
-                "--prefsdir",
-                "${workspaceFolder}/prefs",
-                "--cachedir",
-                "${workspaceFolder}/Cache"
+                "--httpport", "9000",
+                "--prefsdir", "/config/prefs",
+                "--logdir",   "/config/logs",
+                "--cachedir", "/config/cache",
+                // "--d_startup" // Uncomment for more verbose module loading
             ],
             "env": {
                 "LMS_VSCODE_DEBUG": "1",
                 "PERL5OPT": "-Mlib=${workspaceFolder}/.vscode -MPerlLanguageServerBootstrap",
-                "PERL5LIB": "${workspaceFolder}:${workspaceFolder}/lib:${workspaceFolder}/CPAN:${workspaceFolder}/CPAN/arch/5.40:${workspaceFolder}/CPAN/arch/5.40/x86_64-linux-thread-multi:${workspaceFolder}/CPAN/arch/5.40/x86_64-linux-thread-multi/auto"
+                "PERL5LIB": "${workspaceFolder}:${workspaceFolder}/lib"
             },
             "stopOnEntry": false,
             "reloadModules": true

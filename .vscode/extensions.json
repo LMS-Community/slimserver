@@ -1,7 +1,7 @@
 {
     "recommendations": [
         "editorconfig.editorconfig",
-        "gerald-richter.perl",
+        "richterger.perl",
         "ms-vscode-remote.remote-containers"
     ]
 }

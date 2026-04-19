@@ -1,21 +1,26 @@
 #!/usr/bin/env bash
-# Cleans runtime-generated folders.
+# Cleans runtime-generated folders in /config.
 
 set -euo pipefail
 
 readonly FORCE="${FORCE:-0}"
 
-# Folders to remove (runtime-generated, in .gitignore)
+# Runtime-generated subdirectories (prefs, logs, cache)
 readonly FOLDERS_TO_CLEAN=(
-	"Cache"
-	"Logs"
-	"prefs"
+	"/config/prefs"
+	"/config/logs"
+	"/config/cache"
 )
-REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-cd "$REPO_ROOT"
 
 if [[ "$FORCE" != "1" ]]; then
-	echo "[INFO] This will delete: ${FOLDERS_TO_CLEAN[*]}"
+	echo "[INFO] The following folders would be deleted:"
+	for folder in "${FOLDERS_TO_CLEAN[@]}"; do
+		if [[ -d "$folder" ]]; then
+			echo "[INFO]   $folder/ (exists)"
+		else
+			echo "[INFO]   $folder/ (not found, skipped)"
+		fi
+	done
 	echo "[INFO] Re-run with FORCE=1 to continue"
 	exit 0
 fi
@@ -30,4 +35,3 @@ for folder in "${FOLDERS_TO_CLEAN[@]}"; do
 done
 
 echo "[INFO] Cleanup complete ($DELETED folder(s) removed)"
-

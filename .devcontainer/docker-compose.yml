@@ -1,9 +1,12 @@
 services:
   lyrion-devcontainer:
+    hostname: lyrion-devcontainer
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
+      # In Compose mode, Dev Containers does not auto-mount the workspace —
+      # this explicit mount is required.
       - ../..:/workspaces:cached
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity

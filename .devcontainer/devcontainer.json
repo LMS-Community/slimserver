@@ -24,7 +24,18 @@
 
     "containerEnv": {
         "AUTO_START_LMS": "false" // Set to "true" to automatically start Lyrion Media Server when the container starts
+        // Optional startup variables (uncomment and adjust as needed):
+        // "LMS_EXTRA_ARGS": "--advertiseaddr=192.168.1.100"
     },
+
+    // Mount host folders into the container.
+    // Uncomment and adjust the source paths to match your host system before (re)building the container.
+    // Not needed in GitHub Codespaces — /config is created inside the container (ephemeral).
+    // "mounts": [
+    //     { "type": "bind", "source": "/path/to/your/config",   "target": "/config" },
+    //     { "type": "bind", "source": "/path/to/your/music",    "target": "/music" },
+    //     { "type": "bind", "source": "/path/to/your/playlist", "target": "/playlist" }
+    // ],
 
     // Dev Containers mounts the opened repository under /workspaces/<repo> by default.
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
@@ -70,19 +81,19 @@
                 "perl.enable": true, // Set to false to disable the Perl extension and language server features
                 "perl.env": {
                     "PERL5OPT": "-Mlib=/workspaces/slimserver/.vscode -MPerlLanguageServerBootstrap",
-                    "PERL5LIB": "/workspaces/slimserver:/workspaces/slimserver/lib:/workspaces/slimserver/CPAN:/workspaces/slimserver/CPAN/arch/5.40:/workspaces/slimserver/CPAN/arch/5.40/x86_64-linux-thread-multi:/workspaces/slimserver/CPAN/arch/5.40/x86_64-linux-thread-multi/auto"
+                    "PERL5LIB": "/workspaces/slimserver:/workspaces/slimserver/lib"
                 },
                 "perl.perlCmd": "/usr/bin/perl",
+                "perl.perlArgs": [
+                    "-Mlib=/workspaces/slimserver/.vscode",
+                    "-MPerlLanguageServerBootstrap"
+                ],
                 "perl.logLevel": 0,
                 "perl.pathMap": [],
                 "perl.perlInc": [
                     "/workspaces/slimserver/.vscode",
                     "/workspaces/slimserver",
-                    "/workspaces/slimserver/lib",
-                    "/workspaces/slimserver/CPAN/arch/5.40",
-                    "/workspaces/slimserver/CPAN/arch/5.40/x86_64-linux-thread-multi",
-                    "/workspaces/slimserver/CPAN/arch/5.40/x86_64-linux-thread-multi/auto",
-                    "/workspaces/slimserver/CPAN"
+                    "/workspaces/slimserver/lib"
                 ]
             }
         }
