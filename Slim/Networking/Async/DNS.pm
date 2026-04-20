@@ -70,8 +70,8 @@ sub resolve {
 			return;
 		}
 
-		my $addr = $res->[3];
-		my $ttl	 = $res->[4];
+		my $addr = $res->[4];
+		my $ttl	 = $res->[3];
 
 		main::DEBUGLOG && $log->is_debug && $log->debug( "Got DNS response $addr for $host (ttl $ttl)" );
 
