@@ -930,7 +930,7 @@ sub _objForDbUrl {
 }
 
 sub _createOrUpdateAlbum {
-	my ($self, $attributes, $trackColumns, $isCompilation, $contributorId, $hasAlbumArtist, $create, $track, $basename) = @_;
+	my ($self, $attributes, $trackColumns, $isCompilation, $contributorId, $hasAlbumArtist, $create, $track, $basename, $aaDisplayID) = @_;
 
 	my $dbh = $self->dbh;
 
@@ -1296,6 +1296,8 @@ sub _createOrUpdateAlbum {
 	}
 
 	$albumHash->{musicbrainz_id} = $attributes->{MUSICBRAINZ_ALBUM_ID};
+#	$albumHash->{display_contributor} = $aaDisplayID;
+	$albumHash->{label} = $aaDisplayID;
 
 	# Handle album gain tags.
 	for my $gainTag ( qw(REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK) ) {
@@ -1706,7 +1708,18 @@ sub _newTrack {
 		$LAST_ERROR = 'Track is DRM-protected';
 		return;
 	}
-
+###
+	if ( $attributeHash->{ALBUMARTIST} && $attributeHash->{ALBUMARTISTS} ) {
+		my $temp = $attributeHash->{ALBUMARTISTS};
+		$attributeHash->{ALBUMARTISTS} = $attributeHash->{ALBUMARTIST};
+		$attributeHash->{ALBUMARTIST} = $temp;
+	}
+	if ( $attributeHash->{ARTIST} && $attributeHash->{ARTISTS} ) {
+		my $temp = $attributeHash->{ARTISTS};
+		$attributeHash->{ARTISTS} = $attributeHash->{ARTIST};
+		$attributeHash->{ARTIST} = $temp;
+	}
+###
 	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes({
 		'url'        => $url,
 		'attributes' => $attributeHash,
@@ -1793,6 +1806,22 @@ sub _newTrack {
 	# Walk through the valid contributor roles, adding them to the database.
 	my $contributors = $self->_mergeAndCreateContributors($deferredAttributes, $isCompilation, 1);
 
+###
+	my $aaDisplayID = $deferredAttributes->{ALBUMARTISTS};
+#	my $aaDisplayID;
+#	if ( $deferredAttributes->{ALBUMARTISTS} ) {
+#		my $contributor_display_sth = $self->dbh->prepare_cached('SELECT id FROM contributor_display WHERE name = ?');
+#		$contributor_display_sth->execute($deferredAttributes->{ALBUMARTISTS});
+#		($aaDisplayID) = $contributor_display_sth->fetchrow_array;
+#		$contributor_display_sth->finish;
+#		if ( !$aaDisplayID ) {
+#			my $sth_insert = $self->dbh->prepare_cached("INSERT INTO contributor_display (name) VALUES (?)");
+#			$sth_insert->execute( $deferredAttributes->{ALBUMARTISTS} );
+#			$aaDisplayID = $self->dbh->last_insert_id(undef, undef, undef, undef);
+#		}
+#	}
+###
+
 	# Set primary_artist for the track
 	if ( my $artist = $contributors->{ARTIST} || $contributors->{TRACKARTIST} ) {
 		$columnValueHash{primary_artist} = $artist->[0];
@@ -1833,6 +1862,7 @@ sub _newTrack {
 		1,																		# create
 		undef,																	# Track
 		$dirname,
+		$aaDisplayID,
 	);
 
 	### Create Track row
@@ -1841,7 +1871,7 @@ sub _newTrack {
 	$trackId = $self->_createTrack(\%columnValueHash, \%persistentColumnValueHash, $source);
 
 	### Create ContributorTrack & ContributorAlbum rows
-	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId);
+	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId, $aaDisplayID);
 
 	### Create Genre rows
 	$self->_createGenre($deferredAttributes->{'GENRE'}, $trackId, 1);
@@ -2842,6 +2872,7 @@ sub _preCheckAttributes {
 			MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID
 			MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS RELEASETYPE
 			ALBUM_EXTID ARTIST_EXTID WORK WORKSORT
+			ARTISTS ALBUMARTISTS
 		))
 	{
 
@@ -3191,7 +3222,7 @@ sub _mergeAndCreateContributors {
 
 sub _createContributorRoleRelationships {
 
-	my ($self, $contributors, $trackId, $albumId) = @_;
+	my ($self, $contributors, $trackId, $albumId, $aaDisplayID) = @_;
 
 	if (!keys %$contributors) {
 		main::DEBUGLOG && $log->debug('Attempt to set empty contributor set for trackid=', $trackId);
@@ -3231,7 +3262,14 @@ sub _createContributorRoleRelationships {
 		VALUES
 		(?, ?, ?)
 	} );
+#	my $sth_album_display = $self->dbh->prepare_cached( qq{
+#		REPLACE INTO contributor_album_display
+#		(contributor_display, contributor, album)
+#		VALUES
+#		(?, ?, ?)
+#	} ) if $aaDisplayID;
 
+Slim::Utils::Log::logError("DK \$contributors=" . Data::Dump::dump($contributors));
 	while (my ($role, $contributorList) = each %{$contributors}) {
 		my $roleId = Slim::Schema::Contributor->typeToRole($role);
 		for my $contributor (@{$contributorList}) {
@@ -3242,6 +3280,9 @@ sub _createContributorRoleRelationships {
 
 			# The following is retained at present to add mappings for BMF, entries created will be deleted in the optimise phase
 			$sth_album->execute( $roleId, $contributor, $albumId );
+#			if ( $aaDisplayID && $role eq 'ALBUMARTIST' ) {
+#				$sth_album_display->execute( $aaDisplayID, $contributor, $albumId );
+#			}
 		}
 	}
 }

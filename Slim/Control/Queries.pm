@@ -647,6 +647,9 @@ sub albumsQuery {
 		# We need the main albums.contributor name for favorites, so always do this join unless getting count only.
 		$sql .= 'JOIN contributors ON contributors.id = albums.contributor ';
 		$c->{'contributors.name'} = 1;
+		$c->{'albums.label'} = 1;
+#		$sql .= 'LEFT JOIN contributor_display ON albums.display_contributor = contributor_display.id ';
+#		$c->{'contributor_display.name'} = 1;
 	}
 
 	if ( $tags =~ /s/ ) {
@@ -837,6 +840,8 @@ sub albumsQuery {
 			utf8::decode( $c->{'composer.name'} ) if exists $c->{'composer.name'};
 			utf8::decode( $c->{'tracks.performance'} ) if exists $c->{'tracks.performance'};
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
+#			utf8::decode( $c->{'contributor_display.name'} ) if exists $c->{'contributor_display.name'};
+			utf8::decode( $c->{'albums.label'} ) if exists $c->{'albums.label'};
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_id', $c->{'tracks.work'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_name', $c->{'works.title'});
@@ -900,6 +905,8 @@ sub albumsQuery {
 			if ( !$work ) {
 				$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
 				$tags =~ /a/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
+#				$tags =~ /a/ && $c->{'contributor_display.name'} && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'display_artist', $c->{'contributor_display.name'});
+				$tags =~ /a/ && $c->{'albums.label'} && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'display_artist', $c->{'albums.label'});
 				$tags =~ /4/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'portraitid', $c->{'contributors.portraitid'});
 			}
 
@@ -5792,6 +5799,9 @@ sub _songDataFromHash {
 					$returnHash{$role} = $res->{$role};
 				}
 			}
+			# also return contributor_display.name
+#			$returnHash{'display_artist'} = $res->{'contributor_display.name'} if $res->{'contributor_display.name'};
+			$returnHash{'display_artist'} = $res->{'albums.label'} if $res->{'albums.label'};
 		}
 		elsif ( $tag eq 'S' ) {
 			for my $role ( @contributorRoles ) {
@@ -6392,6 +6402,13 @@ sub _getTagDataForTracks {
 		}
 	};
 
+#	my $join_contributor_display = sub {
+#		if ( $sql !~ /JOIN contributor_display/ ) {
+#		$join_albums->();
+#			$sql .= 'LEFT JOIN contributor_display ON albums.display_contributor = contributor_display.id ';
+#		}
+#	};
+
 	if ( my $year = $args->{year} ) {
 		push @{$w}, 'tracks.year = ?';
 		push @{$p}, $year;
@@ -6497,6 +6514,12 @@ sub _getTagDataForTracks {
 	$tags =~ /[as]/ && do {
 		$join_contributors->();
 		$c->{'contributors.name'} = 1 if $tags =~ /a/;
+		
+#		$join_contributor_display->();
+#		$c->{'contributor_display.name'} = 1;
+		$c->{'albums.label'} = 1;
+		
+		
 
 		# only albums on which the contributor has a specific role?
 		my @roles;
@@ -6656,6 +6679,7 @@ sub _getTagDataForTracks {
 			utf8::decode( $c->{'tracks.lyrics'} ) if exists $c->{'tracks.lyrics'};
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
+			utf8::decode( $c->{'contributor_display.name'} ) if exists $c->{'contributor_display.name'};
 			utf8::decode( $c->{'genres.name'} ) if exists $c->{'genres.name'};
 			utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
 			utf8::decode( $c->{'tracks.discsubtitle'}) if exists $c->{'tracks.discsubtitle'};
