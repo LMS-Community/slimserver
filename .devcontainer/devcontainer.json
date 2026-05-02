@@ -30,9 +30,7 @@
 
     // Mount host folders into the container.
     // Uncomment and adjust the source paths to match your host system before (re)building the container.
-    // Not needed in GitHub Codespaces — /config is created inside the container (ephemeral).
     // "mounts": [
-    //     { "type": "bind", "source": "/path/to/your/config",   "target": "/config" },
     //     { "type": "bind", "source": "/path/to/your/music",    "target": "/music" },
     //     { "type": "bind", "source": "/path/to/your/playlist", "target": "/playlist" }
     // ],

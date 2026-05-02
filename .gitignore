@@ -7,3 +7,8 @@
 # Ignore custom OS module as this is installed in Dev Container and not part of this repo
 Slim/Utils/OS/Custom.pm
 
+# Ignore cache, logs, prefs, and plugins directories
+Cache/*
+Logs/*
+prefs/*
+Plugins/*

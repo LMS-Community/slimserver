@@ -12,9 +12,9 @@
             "cwd": "${workspaceFolder}",
             "args": [
                 "--httpport", "9000",
-                "--prefsdir", "/config/prefs",
-                "--logdir",   "/config/logs",
-                "--cachedir", "/config/cache",
+                "--cachedir", "${workspaceFolder}/Cache",
+                "--logdir",   "${workspaceFolder}/Logs",
+                "--prefsdir", "${workspaceFolder}/prefs",
                 // "--d_startup" // Uncomment for more verbose module loading
             ],
             "env": {

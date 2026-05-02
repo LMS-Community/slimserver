@@ -23,8 +23,8 @@ RUN apt-get update -qq && \
 # Volume and port setup
 # Permissions allow the non-root Dev Container user (vscode) to write here
 # when no host folder is mounted (e.g. GitHub Codespaces).
-RUN mkdir -p /config /music /playlist && \
-    chmod 777 /config /music /playlist
+RUN mkdir -p /music /playlist && \
+    chmod 777 /music /playlist
 
 # Install Perl::LanguageServer (for "richterger.perl" VS Code extension)
 RUN cpanm --notest --quiet Perl::LanguageServer

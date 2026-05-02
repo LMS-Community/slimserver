@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
-# Cleans runtime-generated folders in /config.
+# Cleans runtime-generated folders.
 
 set -euo pipefail
 
 readonly FORCE="${FORCE:-0}"
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-# Runtime-generated subdirectories (prefs, logs, cache)
+# Runtime-generated subdirectories (Cache, Logs, prefs)
 readonly FOLDERS_TO_CLEAN=(
-	"/config/prefs"
-	"/config/logs"
-	"/config/cache"
+	"$REPO_ROOT/prefs"
+	"$REPO_ROOT/Logs"
+	"$REPO_ROOT/Cache"
 )
 
 if [[ "$FORCE" != "1" ]]; then

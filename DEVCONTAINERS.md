@@ -48,13 +48,15 @@ Both modes mount your project to `/workspaces/slimserver` in the container and p
 
 ## Running Lyrion
 
-Lyrion always uses `/config` for its data:
+Lyrion stores its data in the project root:
 
-| Path            | Purpose     |
-| --------------- | ----------- |
-| `/config/prefs` | Preferences |
-| `/config/cache` | Cache       |
-| `/config/logs`  | Logs        |
+| Path    | Purpose     |
+| ------- | ----------- |
+| `Cache` | Cache       |
+| `Logs`  | Logs        |
+| `prefs` | Preferences |
+
+These directories are listed in `.gitignore` and are not tracked by git.
 
 ### Manual Start
 
@@ -71,11 +73,7 @@ Lyrion always uses `/config` for its data:
    Alternatively, start it directly with Perl:
 
    ```bash
-   perl slimserver.pl \
-       --prefsdir /config/prefs \
-       --logdir   /config/logs \
-       --cachedir /config/cache \
-       --httpport 9000
+   perl slimserver.pl
    ```
 
 4. Open the **Ports** tab and click the **Forwarded Address** `Web interface` to access Lyrion web UI [^2].
@@ -116,22 +114,20 @@ Use the standalone guide in [.devcontainer/softsqueeze/SOFTSQUEEZE.md](.devconta
 
 ## Mounting Music and Playlist Folders
 
-The Dev Container supports these folders:
+The Dev Container supports these optional host folder mounts:
 
-- `/config` — preferences, cache, logs
 - `/music` — music library
 - `/playlist` — playlists
 
-Mounts are **disabled by default** — the container works out of the box in GitHub Codespaces and local Dev Containers without any configuration. `/config`, `/music`, and `/playlist` are created inside the container by the image.
+Mounts are **disabled by default** — the container works out of the box in GitHub Codespaces and local Dev Containers without any configuration. `/music` and `/playlist` are created inside the container by the image.
 
 > [!NOTE]
-> Without mounts, `/config` is **ephemeral** — its contents are lost when the container is rebuilt. Mount a host folder to persist preferences, cache, and logs across rebuilds.
+> Preferences, cache, and logs (`Cache/`, `Logs/`, `prefs/`) are stored in the project root and are already persisted via the workspace bind mount.
 
-To mount host folders, uncomment and adjust the `mounts` key in [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json) before (re)building the container. The `mounts` key works in **both** Dockerfile and Docker Compose mode:
+To mount host folders for music and playlists, uncomment and adjust the `mounts` key in [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json) before (re)building the container. The `mounts` key works in **both** Dockerfile and Docker Compose mode:
 
 ```jsonc
 "mounts": [
-   { "type": "bind", "source": "/path/to/your/config",   "target": "/config" },
    { "type": "bind", "source": "/path/to/your/music",    "target": "/music" },
    { "type": "bind", "source": "/path/to/your/playlist", "target": "/playlist" }
 ]
@@ -147,7 +143,7 @@ To mount host folders, uncomment and adjust the `mounts` key in [.devcontainer/d
 1. Set a breakpoint.
 2. Press **F5**.
 3. Select **LMS: Debug slimserver.pl**.
-4. LMS will launch in debug mode on port 9000, using `/config` for all data.
+4. LMS will launch in debug mode on port 9000, using the project root for all data.
 
 Configuration is in [.vscode/launch.json](.vscode/launch.json).
 
@@ -167,7 +163,7 @@ bash .devcontainer/clean-folders.sh
 FORCE=1 bash .devcontainer/clean-folders.sh
 ```
 
-This removes `/config/prefs`, `/config/logs`, and `/config/cache`.
+This removes `Cache/`, `Logs/`, and `prefs/` from the project root.
 
 ## Troubleshooting
 

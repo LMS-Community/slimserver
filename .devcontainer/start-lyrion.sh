@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Starts LMS. Config is always /config.
+# Starts LMS.
 
 set -euo pipefail
 
@@ -18,7 +18,7 @@ if is_lms_running; then
 	exit 0
 fi
 
-mkdir -p /config/prefs /config/logs /config/cache
+mkdir -p "$REPO_ROOT/Cache" "$REPO_ROOT/Logs" "$REPO_ROOT/prefs"
 
 declare -a extra_args=()
 if [[ -n "$LMS_EXTRA_ARGS" ]]; then
@@ -27,9 +27,9 @@ fi
 
 echo "[INFO] Starting LMS on port $HTTP_PORT"
 nohup perl "$REPO_ROOT/slimserver.pl" \
-	--prefsdir /config/prefs \
-	--logdir   /config/logs \
-	--cachedir /config/cache \
+	--cachedir "$REPO_ROOT/Cache" \
+	--logdir   "$REPO_ROOT/Logs" \
+	--prefsdir "$REPO_ROOT/prefs" \
 	--httpport "$HTTP_PORT" \
 	"${extra_args[@]}" \
 	>"$LOGFILE" 2>&1 &
