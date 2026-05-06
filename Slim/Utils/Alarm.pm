@@ -609,12 +609,17 @@ sub sound {
 		# Set up volume
 		my $currentVolume = $prefs->client($client)->get('volume');
 		$self->{_originalVolume} = $currentVolume;
-		main::DEBUGLOG && $isDebug && $log->debug("Current vol: $currentVolume Alarm vol: " . $self->volume);
+		# Capture the alarm volume now so the restore check at alarm end uses the same value,
+		# even if alarmDefaultVolume changes mid-alarm (which would make $self->volume return
+		# a different value and cause the restore condition to fail).
+		my $alarmVolume = $self->volume;
+		$self->{_activeVolume} = $alarmVolume;
+		main::DEBUGLOG && $isDebug && $log->debug("Current vol: $currentVolume Alarm vol: $alarmVolume");
 
-		if ($currentVolume != $self->volume) {
-			main::DEBUGLOG && $isDebug && $log->debug("Changing volume from $currentVolume to " . $self->volume);
+		if ($currentVolume != $alarmVolume) {
+			main::DEBUGLOG && $isDebug && $log->debug("Changing volume from $currentVolume to $alarmVolume");
 			# Bug 15662: use mixer command to change volume so that synced volumes are correctly set
-			$client->execute(['mixer', 'volume', $self->volume]);
+			$client->execute(['mixer', 'volume', $alarmVolume]);
 		}
 
 		# Set the player shuffle mode prior to loading
@@ -895,7 +900,7 @@ sub stop {
 		# Get volume level directly via the pref as we don't care about temporary
 		# volume levels (vol is reported as 0 after a mute)
 		my $vol = $prefs->client($client)->get('volume');
-		if (! $client->isPlaying && $vol == $self->volume) {
+		if (! $client->isPlaying && $vol == ($self->{_activeVolume} // $self->volume)) {
 			main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm volume level: ' . $self->{_originalVolume});
 			$client->volume($self->{_originalVolume});
 		}
