@@ -151,7 +151,9 @@ sub find {
 		$count++;
 
 		# canonpath or something seems to be messing with the stat cache, so we need to stat the file again to get the correct mtime and size
-		stat $file;
+		if ( !main::ISWINDOWS || !(stat _)[9] ) {
+			stat $file;
+		}
 
 		$sth->execute(
 			Slim::Utils::Misc::fileURLFromPath($file),
