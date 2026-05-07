@@ -849,14 +849,19 @@ sub stopSnooze {
 
 =head3
 
-stop( )
+stop( [ $continueAudio ] )
 
 Stops this alarm.  Has no effect if the alarm is not sounding.
+
+If $continueAudio is true, the player's playback, volume, power, and shuffle
+state are left untouched — the alarm UI is dismissed without interrupting what
+is playing.  Defaults to false (full restore).
 
 =cut
 
 sub stop {
 	my $self = shift;
+	my $continueAudio = shift;
 
 	my $client = $self->client;
 
@@ -882,37 +887,39 @@ sub stop {
 		$self->{_timeoutTimer} = undef;
 	}
 
-	# Restore analogOutMode to previous setting
-	if ($client->can('setAnalogOutMode') && $client->can('lineOutConnected')
-		&& $client->lineOutConnected()) {
-		# Restore in a second in order to avoid a blip that can occur if setAnalogOutMode
-		# is called during a power off volume fade.  Bug 9093.
-		Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 1, sub {
-			main::DEBUGLOG && $isDebug && $log->debug('Restoring previous line out mode');
-			$client->setAnalogOutMode();
-		});
-	}
-
-	# Restore original volume if the music is stopped at the end of the alarm and
-	# the volume hasn't been changed from the alarm volume level.  Do this after a pause
-	# to allow any volume fades to complete.
-	Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 1, sub {
-		# Get volume level directly via the pref as we don't care about temporary
-		# volume levels (vol is reported as 0 after a mute)
-		my $vol = $prefs->client($client)->get('volume');
-		if (! $client->isPlaying && $vol == ($self->{_activeVolume} // $self->volume)) {
-			main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm volume level: ' . $self->{_originalVolume});
-			$client->volume($self->{_originalVolume});
+	if (!$continueAudio) {
+		# Restore analogOutMode to previous setting
+		if ($client->can('setAnalogOutMode') && $client->can('lineOutConnected')
+			&& $client->lineOutConnected()) {
+			# Restore in a second in order to avoid a blip that can occur if setAnalogOutMode
+			# is called during a power off volume fade.  Bug 9093.
+			Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 1, sub {
+				main::DEBUGLOG && $isDebug && $log->debug('Restoring previous line out mode');
+				$client->setAnalogOutMode();
+			});
 		}
 
-		# Restore client shuffle mode
-		main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm shuffle mode: ' . $self->{_originalShuffleMode});
-		$client->execute(['playlist', 'shuffle', $self->{_originalShuffleMode}]);
+		# Restore original volume if the music is stopped at the end of the alarm and
+		# the volume hasn't been changed from the alarm volume level.  Do this after a pause
+		# to allow any volume fades to complete.
+		Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 1, sub {
+			# Get volume level directly via the pref as we don't care about temporary
+			# volume levels (vol is reported as 0 after a mute)
+			my $vol = $prefs->client($client)->get('volume');
+			if (! $client->isPlaying && $vol == ($self->{_activeVolume} // $self->volume)) {
+				main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm volume level: ' . $self->{_originalVolume});
+				$client->volume($self->{_originalVolume});
+			}
 
-		# Bug: 12760, 9569 - Return power state to that prior to the alarm
-		main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm power state: ' . ($self->{_originalPower} ? 'on' : 'off'));
-		$client->power($self->{_originalPower});
-	});
+			# Restore client shuffle mode
+			main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm shuffle mode: ' . $self->{_originalShuffleMode});
+			$client->execute(['playlist', 'shuffle', $self->{_originalShuffleMode}]);
+
+			# Bug: 12760, 9569 - Return power state to that prior to the alarm
+			main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm power state: ' . ($self->{_originalPower} ? 'on' : 'off'));
+			$client->power($self->{_originalPower});
+		});
+	}
 
 
 	my $class = ref $self;
