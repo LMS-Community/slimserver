@@ -6517,6 +6517,7 @@ sub _getTagDataForTracks {
 		
 #		$join_contributor_display->();
 #		$c->{'contributor_display.name'} = 1;
+		$join_albums->();
 		$c->{'albums.label'} = 1;
 		
 		
