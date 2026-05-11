@@ -12,7 +12,7 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -qy \
     # Lyrion runtime dependencies
         procps psmisc wget curl perl tzdata libcrypt-blowfish-perl libwww-perl libfont-freetype-perl liblinux-inotify2-perl \
-        libdata-dump-perl libio-socket-ssl-perl libnet-ssleay-perl libcrypt-ssleay-perl libcrypt-openssl-rsa-perl libssl-dev libgomp1 libasound2 lame opus-tools \
+        libdata-dump-perl libcrypt-ssleay-perl libcrypt-openssl-rsa-perl libssl-dev libgomp1 libasound2 lame opus-tools \
     # Perl Language Server dependencies (for "richterger.perl" VS Code extension)
         cpanminus \
         libanyevent-perl libclass-refresh-perl libcompiler-lexer-perl libdata-dump-perl libio-aio-perl libjson-perl libmoose-perl libpadwalker-perl \
@@ -28,3 +28,11 @@ RUN mkdir -p /music /playlist && \
 
 # Install Perl::LanguageServer (for "richterger.perl" VS Code extension)
 RUN cpanm --notest --quiet Perl::LanguageServer
+
+# Re-install SSL packages after cpanm: cpanm may pull in or override Net::SSLeay
+# with a CPAN version that doesn't work correctly on all platforms (e.g. ARM64).
+# Installing via apt after cpanm ensures the distro-compiled packages win.
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y libio-socket-ssl-perl libnet-ssleay-perl && \
+    apt-get clean -qy && \
+    rm -rf /var/lib/apt/lists/*
