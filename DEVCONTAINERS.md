@@ -22,7 +22,7 @@ Both methods are ready for Perl development, including support for the [Perl Lan
     For Podman, set [`dev.containers.dockerPath`](vscode://settings/dev.containers.dockerPath) to `podman`, and set [`dev.containers.dockerComposePath`](vscode://settings/dev.containers.dockerComposePath) to `podman compose`.
 
 > [!TIP]
-> It is recommended to use at least 6GB of RAM for the Dev Container, especially if you plan to run SoftSqueeze alongside Lyrion. See the `memory` key in [WSL configuration](https://learn.microsoft.com/en-us/windows/wsl/wsl-config#main-wsl-settings) for more details.
+> It is recommended to use at least 6GB of RAM for the Dev Container, especially if you plan to run SoftSqueeze alongside Lyrion. On Windows, see the `memory` key in [WSL configuration](https://learn.microsoft.com/en-us/windows/wsl/wsl-config#main-wsl-settings) for more details.
 
 1. Install [Visual Studio Code](https://code.visualstudio.com/).
 2. Install the [Dev Containers extension](vscode:extension/ms-vscode-remote.remote-containers) and make sure Dev Containers work on your machine. Follow the **Installation** instructions in the extension documentation.
@@ -65,16 +65,19 @@ These directories are listed in `.gitignore` and are not tracked by git.
 3. Run:
 
    ```bash
-   bash .devcontainer/start-lyrion.sh
+   .devcontainer/start-lyrion.sh
    ```
 
    The script waits until Lyrion is reachable and prints the URL.
 
-   Alternatively, start it directly with Perl:
+   Alternatively, start it directly with Perl for live log output in the console:
 
    ```bash
    perl slimserver.pl
    ```
+
+   > [!TIP]
+   > Set `LMS_STDIO=1` when running directly (`LMS_STDIO=1 perl slimserver.pl`) to enable interactive CLI input — you can type CLI commands directly in the terminal while LMS is running.
 
 4. Open the **Ports** tab and click the **Forwarded Address** `Web interface` to access Lyrion web UI [^2].
    [^2]: For local Dev Containers you can also open [http://localhost:9000](http://localhost:9000) directly.
@@ -82,9 +85,9 @@ These directories are listed in `.gitignore` and are not tracked by git.
 ### Manual Stop
 
 ```bash
-bash .devcontainer/stop-lyrion.sh
+.devcontainer/stop-lyrion.sh
 # or force-kill
-FORCE=1 bash .devcontainer/stop-lyrion.sh
+FORCE=1 .devcontainer/stop-lyrion.sh
 ```
 
 ### Auto-Start (`AUTO_START_LMS=true`)
@@ -158,9 +161,9 @@ Configuration is in [.vscode/launch.json](.vscode/launch.json).
 
 ```bash
 # Preview what would be deleted
-bash .devcontainer/clean-folders.sh
+.devcontainer/clean-folders.sh
 # Actually delete
-FORCE=1 bash .devcontainer/clean-folders.sh
+FORCE=1 .devcontainer/clean-folders.sh
 ```
 
 This removes `Cache/`, `Logs/`, and `prefs/` from the project root.
@@ -183,6 +186,18 @@ This removes `Cache/`, `Logs/`, and `prefs/` from the project root.
 
 - Lyrion ports `9000`, `3483`, and `9090` are forwarded by default.
 - Lyrion and SoftSqueeze use the `lyrion_bridge` network.
+
+## Contributing
+
+### Adding New Scripts
+
+All `.sh` scripts in `.devcontainer/` must have the executable bit set in git so they run without an explicit `bash` prefix on macOS and Linux:
+
+```bash
+git update-index --chmod=+x .devcontainer/your-script.sh
+```
+
+The `post-create.sh` script also runs `chmod +x` on all `.devcontainer/**/*.sh` files inside the container as a fallback, but the git bit is the canonical source of truth and should always be set.
 
 ## Further Reading
 
