@@ -1280,6 +1280,8 @@ sub _createOrUpdateAlbum {
 	$albumHash->{release_type} = Slim::Utils::Text::ignoreCase( $releaseType || 'album' );
 	Slim::Schema::Album->addReleaseTypeMap($releaseType, $albumHash->{release_type});
 
+	$albumHash->{label} = $attributes->{LABEL};
+
 	# Bug 3255 - add album contributor which is either VA or the primary artist, used for sort by artist
 	$vaObjId ||= $self->variousArtistsObject->id;
 
@@ -2860,6 +2862,8 @@ sub _preCheckAttributes {
 	# We also need these in _postCheckAttributes, but they should be set during create()
 	$deferredAttributes->{'DISC'} = $attributes->{'DISC'} if $attributes->{'DISC'};
 
+	$deferredAttributes->{'LABEL'} = $attributes->{'LABEL'} || undef;
+
 	# thumb has gone away, since we have GD resizing.
 	delete $attributes->{'THUMB'};
 
@@ -3317,6 +3321,7 @@ sub totals {
 		track => ['titles', 0, 1, 'tags:CC'],
 		playlist => ['playlists', 0, 1, 'tags:CC'],
 		work => ['works', 0, 1, 'tags:CC'],
+		label => ['labels', 0, 1, 'tags:CC'],
 	);
 
 	while (my ($key, $query) = each %categories) {

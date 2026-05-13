@@ -155,6 +155,7 @@ use JSON::XS::VersionOneAndTwo;
 
 use Slim::Menu::BrowseLibrary::Releases;
 use Slim::Menu::BrowseLibrary::Works;
+use Slim::Menu::BrowseLibrary::Labels;
 use Slim::Music::VirtualLibraries;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
@@ -598,6 +599,23 @@ sub _registerBaseNodes {
 		},
 		{
 			type         => 'link',
+			name         => 'BROWSE_BY_LABEL',
+			params       => {mode => 'labels'},
+			feed         => \&_labels,
+			icon         => 'html/images/albums.png',
+			jiveIcon     => 'html/images/albums.png',
+			homeMenuText => 'BROWSE_LABELS',
+			condition    => sub {
+						return unless isEnabledNode(@_);
+						my $totals = Slim::Schema->totals($_[0]);
+						return $totals->{label} if $totals;
+					},
+			id           => 'myMusicLabels',
+			weight       => 45,
+			cache        => 1,
+		},
+		{
+			type         => 'link',
 			name         => 'BROWSE_NEW_MUSIC',
 			icon         => 'html/images/newmusic.png',
 			params       => {mode => 'albums', sort => 'new', wantMetadata => 1},
@@ -735,7 +753,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year only_album_years folder_id role_id library_id remote_library release_type work_id composer_id from_search subtitle grouping performance);
+our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year only_album_years folder_id role_id library_id remote_library release_type work_id composer_id from_search subtitle grouping performance record_label);
 
 sub _topLevel {
 	my ($client, $callback, $args, $pt) = @_;
