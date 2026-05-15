@@ -63,11 +63,11 @@ sub findStandaloneArtwork {
 	# new parameter $commonParent flag introduced. If this is passed $dirurl should be the parent directory and we don't need
 	# to have received anything in $trackAttributes or $deferredAttributes as track-based variable cover art format is bypassed.
 
-	my ( $class, $trackAttributes, $deferredAttributes, $dirurl, $commonParent, $trackUrl, $trackDisc ) = @_;
+	my ( $class, $trackAttributes, $deferredAttributes, $dirurl, $commonParent, $trackid, $trackDisc ) = @_;
 
 	my $discNumber = $trackAttributes->{disc} || $trackDisc;
 
-	return 0 if !Slim::Music::Info::isFileURL($dirurl) || (!$trackAttributes && !$commonParent && !$trackUrl);
+	return 0 if !Slim::Music::Info::isFileURL($dirurl);
 
 	my $isInfo = main::INFOLOG && $log->is_info;
 
@@ -86,11 +86,11 @@ sub findStandaloneArtwork {
 
 		# coverArt/artfolder pref support
 
-		# if called with the commonParent parameter instead of a Track attribute hash, only accept a hardcoded user pref.
+		# if called with the commonParent parameter we only accept a hardcoded user pref.
 		if ($commonParent && $coverFormat && $coverFormat !~ /^%/) {
 			push @files, $coverFormat;
 		}
-		elsif ( $coverFormat ) {
+		elsif ( !$commonParent && $coverFormat ) {
 			# If the user has specified a pattern to match the artwork on, we need
 			# to generate that pattern. This is nasty.
 			if ( $coverFormat =~ /^%(.*?)(\..*?){0,1}$/ ) {
@@ -100,7 +100,60 @@ sub findStandaloneArtwork {
 				# XXX This may break for some people as it's not using a Track object anymore
 				my $meta = { %{$trackAttributes}, %{$deferredAttributes} };
 
-				if ( my $prefix = Slim::Music::TitleFormatter::infoFormat( $trackUrl, $1, undef, $trackUrl ? undef : $meta ) ) {
+				if ( keys %$meta == 0 && $trackid ) {
+
+					my @cols = map { "tracks.$_" } keys %{Slim::Schema::Track->attributes};
+					push @cols, ( "albums.title", "albums.titlesort", "albums.discc", "works.title");
+					my $cols = join(', ', @cols);
+
+					my $dbh = Slim::Schema->dbh;
+					my $meta_sth = $dbh->prepare( qq{
+						SELECT $cols
+						FROM tracks
+						JOIN albums ON albums.id = tracks.album
+						LEFT JOIN works ON tracks.work = works.id
+						WHERE tracks.id = ?
+						} );
+					$meta_sth->execute($trackid);
+					my @data = $meta_sth->fetchrow_array;
+
+					@$meta{@cols} = @data;
+					$meta->{"albumid"} = delete $meta->{"tracks.album"};
+					$meta->{"workid"} = delete $meta->{"tracks.work"};
+
+					if ( $1 =~ /ARTIST|COMPOSER|CONDUCTOR|BAND/ ) {
+						$meta_sth = $dbh->prepare( qq{
+						SELECT name, namesort, role
+						FROM contributor_track
+						JOIN contributors ON contributors.id = contributor_track.contributor
+						WHERE contributor_track.track = ?
+						} );
+						$meta_sth->execute($trackid);
+						my ($name, $namesort, $role);
+						$meta_sth->bind_columns(\$name, \$namesort, \$role);
+						while ( $meta_sth->fetch ) {
+							my $rolename = Slim::Schema::Contributor->roleToType($role);
+							push @{$meta->{$rolename}}, $name;
+							push @{$meta->{${rolename}. "SORT"}}, $namesort;
+						}
+					}
+
+					if ( $1 =~ /GENRE/ ) {
+						$meta_sth = $dbh->prepare( qq{
+						SELECT name
+						FROM genre_track
+						JOIN genres ON genres.id = genre_track.genre
+						WHERE genre_track.track = ? LIMIT 1
+						} );
+						$meta_sth->execute($trackid);
+						my ($name);
+						$meta_sth->bind_columns(\$name);
+						$meta_sth->fetch;
+						$meta->{'genre'} = $name;
+					}
+				}
+
+				if ( my $prefix = Slim::Music::TitleFormatter::infoFormat( undef, $1, undef, $meta ) ) {
 					$coverFormat = $prefix . $suffix;
 
 					if ( main::ISWINDOWS ) {
@@ -295,7 +348,7 @@ sub updateStandaloneArtwork {
 			@albumDirs = Slim::Utils::Misc::uniq(@albumDirs);
 			my $commonParent = _findCommonParent(\@albumDirs);
 
-			if ( my $parentArtwork = Slim::Music::Artwork->findStandaloneArtwork(undef, undef, Slim::Utils::Misc::fileURLFromPath($commonParent), 1) ) {
+			if ( my $parentArtwork = Slim::Music::Artwork->findStandaloneArtwork({}, {}, Slim::Utils::Misc::fileURLFromPath($commonParent), 1) ) {
 				my $parentUrl = Slim::Utils::Misc::fileURLFromPath($parentArtwork);
 				$newAlbumCover = Slim::Music::Artwork->generateImageId({
 					image => $parentArtwork,
@@ -347,14 +400,12 @@ sub updateStandaloneArtwork {
 			# - !$newCoverId: existing file has disappeared
 
 			if ( Slim::Music::Info::isFileURL($url) && (!$cover || !$newCoverId || $urlDir ne dirname($cover) || $disc_count > 1) ) {
-				# pass the url, much faster! If the user has a wildcard image name pref, the Track will still be instantiated further
-				# down the line, but this change avoids it being done when not neccessary.
 				$newCover = Slim::Music::Artwork->findStandaloneArtwork(
 					{},
 					{},
 					Slim::Utils::Misc::fileURLFromPath($urlDir),
 					undef,
-					$url,
+					$trackid,
 					$disc_number,
 				);
 
@@ -833,7 +884,7 @@ sub precacheAllArtwork {
 						$commonParent = _findCommonParent(\@paths);
 					}
 					my $urlDir = dirname(Slim::Utils::Misc::pathFromFileURL($url));
-					if ( $parentArtwork = Slim::Music::Artwork->findStandaloneArtwork(undef, undef, Slim::Utils::Misc::fileURLFromPath($commonParent), 1) ) {
+					if ( $parentArtwork = Slim::Music::Artwork->findStandaloneArtwork({}, {}, Slim::Utils::Misc::fileURLFromPath($commonParent), 1) ) {
 						$parentArtworkId = Slim::Music::Artwork->generateImageId({
 							image => $parentArtwork,
 							url   => Slim::Utils::Misc::fileURLFromPath($parentArtwork),
