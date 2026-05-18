@@ -3190,6 +3190,18 @@ sub _mergeAndCreateContributors {
 		}
 	}
 
+	if ( $prefs->get('usePluralArtistTags') ) {
+		for my $pair ( ['ALBUMARTISTS', 'ALBUMARTIST'], ['ARTISTS', $attributes->{TRACKARTIST} ? 'TRACKARTIST' : 'ARTIST'] ) {
+			my ($plural, $singular) = @$pair;
+			next unless $attributes->{$plural} && ref $attributes->{$plural} eq 'ARRAY';
+
+			my @individuals = grep { defined $_ && $_ ne '' } @{$attributes->{$plural}};
+			next unless @individuals;
+
+			$attributes->{$singular} = \@individuals;
+		}
+	}
+
 	my %contributors = ();
 
 	for my $tag (Slim::Schema::Contributor->contributorRoles) {

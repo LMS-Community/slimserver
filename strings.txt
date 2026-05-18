@@ -8703,6 +8703,18 @@ SETUP_NOROLEFILTER_DESC
 	SV	När du bläddrar genom "Artister" kan du filtrera så att bara album och låtar som matchar den valda rollen ("ALBUMARTIST", "COMPOSER", etc.) visas.
 	ZH_CN	在浏览艺术家时，可以过滤并只显示和所选角色匹配的专辑和音轨（例如，ALBUMARTIST，COMPOSER等）。
 
+SETUP_USEPLURALARTISTTAGS
+	EN	Use Plural Artist Tags
+
+SETUP_USEPLURALARTISTTAGS_DESC
+	EN	When enabled, the scanner uses ALBUMARTISTS and ARTISTS tags (plural) as the authoritative source for individual contributors. This produces clean contributor entries without joined display strings. Requires a rescan after changing. Tags written by Picard, SongKong, and other modern taggers are supported.
+
+SETUP_USEPLURALARTISTTAGS_0
+	EN	Disabled
+
+SETUP_USEPLURALARTISTTAGS_1
+	EN	Enabled
+
 SETUP_ROLESINARTISTS
 	CS	Interpret skladby, Skladatel, Skupina a Orchestr v Interpretech
 	DA	Nummerets kunstner, Komponist, band og orkester i Kunstnere

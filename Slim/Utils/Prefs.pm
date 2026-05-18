@@ -173,6 +173,7 @@ sub init {
 		'autoDownloadUpdate'    => sub { $os->canAutoUpdate() },
 		'noGenreFilter'         => 0,
 		'noRoleFilter'          => 0,
+		'usePluralArtistTags'   => 0,
 		'searchSubString'       => 0,
 		'ignoredarticles'       => "The El La Los Las Le Les",
 		'splitList'             => ';',
