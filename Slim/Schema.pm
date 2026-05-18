@@ -1708,15 +1708,22 @@ sub _newTrack {
 		$LAST_ERROR = 'Track is DRM-protected';
 		return;
 	}
-	if ( $attributeHash->{ALBUMARTIST} && $attributeHash->{ALBUMARTISTS} ) {
-		my $temp = $attributeHash->{ALBUMARTISTS};
-		$attributeHash->{ALBUMARTISTS} = $attributeHash->{ALBUMARTIST};
-		$attributeHash->{ALBUMARTIST} = $temp;
+	my $albumDisplayArtist;
+	if ( $attributeHash->{ALBUMARTIST} ) {
+		$albumDisplayArtist = ref $attributeHash->{ALBUMARTIST} eq 'ARRAY'
+			? $attributeHash->{ALBUMARTIST}->[0]
+			: $attributeHash->{ALBUMARTIST};
+	} elsif ( $attributeHash->{ALBUMARTISTS} && ref $attributeHash->{ALBUMARTISTS} eq 'ARRAY' ) {
+		$albumDisplayArtist = join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ALBUMARTISTS}});
 	}
-	if ( $attributeHash->{ARTIST} && $attributeHash->{ARTISTS} ) {
-		my $temp = $attributeHash->{ARTISTS};
-		$attributeHash->{ARTISTS} = $attributeHash->{ARTIST};
-		$attributeHash->{ARTIST} = $temp;
+
+	my $trackDisplayArtist;
+	if ( $attributeHash->{ARTIST} ) {
+		$trackDisplayArtist = ref $attributeHash->{ARTIST} eq 'ARRAY'
+			? $attributeHash->{ARTIST}->[0]
+			: $attributeHash->{ARTIST};
+	} elsif ( $attributeHash->{ARTISTS} && ref $attributeHash->{ARTISTS} eq 'ARRAY' ) {
+		$trackDisplayArtist = join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ARTISTS}});
 	}
 	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes({
 		'url'        => $url,
@@ -1804,12 +1811,14 @@ sub _newTrack {
 	# Walk through the valid contributor roles, adding them to the database.
 	my $contributors = $self->_mergeAndCreateContributors($deferredAttributes, $isCompilation, 1);
 
-	my $aaDisplayID = $self->_getOrCreateDisplayContributor($deferredAttributes->{ALBUMARTISTS});
+	my $aaDisplayID = $self->_getOrCreateDisplayContributor($albumDisplayArtist);
+	my $taDisplayID = $self->_getOrCreateDisplayContributor($trackDisplayArtist);
 
 	# Set primary_artist for the track
 	if ( my $artist = $contributors->{ARTIST} || $contributors->{TRACKARTIST} ) {
 		$columnValueHash{primary_artist} = $artist->[0];
 	}
+	$columnValueHash{display_contributor} = $taDisplayID if $taDisplayID;
 
 	### Create Work rows
 	my $workID;
@@ -1855,7 +1864,7 @@ sub _newTrack {
 	$trackId = $self->_createTrack(\%columnValueHash, \%persistentColumnValueHash, $source);
 
 	### Create ContributorTrack & ContributorAlbum rows
-	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId, $aaDisplayID);
+	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId, $aaDisplayID, $taDisplayID);
 
 	### Create Genre rows
 	$self->_createGenre($deferredAttributes->{'GENRE'}, $trackId, 1);
