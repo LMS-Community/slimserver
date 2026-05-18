@@ -2020,6 +2020,24 @@ sub updateOrCreateBase {
 			$attributeHash = { %{Slim::Formats->readTags($url)}, %$attributeHash  };
 		}
 
+		my $albumDisplayArtist;
+		if ( $attributeHash->{ALBUMARTIST} ) {
+			$albumDisplayArtist = ref $attributeHash->{ALBUMARTIST} eq 'ARRAY'
+				? $attributeHash->{ALBUMARTIST}->[0]
+				: $attributeHash->{ALBUMARTIST};
+		} elsif ( $attributeHash->{ALBUMARTISTS} && ref $attributeHash->{ALBUMARTISTS} eq 'ARRAY' ) {
+			$albumDisplayArtist = join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ALBUMARTISTS}});
+		}
+
+		my $trackDisplayArtist;
+		if ( $attributeHash->{ARTIST} ) {
+			$trackDisplayArtist = ref $attributeHash->{ARTIST} eq 'ARRAY'
+				? $attributeHash->{ARTIST}->[0]
+				: $attributeHash->{ARTIST};
+		} elsif ( $attributeHash->{ARTISTS} && ref $attributeHash->{ARTISTS} eq 'ARRAY' ) {
+			$trackDisplayArtist = join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ARTISTS}});
+		}
+
 		my $deferredAttributes;
 		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes({
 			'url'        => $url,
@@ -2070,9 +2088,11 @@ sub updateOrCreateBase {
 		if (!$playlist) {
 
 			$self->_postCheckAttributes({
-				'track'      => $track,
-				'attributes' => $deferredAttributes,
-				'integrateRemote' => $integrateRemote
+				'track'              => $track,
+				'attributes'         => $deferredAttributes,
+				'integrateRemote'    => $integrateRemote,
+				'albumDisplayArtist' => $albumDisplayArtist,
+				'trackDisplayArtist' => $trackDisplayArtist,
 			});
 		}
 
@@ -3049,6 +3069,9 @@ sub _postCheckAttributes {
 	my $attributes = $args->{'attributes'};
 	my $create     = $args->{'create'} || 0;
 
+	my $albumDisplayArtist = $args->{'albumDisplayArtist'};
+	my $trackDisplayArtist = $args->{'trackDisplayArtist'};
+
 	# Don't bother with directories / lnks. This makes sure "No Artist",
 	# etc don't show up if you don't have any.
 	my %cols = $track->get_columns;
@@ -3090,6 +3113,13 @@ sub _postCheckAttributes {
 		$cols{primary_artist} = $artist->[0];
 	}
 
+	my $aaDisplayID = $self->_getOrCreateDisplayContributor($albumDisplayArtist);
+	my $taDisplayID = $self->_getOrCreateDisplayContributor($trackDisplayArtist);
+
+	if ($taDisplayID) {
+		$track->set_column('display_contributor', $taDisplayID);
+	}
+
 	#Work
 	if (defined $attributes->{'WORK'}) {
 		if ( _workRequired($attributes->{'GENRE'}) ) {
@@ -3109,10 +3139,12 @@ sub _postCheckAttributes {
 	my $albumId = $self->_createOrUpdateAlbum($attributes,
 		\%cols,																	# trackColumns
 		$isCompilation,
-		$artist->[0],	                                          # primary contributor-id
+		$artist->[0],															# primary contributor-id
 		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,					# hasAlbumArtist
 		$create,																# create
 		$track,																	# Track
+		undef,																	# basename
+		$aaDisplayID,
 	);
 
 	# Don't add an album to container tracks - See bug 2337
@@ -3120,7 +3152,7 @@ sub _postCheckAttributes {
 		$track->album($albumId);
 	}
 
-	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId);
+	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId, $aaDisplayID, $taDisplayID);
 
 	# Save any changes - such as album.
 	$track->update;
