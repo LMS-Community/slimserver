@@ -155,7 +155,7 @@ sub cliQuery {
 		my $nextIndex;
 		if ( defined $itemId && length($itemId) ) {
 			my @index = split(/\./, $itemId);
-			if (length($index[0]) >= 8) {
+			if (getSID($index[0])) {
 				shift @index;	# discard sid
 			}
 			$levels = scalar @index;
@@ -211,9 +211,7 @@ sub cliQuery {
 
 	# Lookup this browse session in cache if user is browsing below top-level
 	# This avoids repated lookups to drill down the menu
-	if ( $itemId && $itemId =~ /^([a-f0-9]{8})/ ) {
-		my $sid = $1;
-
+	if ( my $sid = getSID($itemId) ) {
 		# Do not use cache if this is a search query
 		if ( $request->getParam('search') ) {
 			# Generate a new sid
@@ -335,7 +333,7 @@ sub _cliQuery_done {
 
 		@index = split /\./, $item_id;
 
-		if ( isSID($index[0]) ) {
+		if ( getSID($index[0]) ) {
 			# Session ID is first element in index
 			$sid = shift @index;
 		}
@@ -813,7 +811,7 @@ sub _cliQuery_done {
 					$subFeed->{'offset'}, '..', $subFeed->{'offset'} + $count -1);
 			} else {
 				# this certainly does look wrong, but I've seen cases where this menu was misbehavioung if there was a code reference in one item - mh
-				unshift @crumbIndex, 'ffffffff' if !isSID($crumbIndex[0]);
+				unshift @crumbIndex, 'ffffffff' if !getSID($crumbIndex[0]);
 
 				my $item = $items->[$i];
 				for my $eachmenu (@{
@@ -1529,7 +1527,7 @@ sub _cliQuerySubFeed_done {
 
 	for my $i ( @{ $params->{'currentIndex'} } ) {
 		# Skip sid and sid + top-level search query
-		next if isSID($i);
+		next if getSID($i);
 
 		# If an index contains a search query, strip it out
 		$i =~ s/_.+$//g;
@@ -1738,8 +1736,8 @@ sub _fixCount {
 	return $totalCount;
 }
 
-sub isSID {
-	return length($_[0]) >= 8 && $_[0] =~ /^[a-f0-9]{8}/i;
+sub getSID {
+	return length($_[0]) >= 8 && $_[0] =~ /^([a-f0-9]{8})/i && $1;
 }
 
 sub hasAudio {
