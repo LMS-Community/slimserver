@@ -335,7 +335,7 @@ sub _cliQuery_done {
 
 		@index = split /\./, $item_id;
 
-		if ( length( $index[0] ) >= 8 && $index[0] =~ /^[a-f0-9]{8}/ ) {
+		if ( isSID($index[0]) ) {
 			# Session ID is first element in index
 			$sid = shift @index;
 		}
@@ -813,7 +813,7 @@ sub _cliQuery_done {
 					$subFeed->{'offset'}, '..', $subFeed->{'offset'} + $count -1);
 			} else {
 				# this certainly does look wrong, but I've seen cases where this menu was misbehavioung if there was a code reference in one item - mh
-				unshift @crumbIndex, 'ffffffff' if $crumbIndex[0] !~ /^[a-f0-9]{8}/i;
+				unshift @crumbIndex, 'ffffffff' if !isSID($crumbIndex[0]);
 
 				my $item = $items->[$i];
 				for my $eachmenu (@{
@@ -1529,7 +1529,7 @@ sub _cliQuerySubFeed_done {
 
 	for my $i ( @{ $params->{'currentIndex'} } ) {
 		# Skip sid and sid + top-level search query
-		next if length($i) >= 8 && $i =~ /^[a-f0-9]{8}/;
+		next if isSID($i);
 
 		# If an index contains a search query, strip it out
 		$i =~ s/_.+$//g;
@@ -1736,6 +1736,10 @@ sub _fixCount {
 	}
 
 	return $totalCount;
+}
+
+sub isSID {
+	return length($_[0]) >= 8 && $_[0] =~ /^[a-f0-9]{8}/i;
 }
 
 sub hasAudio {
