@@ -29,6 +29,12 @@ DELETE FROM scanned_files;
 
 DELETE FROM works;
 
+DELETE FROM contributor_display;
+
+DELETE FROM contributor_album_display;
+
+DELETE FROM contributor_track_display;
+
 UPDATE metainformation SET value = 0 WHERE name = 'lastRescanTime';
 
 UPDATE tracks_persistent SET track = NULL;
