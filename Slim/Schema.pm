@@ -3271,7 +3271,7 @@ sub _getOrCreateDisplayContributor {
 
 sub _createContributorRoleRelationships {
 
-	my ($self, $contributors, $trackId, $albumId, $aaDisplayID) = @_;
+	my ($self, $contributors, $trackId, $albumId, $aaDisplayID, $taDisplayID) = @_;
 
 	if (!keys %$contributors) {
 		main::DEBUGLOG && $log->debug('Attempt to set empty contributor set for trackid=', $trackId);
@@ -3318,6 +3318,13 @@ sub _createContributorRoleRelationships {
 		(?, ?, ?)
 	} ) if $aaDisplayID;
 
+	my $sth_track_display = $self->dbh->prepare_cached( qq{
+		REPLACE INTO contributor_track_display
+		(contributor_display, contributor, track)
+		VALUES
+		(?, ?, ?)
+	} ) if $taDisplayID;
+
 	while (my ($role, $contributorList) = each %{$contributors}) {
 		my $roleId = Slim::Schema::Contributor->typeToRole($role);
 		for my $contributor (@{$contributorList}) {
@@ -3330,6 +3337,9 @@ sub _createContributorRoleRelationships {
 			$sth_album->execute( $roleId, $contributor, $albumId );
 			if ( $aaDisplayID && $role eq 'ALBUMARTIST' ) {
 				$sth_album_display->execute( $aaDisplayID, $contributor, $albumId );
+			}
+			if ( $taDisplayID && ($role eq 'ARTIST' || $role eq 'TRACKARTIST') ) {
+				$sth_track_display->execute( $taDisplayID, $contributor, $trackId );
 			}
 		}
 	}
