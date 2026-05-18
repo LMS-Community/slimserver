@@ -161,9 +161,7 @@ sub handleWebIndex {
 	# Lookup this browse session in cache if user is browsing below top-level
 	# This avoids repated lookups to drill down the menu
 	my $index = $params->{args}->[1]->{index};
-	if ( $index && $index =~ /^([a-f0-9]{8})/ ) {
-		my $sid = $1;
-
+	if ( my $sid = Slim::Control::XMLBrowser::getSID($index) ) {
 		# Do not use cache if this is a search query
 		if ( $asyncArgs->[1]->{q} ) {
 			# Generate a new sid
@@ -218,10 +216,8 @@ sub handleFeed {
 
 		@index = split (/\./, $stash->{'index'});
 
-		if ( Slim::Control::XMLBrowser::isSID( $index[0] ) ) {
-			# Session ID is first element in index
-			$sid = shift @index;
-		}
+		# Session ID is first element in index
+		$sid = Slim::Control::XMLBrowser::getSID( $index[0] );
 	}
 	else {
 		# Create a new session ID, unless the list has coderefs
@@ -1129,7 +1125,7 @@ sub handleSubFeed {
 	my $subFeed = $parent;
 	for my $i ( @{ $params->{'currentIndex'} } ) {
 		# Skip sid and sid + top-level search query
-		next if Slim::Control::XMLBrowser::isSID($i);
+		next if Slim::Control::XMLBrowser::getSID($i);
 
 		# If an index contains a search query, strip it out
 		$i =~ s/_.+$//g;

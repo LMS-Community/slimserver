@@ -237,7 +237,7 @@ sub indexListFromIndex {
 		@ind = split(/\./, $index);
 	}
 
-	if (Slim::Control::XMLBrowser::isSID($ind[0])) {
+	if (Slim::Control::XMLBrowser::getSID($ind[0])) {
 		shift @ind;
 	}
 
