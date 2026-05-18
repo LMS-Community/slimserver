@@ -1306,6 +1306,7 @@ sub _createOrUpdateAlbum {
 		# Bug 8034, this used to not change gain/peak values if they were already set,
 		# bug we do want to update album gain tags if they are changed.
 		if ( $attributes->{$gainTag} ) {
+			$attributes->{$gainTag} = $attributes->{$gainTag}[0] if ref $attributes->{$gainTag} eq 'ARRAY';
 			$attributes->{$gainTag} =~ s/\s*dB//gi;
 			$attributes->{$gainTag} =~ s/\s//g;  # bug 15965
 			$attributes->{$gainTag} =~ s/,/\./g; # bug 6900, change comma to period
@@ -2826,6 +2827,7 @@ sub _preCheckAttributes {
 	# Bug: 2605 - Get URL out of the attributes - some programs, and
 	# services such as www.allofmp3.com add it.
 	if ($attributes->{'URL'}) {
+		$attributes->{'URL'} = $attributes->{'URL'}[0] if ref $attributes->{'URL'} eq 'ARRAY';
 
 		push @$rawcomments, delete $attributes->{'URL'};
 	}
@@ -2946,6 +2948,7 @@ sub processReplayGainTags {
 		   $shortTag =~ s/^REPLAYGAIN_TRACK_(\w+)$/REPLAY_$1/;
 
 		if (defined $attributes->{$gainTag}) {
+			$attributes->{$gainTag} = $attributes->{$gainTag}[0] if ref $attributes->{$gainTag} eq 'ARRAY';
 
 			$attributes->{$shortTag} = delete $attributes->{$gainTag};
 			$attributes->{$shortTag} =~ s/\s*dB//gi;

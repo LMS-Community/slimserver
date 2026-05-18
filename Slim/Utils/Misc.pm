@@ -1232,7 +1232,6 @@ sub userAgentString {
 sub apiHeaders {
 	my ($module) = @_;
 
-	# we might be called before
 	eval {
 		if (!$apiHeaders) {
 			$apiHeaders = {};
@@ -1244,12 +1243,12 @@ sub apiHeaders {
 		$apiHeaders->{'X-LMS-Plugin-ID'} = $module;
 	};
 
-	# we might be called before the analytics module was available - return empty to force re-initialization
+	# we might be called before the analytics module was available - don't cache the header data to force re-initialization
 	if ($@) {
 		$apiHeaders = undef;
-		return {
+		return (
 			'X-LMS-Plugin-ID' => $module,
-		};
+		);
 	}
 
 	return %$apiHeaders
