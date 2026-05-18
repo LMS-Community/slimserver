@@ -5797,8 +5797,8 @@ sub _songDataFromHash {
 					$returnHash{$role} = $res->{$role};
 				}
 			}
-			# also return contributor_display.name
-			$returnHash{'display_artist'} = $res->{'contributor_display.name'} if $res->{'contributor_display.name'};
+			my $da = $res->{'tcd.name'} || $res->{'acd.name'};
+			$returnHash{display_artist} = $da if $da;
 		}
 		elsif ( $tag eq 'S' ) {
 			for my $role ( @contributorRoles ) {
@@ -6400,9 +6400,15 @@ sub _getTagDataForTracks {
 	};
 
 	my $join_contributor_display = sub {
-		if ( $sql !~ /JOIN contributor_display/ ) {
+		if ( $sql !~ /JOIN contributor_display AS acd/ ) {
 			$join_albums->();
-			$sql .= 'LEFT JOIN contributor_display ON albums.display_contributor = contributor_display.id ';
+			$sql .= 'LEFT JOIN contributor_display AS acd ON albums.display_contributor = acd.id ';
+		}
+	};
+
+	my $join_track_contributor_display = sub {
+		if ( $sql !~ /JOIN contributor_display AS tcd/ ) {
+			$sql .= 'LEFT JOIN contributor_display AS tcd ON tracks.display_contributor = tcd.id ';
 		}
 	};
 
@@ -6512,7 +6518,9 @@ sub _getTagDataForTracks {
 		$join_contributors->();
 		$c->{'contributors.name'} = 1 if $tags =~ /a/;
 		$join_contributor_display->();
-		$c->{'contributor_display.name'} = 1;
+		$join_track_contributor_display->();
+		$c->{'acd.name'} = 1;
+		$c->{'tcd.name'} = 1;
 
 		# only albums on which the contributor has a specific role?
 		my @roles;
@@ -6672,7 +6680,8 @@ sub _getTagDataForTracks {
 			utf8::decode( $c->{'tracks.lyrics'} ) if exists $c->{'tracks.lyrics'};
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
-			utf8::decode( $c->{'contributor_display.name'} ) if exists $c->{'contributor_display.name'};
+			utf8::decode( $c->{'acd.name'} ) if exists $c->{'acd.name'};
+			utf8::decode( $c->{'tcd.name'} ) if exists $c->{'tcd.name'};
 			utf8::decode( $c->{'genres.name'} ) if exists $c->{'genres.name'};
 			utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
 			utf8::decode( $c->{'tracks.discsubtitle'}) if exists $c->{'tracks.discsubtitle'};
