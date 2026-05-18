@@ -218,7 +218,7 @@ sub handleFeed {
 
 		@index = split (/\./, $stash->{'index'});
 
-		if ( length( $index[0] ) >= 8 && $index[0] =~ /^[a-f0-9]{8}/ ) {
+		if ( Slim::Control::XMLBrowser::isSID( $index[0] ) ) {
 			# Session ID is first element in index
 			$sid = shift @index;
 		}
@@ -1129,7 +1129,7 @@ sub handleSubFeed {
 	my $subFeed = $parent;
 	for my $i ( @{ $params->{'currentIndex'} } ) {
 		# Skip sid and sid + top-level search query
-		next if length($i) >= 8 && $i =~ /^[a-f0-9]{8}/;
+		next if Slim::Control::XMLBrowser::isSID($i);
 
 		# If an index contains a search query, strip it out
 		$i =~ s/_.+$//g;

@@ -129,7 +129,7 @@ sub save {
 				$log->warn("Failed for rename $tmpfilename to $filename");
 			}
 		}
-	
+
 	} else {
 
 		$log->warn("Unable to write opml file $filename - directory $dir is not writable");
@@ -188,15 +188,9 @@ sub level {
 	my $index    = shift;
 	my $contains = shift; # return the level containing the index rather than level for index
 
-	my @ind;
 	my @prefix;
+	my @ind = $class->indexListFromIndex($index);
 	my $pos = $class->toplevel;
-
-	if (ref $index eq 'ARRAY') {
-		@ind = @$index;
-	} else {
-		@ind = split(/\./, $index);
-	}
 
 	my $count = scalar @ind - ($contains && scalar @ind && 1);
 
@@ -221,8 +215,21 @@ sub entry {
 	my $class    = shift;
 	my $index    = shift;
 
-	my @ind;
+	my @ind = $class->indexListFromIndex($index);
 	my $pos = $class->{'opml'}->{'body'}[0];
+
+	while (@ind && ref $pos->{'outline'}->[ $ind[0] ] eq 'HASH') {
+		$pos = $pos->{'outline'}->[shift @ind];
+	}
+
+	return @ind ? undef : $pos;
+}
+
+sub indexListFromIndex {
+	my $class = shift;
+	my $index = shift;
+
+	my @ind;
 
 	if (ref $index eq 'ARRAY') {
 		@ind = @$index;
@@ -230,11 +237,11 @@ sub entry {
 		@ind = split(/\./, $index);
 	}
 
-	while (@ind && ref $pos->{'outline'}->[ $ind[0] ] eq 'HASH') {
-		$pos = $pos->{'outline'}->[shift @ind];
+	if (Slim::Control::XMLBrowser::isSID($ind[0])) {
+		shift @ind;
 	}
 
-	return @ind ? undef : $pos;
+	return @ind;
 }
 
 sub xmlbrowser {
