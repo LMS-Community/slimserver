@@ -1804,18 +1804,7 @@ sub _newTrack {
 	# Walk through the valid contributor roles, adding them to the database.
 	my $contributors = $self->_mergeAndCreateContributors($deferredAttributes, $isCompilation, 1);
 
-	my $aaDisplayID;
-	if ( $deferredAttributes->{ALBUMARTISTS} ) {
-		my $contributor_display_sth = $self->dbh->prepare_cached('SELECT id FROM contributor_display WHERE name = ?');
-		$contributor_display_sth->execute($deferredAttributes->{ALBUMARTISTS});
-		($aaDisplayID) = $contributor_display_sth->fetchrow_array;
-		$contributor_display_sth->finish;
-		if ( !$aaDisplayID ) {
-			my $sth_insert = $self->dbh->prepare_cached("INSERT INTO contributor_display (name) VALUES (?)");
-			$sth_insert->execute( $deferredAttributes->{ALBUMARTISTS} );
-			$aaDisplayID = $self->dbh->last_insert_id(undef, undef, undef, undef);
-		}
-	}
+	my $aaDisplayID = $self->_getOrCreateDisplayContributor($deferredAttributes->{ALBUMARTISTS});
 
 	# Set primary_artist for the track
 	if ( my $artist = $contributors->{ARTIST} || $contributors->{TRACKARTIST} ) {
@@ -3215,6 +3204,28 @@ sub _mergeAndCreateContributors {
 	}
 
 	return \%contributors;
+}
+
+sub _getOrCreateDisplayContributor {
+	my ($self, $displayName) = @_;
+	return unless defined $displayName && $displayName ne '';
+
+	my $sth = $self->dbh->prepare_cached(
+		'SELECT id FROM contributor_display WHERE name = ?'
+	);
+	$sth->execute($displayName);
+	my ($id) = $sth->fetchrow_array;
+	$sth->finish;
+
+	if (!$id) {
+		my $insert = $self->dbh->prepare_cached(
+			'INSERT INTO contributor_display (name) VALUES (?)'
+		);
+		$insert->execute($displayName);
+		$id = $self->dbh->last_insert_id(undef, undef, undef, undef);
+	}
+
+	return $id;
 }
 
 sub _createContributorRoleRelationships {
