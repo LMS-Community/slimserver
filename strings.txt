@@ -8707,7 +8707,7 @@ SETUP_USEPLURALARTISTTAGS
 	EN	Use Plural Artist Tags
 
 SETUP_USEPLURALARTISTTAGS_DESC
-	EN	When enabled, the scanner uses ALBUMARTISTS and ARTISTS tags (plural) as the authoritative source for individual contributors. This produces clean contributor entries without joined display strings. Requires a rescan after changing. Tags written by Picard, SongKong, and other modern taggers are supported.
+	EN	When your music files contain both a display name (e.g. ALBUMARTIST = "John Lennon & Yoko Ono") and a list of individual artists (ALBUMARTISTS/ARTISTS tags), LMS normally creates a single artist entry from the display name. Enable this setting to use the individual artist list instead, so each artist gets their own entry in the library. The display name is still shown in the UI. Requires a rescan after changing. Most taggers (Picard, SongKong, Mp3tag) can write these tags.
 
 SETUP_USEPLURALARTISTTAGS_0
 	EN	Disabled
