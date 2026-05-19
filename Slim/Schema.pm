@@ -1713,8 +1713,10 @@ sub _newTrack {
 		$albumDisplayArtist = ref $attributeHash->{ALBUMARTIST} eq 'ARRAY'
 			? $attributeHash->{ALBUMARTIST}->[0]
 			: $attributeHash->{ALBUMARTIST};
-	} elsif ( $attributeHash->{ALBUMARTISTS} && ref $attributeHash->{ALBUMARTISTS} eq 'ARRAY' ) {
-		$albumDisplayArtist = join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ALBUMARTISTS}});
+	} elsif ( $attributeHash->{ALBUMARTISTS} ) {
+		$albumDisplayArtist = ref $attributeHash->{ALBUMARTISTS} eq 'ARRAY'
+			? join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ALBUMARTISTS}})
+			: $attributeHash->{ALBUMARTISTS};
 	}
 
 	my $trackDisplayArtist;
@@ -1722,8 +1724,10 @@ sub _newTrack {
 		$trackDisplayArtist = ref $attributeHash->{ARTIST} eq 'ARRAY'
 			? $attributeHash->{ARTIST}->[0]
 			: $attributeHash->{ARTIST};
-	} elsif ( $attributeHash->{ARTISTS} && ref $attributeHash->{ARTISTS} eq 'ARRAY' ) {
-		$trackDisplayArtist = join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ARTISTS}});
+	} elsif ( $attributeHash->{ARTISTS} ) {
+		$trackDisplayArtist = ref $attributeHash->{ARTISTS} eq 'ARRAY'
+			? join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ARTISTS}})
+			: $attributeHash->{ARTISTS};
 	}
 	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes({
 		'url'        => $url,
@@ -2025,8 +2029,10 @@ sub updateOrCreateBase {
 			$albumDisplayArtist = ref $attributeHash->{ALBUMARTIST} eq 'ARRAY'
 				? $attributeHash->{ALBUMARTIST}->[0]
 				: $attributeHash->{ALBUMARTIST};
-		} elsif ( $attributeHash->{ALBUMARTISTS} && ref $attributeHash->{ALBUMARTISTS} eq 'ARRAY' ) {
-			$albumDisplayArtist = join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ALBUMARTISTS}});
+		} elsif ( $attributeHash->{ALBUMARTISTS} ) {
+			$albumDisplayArtist = ref $attributeHash->{ALBUMARTISTS} eq 'ARRAY'
+				? join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ALBUMARTISTS}})
+				: $attributeHash->{ALBUMARTISTS};
 		}
 
 		my $trackDisplayArtist;
@@ -2034,8 +2040,10 @@ sub updateOrCreateBase {
 			$trackDisplayArtist = ref $attributeHash->{ARTIST} eq 'ARRAY'
 				? $attributeHash->{ARTIST}->[0]
 				: $attributeHash->{ARTIST};
-		} elsif ( $attributeHash->{ARTISTS} && ref $attributeHash->{ARTISTS} eq 'ARRAY' ) {
-			$trackDisplayArtist = join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ARTISTS}});
+		} elsif ( $attributeHash->{ARTISTS} ) {
+			$trackDisplayArtist = ref $attributeHash->{ARTISTS} eq 'ARRAY'
+				? join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ARTISTS}})
+				: $attributeHash->{ARTISTS};
 		}
 
 		my $deferredAttributes;
@@ -3193,9 +3201,10 @@ sub _mergeAndCreateContributors {
 	if ( $prefs->get('usePluralArtistTags') ) {
 		for my $pair ( ['ALBUMARTISTS', 'ALBUMARTIST'], ['ARTISTS', $attributes->{TRACKARTIST} ? 'TRACKARTIST' : 'ARTIST'] ) {
 			my ($plural, $singular) = @$pair;
-			next unless $attributes->{$plural} && ref $attributes->{$plural} eq 'ARRAY';
+			next unless defined $attributes->{$plural};
 
-			my @individuals = grep { defined $_ && $_ ne '' } @{$attributes->{$plural}};
+			my @individuals = grep { defined $_ && $_ ne '' }
+				Slim::Music::Info::splitTag($attributes->{$plural});
 			next unless @individuals;
 
 			$attributes->{$singular} = \@individuals;
