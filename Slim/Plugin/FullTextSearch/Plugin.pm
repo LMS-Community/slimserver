@@ -35,7 +35,8 @@ use constant SQL_CREATE_TRACK_ITEM => q{
 		UNIQUE_TOKENS(LOWER(IFNULL(tracks.title, '')) || ' ' || IFNULL(tracks.titlesearch, '') || ' ' || IFNULL(tracks.customsearch, '')),
 		-- weight 5
 		UNIQUE_TOKENS(IFNULL(tracks.year, '') || ' ' || GROUP_CONCAT(albums.title, ' ') || ' ' || GROUP_CONCAT(albums.titlesearch, ' ') || ' '
-			|| GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' ')),
+			|| GROUP_CONCAT(genres.name, ' ') || ' ' || GROUP_CONCAT(genres.namesearch, ' ') || ' '
+			|| IFNULL(tcd.name, '') || ' ' || IFNULL(acd.name, '')),
 		-- weight 3 - contributors create multiple hits, therefore only w3
 		UNIQUE_TOKENS(CONCAT_CONTRIBUTOR_ROLE(tracks.id, GROUP_CONCAT(contributor_track.contributor, ','), 'contributor_track') || ' '
 			|| IGNORE_CASE(comments.value) || ' ' || IGNORE_CASE(tracks.lyrics) || ' ' || IFNULL(tracks.content_type, '') || ' '
@@ -52,6 +53,8 @@ use constant SQL_CREATE_TRACK_ITEM => q{
 		LEFT JOIN genre_track ON genre_track.track = tracks.id
 		LEFT JOIN genres ON genres.id = genre_track.genre
 		LEFT JOIN comments ON comments.track = tracks.id
+		LEFT JOIN contributor_display AS acd ON albums.display_contributor = acd.id
+		LEFT JOIN contributor_display AS tcd ON tracks.display_contributor = tcd.id
 
 		%s
 
@@ -112,7 +115,7 @@ use constant SQL_CREATE_ALBUM_ITEM => qq{
 		UNIQUE_TOKENS(LOWER(IFNULL(albums.title, '')) || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, '') || ' '
 		|| IFNULL((SELECT GROUP_CONCAT(wt,' ') FROM (SELECT DISTINCT works.titlesearch wt FROM tracks JOIN works ON tracks.work = works.id WHERE tracks.album = albums.id) ), ' ') ),
 		-- weight 5
-		IFNULL(albums.year, ''),
+		UNIQUE_TOKENS(IFNULL(albums.year, '') || ' ' || IFNULL(contributor_display.name, '')),
 		-- weight 3
 		UNIQUE_TOKENS(CONCAT_CONTRIBUTOR_ROLE(albums.id, GROUP_CONCAT(contributor_album.contributor, ','), 'contributor_album')),
 		-- weight 1
@@ -122,6 +125,7 @@ use constant SQL_CREATE_ALBUM_ITEM => qq{
 		FROM albums
 		LEFT JOIN contributor_album ON contributor_album.album = albums.id
 		LEFT JOIN contributors ON contributors.id = contributor_album.contributor
+		LEFT JOIN contributor_display ON albums.display_contributor = contributor_display.id
 
 		%s
 

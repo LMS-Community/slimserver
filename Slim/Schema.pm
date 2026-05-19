@@ -1708,15 +1708,26 @@ sub _newTrack {
 		$LAST_ERROR = 'Track is DRM-protected';
 		return;
 	}
-	if ( $attributeHash->{ALBUMARTIST} && $attributeHash->{ALBUMARTISTS} ) {
-		my $temp = $attributeHash->{ALBUMARTISTS};
-		$attributeHash->{ALBUMARTISTS} = $attributeHash->{ALBUMARTIST};
-		$attributeHash->{ALBUMARTIST} = $temp;
+	my $albumDisplayArtist;
+	if ( $attributeHash->{ALBUMARTIST} ) {
+		$albumDisplayArtist = ref $attributeHash->{ALBUMARTIST} eq 'ARRAY'
+			? $attributeHash->{ALBUMARTIST}->[0]
+			: $attributeHash->{ALBUMARTIST};
+	} elsif ( $attributeHash->{ALBUMARTISTS} ) {
+		$albumDisplayArtist = ref $attributeHash->{ALBUMARTISTS} eq 'ARRAY'
+			? join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ALBUMARTISTS}})
+			: $attributeHash->{ALBUMARTISTS};
 	}
-	if ( $attributeHash->{ARTIST} && $attributeHash->{ARTISTS} ) {
-		my $temp = $attributeHash->{ARTISTS};
-		$attributeHash->{ARTISTS} = $attributeHash->{ARTIST};
-		$attributeHash->{ARTIST} = $temp;
+
+	my $trackDisplayArtist;
+	if ( $attributeHash->{ARTIST} ) {
+		$trackDisplayArtist = ref $attributeHash->{ARTIST} eq 'ARRAY'
+			? $attributeHash->{ARTIST}->[0]
+			: $attributeHash->{ARTIST};
+	} elsif ( $attributeHash->{ARTISTS} ) {
+		$trackDisplayArtist = ref $attributeHash->{ARTISTS} eq 'ARRAY'
+			? join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ARTISTS}})
+			: $attributeHash->{ARTISTS};
 	}
 	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes({
 		'url'        => $url,
@@ -1804,23 +1815,14 @@ sub _newTrack {
 	# Walk through the valid contributor roles, adding them to the database.
 	my $contributors = $self->_mergeAndCreateContributors($deferredAttributes, $isCompilation, 1);
 
-	my $aaDisplayID;
-	if ( $deferredAttributes->{ALBUMARTISTS} ) {
-		my $contributor_display_sth = $self->dbh->prepare_cached('SELECT id FROM contributor_display WHERE name = ?');
-		$contributor_display_sth->execute($deferredAttributes->{ALBUMARTISTS});
-		($aaDisplayID) = $contributor_display_sth->fetchrow_array;
-		$contributor_display_sth->finish;
-		if ( !$aaDisplayID ) {
-			my $sth_insert = $self->dbh->prepare_cached("INSERT INTO contributor_display (name) VALUES (?)");
-			$sth_insert->execute( $deferredAttributes->{ALBUMARTISTS} );
-			$aaDisplayID = $self->dbh->last_insert_id(undef, undef, undef, undef);
-		}
-	}
+	my $aaDisplayID = $self->_getOrCreateDisplayContributor($albumDisplayArtist);
+	my $taDisplayID = $self->_getOrCreateDisplayContributor($trackDisplayArtist);
 
 	# Set primary_artist for the track
 	if ( my $artist = $contributors->{ARTIST} || $contributors->{TRACKARTIST} ) {
 		$columnValueHash{primary_artist} = $artist->[0];
 	}
+	$columnValueHash{display_contributor} = $taDisplayID if $taDisplayID;
 
 	### Create Work rows
 	my $workID;
@@ -1866,7 +1868,7 @@ sub _newTrack {
 	$trackId = $self->_createTrack(\%columnValueHash, \%persistentColumnValueHash, $source);
 
 	### Create ContributorTrack & ContributorAlbum rows
-	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId, $aaDisplayID);
+	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId, $aaDisplayID, $taDisplayID);
 
 	### Create Genre rows
 	$self->_createGenre($deferredAttributes->{'GENRE'}, $trackId, 1);
@@ -2022,6 +2024,28 @@ sub updateOrCreateBase {
 			$attributeHash = { %{Slim::Formats->readTags($url)}, %$attributeHash  };
 		}
 
+		my $albumDisplayArtist;
+		if ( $attributeHash->{ALBUMARTIST} ) {
+			$albumDisplayArtist = ref $attributeHash->{ALBUMARTIST} eq 'ARRAY'
+				? $attributeHash->{ALBUMARTIST}->[0]
+				: $attributeHash->{ALBUMARTIST};
+		} elsif ( $attributeHash->{ALBUMARTISTS} ) {
+			$albumDisplayArtist = ref $attributeHash->{ALBUMARTISTS} eq 'ARRAY'
+				? join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ALBUMARTISTS}})
+				: $attributeHash->{ALBUMARTISTS};
+		}
+
+		my $trackDisplayArtist;
+		if ( $attributeHash->{ARTIST} ) {
+			$trackDisplayArtist = ref $attributeHash->{ARTIST} eq 'ARRAY'
+				? $attributeHash->{ARTIST}->[0]
+				: $attributeHash->{ARTIST};
+		} elsif ( $attributeHash->{ARTISTS} ) {
+			$trackDisplayArtist = ref $attributeHash->{ARTISTS} eq 'ARRAY'
+				? join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ARTISTS}})
+				: $attributeHash->{ARTISTS};
+		}
+
 		my $deferredAttributes;
 		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes({
 			'url'        => $url,
@@ -2072,9 +2096,11 @@ sub updateOrCreateBase {
 		if (!$playlist) {
 
 			$self->_postCheckAttributes({
-				'track'      => $track,
-				'attributes' => $deferredAttributes,
-				'integrateRemote' => $integrateRemote
+				'track'              => $track,
+				'attributes'         => $deferredAttributes,
+				'integrateRemote'    => $integrateRemote,
+				'albumDisplayArtist' => $albumDisplayArtist,
+				'trackDisplayArtist' => $trackDisplayArtist,
 			});
 		}
 
@@ -3051,6 +3077,9 @@ sub _postCheckAttributes {
 	my $attributes = $args->{'attributes'};
 	my $create     = $args->{'create'} || 0;
 
+	my $albumDisplayArtist = $args->{'albumDisplayArtist'};
+	my $trackDisplayArtist = $args->{'trackDisplayArtist'};
+
 	# Don't bother with directories / lnks. This makes sure "No Artist",
 	# etc don't show up if you don't have any.
 	my %cols = $track->get_columns;
@@ -3092,6 +3121,13 @@ sub _postCheckAttributes {
 		$cols{primary_artist} = $artist->[0];
 	}
 
+	my $aaDisplayID = $self->_getOrCreateDisplayContributor($albumDisplayArtist);
+	my $taDisplayID = $self->_getOrCreateDisplayContributor($trackDisplayArtist);
+
+	if ($taDisplayID) {
+		$track->set_column('display_contributor', $taDisplayID);
+	}
+
 	#Work
 	if (defined $attributes->{'WORK'}) {
 		if ( _workRequired($attributes->{'GENRE'}) ) {
@@ -3111,10 +3147,12 @@ sub _postCheckAttributes {
 	my $albumId = $self->_createOrUpdateAlbum($attributes,
 		\%cols,																	# trackColumns
 		$isCompilation,
-		$artist->[0],	                                          # primary contributor-id
+		$artist->[0],															# primary contributor-id
 		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,					# hasAlbumArtist
 		$create,																# create
 		$track,																	# Track
+		undef,																	# basename
+		$aaDisplayID,
 	);
 
 	# Don't add an album to container tracks - See bug 2337
@@ -3122,7 +3160,7 @@ sub _postCheckAttributes {
 		$track->album($albumId);
 	}
 
-	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId);
+	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId, $aaDisplayID, $taDisplayID);
 
 	# Save any changes - such as album.
 	$track->update;
@@ -3157,6 +3195,19 @@ sub _mergeAndCreateContributors {
 			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Contributor '%s' of role 'ARTIST' transformed to role 'TRACKARTIST'",
 				$attributes->{'TRACKARTIST'},
 			));
+		}
+	}
+
+	if ( $prefs->get('usePluralArtistTags') ) {
+		for my $pair ( ['ALBUMARTISTS', 'ALBUMARTIST'], ['ARTISTS', $attributes->{TRACKARTIST} ? 'TRACKARTIST' : 'ARTIST'] ) {
+			my ($plural, $singular) = @$pair;
+			next unless defined $attributes->{$plural};
+
+			my @individuals = grep { defined $_ && $_ ne '' }
+				Slim::Music::Info::splitTag($attributes->{$plural});
+			next unless @individuals;
+
+			$attributes->{$singular} = \@individuals;
 		}
 	}
 
@@ -3217,9 +3268,31 @@ sub _mergeAndCreateContributors {
 	return \%contributors;
 }
 
+sub _getOrCreateDisplayContributor {
+	my ($self, $displayName) = @_;
+	return unless defined $displayName && $displayName ne '';
+
+	my $sth = $self->dbh->prepare_cached(
+		'SELECT id FROM contributor_display WHERE name = ?'
+	);
+	$sth->execute($displayName);
+	my ($id) = $sth->fetchrow_array;
+	$sth->finish;
+
+	if (!$id) {
+		my $insert = $self->dbh->prepare_cached(
+			'INSERT INTO contributor_display (name) VALUES (?)'
+		);
+		$insert->execute($displayName);
+		$id = $self->dbh->last_insert_id(undef, undef, undef, undef);
+	}
+
+	return $id;
+}
+
 sub _createContributorRoleRelationships {
 
-	my ($self, $contributors, $trackId, $albumId, $aaDisplayID) = @_;
+	my ($self, $contributors, $trackId, $albumId, $aaDisplayID, $taDisplayID) = @_;
 
 	if (!keys %$contributors) {
 		main::DEBUGLOG && $log->debug('Attempt to set empty contributor set for trackid=', $trackId);
@@ -3266,6 +3339,13 @@ sub _createContributorRoleRelationships {
 		(?, ?, ?)
 	} ) if $aaDisplayID;
 
+	my $sth_track_display = $self->dbh->prepare_cached( qq{
+		REPLACE INTO contributor_track_display
+		(contributor_display, contributor, track)
+		VALUES
+		(?, ?, ?)
+	} ) if $taDisplayID;
+
 	while (my ($role, $contributorList) = each %{$contributors}) {
 		my $roleId = Slim::Schema::Contributor->typeToRole($role);
 		for my $contributor (@{$contributorList}) {
@@ -3278,6 +3358,9 @@ sub _createContributorRoleRelationships {
 			$sth_album->execute( $roleId, $contributor, $albumId );
 			if ( $aaDisplayID && $role eq 'ALBUMARTIST' ) {
 				$sth_album_display->execute( $aaDisplayID, $contributor, $albumId );
+			}
+			if ( $taDisplayID && ($role eq 'ARTIST' || $role eq 'TRACKARTIST') ) {
+				$sth_track_display->execute( $taDisplayID, $contributor, $trackId );
 			}
 		}
 	}

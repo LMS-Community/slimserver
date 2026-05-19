@@ -195,6 +195,15 @@
 		</select>
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_USEPLURALARTISTTAGS" desc="SETUP_USEPLURALARTISTTAGS_DESC"%]
+		<select class="stdedit" name="pref_usePluralArtistTags" id="usePluralArtistTags">
+
+			<option [% IF NOT prefs.pref_usePluralArtistTags %]selected [% END %]value="0">[% 'SETUP_USEPLURALARTISTTAGS_0' | string %]</option>
+			<option [% IF prefs.pref_usePluralArtistTags %]selected [% END %]value="1">[% 'SETUP_USEPLURALARTISTTAGS_1' | string %]</option>
+
+		</select>
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_YEARMENU" desc="SETUP_YEARMENU_DESC"%]
 		<select class="stdedit" name="pref_onlyAlbumYears" id="onlyAlbumYears">
 

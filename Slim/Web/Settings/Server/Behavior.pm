@@ -31,7 +31,7 @@ sub prefs {
 				ignoreReleaseTypes cleanupReleaseTypes groupArtistAlbumsByReleaseType
 				useTPE2AsAlbumArtist variousArtistsString ratingImplementation useUnifiedArtistsList
 				skipsentinel showComposerReleasesbyAlbum myClassicalGenres onlyAlbumYears
-				worksScan useTIT1AsWork)
+				worksScan useTIT1AsWork usePluralArtistTags)
 		   );
 }
 

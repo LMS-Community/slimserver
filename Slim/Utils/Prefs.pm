@@ -173,6 +173,7 @@ sub init {
 		'autoDownloadUpdate'    => sub { $os->canAutoUpdate() },
 		'noGenreFilter'         => 0,
 		'noRoleFilter'          => 0,
+		'usePluralArtistTags'   => 0,
 		'searchSubString'       => 0,
 		'ignoredarticles'       => "The El La Los Las Le Les",
 		'splitList'             => ';',
@@ -410,7 +411,7 @@ sub init {
 
 	$prefs->setChange(
 		sub { Slim::Control::Request::executeRequest(undef, ['wipecache', $prefs->get('dontTriggerScanOnPrefChange') ? 'queue' : undef]) },
-		qw(splitList groupdiscs useTPE2AsAlbumArtist useTIT1AsWork cleanupReleaseTypes worksScan)
+		qw(splitList groupdiscs useTPE2AsAlbumArtist useTIT1AsWork cleanupReleaseTypes worksScan usePluralArtistTags)
 	);
 
 	$prefs->setChange( sub {
