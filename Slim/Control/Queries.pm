@@ -5799,6 +5799,7 @@ sub _songDataFromHash {
 			}
 			my $da = $res->{'tcd.name'} || $res->{'acd.name'};
 			$returnHash{display_artist} = $da if $da;
+			$returnHash{display_artist_album} = $res->{'acd.name'} if $res->{'acd.name'};
 		}
 		elsif ( $tag eq 'S' ) {
 			for my $role ( @contributorRoles ) {
