@@ -15,6 +15,7 @@
 	<li>Server Changes:</li>
 	<ul>
 		<li>More aggressively cache DNS lookups, re-use cached data even if expired, but if lookup fails.</li>
+		<li>Improve <a href="https://forums.lyrion.org/forum/developer-forums/developers/1823228-possible-issue-with-http-1-1-keep-alive-and-small-body">HTTP/1.1 compatibility using keep-alive and SSL/TLS.</a></li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1548">#1548</a> - Updated Czech translation (@mipa87)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1549">#1549</a> - Update CODE2000 font to 1.176 (@mipa87)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1550">#1550</a> - Update wizard plugin JSON encoding to use UTF-8 for HTML templates (@mipa87)</li>
@@ -31,7 +32,6 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li>Fix deletion of favorites when the "item_id" comes with a session ID.</li>
 		<li><a href="https://github.com/LMS-Community/Audio-Scan/pull/10">#10</a> - id3: Never add undef to tag hash for empty or invalid TXXX key (@cheesestraws)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1140">#1140</a> - Fix stat returning an empty size for most files (@jecaro)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1517">#1517</a> - Fix work images and artwork precaching (@darrell-k)</li>
