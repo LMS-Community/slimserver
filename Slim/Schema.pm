@@ -1708,27 +1708,24 @@ sub _newTrack {
 		$LAST_ERROR = 'Track is DRM-protected';
 		return;
 	}
+
 	my $albumDisplayArtist;
-	if ( $attributeHash->{ALBUMARTIST} ) {
-		$albumDisplayArtist = ref $attributeHash->{ALBUMARTIST} eq 'ARRAY'
-			? $attributeHash->{ALBUMARTIST}->[0]
-			: $attributeHash->{ALBUMARTIST};
-	} elsif ( $attributeHash->{ALBUMARTISTS} ) {
-		$albumDisplayArtist = ref $attributeHash->{ALBUMARTISTS} eq 'ARRAY'
-			? join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ALBUMARTISTS}})
-			: $attributeHash->{ALBUMARTISTS};
+	my $trackDisplayArtist;
+	if ( $prefs->get('usePluralArtistTags') ) {
+		if ( $attributeHash->{ALBUMARTIST} && $attributeHash->{ALBUMARTISTS} ) {
+			$albumDisplayArtist = ref $attributeHash->{ALBUMARTIST} eq 'ARRAY'
+				? $attributeHash->{ALBUMARTIST}->[0]
+				: $attributeHash->{ALBUMARTIST};
+			$attributeHash->{ALBUMARTIST} = $attributeHash->{ALBUMARTISTS};
+		}
+		if ( $attributeHash->{ARTIST} && $attributeHash->{ARTISTS} ) {
+			$trackDisplayArtist = ref $attributeHash->{ARTIST} eq 'ARRAY'
+				? $attributeHash->{ARTIST}->[0]
+				: $attributeHash->{ARTIST};
+			$attributeHash->{ARTIST} = $attributeHash->{ARTISTS};
+		}
 	}
 
-	my $trackDisplayArtist;
-	if ( $attributeHash->{ARTIST} ) {
-		$trackDisplayArtist = ref $attributeHash->{ARTIST} eq 'ARRAY'
-			? $attributeHash->{ARTIST}->[0]
-			: $attributeHash->{ARTIST};
-	} elsif ( $attributeHash->{ARTISTS} ) {
-		$trackDisplayArtist = ref $attributeHash->{ARTISTS} eq 'ARRAY'
-			? join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ARTISTS}})
-			: $attributeHash->{ARTISTS};
-	}
 	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes({
 		'url'        => $url,
 		'attributes' => $attributeHash,
@@ -1815,8 +1812,8 @@ sub _newTrack {
 	# Walk through the valid contributor roles, adding them to the database.
 	my $contributors = $self->_mergeAndCreateContributors($deferredAttributes, $isCompilation, 1);
 
-	my $aaDisplayID = $self->_getOrCreateDisplayContributor($albumDisplayArtist);
-	my $taDisplayID = $self->_getOrCreateDisplayContributor($trackDisplayArtist);
+	my $aaDisplayID = $self->_getOrCreateDisplayContributor($albumDisplayArtist) if $albumDisplayArtist;
+	my $taDisplayID = $self->_getOrCreateDisplayContributor($trackDisplayArtist) if $trackDisplayArtist;
 
 	# Set primary_artist for the track
 	if ( my $artist = $contributors->{ARTIST} || $contributors->{TRACKARTIST} ) {
@@ -2025,25 +2022,20 @@ sub updateOrCreateBase {
 		}
 
 		my $albumDisplayArtist;
-		if ( $attributeHash->{ALBUMARTIST} ) {
-			$albumDisplayArtist = ref $attributeHash->{ALBUMARTIST} eq 'ARRAY'
-				? $attributeHash->{ALBUMARTIST}->[0]
-				: $attributeHash->{ALBUMARTIST};
-		} elsif ( $attributeHash->{ALBUMARTISTS} ) {
-			$albumDisplayArtist = ref $attributeHash->{ALBUMARTISTS} eq 'ARRAY'
-				? join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ALBUMARTISTS}})
-				: $attributeHash->{ALBUMARTISTS};
-		}
-
 		my $trackDisplayArtist;
-		if ( $attributeHash->{ARTIST} ) {
-			$trackDisplayArtist = ref $attributeHash->{ARTIST} eq 'ARRAY'
-				? $attributeHash->{ARTIST}->[0]
-				: $attributeHash->{ARTIST};
-		} elsif ( $attributeHash->{ARTISTS} ) {
-			$trackDisplayArtist = ref $attributeHash->{ARTISTS} eq 'ARRAY'
-				? join(', ', grep { defined $_ && $_ ne '' } @{$attributeHash->{ARTISTS}})
-				: $attributeHash->{ARTISTS};
+		if ( $prefs->get('usePluralArtistTags') ) {
+			if ( $attributeHash->{ALBUMARTIST} && $attributeHash->{ALBUMARTISTS} ) {
+				$albumDisplayArtist = ref $attributeHash->{ALBUMARTIST} eq 'ARRAY'
+					? $attributeHash->{ALBUMARTIST}->[0]
+					: $attributeHash->{ALBUMARTIST};
+				$attributeHash->{ALBUMARTIST} = $attributeHash->{ALBUMARTISTS};
+			}
+			if ( $attributeHash->{ARTIST} && $attributeHash->{ARTISTS} ) {
+				$trackDisplayArtist = ref $attributeHash->{ARTIST} eq 'ARRAY'
+					? $attributeHash->{ARTIST}->[0]
+					: $attributeHash->{ARTIST};
+				$attributeHash->{ARTIST} = $attributeHash->{ARTISTS};
+			}
 		}
 
 		my $deferredAttributes;
@@ -3121,11 +3113,11 @@ sub _postCheckAttributes {
 		$cols{primary_artist} = $artist->[0];
 	}
 
-	my $aaDisplayID = $self->_getOrCreateDisplayContributor($albumDisplayArtist);
-	my $taDisplayID = $self->_getOrCreateDisplayContributor($trackDisplayArtist);
+	my $aaDisplayID = $self->_getOrCreateDisplayContributor($albumDisplayArtist) if $albumDisplayArtist;
+	my $taDisplayID = $self->_getOrCreateDisplayContributor($trackDisplayArtist) if $trackDisplayArtist;
 
 	if ($taDisplayID) {
-		$track->set_column('display_contributor', $taDisplayID);
+		$track->display_contributor($taDisplayID);
 	}
 
 	#Work
@@ -3198,19 +3190,6 @@ sub _mergeAndCreateContributors {
 		}
 	}
 
-	if ( $prefs->get('usePluralArtistTags') ) {
-		for my $pair ( ['ALBUMARTISTS', 'ALBUMARTIST'], ['ARTISTS', $attributes->{TRACKARTIST} ? 'TRACKARTIST' : 'ARTIST'] ) {
-			my ($plural, $singular) = @$pair;
-			next unless defined $attributes->{$plural};
-
-			my @individuals = grep { defined $_ && $_ ne '' }
-				Slim::Music::Info::splitTag($attributes->{$plural});
-			next unless @individuals;
-
-			$attributes->{$singular} = \@individuals;
-		}
-	}
-
 	my %contributors = ();
 
 	for my $tag (Slim::Schema::Contributor->contributorRoles) {
@@ -3270,12 +3249,11 @@ sub _mergeAndCreateContributors {
 
 sub _getOrCreateDisplayContributor {
 	my ($self, $displayName) = @_;
-	return unless defined $displayName && $displayName ne '';
 
 	my $sth = $self->dbh->prepare_cached(
-		'SELECT id FROM contributor_display WHERE name = ?'
+		'SELECT id FROM contributor_display WHERE UPPER(name) = ?'
 	);
-	$sth->execute($displayName);
+	$sth->execute(uc($displayName));
 	my ($id) = $sth->fetchrow_array;
 	$sth->finish;
 
