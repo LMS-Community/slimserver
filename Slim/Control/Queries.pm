@@ -6518,10 +6518,6 @@ sub _getTagDataForTracks {
 	$tags =~ /[as]/ && do {
 		$join_contributors->();
 		$c->{'contributors.name'} = 1 if $tags =~ /a/;
-		$join_contributor_display->();
-		$join_track_contributor_display->();
-		$c->{'acd.name'} = 1;
-		$c->{'tcd.name'} = 1;
 
 		# only albums on which the contributor has a specific role?
 		my @roles;
@@ -6539,6 +6535,13 @@ sub _getTagDataForTracks {
 		push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
 		push @{$w}, '(contributors.id = tracks.primary_artist OR tracks.primary_artist IS NULL)' if $args->{trackIds};
 		push @{$w}, 'contributor_track.role IN (' . join(', ', map {'?'} @roles) . ')';
+	};
+
+	$tags =~ /A/ && do {
+		$join_contributor_display->();
+		$join_track_contributor_display->();
+		$c->{'acd.name'} = 1;
+		$c->{'tcd.name'} = 1;
 	};
 
 	$tags =~ /s/ && do {
