@@ -68,7 +68,12 @@ sub initPlugin {
 
 	$prefs->init({
 		ignoreStations => [],
+		killWords => {},
 	});
+
+	$killWords = $prefs->get('killWords') || {};
+
+	Slim::Utils::Timers::setTimer( $class, Time::HiRes::time() + rand(5), \&updateKillWords );
 }
 
 sub handleTrackCover {
