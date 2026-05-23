@@ -20,6 +20,9 @@ on:
           - nightly
           - release
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true
+
 jobs:
   mac:
     name: Build LMS for Mac
