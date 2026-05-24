@@ -3286,6 +3286,13 @@ sub _createContributorRoleRelationships {
 		WHERE track = ?
 	} );
 	$sth_delete_tracks->execute($trackId);
+	# And for contributor_track_display
+	$sth_delete_tracks = $self->dbh->prepare_cached( qq{
+		DELETE
+		FROM contributor_track_display
+		WHERE track = ?
+	} );
+	$sth_delete_tracks->execute($trackId);
 
 	# Using native DBI here to improve performance during scanning
 	if ( my $artist = $contributors->{ARTIST} || $contributors->{TRACKARTIST} ) {
@@ -3334,6 +3341,7 @@ sub _createContributorRoleRelationships {
 
 			# The following is retained at present to add mappings for BMF, entries created will be deleted in the optimise phase
 			$sth_album->execute( $roleId, $contributor, $albumId );
+
 			if ( $aaDisplayID && $role eq 'ALBUMARTIST' ) {
 				$sth_album_display->execute( $aaDisplayID, $contributor, $albumId );
 			}

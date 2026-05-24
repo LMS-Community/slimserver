@@ -5797,9 +5797,9 @@ sub _songDataFromHash {
 					$returnHash{$role} = $res->{$role};
 				}
 			}
-			my $da = $res->{'tcd.name'} || $res->{'acd.name'};
-			$returnHash{display_artist} = $da if $da;
-			$returnHash{display_artist_album} = $res->{'acd.name'} if $res->{'acd.name'};
+			$returnHash{display_trackartist} = $res->{'tacd.name'} if $res->{'tacd.name'};
+			$returnHash{display_artist} = $res->{'tacd.name'} if $res->{'tacd.name'};
+			$returnHash{display_albumartist} = $res->{'aacd.name'} if $res->{'aacd.name'};
 		}
 		elsif ( $tag eq 'S' ) {
 			for my $role ( @contributorRoles ) {
@@ -6401,15 +6401,15 @@ sub _getTagDataForTracks {
 	};
 
 	my $join_contributor_display = sub {
-		if ( $sql !~ /JOIN contributor_display AS acd/ ) {
+		if ( $sql !~ /JOIN contributor_display AS aacd/ ) {
 			$join_albums->();
-			$sql .= 'LEFT JOIN contributor_display AS acd ON albums.display_contributor = acd.id ';
+			$sql .= 'LEFT JOIN contributor_display AS aacd ON albums.display_contributor = aacd.id ';
 		}
 	};
 
 	my $join_track_contributor_display = sub {
-		if ( $sql !~ /JOIN contributor_display AS tcd/ ) {
-			$sql .= 'LEFT JOIN contributor_display AS tcd ON tracks.display_contributor = tcd.id ';
+		if ( $sql !~ /JOIN contributor_display AS tacd/ ) {
+			$sql .= 'LEFT JOIN contributor_display AS tacd ON tracks.display_contributor = tacd.id ';
 		}
 	};
 
@@ -6540,8 +6540,8 @@ sub _getTagDataForTracks {
 	$tags =~ /A/ && do {
 		$join_contributor_display->();
 		$join_track_contributor_display->();
-		$c->{'acd.name'} = 1;
-		$c->{'tcd.name'} = 1;
+		$c->{'aacd.name'} = 1;
+		$c->{'tacd.name'} = 1;
 	};
 
 	$tags =~ /s/ && do {
@@ -6684,8 +6684,8 @@ sub _getTagDataForTracks {
 			utf8::decode( $c->{'tracks.lyrics'} ) if exists $c->{'tracks.lyrics'};
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
-			utf8::decode( $c->{'acd.name'} ) if exists $c->{'acd.name'};
-			utf8::decode( $c->{'tcd.name'} ) if exists $c->{'tcd.name'};
+			utf8::decode( $c->{'aacd.name'} ) if exists $c->{'aacd.name'};
+			utf8::decode( $c->{'tacd.name'} ) if exists $c->{'tacd.name'};
 			utf8::decode( $c->{'genres.name'} ) if exists $c->{'genres.name'};
 			utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
 			utf8::decode( $c->{'tracks.discsubtitle'}) if exists $c->{'tracks.discsubtitle'};
