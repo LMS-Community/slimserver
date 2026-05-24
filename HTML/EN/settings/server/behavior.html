@@ -105,6 +105,11 @@
 			<label for="pref_useTPE2AsAlbumArtist1" class="stdlabel">[% 'SETUP_USETPE2ASALBUMARTIST_1' | getstring %]</label><br/>
 		[% END %]
 
+		[% WRAPPER settingGroup title="SETUP_MERGECONTRIBUTORSBYNAME" desc="SETUP_MERGECONTRIBUTORSBYNAME_DESC" %]
+			<input type="checkbox" name="pref_mergeContributorsByName" id="pref_mergeContributorsByName" value="1" [% IF prefs.pref_mergeContributorsByName %]checked="checked"[% END %] />
+			<label for="pref_mergeContributorsByName" class="stdlabel">[% 'SETUP_MERGECONTRIBUTORSBYNAME_LABEL' | getstring %]</label>
+		[% END %]
+
 		[% WRAPPER settingGroup title="SETUP_MYCLASSICALGENRES" desc="SETUP_MYCLASSICALGENRES_DESC" %]
 			<input type="text" class="stdedit" name="pref_myClassicalGenres" id="myClassicalGenres" value="[% prefs.pref_myClassicalGenres | html %]" size="40" placeholder="[% "GENRES" | string | html %]"><br/>
 		[% END %]

@@ -258,8 +258,19 @@ sub add {
 		my $mbid   = $brainzIDList[$i];
 		my ($id, $oldExtId, $oldMbid, $sth);
 
-		# check Musicbrainz ID first
-		if ($mbid) {
+		my $preferNameMatch = $prefs->get('mergeContributorsByName');
+
+		# Default behaviour: check Musicbrainz ID first, name fallback
+		# only against rows whose musicbrainz_id is NULL.
+		#
+		# When mergeContributorsByName is enabled: look up by name first
+		# regardless of MBID, tie-breaking by preferring rows with a
+		# non-null musicbrainz_id (richer data) then by id ascending
+		# (oldest first) for determinism. MBID lookup is the fallback.
+		# This is opt-in because some libraries legitimately rely on
+		# MBIDs to distinguish two artists who share a display name
+		# (e.g. John Williams the composer vs. the guitarist).
+		if ($mbid && !$preferNameMatch) {
 			$sth = $dbh->prepare_cached( 'SELECT id, extid, musicbrainz_id FROM contributors WHERE musicbrainz_id = ?' );
 			$sth->execute($mbid);
 			($id, $oldExtId, $oldMbid) = $sth->fetchrow_array;
@@ -270,6 +281,24 @@ sub add {
 				$sth = $dbh->prepare_cached( 'SELECT id, extid FROM contributors WHERE name = ? AND musicbrainz_id IS NULL' );
 				$sth->execute($name);
 				($id, $oldExtId) = $sth->fetchrow_array;
+				$sth->finish;
+			}
+		}
+		elsif ($preferNameMatch && $name) {
+			$sth = $dbh->prepare_cached(
+				'SELECT id, extid, musicbrainz_id FROM contributors WHERE name = ? '
+				. 'ORDER BY (musicbrainz_id IS NULL), id LIMIT 1'
+			);
+			$sth->execute($name);
+			($id, $oldExtId, $oldMbid) = $sth->fetchrow_array;
+			$sth->finish;
+
+			# If no name match, fall back to MBID lookup so a brand-new
+			# contributor doesn't get split off from an existing MBID-only row.
+			if ( !$id && $mbid ) {
+				$sth = $dbh->prepare_cached( 'SELECT id, extid, musicbrainz_id FROM contributors WHERE musicbrainz_id = ?' );
+				$sth->execute($mbid);
+				($id, $oldExtId, $oldMbid) = $sth->fetchrow_array;
 				$sth->finish;
 			}
 		}
