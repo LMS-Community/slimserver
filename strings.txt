@@ -20219,6 +20219,15 @@ SETUP_USETPE2ASALBUMARTIST_0
 	RU	Поле TPE2 тега MP3 содержит группу
 	SV	Behandla mp3-taggen TPE2 som band
 
+SETUP_MERGECONTRIBUTORSBYNAME
+	EN	Merge contributors by name
+
+SETUP_MERGECONTRIBUTORSBYNAME_DESC
+	EN	When two tracks share the same album artist display name but carry different MusicBrainz Album Artist IDs (e.g. a band credit on MusicBrainz that uses the solo artist's name string), LMS normally creates separate contributor rows — causing duplicate browse entries for the same apparent artist. Enable this option to match contributors by display name first, ignoring MBID differences, so those tracks are grouped under a single entry. Leave disabled if your library contains genuinely distinct artists who share a name and you rely on MusicBrainz IDs to keep them apart. Changing this setting will trigger a rescan.
+
+SETUP_MERGECONTRIBUTORSBYNAME_LABEL
+	EN	Merge album artist contributors with the same name, even when MusicBrainz IDs differ
+
 LYRICS
 	CS	Texty písní
 	DA	Tekster
