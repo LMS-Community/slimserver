@@ -216,8 +216,10 @@ sub handleFeed {
 
 		@index = split (/\./, $stash->{'index'});
 
-		# Session ID is first element in index
-		$sid = Slim::Control::XMLBrowser::getSID( $index[0] );
+		if ( $sid = Slim::Control::XMLBrowser::getSID( $index[0] ) ) {
+			# Session ID is first element in index
+			shift @index;
+		}
 	}
 	else {
 		# Create a new session ID, unless the list has coderefs
