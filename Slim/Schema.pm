@@ -1709,23 +1709,6 @@ sub _newTrack {
 		return;
 	}
 
-	my $albumDisplayArtist;
-	my $trackDisplayArtist;
-	if ( $prefs->get('usePluralArtistTags') ) {
-		if ( $attributeHash->{ALBUMARTIST} && $attributeHash->{ALBUMARTISTS} ) {
-			$albumDisplayArtist = ref $attributeHash->{ALBUMARTIST} eq 'ARRAY'
-				? $attributeHash->{ALBUMARTIST}->[0]
-				: $attributeHash->{ALBUMARTIST};
-			$attributeHash->{ALBUMARTIST} = $attributeHash->{ALBUMARTISTS};
-		}
-		if ( $attributeHash->{ARTIST} && $attributeHash->{ARTISTS} ) {
-			$trackDisplayArtist = ref $attributeHash->{ARTIST} eq 'ARRAY'
-				? $attributeHash->{ARTIST}->[0]
-				: $attributeHash->{ARTIST};
-			$attributeHash->{ARTIST} = $attributeHash->{ARTISTS};
-		}
-	}
-
 	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes({
 		'url'        => $url,
 		'attributes' => $attributeHash,
@@ -1812,8 +1795,8 @@ sub _newTrack {
 	# Walk through the valid contributor roles, adding them to the database.
 	my $contributors = $self->_mergeAndCreateContributors($deferredAttributes, $isCompilation, 1);
 
-	my $aaDisplayID = $self->_getOrCreateDisplayContributor($albumDisplayArtist) if $albumDisplayArtist;
-	my $taDisplayID = $self->_getOrCreateDisplayContributor($trackDisplayArtist) if $trackDisplayArtist;
+	my $aaDisplayID = $self->_getOrCreateDisplayContributor($deferredAttributes->{ALBUMARTISTS}) if $deferredAttributes->{ALBUMARTISTS};
+	my $taDisplayID = $self->_getOrCreateDisplayContributor($deferredAttributes->{ARTISTS}) if $deferredAttributes->{ARTISTS};
 
 	# Set primary_artist for the track
 	if ( my $artist = $contributors->{ARTIST} || $contributors->{TRACKARTIST} ) {
@@ -2021,23 +2004,6 @@ sub updateOrCreateBase {
 			$attributeHash = { %{Slim::Formats->readTags($url)}, %$attributeHash  };
 		}
 
-		my $albumDisplayArtist;
-		my $trackDisplayArtist;
-		if ( $prefs->get('usePluralArtistTags') ) {
-			if ( $attributeHash->{ALBUMARTIST} && $attributeHash->{ALBUMARTISTS} ) {
-				$albumDisplayArtist = ref $attributeHash->{ALBUMARTIST} eq 'ARRAY'
-					? $attributeHash->{ALBUMARTIST}->[0]
-					: $attributeHash->{ALBUMARTIST};
-				$attributeHash->{ALBUMARTIST} = $attributeHash->{ALBUMARTISTS};
-			}
-			if ( $attributeHash->{ARTIST} && $attributeHash->{ARTISTS} ) {
-				$trackDisplayArtist = ref $attributeHash->{ARTIST} eq 'ARRAY'
-					? $attributeHash->{ARTIST}->[0]
-					: $attributeHash->{ARTIST};
-				$attributeHash->{ARTIST} = $attributeHash->{ARTISTS};
-			}
-		}
-
 		my $deferredAttributes;
 		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes({
 			'url'        => $url,
@@ -2091,8 +2057,6 @@ sub updateOrCreateBase {
 				'track'              => $track,
 				'attributes'         => $deferredAttributes,
 				'integrateRemote'    => $integrateRemote,
-				'albumDisplayArtist' => $albumDisplayArtist,
-				'trackDisplayArtist' => $trackDisplayArtist,
 			});
 		}
 
@@ -2759,6 +2723,23 @@ sub _preCheckAttributes {
 		}
 	}
 
+	for my $tag (Slim::Schema::Contributor->contributorRoles, qw(ALBUMARTISTS ARTISTS)) {
+		if ($attributes->{$tag}) {
+			my @tag = Slim::Music::Info::splitTag($attributes->{$tag});
+			$attributes->{$tag} = \@tag;
+		}
+	}
+	for my $tag (qw(ALBUMARTIST ARTIST)) {
+		if ( $prefs->get('usePluralArtistTags') && $attributes->{$tag} && scalar(@{$attributes->{$tag}}) == 1 && $attributes->{$tag . 'S'} ) {
+				my $displayArtist = $attributes->{$tag}->[0];
+				$attributes->{$tag} = $attributes->{$tag . 'S'};
+				$attributes->{$tag . 'S'} = $displayArtist;
+		}
+		else {
+			delete $attributes->{$tag . 'S'};
+		}
+	}
+
 	if ($attributes->{'TITLE'}) {
 		# Create a canonical title to search against.
 		$attributes->{'TITLESEARCH'} = Slim::Utils::Text::ignoreCase($attributes->{'TITLE'}, 1);
@@ -3069,9 +3050,6 @@ sub _postCheckAttributes {
 	my $attributes = $args->{'attributes'};
 	my $create     = $args->{'create'} || 0;
 
-	my $albumDisplayArtist = $args->{'albumDisplayArtist'};
-	my $trackDisplayArtist = $args->{'trackDisplayArtist'};
-
 	# Don't bother with directories / lnks. This makes sure "No Artist",
 	# etc don't show up if you don't have any.
 	my %cols = $track->get_columns;
@@ -3113,8 +3091,8 @@ sub _postCheckAttributes {
 		$cols{primary_artist} = $artist->[0];
 	}
 
-	my $aaDisplayID = $self->_getOrCreateDisplayContributor($albumDisplayArtist) if $albumDisplayArtist;
-	my $taDisplayID = $self->_getOrCreateDisplayContributor($trackDisplayArtist) if $trackDisplayArtist;
+	my $aaDisplayID = $self->_getOrCreateDisplayContributor($attributes->{ALBUMARTISTS}) if $attributes->{ALBUMARTISTS};
+	my $taDisplayID = $self->_getOrCreateDisplayContributor($attributes->{ARTISTS}) if $attributes->{ARTISTS};
 
 	if ($taDisplayID) {
 		$track->display_contributor($taDisplayID);
@@ -3188,6 +3166,9 @@ sub _mergeAndCreateContributors {
 				$attributes->{'TRACKARTIST'},
 			));
 		}
+		if  ( !$attributes->{'ALBUMARTISTS'} && !$attributes->{'ALBUMARTIST'} && $attributes->{'ARTISTS'} ) {
+			$attributes->{'ALBUMARTISTS'} = delete $attributes->{'ARTISTS'}
+		}
 	}
 
 	my %contributors = ();
@@ -3249,6 +3230,7 @@ sub _mergeAndCreateContributors {
 
 sub _getOrCreateDisplayContributor {
 	my ($self, $displayName) = @_;
+	return undef if !$prefs->get('usePluralArtistTags');
 
 	my $sth = $self->dbh->prepare_cached(
 		'SELECT id FROM contributor_display WHERE UPPER(name) = ?'
@@ -3342,7 +3324,7 @@ sub _createContributorRoleRelationships {
 			# The following is retained at present to add mappings for BMF, entries created will be deleted in the optimise phase
 			$sth_album->execute( $roleId, $contributor, $albumId );
 
-			if ( $aaDisplayID && $role eq 'ALBUMARTIST' ) {
+			if ( $aaDisplayID && ($role eq 'ALBUMARTIST' || $role eq 'ARTIST') ) {
 				$sth_album_display->execute( $aaDisplayID, $contributor, $albumId );
 			}
 			if ( $taDisplayID && ($role eq 'ARTIST' || $role eq 'TRACKARTIST') ) {

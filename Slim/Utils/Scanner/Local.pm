@@ -366,7 +366,7 @@ sub rescan {
 						JOIN contributor_display ON contributor_display.id = albums.display_contributor
 						JOIN contributor_album on contributor_album.album = albums.id
 						JOIN changed_albums ON albums.id = changed_albums.album
-						WHERE contributor_album.role = 5
+						WHERE contributor_album.role IN (1, 5)
 			} );
 
 			main::SCANNER && Slim::Schema->forceCommit;
