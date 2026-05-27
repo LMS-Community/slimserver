@@ -27,6 +27,7 @@ package Slim::Plugin::RadioArtwork::Plugin;
 
 use strict;
 use JSON::XS::VersionOneAndTwo;
+use Tie::RegexpHash;
 use URI;
 use URI::QueryParam;
 use URI::Escape qw(uri_escape_utf8);
@@ -52,6 +53,7 @@ use constant FALLBACK_ARTWORK => 'https://i1.sndcdn.com/artworks-x8zI2HVC2pnkK7F
 
 my %queue;
 my $killWords = {};
+tie my %radioUrlsToIgnore, 'Tie::RegexpHash';
 
 sub initPlugin {
 	my ($class) = @_;
@@ -139,6 +141,11 @@ sub validateRequest {
 
 	if (!$artist || !$title) {
 		main::INFOLOG && $log->is_info && $log->info("Title info not available after cleanup: title \"$title\", artist \"$artist\"");
+		return;
+	}
+
+	if (length($artist) > 100 || length($title) > 100 || ($artist =~ /^\s*\d+\s*$/ && $title =~ /^\s*\d+\s*$/)) {
+		main::INFOLOG && $log->is_info && $log->info("Title info unlikely to be resolvable: title \"$title\", artist \"$artist\" - skipping lookup");
 		return;
 	}
 
@@ -270,6 +277,8 @@ sub updateKillWords {
 			if ($json && ref $json eq 'HASH' && scalar @{$json->{killWords} || []}) {
 				$killWords = { map { $_ => 1 } @{$json->{killWords}} };
 				$prefs->set('killWords', $killWords);
+
+				%radioUrlsToIgnore = map { qr/\Q$_\E/ => 1 } @{$json->{ignoreStations} || []}, @{$prefs->get('ignoreStations') || []};
 			}
 		},
 		sub {
@@ -331,7 +340,9 @@ sub gotArtwork {
 
 sub ignoreStation {
 	my ($class, $url) = @_;
-	return grep { lc($_) eq lc($url) } @{$prefs->get('ignoreStations') || []};
+	return 1 if $radioUrlsToIgnore{$url};
+	return 1 if grep { lc($_) eq lc($url) } @{$prefs->get('ignoreStations') || []};
+	return;
 }
 
 sub updateIgnoreStationList {

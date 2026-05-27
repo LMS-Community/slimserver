@@ -879,7 +879,13 @@ sub cliAdd {
 
 		if (defined $i) {
 
-			splice @$level, $i, 0, $entry;
+			# is the target element a sub-folder? if so add to that sub-folder, otherwise insert before it
+			if ($level->[$i] && $level->[$i]->{outline} && ref $level->[$i]->{outline} eq 'ARRAY') {
+				push @{$level->[$i]->{outline}}, $entry;
+			}
+			else {
+				splice @$level, $i, 0, $entry;
+			}
 
 		} else { # with no specific index, place automatically at the end
 
