@@ -4865,7 +4865,7 @@ sub titlesQuery {
 		},
 	};
 	$tagDataParams->{performance} = $performance if $performance;
-	my ($items, $itemOrder, $totalCount) = _getTagDataForTracks( $tags, $tagDataParams );
+	my ($items, $itemOrder, $totalCount, $albumHeader) = _getTagDataForTracks( $tags, $tagDataParams );
 
 	if ($stillScanning) {
 		$request->addResult("rescan", 1);
@@ -4891,6 +4891,7 @@ sub titlesQuery {
 	}
 
 	$request->addResult('count', $totalCount);
+	$request->addResult('album_header', $albumHeader) if $albumHeader;
 
 	$request->setStatusDone();
 }
@@ -6255,6 +6256,8 @@ sub _getTagDataForTracks {
 	my $w        = [];
 	my $p        = [];
 	my $total    = 0;
+       my $albumHeader;
+       my $oneAlbum;
 
 	if ( $args->{where} ) {
 		push @{$w}, $args->{where};
@@ -6317,6 +6320,7 @@ sub _getTagDataForTracks {
 
 	if ( my $albumId = $args->{albumId} ) {
 		my @albumIds = split(',', $albumId);
+		$oneAlbum = scalar @albumIds == 1;
 		push @{$w}, 'tracks.album IN (' . join(',', map {'?'} @albumIds) . ')';
 		push @{$p}, @albumIds;
 		delete $args->{releaseType};
@@ -6696,16 +6700,21 @@ sub _getTagDataForTracks {
 		my $separator = $tags =~ /AA/ ? ',' : ', ';
 		while ( my ($id, $name, $track, $role) = $contrib_sth->fetchrow_array ) {
 			$values{$track} ||= {};
-			my $role_info = $values{$track}->{$role} ||= {};
+                       my $role_info = $values{$track}->{$role} ||= {
+                               'ids' => [],
+                               'names' => []
+                       };
 
-			# XXX: what if name has ", " in it?
 			utf8::decode($name);
-			$role_info->{ids}   .= $role_info->{ids} ? ',' . $id : $id;
-			$role_info->{names} .= $role_info->{names} ? $separator . $name : $name;
+			push @{$role_info->{'ids'}}, $id;
+			push @{$role_info->{names}}, $name;
 		}
 
 		my $want_names = $tags =~ /A/;
 		my $want_ids   = $tags =~ /S/;
+		my @albumTitleRoles = map { Slim::Schema::Contributor->typeToRole($_) } Slim::Schema::Contributor->allAlbumLinkRoles();
+		my @albumTitleNames;
+		my @albumTitleIds;
 
 		while ( my ($id, $role) = each %values ) {
 			my $track = $results{$id};
@@ -6713,10 +6722,20 @@ sub _getTagDataForTracks {
 			while ( my ($role_id, $role_info) = each %{$role} ) {
 				my $role = lc( Slim::Schema::Contributor->roleToType($role_id) );
 
-				$track->{"${role}_ids"} = $role_info->{ids}   if $want_ids;
-				$track->{$role}         = $role_info->{names} if $want_names;
+				$track->{"${role}_ids"} = join(',', @{$role_info->{ids}}) if $want_ids;
+				# XXX: what if name has ", " in it?
+				$track->{$role} = join($separator, @{$role_info->{names}}) if $want_names;
+			}
+
+			if ( $oneAlbum ) {
+				foreach (@albumTitleRoles) {
+					push @albumTitleNames, @{$role->{$_}->{names}} if $role->{$_}->{names};
+					push @albumTitleIds, @{$role->{$_}->{ids}} if $role->{$_}->{ids};
+				}
 			}
 		}
+		$albumHeader->{title_names} = join(',', Slim::Utils::Misc::uniq(@albumTitleNames)) if $oneAlbum;
+		$albumHeader->{title_ids} = join(',', Slim::Utils::Misc::uniq(@albumTitleIds)) if $oneAlbum;
 	}
 
 	# Same thing for G/P, multiple genres requires another query
@@ -6792,7 +6811,7 @@ sub _getTagDataForTracks {
 	# delete the temporary table, as it's stored in memory and can be rather large
 	Slim::Plugin::FullTextSearch::Plugin->dropHelperTable('tracksSearch') if $search && Slim::Schema->canFulltextSearch;
 
-	return wantarray ? ( \%results, \@resultOrder, $total ) : \%results;
+	return wantarray ? ( \%results, \@resultOrder, $total, $albumHeader ) : \%results;
 }
 
 # SQLite would not sort single characters the same way as the same characters at
