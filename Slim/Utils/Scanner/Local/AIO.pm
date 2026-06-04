@@ -61,9 +61,10 @@ sub find {
 	} );
 
 	# Add the root directory to the database
+	my $mtime = (stat $path)[9] || 0;
 	$sth->execute(
 		Slim::Utils::Misc::fileURLFromPath($path),
-		(stat $path)[9], # mtime
+		$mtime,
 		0,               # size, 0 for dirs
 	);
 
@@ -123,6 +124,10 @@ sub find {
 
 				$_[0] && return;
 
+				my @stat = stat _;
+				my $mtime = $stat[9] || 0;
+				my $size  = $stat[7] || 0;
+
 				if ( -d _ ) {
 					if ( Slim::Utils::Misc::folderFilter( $file, 0, $types ) ) {
 						$todo++;
@@ -131,7 +136,7 @@ sub find {
 						# Save the dir entry in the database
 						$sth->execute(
 							Slim::Utils::Misc::fileURLFromPath($file),
-							(stat _)[9], # mtime
+							$mtime,
 							0,           # size, 0 for dirs
 						);
 
@@ -181,7 +186,7 @@ sub find {
 							elsif (
 								main::ISMAC
 								&&
-								(stat _)[7] == 0 # aliases have a 0 size
+								$size == 0 # aliases have a 0 size
 								&&
 								(my $alias = Slim::Utils::Misc::pathFromMacAlias($file))
 							) {
@@ -212,8 +217,8 @@ sub find {
 
 							$sth->execute(
 								Slim::Utils::Misc::fileURLFromPath($file),
-								(stat _)[9], # mtime
-								(stat _)[7], # size
+								$mtime,
+								$size,
 							);
 						}
 					}
