@@ -5054,6 +5054,8 @@ sub worksQuery {
 	my $workID        = $request->getParam('work_id');
 	my $albumID       = $request->getParam('album_id');
 
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
+
 	# get them all by default
 	my $where = {};
 	my $w   = [];
@@ -5217,7 +5219,7 @@ sub worksQuery {
 		}
 	}
 
-	my $order_by = "ORDER BY composer.namesort, works.titlesort";
+	my $order_by = "ORDER BY composer.namesort $collate , works.titlesort $collate";
 
 	my $page_key = $composerCount == 1 ? "SUBSTR(works.titlesort,1,1)" : "SUBSTR(composer.namesort,1,1)";
 
