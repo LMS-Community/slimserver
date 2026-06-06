@@ -150,15 +150,21 @@ sub find {
 
 		$count++;
 
-		# canonpath or something seems to be messing with the stat cache, so we need to stat the file again to get the correct mtime and size
-		if ( !main::ISWINDOWS || !(stat _)[9] ) {
-			stat $file;
+		# Capture stat values once, then bind stable scalars into SQL.
+		# Some platforms appear to lose the stat cache (`_`) before execute().
+		my @stat = stat $file;
+		if ( !@stat ) {
+			$log->warn("Failed to stat while scanning: $file ($!)");
+			return 1;
 		}
+
+		my $mtime = $stat[9] || 0;
+		my $size  = -d $file ? 0 : ($stat[7] || 0);
 
 		$sth->execute(
 			Slim::Utils::Misc::fileURLFromPath($file),
-			(stat _)[9], # mtime
-			-d _ ? 0 : (stat _)[7], # size, 0 for directories
+			$mtime,
+			$size,
 		);
 
 		return 1;
