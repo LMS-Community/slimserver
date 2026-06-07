@@ -89,6 +89,11 @@ jobs:
           - [tarball, "--noCPAN"]
           - [pcp, ""]
 
+    container:
+      image: ${{ matrix.flavour[0] == 'rpm' && 'fedora:latest' || '' }}
+      volumes:
+        - ${{ github.workspace }}/publish:/home/runner/work/slimserver/slimserver/publish
+
     steps:
       # we must check out here, as  otherwise the build action is not available
       - name: Check out LMS code
@@ -101,7 +106,7 @@ jobs:
         if: ${{ matrix.flavour[0] != 'tarball' && matrix.flavour[0] != 'pcp' }}
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: apt-transport-https debhelper devscripts systemd-rpm-macros
+          packages: apt-transport-https debhelper devscripts
           version: 1
 
       - name: Launch build process
