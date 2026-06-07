@@ -6258,8 +6258,8 @@ sub _getTagDataForTracks {
 	my $w        = [];
 	my $p        = [];
 	my $total    = 0;
-       my $albumHeader;
-       my $oneAlbum;
+	my $albumHeader;
+	my $oneAlbum;
 
 	if ( $args->{where} ) {
 		push @{$w}, $args->{where};
