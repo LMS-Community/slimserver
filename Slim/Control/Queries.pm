@@ -6388,7 +6388,7 @@ sub _getTagDataForTracks {
 		$join_contributor_tracks->();
 
 		if ( $sql !~ /JOIN contributors/ ) {
-			$sql .= 'LEFT JOIN contributors ON contributors.id = contributor_track.contributor ';
+			$sql .= 'LEFT JOIN contributors ON contributors.id = tracks.primary_artist ';
 		}
 	};
 
@@ -6736,8 +6736,25 @@ sub _getTagDataForTracks {
 				}
 			}
 		}
-		$albumHeader->{title_names} = join(',', Slim::Utils::Misc::uniq(@albumTitleNames)) if $oneAlbum;
-		$albumHeader->{title_ids} = join(',', Slim::Utils::Misc::uniq(@albumTitleIds)) if $oneAlbum;
+		if ( scalar @albumTitleIds ) {
+			@{$albumHeader->{title_names}} = Slim::Utils::Misc::uniq(@albumTitleNames);
+			@{$albumHeader->{title_ids}} = Slim::Utils::Misc::uniq(@albumTitleIds);
+		}
+		elsif ( $oneAlbum ) {
+			# We've been asked for a specific album but for some reason we don't have any artists for the header: get from the album
+			$sql = "SELECT albums.contributor, contributors.name FROM albums JOIN contributors ON albums.contributor = contributors.id WHERE albums.id = $args->{albumId}";
+			my $album_contrib_sth = $dbh->prepare($sql);
+
+			if ( main::DEBUGLOG && $sqllog->is_debug ) {
+				$sqllog->debug( "Tag A/S (album contributor) query: $sql" );
+			}
+
+			$album_contrib_sth->execute;
+			if ( my ($id, $name) = $album_contrib_sth->fetchrow_array ) {
+				@{$albumHeader->{title_names}} = $name;
+				@{$albumHeader->{title_ids}} = $id;
+			}
+		}
 	}
 
 	# Same thing for G/P, multiple genres requires another query
