@@ -451,7 +451,7 @@ sub parseRSS {
 		}
 
 		if ($enclosure) {
-			$item{'enclosure'}->{'url'}    = trim($enclosure->{'url'});
+			$item{'enclosure'}->{'url'}    = Slim::Utils::Unicode::utf8off(trim($enclosure->{'url'}));
 			$item{'enclosure'}->{'type'}   = trim($enclosure->{'type'});
 			$item{'enclosure'}->{'length'} = trim($enclosure->{'length'});
 		}
