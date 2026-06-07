@@ -2837,13 +2837,15 @@ sub _preCheckAttributes {
 	# since the tag may need to be split.  See bugs #295 and #4584.
 	#
 	# Push these back until we have a Track object.
-	for my $tag (Slim::Schema::Contributor->contributorRoles, (map { $_ . 'SORT' } Slim::Schema::Contributor->contributorRoles()),
+	for my $tag (Slim::Schema::Contributor->contributorRoles,
+		(map { $_ . 'SORT' } Slim::Schema::Contributor->contributorRoles()),
+		(map { $_ . '_EXTID' } Slim::Schema::Contributor->contributorRoles()),
 		qw(
 			COMMENT GENRE PIC APIC ALBUM ALBUMSORT DISCC
 			COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN
 			MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID
 			MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS RELEASETYPE
-			ALBUM_EXTID ARTIST_EXTID WORK WORKSORT
+			ALBUM_EXTID WORK WORKSORT
 		))
 	{
 
@@ -3128,6 +3130,7 @@ sub _mergeAndCreateContributors {
 			# Bug: 6507 - use any ARTISTSORT tag for this contributor
 			$attributes->{'TRACKARTISTSORT'} = delete $attributes->{'ARTISTSORT'};
 			$attributes->{'MUSICBRAINZ_TRACKARTIST_ID'} = delete $attributes->{'MUSICBRAINZ_ARTIST_ID'} if $attributes->{'MUSICBRAINZ_ARTIST_ID'};
+			$attributes->{'TRACKARTIST_EXTID'} = delete $attributes->{'ARTIST_EXTID'};
 
 			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Contributor '%s' of role 'ARTIST' transformed to role 'TRACKARTIST'",
 				$attributes->{'TRACKARTIST'},
@@ -3152,8 +3155,7 @@ sub _mergeAndCreateContributors {
 			'artist'   => $contributor,
 			'brainzID' => $attributes->{"MUSICBRAINZ_${tag}_ID"},
 			'sortBy'   => $attributes->{$tag.'SORT'},
-			# only store EXTID for track artist, as we don't have it for other roles
-			'extid'    => $tag eq 'ARTIST' && $attributes->{'ARTIST_EXTID'},
+			'extid'    => $attributes->{"${tag}_EXTID"},
 		});
 
 		main::DEBUGLOG && $isDebug && $log->is_debug && $log->debug(sprintf("-- Track has contributor '$contributor' of role '$tag'"));

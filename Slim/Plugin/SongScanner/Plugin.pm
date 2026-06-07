@@ -102,15 +102,11 @@ my %modeParams = (
 sub _formatTime {
 	my $seconds = shift;
 
-	my $hrs  = int($seconds / 3600);
-	my $mins = int(($seconds % 3600) / 60);
-	my $secs = $seconds % 60;
-
-	if ($hrs) {
-	    return sprintf("%d:%02d:%02d", $hrs, $mins, $secs);
+	if (int($seconds / 3600)) {
+	    return Slim::Utils::DateTime::timeFormat($seconds);
 	}
 	else {
-	    return sprintf("%02d:%02d", $mins, $secs);
+	    return Slim::Utils::DateTime::secsToMMSS($seconds);
 	}
 }
 

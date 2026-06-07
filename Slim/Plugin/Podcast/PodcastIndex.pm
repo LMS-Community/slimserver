@@ -75,6 +75,9 @@ sub getFeedsIterator {
 			description  => $feed->{description},
 			author       => $feed->{author},
 			language     => $feed->{language},
+			hasMetadata  => 'podcast',
+			title        => $feed->{title},
+			publisher    => $feed->{author},
 		};
 	};
 }
@@ -124,6 +127,10 @@ sub newsHandler {
 						image => $item->{image} || $item->{feedImage},
 						date  => $item->{datePublished},
 						type  => 'audio',
+						hasMetadata => 'episode',
+						title => $item->{title},
+						description => $item->{description},
+						secs => $item->{duration},
 					};
 				}
 

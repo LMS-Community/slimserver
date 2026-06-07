@@ -204,7 +204,6 @@ sub setFeed { \$localFeed = \$_[1] }
 	$subclass->initPlugin();
 }
 
-# Some TuneIn-specific code to add formats param if Alien is installed
 sub radiotimeFeed {
 	my ( $class, $feed, $client ) = @_;
 

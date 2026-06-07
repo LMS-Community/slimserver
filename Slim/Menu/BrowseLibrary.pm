@@ -1859,7 +1859,7 @@ sub _tracks {
 				$_->{'ct'}            = $_->{'type'};
 				if (my $secs = $_->{'duration'}) {
 					$_->{'secs'}      = $secs;
-					$_->{'duration'}  = sprintf('%d:%02d', int($secs / 60), $secs % 60);
+					$_->{'duration'}  = Slim::Utils::DateTime::secsToMMSS($secs);
 				}
 				$_->{'discc'}         = delete $_->{'disccount'} if defined $_->{'disccount'};
 				$_->{'fs'}            = $_->{'filesize'};
@@ -2244,7 +2244,7 @@ sub _playlistTracks {
 				$_->{'ct'}            = $_->{'type'};
 				if (my $secs = $_->{'duration'}) {
 					$_->{'secs'}      = $secs;
-					$_->{'duration'}  = sprintf('%d:%02d', int($secs / 60), $secs % 60);
+					$_->{'duration'}  = Slim::Utils::DateTime::secsToMMSS($secs);
 				}
 				$_->{'discc'}         = delete $_->{'disccount'} if defined $_->{'disccount'};
 				$_->{'fs'}            = $_->{'filesize'};

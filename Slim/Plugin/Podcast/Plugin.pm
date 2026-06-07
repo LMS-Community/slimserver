@@ -183,6 +183,8 @@ sub handleFeed {
 			parser => 'Slim::Plugin::Podcast::Parser',
 			image => $image || __PACKAGE__->_pluginDataFor('icon'),
 			playlist => $url,
+			hasMetadata => 'podcast',
+			title => $_->{name},
 		};
 
 		# if pre-cached feed data is missing, initiate retrieval

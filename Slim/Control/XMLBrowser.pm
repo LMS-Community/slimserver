@@ -38,6 +38,25 @@ use constant CACHE_TIME => 3600; # how long to cache browse sessions
 my $log = logger('formats.xml');
 my $prefs = preferences('server');
 
+# variable of same name in Slim::Control::Queries is source of truth
+# used to return raw metadata for clients who request tags
+my %colMap = (
+	# "publisher" is used in Podcasts
+	a => ['artist','publisher'],
+	A => 'artists',
+	b => ['work','composer'],
+	d => ['secs','duration'],
+	g => 'genre',
+	G => 'genres',
+	i => 'discnum',
+	k => 'description',
+	l => ['album','version','remoteAlbumId'],
+	q => 'disccount',
+	t => ['tracknum','title','titleFlags'],
+	# "date" is being used in Podcast episodes
+	'y' => ['year','date'],
+);
+
 sub cliQuery {
 	my ( $query, $feed, $request, $expires, $forceTitle ) = @_;
 
@@ -308,6 +327,7 @@ sub _cliQuery_done {
 	my $menu       = $request->getParam('menu');
 	my $url        = $request->getParam('url');
 	my $trackId    = $request->getParam('track_id');
+	my $tags       = $request->getParam('tags');
 
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
@@ -494,6 +514,8 @@ sub _cliQuery_done {
 					my $pt = $subFeed->{passthrough} || [];
 					my %args = (params => $feed->{'query'}, isControl => 1);
 
+					$args{'tags'} = $tags if $tags;
+
 					if (defined $search && $subFeed->{type} && ($subFeed->{type} eq 'search' || defined $subFeed->{'searchParam'})) {
 						$args{'search'} = $search;
 					}
@@ -547,7 +569,7 @@ sub _cliQuery_done {
 						($subFeed->{'type'} && $subFeed->{'type'} eq 'audio') ||
 						$subFeed->{'enclosure'} ||
 						# Bug 17385 - rss feeds include description at non leaf levels
-						($subFeed->{'description'} && $subFeed->{'type'} && $subFeed->{'type'} ne 'rss')
+						($subFeed->{'description'} && $subFeed->{'type'} && $subFeed->{'type'} ne 'rss' && ($subFeed->{'hasMetadata'} || '') ne 'podcast')
 					)
 				) {
 
@@ -671,7 +693,7 @@ sub _cliQuery_done {
 				&& (defined $subFeed->{'name'} || defined $subFeed->{'title'})
 				&& ($method !~ /all/)) {
 
-				my $title = $subFeed->{'name'} || $subFeed->{'title'};
+				my $title = $subFeed->{'album'} && $subFeed->{'artist'} ? $subFeed->{'title'} : $subFeed->{'name'};
 				my $url   = $subFeed->{'url'};
 
 				# Podcast enclosures
@@ -697,6 +719,8 @@ sub _cliQuery_done {
 						bitrate => $subFeed->{'bitrate'},
 						cover   => $subFeed->{'cover'} || $subFeed->{'image'} || $subFeed->{'icon'} || $request->getParam('icon'),
 						year	=> $subFeed->{'year'},
+						album   => $subFeed->{'album'},
+						artist  => $subFeed->{'artist'},
 					} );
 
 					$client->execute([ 'playlist', $method, $url ]);
@@ -1370,6 +1394,35 @@ sub _cliQuery_done {
 							delete $hash{'style'} if $hash{'style'} && $hash{'style'} eq 'itemNoAction';
 						}
 
+						if ( $item->{hasMetadata} && (my $tags = $request->getParam('tags')) ) {
+							my $metadata = {
+								type => $item->{hasMetadata},
+							};
+
+							foreach my $tag (split(//, $tags)) {
+								if (my $mapping = $colMap{$tag}) {
+									$mapping = [$mapping] unless ref $mapping;
+									foreach my $map (@$mapping) {
+										if (my $value = $item->{$map}) {
+											$metadata->{$map} = $value;
+										}
+									}
+								}
+							}
+
+							# some itmes (basically line1, line2) we add always, if available
+							$metadata->{'name'} ||= $item->{'name'} if defined $item->{'name'} && !$metadata->{'title'};
+							$metadata->{'description'} ||= $item->{'description'} if defined $item->{'description'};
+
+							# convert unix timestamps to human readable time
+							$metadata->{'date'} = localtime($metadata->{'date'}) if $metadata->{'date'} =~ /\d{10}/;
+
+							# add formatted duration
+							$metadata->{'duration'} ||= Slim::Utils::DateTime::secsToMMSS($metadata->{'secs'}) if $metadata->{'secs'};
+
+							$hash{'metadata'} = $metadata;
+						}
+
 						$hash{'textkey'} = $item->{textkey} if defined $item->{textkey};
 
 						$request->setResultLoopHash($loopname, $cnt, \%hash);
@@ -1408,7 +1461,6 @@ sub _cliQuery_done {
 
 							$hash{hasitems} = $hasItems;
 						}
-
 						$request->setResultLoopHash($loopname, $cnt, \%hash);
 					}
 					$cnt++;
@@ -1418,6 +1470,16 @@ sub _cliQuery_done {
 		}
 
 		$request->addResult('count', $totalCount);
+
+		if ( my $meta = $subFeed->{'hasMetadata'} ) {
+			$request->addResult('hasMetadata', $meta);
+			if ( $meta eq 'album' ) {
+				$request->addResult('year', $subFeed->{'year'});
+				$request->addResult('album', $subFeed->{'album'});
+				$request->addResult('artist', $subFeed->{'artist'});
+				$request->addResult('genre', $subFeed->{'genre'});
+			}
+		}
 
 		if ($menuMode) {
 
