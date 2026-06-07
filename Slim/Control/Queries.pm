@@ -6623,7 +6623,7 @@ sub _getTagDataForTracks {
 		($valid, $start, $end) = $limit->($total) unless $count_only;
 
 		if ( $count_only || !$valid ) {
-			return wantarray ? ( {}, [], $total ) : {};
+			return wantarray ? ( {}, [], $total, undef) : {};
 		}
 
 		# Limit the real query
@@ -6703,8 +6703,8 @@ sub _getTagDataForTracks {
 		while ( my ($id, $name, $track, $role) = $contrib_sth->fetchrow_array ) {
 			$values{$track} ||= {};
 			my $role_info = $values{$track}->{$role} ||= {
-			       'ids' => [],
-			       'names' => []
+				'ids' => [],
+				'names' => []
 			};
 
 			utf8::decode($name);
@@ -6742,14 +6742,14 @@ sub _getTagDataForTracks {
 		}
 		elsif ( $oneAlbum ) {
 			# We've been asked for a specific album but for some reason we don't have any artists for the header: get from the album
-			$sql = "SELECT albums.contributor, contributors.name FROM albums JOIN contributors ON albums.contributor = contributors.id WHERE albums.id = $args->{albumId}";
+			$sql = "SELECT albums.contributor, contributors.name FROM albums JOIN contributors ON albums.contributor = contributors.id WHERE albums.id = ?";
 			my $album_contrib_sth = $dbh->prepare($sql);
 
 			if ( main::DEBUGLOG && $sqllog->is_debug ) {
-				$sqllog->debug( "Tag A/S (album contributor) query: $sql" );
+				$sqllog->debug( "Tag A/S (album contributor) query: $sql / $args->{albumId}" );
 			}
 
-			$album_contrib_sth->execute;
+			$album_contrib_sth->execute($args->{albumId});
 			if ( my ($id, $name) = $album_contrib_sth->fetchrow_array ) {
 				@{$albumHeader->{title_names}} = $name;
 				@{$albumHeader->{title_ids}} = $id;
