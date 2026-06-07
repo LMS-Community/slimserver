@@ -6702,10 +6702,10 @@ sub _getTagDataForTracks {
 		my $separator = $tags =~ /AA/ ? ',' : ', ';
 		while ( my ($id, $name, $track, $role) = $contrib_sth->fetchrow_array ) {
 			$values{$track} ||= {};
-                       my $role_info = $values{$track}->{$role} ||= {
-                               'ids' => [],
-                               'names' => []
-                       };
+			my $role_info = $values{$track}->{$role} ||= {
+			       'ids' => [],
+			       'names' => []
+			};
 
 			utf8::decode($name);
 			push @{$role_info->{'ids'}}, $id;
