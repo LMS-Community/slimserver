@@ -1945,7 +1945,7 @@ sub updateOrCreateBase {
 	}
 
 	# make sure we always have an up to date md5 hash value
-	$attributeHash->{urlmd5} = md5_hex($url);
+	$attributeHash->{urlmd5} = md5_hex(Slim::Utils::Unicode::utf8off($url));
 
 	# Short-circuit for remote tracks
 	if (!$integrateRemote && Slim::Music::Info::isRemoteURL($url)) {
