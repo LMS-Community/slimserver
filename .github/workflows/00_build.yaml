@@ -103,7 +103,7 @@ jobs:
           ref: ${{ inputs.branch }}
 
       - name: Prepare build environment
-        if: ${{ matrix.flavour[0] != 'tarball' && matrix.flavour[0] != 'pcp' }}
+        if: ${{ matrix.flavour[0] != 'tarball' && matrix.flavour[0] != 'pcp' && matrix.flavour[0] != 'rpm' }}
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: apt-transport-https debhelper devscripts
