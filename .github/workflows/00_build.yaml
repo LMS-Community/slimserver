@@ -101,7 +101,7 @@ jobs:
         if: ${{ matrix.flavour[0] != 'tarball' && matrix.flavour[0] != 'pcp' }}
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: apt-transport-https debhelper devscripts
+          packages: apt-transport-https debhelper devscripts systemd-rpm-macros
           version: 1
 
       - name: Launch build process
