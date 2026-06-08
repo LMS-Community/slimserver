@@ -34,7 +34,6 @@ use File::Basename qw(basename);
 use File::Spec::Functions qw(catdir);
 use Storable ();
 use JSON::XS::VersionOneAndTwo;
-use Digest::MD5 qw(md5_hex);
 use List::Util qw(first max min);
 use MIME::Base64 ();
 use Scalar::Util qw(blessed);
@@ -42,7 +41,7 @@ use URI::Escape ();
 use Tie::Cache::LRU::Expires;
 
 use Slim::Music::VirtualLibraries;
-use Slim::Utils::Misc qw( specified );
+use Slim::Utils::Misc qw( specified safe_md5_hex );
 use Slim::Utils::Alarm;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
@@ -2335,7 +2334,7 @@ sub mediafolderQuery {
 		}
 
 		# if this is a follow up query ($index > 0), try to read from the cache
-		my $cacheKey = md5_hex(($params->{url} || $params->{id} || '') . $type . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+		my $cacheKey = safe_md5_hex(($params->{url} || $params->{id} || '') . $type . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
 		if (my $cachedItem = $bmfCache{$cacheKey}) {
 			$items       = $cachedItem->{items};
 			$topLevelObj = $cachedItem->{topLevelObj};
@@ -3403,7 +3402,7 @@ sub rolesQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+	my $cacheKey = safe_md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
 
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -4965,7 +4964,7 @@ sub yearsQuery {
 	my $dbh = Slim::Schema->dbh;
 
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+	my $cacheKey = safe_md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
 
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -6855,12 +6854,12 @@ sub _buildCacheKey {
 	my ($sql, $p, $search, $client) = @_;
 
 	# Slim::Utils::Text::ignoreCase (amongst other useful things) will remove the leading quote from a search phrase, so put it back.
-	return md5_hex(Encode::encode("UTF-8",
+	return safe_md5_hex(
 		$sql
-		. Slim::Utils::Unicode::utf8on(join( ':', @$p ))
+		. join( ':', @$p )
 		. Slim::Music::VirtualLibraries->getLibraryIdForClient($client)
 		. ($search =~ /^"/ ? '"' : '') . Slim::Utils::Text::ignoreCase($search, 1)
-	));
+	);
 }
 
 =head1 SEE ALSO

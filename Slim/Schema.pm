@@ -28,7 +28,6 @@ use strict;
 use base qw(DBIx::Class::Schema);
 
 use DBIx::Migration;
-use Digest::MD5 qw(md5_hex);
 use File::Basename qw(basename dirname);
 use File::Spec::Functions qw(:ALL);
 use List::Util qw(max);
@@ -1756,7 +1755,7 @@ sub _newTrack {
 	# Tag and rename set URL to the Amazon image path. Smack that.
 	# We don't use it anyways.
 	$columnValueHash{'url'} = $url;
-	$columnValueHash{'urlmd5'} = md5_hex($url);
+	$columnValueHash{'urlmd5'} = safe_md5_hex($url);
 
 	# Use an explicit record id if it was passed as an argument.
 	if ($trackId) {
@@ -1945,7 +1944,7 @@ sub updateOrCreateBase {
 	}
 
 	# make sure we always have an up to date md5 hash value
-	$attributeHash->{urlmd5} = md5_hex($url);
+	$attributeHash->{urlmd5} = safe_md5_hex($url);
 
 	# Short-circuit for remote tracks
 	if (!$integrateRemote && Slim::Music::Info::isRemoteURL($url)) {

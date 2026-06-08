@@ -9,7 +9,6 @@ package Slim::Schema::Track;
 use strict;
 use base 'Slim::Schema::DBI';
 
-use Digest::MD5 qw(md5_hex);
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU::Expires;
 

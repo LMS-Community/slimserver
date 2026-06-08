@@ -9,7 +9,7 @@ package Slim::Plugin::AudioScrobbler::Settings;
 use strict;
 use base qw(Slim::Web::Settings);
 
-use Digest::MD5 qw(md5_hex);
+use Slim::Utils::Misc qw(safe_md5_hex);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -67,7 +67,7 @@ sub handler {
 
 		# Last.fm Password (MD5)
 		if ( $params->{pref_password} && $service eq 'lastfm' ) {
-			$params->{pref_password} = md5_hex( $params->{pref_password} );
+			$params->{pref_password} = safe_md5_hex( $params->{pref_password} );
 
 			$serviceHandler = 'Slim::Plugin::AudioScrobbler::API::LastFM';
 		}

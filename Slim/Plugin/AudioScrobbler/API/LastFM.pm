@@ -14,13 +14,13 @@ use strict;
 
 use base qw(Slim::Plugin::AudioScrobbler::API);
 
-use Digest::MD5 qw(md5_hex);
 use Scalar::Util qw(blessed);
 use URI::Escape qw(uri_escape_utf8 uri_unescape);
 
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Player::Client;
 use Slim::Utils::Log;
+use Slim::Utils::Misc qw(safe_md5_hex);
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string cstring);
 use Slim::Utils::Timers;
@@ -60,7 +60,7 @@ sub handshake {
 		. '&v=' . CLIENT_VER
 		. '&u=' . $params->{username}
 		. '&t=' . $time
-		. '&a=' . md5_hex( $params->{password} . $time );
+		. '&a=' . safe_md5_hex( $params->{password} . $time );
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&_handshakeOK,

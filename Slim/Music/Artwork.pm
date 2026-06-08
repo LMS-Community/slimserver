@@ -19,7 +19,6 @@ L<Slim::Music::Artwork>
 
 use strict;
 
-use Digest::MD5 qw(md5_hex);
 use File::Basename qw(basename dirname);
 use File::Slurp;
 use File::Path qw(mkpath rmtree);
@@ -427,7 +426,7 @@ sub generateImageId {
 	}
 
 	if ( $mtime && $size ) {
-		$imageId = substr( md5_hex( $args->{url} . $mtime . $size ), 0, 8 );
+		$imageId = substr( safe_md5_hex( $args->{url} . $mtime . $size ), 0, 8 );
 	}
 
 	return $imageId;
