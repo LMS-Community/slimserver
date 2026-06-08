@@ -29,7 +29,6 @@ use strict;
 use Scalar::Util qw(blessed looks_like_number);
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename dirname);
-use Digest::MD5 qw(md5_hex);
 use JSON::XS::VersionOneAndTwo;
 
 use Slim::Utils::Alarm;
@@ -2516,7 +2515,7 @@ sub playlistsRenameCommand {
 		Slim::Player::Playlist::removePlaylistFromDisk($playlistObj);
 
 		$playlistObj->set_column('url', $newUrl);
-		$playlistObj->set_column('urlmd5', md5_hex($newUrl));
+		$playlistObj->set_column('urlmd5', safe_md5_hex(Slim::Utils::Unicode::utf8off($newUrl)));
 		$playlistObj->set_column('title', $newName);
 		$playlistObj->set_column('titlesort', Slim::Utils::Text::ignoreCaseArticles($newName));
 		$playlistObj->set_column('titlesearch', Slim::Utils::Text::ignoreCase($newName, 1));

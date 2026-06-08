@@ -89,7 +89,17 @@ jobs:
           - [tarball, "--noCPAN"]
           - [pcp, ""]
 
+    container:
+      image: ${{ matrix.flavour[0] == 'rpm' && 'fedora:44' || '' }}
+      volumes:
+        - ${{ github.workspace }}/publish:/home/runner/work/slimserver/slimserver/publish
+
     steps:
+      - name: Prepare build environment (RPM)
+        if: ${{ matrix.flavour[0] == 'rpm' }}
+        run: |
+          dnf install -y git rpm-build rpmdevtools systemd-rpm-macros rsync jq unzip perl which
+
       # we must check out here, as  otherwise the build action is not available
       - name: Check out LMS code
         uses: actions/checkout@v6
@@ -98,7 +108,7 @@ jobs:
           ref: ${{ inputs.branch }}
 
       - name: Prepare build environment
-        if: ${{ matrix.flavour[0] != 'tarball' && matrix.flavour[0] != 'pcp' }}
+        if: ${{ matrix.flavour[0] != 'tarball' && matrix.flavour[0] != 'pcp' && matrix.flavour[0] != 'rpm' }}
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: apt-transport-https debhelper devscripts
@@ -111,6 +121,8 @@ jobs:
           build-type: ${{ inputs.build_type }}
           AWS_KEY_ID: ${{ secrets.R2_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        env:
+          QA_RPATHS: 0x0003
 
   docker:
     name: Build LMS for Docker

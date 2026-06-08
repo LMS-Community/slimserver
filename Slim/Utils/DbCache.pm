@@ -154,7 +154,7 @@ sub _key {
 
 	# Get a 60-bit unsigned int from MD5 (SQLite uses 64-bit signed ints for the key)
 	# Have to concat 2 values here so it works on a 32-bit machine
-	my $md5 = Digest::MD5::md5_hex($key);
+	my $md5 = Slim::Utils::Misc::safe_md5_hex($key);
 	return hex( substr($md5, 0, 8) ) . hex( substr($md5, 8, 7) );
 }
 

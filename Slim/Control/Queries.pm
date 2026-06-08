@@ -34,7 +34,6 @@ use File::Basename qw(basename);
 use File::Spec::Functions qw(catdir);
 use Storable ();
 use JSON::XS::VersionOneAndTwo;
-use Digest::MD5 qw(md5_hex);
 use List::Util qw(first max min);
 use MIME::Base64 ();
 use Scalar::Util qw(blessed);
@@ -42,7 +41,7 @@ use URI::Escape ();
 use Tie::Cache::LRU::Expires;
 
 use Slim::Music::VirtualLibraries;
-use Slim::Utils::Misc qw( specified );
+use Slim::Utils::Misc qw( specified safe_md5_hex );
 use Slim::Utils::Alarm;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
@@ -2340,7 +2339,7 @@ sub mediafolderQuery {
 		}
 
 		# if this is a follow up query ($index > 0), try to read from the cache
-		my $cacheKey = md5_hex(($params->{url} || $params->{id} || '') . $type . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+		my $cacheKey = safe_md5_hex(($params->{url} || $params->{id} || '') . $type . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
 		if (my $cachedItem = $bmfCache{$cacheKey}) {
 			$items       = $cachedItem->{items};
 			$topLevelObj = $cachedItem->{topLevelObj};
@@ -3408,7 +3407,7 @@ sub rolesQuery {
 	my $stillScanning = Slim::Music::Import->stillScanning();
 
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+	my $cacheKey = safe_md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
 
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -4870,7 +4869,7 @@ sub titlesQuery {
 		},
 	};
 	$tagDataParams->{performance} = $performance if $performance;
-	my ($items, $itemOrder, $totalCount) = _getTagDataForTracks( $tags, $tagDataParams );
+	my ($items, $itemOrder, $totalCount, $albumHeader) = _getTagDataForTracks( $tags, $tagDataParams );
 
 	if ($stillScanning) {
 		$request->addResult("rescan", 1);
@@ -4896,6 +4895,7 @@ sub titlesQuery {
 	}
 
 	$request->addResult('count', $totalCount);
+	$request->addResult('album_header', $albumHeader) if $albumHeader;
 
 	$request->setStatusDone();
 }
@@ -4970,7 +4970,7 @@ sub yearsQuery {
 	my $dbh = Slim::Schema->dbh;
 
 	# Get count of all results, the count is cached until the next rescan done event
-	my $cacheKey = md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
+	my $cacheKey = safe_md5_hex($sql . join( '', @{$p} ) . Slim::Music::VirtualLibraries->getLibraryIdForClient($client));
 
 	my $count = $cache->{$cacheKey};
 	if ( !$count ) {
@@ -5058,6 +5058,8 @@ sub worksQuery {
 	my $year          = $request->getParam('year');
 	my $workID        = $request->getParam('work_id');
 	my $albumID       = $request->getParam('album_id');
+
+	my $collate = Slim::Utils::OSDetect->getOS()->sqlHelperClass()->collate();
 
 	# get them all by default
 	my $where = {};
@@ -5222,7 +5224,7 @@ sub worksQuery {
 		}
 	}
 
-	my $order_by = "ORDER BY composer.namesort, works.titlesort";
+	my $order_by = "ORDER BY composer.namesort $collate , works.titlesort $collate";
 
 	my $page_key = $composerCount == 1 ? "SUBSTR(works.titlesort,1,1)" : "SUBSTR(composer.namesort,1,1)";
 
@@ -6263,6 +6265,8 @@ sub _getTagDataForTracks {
 	my $w        = [];
 	my $p        = [];
 	my $total    = 0;
+	my $albumHeader;
+	my $oneAlbum;
 
 	if ( $args->{where} ) {
 		push @{$w}, $args->{where};
@@ -6325,6 +6329,7 @@ sub _getTagDataForTracks {
 
 	if ( my $albumId = $args->{albumId} ) {
 		my @albumIds = split(',', $albumId);
+		$oneAlbum = scalar @albumIds == 1;
 		push @{$w}, 'tracks.album IN (' . join(',', map {'?'} @albumIds) . ')';
 		push @{$p}, @albumIds;
 		delete $args->{releaseType};
@@ -6390,7 +6395,7 @@ sub _getTagDataForTracks {
 		$join_contributor_tracks->();
 
 		if ( $sql !~ /JOIN contributors/ ) {
-			$sql .= 'LEFT JOIN contributors ON contributors.id = contributor_track.contributor ';
+			$sql .= 'LEFT JOIN contributors ON contributors.id = tracks.primary_artist ';
 		}
 	};
 
@@ -6645,7 +6650,7 @@ sub _getTagDataForTracks {
 		($valid, $start, $end) = $limit->($total) unless $count_only;
 
 		if ( $count_only || !$valid ) {
-			return wantarray ? ( {}, [], $total ) : {};
+			return wantarray ? ( {}, [], $total, undef) : {};
 		}
 
 		# Limit the real query
@@ -6726,16 +6731,21 @@ sub _getTagDataForTracks {
 		my $separator = $tags =~ /AA/ ? ',' : ', ';
 		while ( my ($id, $name, $track, $role) = $contrib_sth->fetchrow_array ) {
 			$values{$track} ||= {};
-			my $role_info = $values{$track}->{$role} ||= {};
+			my $role_info = $values{$track}->{$role} ||= {
+				'ids' => [],
+				'names' => []
+			};
 
-			# XXX: what if name has ", " in it?
 			utf8::decode($name);
-			$role_info->{ids}   .= $role_info->{ids} ? ',' . $id : $id;
-			$role_info->{names} .= $role_info->{names} ? $separator . $name : $name;
+			push @{$role_info->{'ids'}}, $id;
+			push @{$role_info->{names}}, $name;
 		}
 
 		my $want_names = $tags =~ /A/;
 		my $want_ids   = $tags =~ /S/;
+		my @albumTitleRoles = map { Slim::Schema::Contributor->typeToRole($_) } Slim::Schema::Contributor->allAlbumLinkRoles();
+		my @albumTitleNames;
+		my @albumTitleIds;
 
 		while ( my ($id, $role) = each %values ) {
 			my $track = $results{$id};
@@ -6743,8 +6753,35 @@ sub _getTagDataForTracks {
 			while ( my ($role_id, $role_info) = each %{$role} ) {
 				my $role = lc( Slim::Schema::Contributor->roleToType($role_id) );
 
-				$track->{"${role}_ids"} = $role_info->{ids}   if $want_ids;
-				$track->{$role}         = $role_info->{names} if $want_names;
+				$track->{"${role}_ids"} = join(',', @{$role_info->{ids}}) if $want_ids;
+				# XXX: what if name has ", " in it?
+				$track->{$role} = join($separator, @{$role_info->{names}}) if $want_names;
+			}
+
+			if ( $oneAlbum ) {
+				foreach (@albumTitleRoles) {
+					push @albumTitleNames, @{$role->{$_}->{names}} if $role->{$_}->{names};
+					push @albumTitleIds, @{$role->{$_}->{ids}} if $role->{$_}->{ids};
+				}
+			}
+		}
+		if ( scalar @albumTitleIds ) {
+			@{$albumHeader->{title_names}} = Slim::Utils::Misc::uniq(@albumTitleNames);
+			@{$albumHeader->{title_ids}} = Slim::Utils::Misc::uniq(@albumTitleIds);
+		}
+		elsif ( $oneAlbum ) {
+			# We've been asked for a specific album but for some reason we don't have any artists for the header: get from the album
+			$sql = "SELECT albums.contributor, contributors.name FROM albums JOIN contributors ON albums.contributor = contributors.id WHERE albums.id = ?";
+			my $album_contrib_sth = $dbh->prepare($sql);
+
+			if ( main::DEBUGLOG && $sqllog->is_debug ) {
+				$sqllog->debug( "Tag A/S (album contributor) query: $sql / $args->{albumId}" );
+			}
+
+			$album_contrib_sth->execute($args->{albumId});
+			if ( my ($id, $name) = $album_contrib_sth->fetchrow_array ) {
+				@{$albumHeader->{title_names}} = $name;
+				@{$albumHeader->{title_ids}} = $id;
 			}
 		}
 	}
@@ -6822,7 +6859,7 @@ sub _getTagDataForTracks {
 	# delete the temporary table, as it's stored in memory and can be rather large
 	Slim::Plugin::FullTextSearch::Plugin->dropHelperTable('tracksSearch') if $search && Slim::Schema->canFulltextSearch;
 
-	return wantarray ? ( \%results, \@resultOrder, $total ) : \%results;
+	return wantarray ? ( \%results, \@resultOrder, $total, $albumHeader ) : \%results;
 }
 
 # SQLite would not sort single characters the same way as the same characters at
@@ -6883,12 +6920,12 @@ sub _buildCacheKey {
 	my ($sql, $p, $search, $client) = @_;
 
 	# Slim::Utils::Text::ignoreCase (amongst other useful things) will remove the leading quote from a search phrase, so put it back.
-	return md5_hex(Encode::encode("UTF-8",
+	return safe_md5_hex(
 		$sql
-		. Slim::Utils::Unicode::utf8on(join( ':', @$p ))
+		. join( ':', @$p )
 		. Slim::Music::VirtualLibraries->getLibraryIdForClient($client)
 		. ($search =~ /^"/ ? '"' : '') . Slim::Utils::Text::ignoreCase($search, 1)
-	));
+	);
 }
 
 =head1 SEE ALSO

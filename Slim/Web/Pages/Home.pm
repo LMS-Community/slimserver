@@ -9,7 +9,6 @@ package Slim::Web::Pages::Home;
 use strict;
 
 use Data::URIEncode qw(complex_to_query);
-use Digest::MD5 qw(md5_hex);
 use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 use JSON::XS::VersionOneAndTwo;
 
@@ -155,7 +154,7 @@ sub home {
 		}
 
 		if (!main::NOBROWSECACHE && $template eq 'home.html') {
-			$checksum = md5_hex(Slim::Utils::Unicode::utf8off(join(':',
+			$checksum = Slim::Utils::Misc::safe_md5_hex(join(':',
 				($client ? $client->id : ''),
 				$params->{newVersion} || '',
 				$params->{newPlugins} || '',
@@ -171,7 +170,7 @@ sub home {
 				$params->{song_count} || 0,
 				$params->{album_count} || 0,
 				$params->{artist_count} || 0,
-			)));
+			));
 
 			if (my $cached = $cache->get($checksum)) {
 				return $cached;
