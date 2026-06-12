@@ -175,15 +175,15 @@ sub loadModules {
 
 		my $failed = join(' ', @required_really_failed);
 
-		print "The following modules failed to load: $failed\n\n";
+		print STDERR "The following modules failed to load: $failed\n\n";
 
 		if ( main::ISWINDOWS ) {
-			print "To run from source on Windows 64-bit, please install dependencies using Strawberry Perl 5.32.\n";
-			print "https://strawberryperl.com/releases.html\n\n";
+			print STDERR "To run from source on Windows 64-bit, please install dependencies using Strawberry Perl 5.32.\n";
+			print STDERR "https://strawberryperl.com/releases.html\n\n";
 		}
 		else {
-			print `perl -v`;
-			print qq{
+			print STDERR `perl -v`;
+			print STDERR qq{
 *******
 
 NOTE:
@@ -202,9 +202,9 @@ don't work for you, ask for help and/or report a bug.
 			\n};
 		}
 
-		print "Exiting..\n";
+		print STDERR "Exiting..\n";
 
-		exit;
+		exit 1;
 	}
 
 	# And we're done with the trying - put our CPAN path back on @INC.
