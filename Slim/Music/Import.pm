@@ -45,6 +45,7 @@ use Config;
 use File::Spec::Functions;
 use FindBin qw($Bin);
 use List::Util qw(max);
+use POSIX ();
 use Proc::Background;
 use Scalar::Util qw(blessed);
 
@@ -55,6 +56,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::Progress;
+use Slim::Utils::Timers;
 
 {
 	if (main::ISWINDOWS) {
@@ -65,7 +67,7 @@ use Slim::Utils::Progress;
 {
 	my $class = __PACKAGE__;
 
-	for my $accessor (qw(scanPlaylistsOnly scanOnlineLibraryOnly scanningProcess doQueueScanTasks)) {
+	for my $accessor (qw(scanPlaylistsOnly scanOnlineLibraryOnly scanningProcess doQueueScanTasks scannerStderrFile)) {
 
 		$class->mk_classdata($accessor);
 	}
@@ -205,11 +207,52 @@ sub launchScan {
 
 	main::INFOLOG && $log->is_info && $log->info("Running scanner using arguments: $command " . Data::Dump::dump(@scanArgs));
 
+	# Capture the scanner's stderr to a file so a startup failure - before the
+	# scanner sets up its own logging, e.g. a required module failing to load
+	# (#1591) - can be surfaced by stillScanning() instead of being lost on a
+	# daemonized server. We redirect fd 2 at the OS level around the spawn
+	# rather than using Proc::Background's 'stderr' option, because the server
+	# ties STDERR to its log trapper and Proc::Background would die reopening
+	# the tied filehandle.
+	$class->scannerStderrFile(undef);
+	my ($savedErr, $capFh);
+	if (defined $::logdir && -d $::logdir) {
+		my $capFile = catfile($::logdir, 'scanner-stderr.log');
+		if (open($capFh, '>', $capFile) && open($savedErr, '>&2')) {
+			POSIX::dup2(fileno($capFh), 2);
+			$class->scannerStderrFile($capFile);
+		}
+	}
+
 	$class->scanningProcess(
 		Proc::Background->new($command, @scanArgs)
 	);
 
+	# Restore the server's own stderr fd
+	if ($class->scannerStderrFile) {
+		POSIX::dup2(fileno($savedErr), 2);
+		close($savedErr);
+		close($capFh);
+	}
+
+	# The scanner runs as a separate process. If it dies - e.g. because a
+	# module fails to load at startup - nothing here would notice until
+	# something polls the scan progress (Settings/Information, a CLI query,
+	# shutdown...), which on a headless server can be never. Poll actively so
+	# a crashed scanner is detected, logged and cleaned up promptly.
+	Slim::Utils::Timers::killTimers($class, \&_watchScanner);
+	Slim::Utils::Timers::setTimer($class, time() + 5, \&_watchScanner);
+
 	return 1;
+}
+
+# Re-arming watchdog for the external scanner process. stillScanning()
+# detects a vanished scanner, logs it if it didn't complete, and cleans up;
+# keep polling while a scan is genuinely in progress.
+sub _watchScanner {
+	my $class = shift;
+
+	Slim::Utils::Timers::setTimer($class, time() + 5, \&_watchScanner) if $class->stillScanning;
 }
 
 sub isOnlineLibrarySupportEnabled {
@@ -732,9 +775,28 @@ sub stillScanning {
 
 	return 0 if !Slim::Schema::hasLibrary();
 
+	my $sth = Slim::Schema->dbh->prepare_cached(
+		"SELECT value FROM metainformation WHERE name = 'isScanning'"
+	);
+	$sth->execute;
+	my ($isScanning) = $sth->fetchrow_array;
+	$sth->finish;
+
 	# clean up progress etc. in case the external scanner crashed
 	if (blessed($class->scanningProcess) && !$class->scanningProcess->alive) {
 		$class->scanningProcess(undef);
+
+		# The scanner clears the isScanning flag when it finishes successfully.
+		# If the process is gone but the flag is still set, it terminated without
+		# completing the scan - typically a failure to even start up (#1591).
+		# The child's exit code is not reliable here, as it may already have been
+		# reaped elsewhere, so use the flag rather than the exit status.
+		if ($isScanning) {
+			my $details = _readScannerStderr($class);
+			$log->error("External scanner exited without completing the scan"
+				. ($details ? ":\n$details" : " - see scanner.log for details"));
+		}
+
 		$class->setIsScanning(0);
 
 		Slim::Utils::Progress->cleanup('importer');
@@ -743,14 +805,27 @@ sub stillScanning {
 		return 0;
 	}
 
-	my $sth = Slim::Schema->dbh->prepare_cached(
-		"SELECT value FROM metainformation WHERE name = 'isScanning'"
-	);
-	$sth->execute;
-	my ($value) = $sth->fetchrow_array;
-	$sth->finish;
+	return $isScanning || 0;
+}
 
-	return $value || 0;
+# Read whatever the external scanner wrote to stderr (captured in launchScan),
+# to surface a startup failure that happened before the scanner's own logging
+# was initialised.
+sub _readScannerStderr {
+	my $class = shift;
+
+	my $file = $class->scannerStderrFile or return;
+	return unless -s $file;
+
+	open(my $fh, '<', $file) or return;
+	local $/;
+	my $err = <$fh>;
+	close($fh);
+
+	$err =~ s/^\s+//;
+	$err =~ s/\s+$//;
+
+	return length $err ? $err : undef;
 }
 
 sub _checkLibraryStatus {
