@@ -55,6 +55,9 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::Progress;
+use Slim::Utils::Timers;
+
+use constant POLL_INTERVAL => 5;
 
 {
 	if (main::ISWINDOWS) {
@@ -205,11 +208,32 @@ sub launchScan {
 
 	main::INFOLOG && $log->is_info && $log->info("Running scanner using arguments: $command " . Data::Dump::dump(@scanArgs));
 
+	# my $scannerLogFile = Slim::Utils::Log->scannerLogFile();
+	open my $scannerLog, '>', Slim::Utils::Log->scannerLogFile();
+
+	untie *STDERR;
 	$class->scanningProcess(
-		Proc::Background->new($command, @scanArgs)
+		Proc::Background->new({
+			stderr => $scannerLog,
+		}, $command, @scanArgs)
 	);
+	tie *STDERR, 'Slim::Utils::Log::Trapper';
+
+	close $scannerLog;
+
+	# The scanner runs as a separate process. If it dies nothing here would notice
+	# until something polls the scan progress. Poll actively so
+	# a crashed scanner is detected, logged and cleaned up promptly.
+	Slim::Utils::Timers::setTimer($class, time() + POLL_INTERVAL, \&_watchScanner);
 
 	return 1;
+}
+
+sub _watchScanner {
+	my $class = shift;
+
+	Slim::Utils::Timers::killTimers($class, \&_watchScanner);
+	Slim::Utils::Timers::setTimer($class, time() + POLL_INTERVAL, \&_watchScanner) if $class->stillScanning;
 }
 
 sub isOnlineLibrarySupportEnabled {
@@ -732,9 +756,23 @@ sub stillScanning {
 
 	return 0 if !Slim::Schema::hasLibrary();
 
+	my $sth = Slim::Schema->dbh->prepare_cached(
+		"SELECT value FROM metainformation WHERE name = 'isScanning'"
+	);
+	$sth->execute;
+	my ($value) = $sth->fetchrow_array;
+	$sth->finish;
+
 	# clean up progress etc. in case the external scanner crashed
 	if (blessed($class->scanningProcess) && !$class->scanningProcess->alive) {
 		$class->scanningProcess(undef);
+
+		# If the process is gone but the isScanning flag is still set, it terminated without
+		# completing the scan - typically a failure to even start up (#1591).
+		if ($value) {
+			$log->error("External scanner exited without completing the scan. Please check the scanner.log for details.");
+		}
+
 		$class->setIsScanning(0);
 
 		Slim::Utils::Progress->cleanup('importer');
@@ -742,13 +780,6 @@ sub stillScanning {
 
 		return 0;
 	}
-
-	my $sth = Slim::Schema->dbh->prepare_cached(
-		"SELECT value FROM metainformation WHERE name = 'isScanning'"
-	);
-	$sth->execute;
-	my ($value) = $sth->fetchrow_array;
-	$sth->finish;
 
 	return $value || 0;
 }
