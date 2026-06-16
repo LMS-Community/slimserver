@@ -208,18 +208,24 @@ sub launchScan {
 
 	main::INFOLOG && $log->is_info && $log->info("Running scanner using arguments: $command " . Data::Dump::dump(@scanArgs));
 
-	# my $scannerLogFile = Slim::Utils::Log->scannerLogFile();
-	open my $scannerLog, '>', Slim::Utils::Log->scannerLogFile();
+	my $procArgs = {};
+	my $scannerLog;
 
-	untie *STDERR;
+	# seems to fail on Windows if run as a service, so only redirect stderr on non-Windows platforms
+	if (!main::ISWINDOWS) {
+		open $scannerLog, '>', Slim::Utils::Log->scannerLogFile();
+		untie *STDERR;
+		$procArgs->{stderr} = $scannerLog;
+	}
+
 	$class->scanningProcess(
-		Proc::Background->new({
-			stderr => $scannerLog,
-		}, $command, @scanArgs)
+		Proc::Background->new($procArgs, $command, @scanArgs)
 	);
-	tie *STDERR, 'Slim::Utils::Log::Trapper';
 
-	close $scannerLog;
+	if (!main::ISWINDOWS) {
+		tie *STDERR, 'Slim::Utils::Log::Trapper';
+		close $scannerLog;
+	}
 
 	# The scanner runs as a separate process. If it dies nothing here would notice
 	# until something polls the scan progress. Poll actively so
