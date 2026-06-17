@@ -45,7 +45,7 @@ require Getopt::Long;
 require Slim::Utils::OSDetect;
 require Slim::Utils::Light;
 
-our $VERSION = '9.1.1';
+our $VERSION = '9.1.2';
 
 if (DEBUG && $@) {
 	print "GUI can't be loaded: $@\n";
