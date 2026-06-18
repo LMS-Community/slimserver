@@ -321,7 +321,8 @@ sub _cacheKey {
 sub unzip {
 	my ($response) = @_;
 
-	if ( my $ce = $response->header('Content-Encoding') ) {
+	my $ce = $response->header('Content-Encoding');
+	if ( $ce && $ce ne 'identity' ) {
 
 		my ($x, $status) = Compress::Raw::Zlib::Inflate->new( {
 			-WindowBits => -Compress::Raw::Zlib::MAX_WBITS(),
