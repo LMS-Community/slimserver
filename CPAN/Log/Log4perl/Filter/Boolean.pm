@@ -51,7 +51,7 @@ sub compile_logic {
     while($logic =~ /([\w_-]+)/g) {
             # Get the corresponding filter object
         my $filter = Log::Log4perl::Filter::by_name($1);
-        die "Filter $filter required by Boolean filter, but not defined" 
+        die "Filter $1 required by Boolean filter, but not defined" 
             unless $filter;
 
         $self->{params}->{$1} = $filter;
@@ -60,9 +60,9 @@ sub compile_logic {
         # Fabricate a parameter list: A1/A2/A3 => $A1, $A2, $A3
     my $plist = join ', ', map { '$' . $_ } keys %{$self->{params}};
 
-        # Replace all the (dollar-less) placeholders in the code 
-        # by scalars (basically just put dollars in front of them)
-    $logic =~ s/([\w_-]+)/\$$1/g;
+        # Replace all the (dollar-less) placeholders in the code with
+        # calls to their respective coderefs.  
+        $logic =~ s/([\w_-]+)/\&\$$1/g;
 
         # Set up the meta decider, which transforms the config file
         # logic into compiled perl code
@@ -95,9 +95,12 @@ sub eval_logic {
         # in the code (although the order of keys is
         # not predictable, it is consistent :)
     for my $param (keys %{$self->{params}}) {
-            # Call ok() and map the result to 1 or 0
-        print "Calling filter $param\n" if _INTERNAL_DEBUG;
-        push @plist, ($self->{params}->{$param}->ok(%$p) ? 1 : 0);
+        # Pass a coderef as a param that will run the filter's ok method and
+        # return a 1 or 0.  
+        print "Passing filter $param\n" if _INTERNAL_DEBUG;
+        push(@plist, sub {
+            return $self->{params}->{$param}->ok(%$p) ? 1 : 0
+        });
     }
 
         # Now pipe the parameters into the canned function,
@@ -110,6 +113,8 @@ sub eval_logic {
 1;
 
 __END__
+
+=encoding utf8
 
 =head1 NAME
 
@@ -169,10 +174,38 @@ standard Perl. Here's a bunch of examples:
 L<Log::Log4perl::Filter>,
 L<Log::Log4perl::Filter::LevelMatch>,
 L<Log::Log4perl::Filter::LevelRange>,
+L<Log::Log4perl::Filter::MDC>,
 L<Log::Log4perl::Filter::StringRange>
+
+=head1 LICENSE
+
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
 
 =head1 AUTHOR
 
-Mike Schilli, E<lt>log4perl@perlmeister.comE<gt>, 2003
+Please contribute patches to the project on Github:
 
-=cut
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

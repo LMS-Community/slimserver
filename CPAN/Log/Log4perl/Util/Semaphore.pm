@@ -57,15 +57,17 @@ sub init {
                           1, 
                           &IPC_EXCL|&IPC_CREAT|($self->{mode}||0777),
                   );
-   
+
    if(! defined $self->{id} and
       $! == EEXIST) {
        print "Semaphore '$self->{key}' already exists\n" if INTERNAL_DEBUG;
-       $self->{id} = semget( $self->{ikey}, 1, 0 )
+       defined( $self->{id} = semget( $self->{ikey}, 1, 0 ) )
            or die "semget($self->{ikey}) failed: $!";
    } elsif($!) {
        die "Cannot create semaphore $self->{key}/$self->{ikey} ($!)";
    }
+
+   print "Semaphore has id $self->{id}\n" if INTERNAL_DEBUG;
 }
 
 ###########################################
@@ -143,7 +145,7 @@ sub semunlock {
     print "Unlocking semaphore '$self->{key}'\n" if INTERNAL_DEBUG;
 
 #      # ignore errors, as they might result from trying to unlock an
-#      # already unlocked semaphor.
+#      # already unlocked semaphore.
 #    semop($self->{id}, $operation);
 
     semctl $self->{id}, 0, SETVAL, 0;
@@ -154,7 +156,7 @@ sub remove {
 ###########################################
     my($self) = @_;
 
-    print "Removing semaphore '$self->{key}'\n" if INTERNAL_DEBUG;
+    print "Removing semaphore '$self->{key}/$self->{id}'\n" if INTERNAL_DEBUG;
 
     semctl ($self->{id}, 0, &IPC_RMID, 0) or 
         die "Removing semaphore $self->{key} failed: $!";
@@ -201,6 +203,8 @@ sub semop {
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
 Log::Log4perl::Util::Semaphore - Easy to use semaphores
@@ -228,12 +232,35 @@ of Log4perl.
 As a convenience, the C<uid> field accepts user names as well, which it 
 translates into the corresponding uid by running C<getpwnam>.
 
-=head1 LEGALESE
+=head1 LICENSE
 
-Copyright 2007 by Mike Schilli, all rights reserved.
-This program is free software, you can redistribute it and/or
-modify it under the same terms as Perl itself.
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
 
 =head1 AUTHOR
 
-2007, Mike Schilli <cpan@perlmeister.com>
+Please contribute patches to the project on Github:
+
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

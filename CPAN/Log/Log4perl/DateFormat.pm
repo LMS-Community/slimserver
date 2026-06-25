@@ -56,7 +56,7 @@ sub prepare {
     #
     # my strategy here is to split the format into active and literal
     # "chunks"; active chunks are prepared using $self->rep() as
-    # before, while literal chunks get transformed to accomodate
+    # before, while literal chunks get transformed to accommodate
     # single quotes and to protect percent signs.
     #
     # motivation: the "recommended" ISO-8601 date spec for a time in
@@ -79,7 +79,7 @@ sub prepare {
                   "unmatched single quote in chunk \"$chunk\"";
         } else {
             # handle active chunks just like before
-            $chunk =~ s/(([GyMdhHmsSEDFwWakKzZ])\2*)/$self->rep($1)/ge;
+            $chunk =~ s/(([GyMdhHmsSEeDFwWakKzZ])\2*)/$self->rep($1)/ge;
             $fmt .= $chunk;
         }
     }
@@ -121,9 +121,9 @@ sub rep {
     
     # So, the array to compute the time format at logtime contains
     # as many elements as the original SimpleDateFormat contained. Each
-    # entry is a arrary ref, holding an array with 2 elements: The index
+    # entry is a array ref, holding an array with 2 elements: The index
     # into the localtime to obtain the value and a reference to a subroutine
-    # to do computations eventually. The subroutine expects the orginal
+    # to do computations eventually. The subroutine expects the original
     # localtime() time component (like year since the epoch) and returns
     # the desired value for sprintf (like y+1900).
 
@@ -138,6 +138,15 @@ sub rep {
     if($first eq "G") {
         # Always constant
         return "AD";
+
+###################
+#e - epoch seconds#
+###################
+    } elsif($first eq "e") {
+          # index (0) irrelevant, but we return time() which 
+          # comes in as 2nd parameter
+        push @{$self->{stack}}, [0, sub { return $_[1] }];
+        return "%d";
 
 ##########
 #y - year#
@@ -248,7 +257,7 @@ sub rep {
 ###############################
     } elsif($first eq "Z") {
         push @{$self->{stack}}, [10, sub { $offset }];
-        return "$offset";
+        return "%s";
 
 #############################
 #Something that's not defined
@@ -287,7 +296,7 @@ sub format {
     for(@{$self->{stack}}) {
         my($val, $code) = @$_;
         if($code) {
-            push @values, $code->($time[$val]);
+            push @values, $code->($time[$val], $secs);
         } else {
             push @values, $time[$val];
         }
@@ -300,46 +309,46 @@ sub format {
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
 Log::Log4perl::DateFormat - Log4perl advanced date formatter helper class
 
 =head1 SYNOPSIS
 
+
+      # Either in a log4j.conf file ...
+    log4perl.appender.Logfile.layout = \
+        Log::Log4perl::Layout::PatternLayout
+    log4perl.appender.Logfile.layout.ConversionPattern = %d{MM/dd HH:mm} %m
+
+      # ... or via the PatternLayout class ...
+    use Log::Log4perl::Layout::PatternLayout;
+    my $layout = Log::Log4perl::Layout::PatternLayout->new(
+        "%d{HH:mm:ss,SSS} %m");
+
+      # ... or even directly with this helper class:
     use Log::Log4perl::DateFormat;
-
     my $format = Log::Log4perl::DateFormat->new("HH:mm:ss,SSS");
-
-    # Simple time, resolution in seconds
     my $time = time();
     print $format->format($time), "\n";
         # => "17:02:39,000"
 
-    # Advanced time, resultion in milliseconds
-    use Time::HiRes;
-    my ($secs, $msecs) = Time::HiRes::gettimeofday();
-    print $format->format($secs, $msecs), "\n";
-        # => "17:02:39,959"
-
 =head1 DESCRIPTION
 
-C<Log::Log4perl::DateFormat> is a low-level helper class for the 
-advanced date formatting functions in C<Log::Log4perl::Layout::PatternLayout>.
+C<Log::Log4perl::DateFormat> is a helper class for the 
+advanced date formatting functions in C<Log::Log4perl::Layout::PatternLayout>,
+and adheres (mostly) to the log4j SimpleDateFormat spec available on
 
-Unless you're writing your own Layout class like
-L<Log::Log4perl::Layout::PatternLayout>, there's probably not much use
-for you to read this.
+    http://download.oracle.com/javase/1.4.2/docs/api/java/text/SimpleDateFormat.html
 
-C<Log::Log4perl::DateFormat> is a formatter which allows dates to be
-formatted according to the log4j spec on
-
-    http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html
-
-which allows the following placeholders to be recognized and processed:
+It supports the following placeholders:
 
     Symbol Meaning              Presentation    Example
     ------ -------              ------------    -------
     G      era designator       (Text)          AD
+    e      epoch seconds        (Number)        1315011604
     y      year                 (Number)        1996
     M      month in year        (Text & Number) July & 07
     d      day in month         (Number)        10
@@ -361,13 +370,38 @@ which allows the following placeholders to be recognized and processed:
     '      escape for text      (Delimiter)
     ''     single quote         (Literal)       '
 
-For example, if you want to format the current Unix time in 
-C<"MM/dd HH:mm"> format, all you have to do is this:
+    Presentation explanation:
+
+    (Text): 4 or more pattern letters--use full form, < 4--use short or 
+            abbreviated form if one exists. 
+
+    (Number): the minimum number of digits. Shorter numbers are 
+              zero-padded to this amount. Year is handled 
+              specially; that is, if the count of 'y' is 2, the 
+              Year will be truncated to 2 digits. 
+
+    (Text & Number): 3 or over, use text, otherwise use number. 
+
+For example, if you want to format the current Unix time in C<"MM/dd HH:mm">
+format, all you have to do is specify it in the %d{...} section of the
+PatternLayout in a Log4perl configuration file:
+
+    # log4j.conf
+    # ...
+    log4perl.appender.Logfile.layout = \
+        Log::Log4perl::Layout::PatternLayout
+    log4perl.appender.Logfile.layout.ConversionPattern = %d{MM/dd HH:mm} %m
+
+Same goes for Perl code defining a PatternLayout for Log4perl:
+
+    use Log::Log4perl::Layout::PatternLayout;
+    my $layout = Log::Log4perl::Layout::PatternLayout->new(
+        "%d{MM/dd HH:mm} %m");
+
+Or, on a lower level, you can use the class directly:
 
     use Log::Log4perl::DateFormat;
-
     my $format = Log::Log4perl::DateFormat->new("MM/dd HH:mm");
-
     my $time = time();
     print $format->format($time), "\n";
 
@@ -415,10 +449,46 @@ someone (and that could be you :) implements them:
 Also, C<Log::Log4perl::DateFormat> just knows about English week and
 month names, internationalization support has to be added.
 
-=head1 SEE ALSO
+=head1 Millisecond Times
+
+More granular timestamps down to the millisecond are also supported,
+just provide the millsecond count as a second argument:
+
+    # Advanced time, resultion in milliseconds
+    use Time::HiRes;
+    my ($secs, $msecs) = Time::HiRes::gettimeofday();
+    print $format->format($secs, $msecs), "\n";
+        # => "17:02:39,959"
+
+=head1 LICENSE
+
+Copyright 2002-2016 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
 
 =head1 AUTHOR
 
-    Mike Schilli, <log4perl@perlmeister.com>
+Please contribute patches to the project on Github:
 
-=cut
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

@@ -100,6 +100,8 @@ sub ok {
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
 Log::Log4perl::Filter - Log4perl Custom Filter Base Class
@@ -155,22 +157,26 @@ oncoming message matches the regular expression C</let this through/i>:
 
     log4perl.filter.MyFilter        = sub { /let this through/i }
 
-It exploits the fact that when C<ok()> is called on a message,
+It exploits the fact that when the subroutine defined
+above is called on a message,
 Perl's special C<$_> variable will be set to the message text (prerendered,
 i.e. concatenated but not layouted) to be logged. 
-The C<ok()> subroutine is expected to return a true value 
+The subroutine is expected to return a true value 
 if it wants the message to be logged or a false value if doesn't.
 
-Also, Log::Log4perl will pass a hash to the C<ok()> method,
+Also, Log::Log4perl will pass a hash to the subroutine,
 containing all key/value pairs that it would pass to the corresponding 
 appender, as specified in Log::Log4perl::Appender. Here's an
 example of a filter checking the priority of the oncoming message:
 
   log4perl.filter.MyFilter        = sub {    \
        my %p = @_;                           \
-       $p{log4p_level} eq "WARN" or          \
-       $p{log4p_level} eq "INFO"             \
-                                          }
+       if($p{log4p_level} eq "WARN" or       \
+          $p{log4p_level} eq "INFO") {       \
+           return 1;                         \
+       }                                     \
+       return 0;                             \
+  }     
 
 If the message priority equals C<WARN> or C<INFO>, 
 it returns a true value, causing
@@ -293,6 +299,10 @@ and define its C<new> and C<ok> methods like this:
 
     1;
 
+Log4perl will call the ok() method to determine if the filter
+should let the message pass or not. A true return value indicates
+the message will be logged by the appender, a false value blocks it.
+
 Values you've defined for its attributes in Log4perl's configuration file,
 will be received through its C<new> method:
 
@@ -324,8 +334,35 @@ L<Log::Log4perl::Filter::LevelRange>,
 L<Log::Log4perl::Filter::StringRange>,
 L<Log::Log4perl::Filter::Boolean>
 
+=head1 LICENSE
+
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
+
 =head1 AUTHOR
 
-Mike Schilli, E<lt>log4perl@perlmeister.comE<gt>, 2003
+Please contribute patches to the project on Github:
 
-=cut
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

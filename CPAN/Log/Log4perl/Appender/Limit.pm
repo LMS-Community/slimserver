@@ -15,8 +15,7 @@ use Storable;
 
 our @ISA = qw(Log::Log4perl::Appender);
 
-our $CVSVERSION   = '$Revision: 1.7 $';
-our ($VERSION)    = ($CVSVERSION =~ /(\d+\.\d+)/);
+our $VERSION    = '1.53';
 
 ###########################################
 sub new {
@@ -26,6 +25,8 @@ sub new {
     my $self = {
         max_until_flushed   => undef,
         max_until_discarded => undef,
+        appender_method_on_flush 
+                            => undef,
         appender            => undef,
         accumulate          => 1,
         persistent          => undef,
@@ -57,6 +58,9 @@ sub log {
 ###########################################
     my($self, %params) = @_;
     
+    local $Log::Log4perl::caller_depth =
+        $Log::Log4perl::caller_depth + 2;
+
         # Check if message needs to be discarded
     my $discard = 0;
     if(defined $self->{max_until_discarded} and
@@ -79,13 +83,13 @@ sub log {
             # Message needs to be blocked for now.
         return if $discard;
 
-            # Save event time for later (if the appender renders the time)
-        $params{log4p_logtime} = 
-          $self->{app}->{layout}->{time_function}->() if exists
-          $self->{app}->{layout}->{time_function};
+            # Ask the appender to save a cached message in $cache
+        $self->{app}->SUPER::log(\%params,
+                             $params{log4p_category},
+                             $params{log4p_level}, \my $cache);
 
             # Save message and other parameters
-        push @{$self->{buffer}}, \%params if $self->{accumulate};
+        push @{$self->{buffer}}, $cache if $self->{accumulate};
 
         $self->save() if $self->{persistent};
 
@@ -95,8 +99,6 @@ sub log {
     # Relay all messages we got to the SUPER class, which needs to render the
     # messages according to the appender's layout, first.
 
-    $Log::Log4perl::caller_depth += 2;
-
         # Log pending messages if we have any
     $self->flush();
 
@@ -104,8 +106,6 @@ sub log {
     $self->{app}->SUPER::log(\%params,
                              $params{log4p_category},
                              $params{log4p_level});
-
-    $Log::Log4perl::caller_depth -= 2;
 
     $self->{sent_last} = time();
 
@@ -164,13 +164,14 @@ sub flush {
 
         # Log pending messages if we have any
     for(@{$self->{buffer}}) {
-            # Trick the renderer into using the original event time
-        local $self->{app}->{layout}->{time_function};
-        $self->{app}->{layout}->{time_function} = 
-                                    sub { $_->{log4p_logtime} };
-        $self->{app}->SUPER::log($_,
-                                 $_->{log4p_category},
-                                 $_->{log4p_level});
+        $self->{app}->SUPER::log_cached($_);
+    }
+
+      # call flush() on the attached appender if so desired.
+    if( $self->{appender_method_on_flush} ) {
+        no strict 'refs';
+        my $method = $self->{appender_method_on_flush};
+        $self->{app}->$method();
     }
 
         # Empty buffer
@@ -188,9 +189,11 @@ sub DESTROY {
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
-    Log::Log4perl::Appender::Limit - Limit message delivery via block period
+Log::Log4perl::Appender::Limit - Limit message delivery via block period
 
 =head1 SYNOPSIS
 
@@ -214,10 +217,10 @@ __END__
     );
 
     Log::Log4perl->init(\$conf);
-    WARN("This message will be sent immediately");
+    WARN("This message will be sent immediately.");
     WARN("This message will be delayed by one hour.");
     sleep(3601);
-    WARN("This message plus the last one will be sent now");
+    WARN("This message plus the last one will be sent now, seperately.");
 
 =head1 DESCRIPTION
 
@@ -254,6 +257,34 @@ Maximum number of accumulated messages. If exceeded, the appender will
 simply discard additional messages, waiting for C<block_period> to expire
 to flush all accumulated messages. Don't mix with C<max_until_flushed>.
 
+=item C<appender_method_on_flush>
+
+Optional method name to be called on the appender attached to the
+limiter when messages are flushed. For example, to have the sample code 
+in the SYNOPSIS section bundle buffered emails into one, change the 
+mailer's C<buffered> parameter to C<1> and set the limiters 
+C<appender_method_on_flush> value to the string C<"flush">:
+
+      log4perl.category = WARN, Limiter
+    
+          # Email appender
+      log4perl.appender.Mailer          = Log::Dispatch::Email::MailSend
+      log4perl.appender.Mailer.to       = drone\@pageme.com
+      log4perl.appender.Mailer.subject  = Something's broken!
+      log4perl.appender.Mailer.buffered = 1
+      log4perl.appender.Mailer.layout   = PatternLayout
+      log4perl.appender.Mailer.layout.ConversionPattern=%d %m %n
+
+          # Limiting appender, using the email appender above
+      log4perl.appender.Limiter              = Log::Log4perl::Appender::Limit
+      log4perl.appender.Limiter.appender     = Mailer
+      log4perl.appender.Limiter.block_period = 3600
+      log4perl.appender.Limiter.appender_method_on_flush = flush
+
+This will cause the mailer to buffer messages and wait for C<flush()>
+to send out the whole batch. The limiter will then call the appender's
+C<flush()> method when it's own buffer gets flushed out.
+
 =back
 
 If the appender attached to C<Limit> uses C<PatternLayout> with a timestamp
@@ -274,12 +305,35 @@ Custom filters are also applied to the composite appender only.
 They are I<not> applied to the sub-appender. Same applies to appender
 thresholds. This behaviour might change in the future.
 
-=head1 LEGALESE
+=head1 LICENSE
 
-Copyright 2004 by Mike Schilli, all rights reserved.
-This program is free software, you can redistribute it and/or
-modify it under the same terms as Perl itself.
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
 
 =head1 AUTHOR
 
-2004, Mike Schilli <m@perlmeister.com>
+Please contribute patches to the project on Github:
+
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

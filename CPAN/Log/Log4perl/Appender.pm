@@ -7,7 +7,7 @@ use strict;
 use warnings;
 
 use Log::Log4perl::Level;
-use Log::Log4perl::Config;
+use Carp;
 
 use constant _INTERNAL_DEBUG => 0;
 
@@ -41,12 +41,15 @@ sub new {
            # the eval string just consists of valid perl code (e.g. an
            # appended ';' in $appenderclass variable). Fail if we see
            # anything in there that can't be class name.
-        die "'$appenderclass' not a valid class name " if $appenderclass =~ /[^:\w]/;
+        die "'$appenderclass' not a valid class name " if 
+            $appenderclass =~ /[^:\w]/;
 
-            # Check if the class/package is already in the namespace because
-            # something like Class::Prototyped injected it previously.
-        no strict 'refs';
-        if(!scalar(keys %{"$appenderclass\::"})) {
+        # Check if the class/package is already available because
+        # something like Class::Prototyped injected it previously.
+
+        # Use UNIVERSAL::can to check the appender's new() method
+        # [RT 28987]
+        if( ! $appenderclass->can('new') ) {
             # Not available yet, try to pull it in.
             # see 'perldoc -f require' for why two evals
             eval "require $appenderclass";
@@ -57,6 +60,7 @@ sub new {
     };
 
     $@ and die "ERROR: can't load appenderclass '$appenderclass'\n$@";
+    print "Appender class $appenderclass loaded OK ($@)\n" if _INTERNAL_DEBUG;
 
     $params{name} = unique_name() unless exists $params{name};
 
@@ -68,6 +72,8 @@ sub new {
         $params{mode} = 'append';
     }
 
+    print "Calling $appenderclass new\n" if _INTERNAL_DEBUG;
+
     my $appender = $appenderclass->new(
             # Set min_level to the lowest setting. *we* are 
             # controlling this now, the appender should just
@@ -76,6 +82,8 @@ sub new {
             # Set 'name' and other parameters
         map { $_ => $params{$_} } keys %params,
     );
+
+    print "Calling $appenderclass new returned OK\n" if _INTERNAL_DEBUG;
 
     my $self = {
                  appender  => $appender,
@@ -87,6 +95,11 @@ sub new {
 
         #whether to collapse arrays, etc.
     $self->{warp_message} = $params{warp_message};
+
+    if (!$INC{'Log/Log4perl/Config.pm'}) {
+        require Log::Log4perl::Config;
+    }
+
     if($self->{warp_message} and
        my $cref = 
        Log::Log4perl::Config::compile_if_perl($self->{warp_message})) {
@@ -130,7 +143,7 @@ sub log {
 # Relay this call to Log::Log4perl::Appender:* or
 # Log::Dispatch::*
 ##################################################
-    my ($self, $p, $category, $level) = @_;
+    my ($self, $p, $category, $level, $cache) = @_;
 
     # Check if the appender has a last-minute veto in form
     # of an "appender threshold"
@@ -159,10 +172,20 @@ sub log {
             #not defined, the normal case
         if (! defined $self->{warp_message} ){
                 #join any message elements
-            $p->{message} = 
-                join($Log::Log4perl::JOIN_MSG_ARRAY_CHAR, 
-                     @{$p->{message}} 
-                     ) if ref $p->{message} eq "ARRAY";
+            if (ref $p->{message} eq "ARRAY") {
+                for my $i (0..$#{$p->{message}}) {
+                    if( !defined $p->{message}->[ $i ] ) {
+                        local $Carp::CarpLevel =
+                        $Carp::CarpLevel + $Log::Log4perl::caller_depth + 1;
+                        carp "Warning: Log message argument #" . 
+                             ($i+1) . " undefined";
+                    }
+                }
+                $p->{message} = 
+                    join($Log::Log4perl::JOIN_MSG_ARRAY_CHAR, 
+                         @{$p->{message}} 
+                         );
+            }
             
             #defined but false, e.g. Appender::DBI
         } elsif (! $self->{warp_message}) {
@@ -186,12 +209,23 @@ sub log {
         ) if $self->layout();
     }
 
-    $self->{appender}->log(%$p, 
-                            #these are used by our Appender::DBI
-                            log4p_category => $category,
-                            log4p_level    => $level,
-                          );
+    my $args = [%$p, log4p_category => $category, log4p_level => $level];
+
+    if(defined $cache) {
+        $$cache = $args;
+    } else {
+        $self->{appender}->log(@$args);
+    }
+
     return 1;
+}
+
+###########################################
+sub log_cached {
+###########################################
+    my ($self, $cache) = @_;
+
+    $self->{appender}->log(@$cache);
 }
 
 ##################################################
@@ -272,6 +306,8 @@ sub DESTROY {
 1;
 
 __END__
+
+=encoding utf8
 
 =head1 NAME
 
@@ -409,7 +445,7 @@ Log::Log4perl level of the event
 
 Since the C<Log::Dispatch::File> appender truncates log files by default,
 and most of the time this is I<not> what you want, we've instructed 
-C<Log::Log4perl> to change this behaviour by slipping it the 
+C<Log::Log4perl> to change this behavior by slipping it the 
 C<mode =E<gt> append> parameter behind the scenes. So, effectively
 with C<Log::Log4perl> 0.23, a configuration like
 
@@ -451,14 +487,14 @@ three arguments passed to the logger and put them in three separate
 rows into the DB.
 
 The  C<warp_message> appender option is used to specify the desired 
-behaviour.
+behavior.
 If no setting for the appender property
 
     # *** Not defined ***
     # log4perl.appender.SomeApp.warp_message
 
 is defined in the Log4perl configuration file, the
-appender referenced by C<SomeApp> will fall back to the standard behaviour
+appender referenced by C<SomeApp> will fall back to the standard behavior
 and join all message chunks together, separating them by
 C<$Log::Log4perl::JOIN_MSG_ARRAY_CHAR>.
 
@@ -561,7 +597,7 @@ The reason for this post-processing step is that the relay appender
 might not be defined yet when the composite appender gets defined.
 This can happen if Log4perl is initialized with a configuration file
 (which is the most common way to initialize Log4perl), because
-appenders spring into existance in unpredictable order.
+appenders spring into existence in unpredictable order.
 
 For example, if you define a Synchronized appender like
 
@@ -604,7 +640,6 @@ perform these steps. Here's the lineup:
     $syncApp->post_init();
     $syncApp->composite(1);
 
-
       # The Synchronized appender is now ready, assign it to a logger
       # and start logging.
     get_logger("")->add_appender($syncApp);
@@ -612,12 +647,96 @@ perform these steps. Here's the lineup:
     get_logger("")->level($DEBUG);
     get_logger("wonk")->debug("waah!");
 
+The composite appender's log() function will typically cache incoming 
+messages until a certain trigger condition is met and then forward a bulk
+of messages to the relay appender.
+
+Caching messages is surprisingly tricky, because you want them to look
+like they came from the code location they were originally issued from
+and not from the location that triggers the flush. Luckily, Log4perl
+offers a cache mechanism for messages, all you need to do is call the
+base class' log() function with an additional reference to a scalar,
+and then save its content to your composite appender's message buffer
+afterwards:
+
+    ###########################################
+    sub log {
+    ###########################################
+        my($self, %params) = @_;
+
+        # ... some logic to decide whether to cache or flush
+
+            # Adjust the caller stack
+        local $Log::Log4perl::caller_depth =
+              $Log::Log4perl::caller_depth + 2;
+
+            # We need to cache.
+            # Ask the appender to save a cached message in $cache
+        $self->{relay_app}->SUPER::log(\%params,
+                             $params{log4p_category},
+                             $params{log4p_level}, \my $cache);
+
+            # Save it in the appender's message buffer
+        push @{ $self->{buffer} }, $cache;
+    }
+
+Note that before calling the log() method of the relay appender's base class
+(and thus introducing two additional levels on the call stack), we need to
+adjust the call stack to allow Log4perl to render cspecs like the %M or %L
+correctly.  The cache will then contain a correctly rendered message, according
+to the layout of the target appender.
+
+Later, when the time comes to flush the cached messages, a call to the relay
+appender's base class' log_cached() method with the cached message as 
+an argument will forward the correctly rendered message:
+
+    ###########################################
+    sub log {
+    ###########################################
+        my($self, %params) = @_;
+
+        # ... some logic to decide whether to cache or flush
+
+            # Flush pending messages if we have any
+        for my $cache (@{$self->{buffer}}) {
+            $self->{relay_app}->SUPER::log_cached($cache);
+        }
+    }
+
+
 =head1 SEE ALSO
 
 Log::Dispatch
 
+=head1 LICENSE
+
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
+
 =head1 AUTHOR
 
-Mike Schilli, E<lt>log4perl@perlmeister.comE<gt>
+Please contribute patches to the project on Github:
 
-=cut
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

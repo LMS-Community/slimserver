@@ -5,53 +5,31 @@ package Log::Log4perl::Layout::PatternLayout;
 use 5.006;
 use strict;
 use warnings;
+
+use constant _INTERNAL_DEBUG => 0;
+
 use Carp;
 use Log::Log4perl::Util;
 use Log::Log4perl::Level;
 use Log::Log4perl::DateFormat;
 use Log::Log4perl::NDC;
 use Log::Log4perl::MDC;
+use Log::Log4perl::Util::TimeTracker;
 use File::Spec;
+use File::Basename;
 
-our $TIME_HIRES_AVAILABLE;
 our $TIME_HIRES_AVAILABLE_WARNED = 0;
 our $HOSTNAME;
-our $PROGRAM_START_TIME;
-
 our %GLOBAL_USER_DEFINED_CSPECS = ();
 
-our $CSPECS = 'cCdFHIlLmMnpPrtTxX%';
-
+our $CSPECS = 'cCdFHIlLmMnpPrRtTxX%';
 
 BEGIN {
-    # Check if we've got Time::HiRes. If not, don't make a big fuss,
-    # just set a flag so we know later on that we can't have fine-grained
-    # time stamps
-    $TIME_HIRES_AVAILABLE = 0;
-    if(Log::Log4perl::Util::module_available("Time::HiRes")) {
-        require Time::HiRes;
-        $TIME_HIRES_AVAILABLE = 1;
-        $PROGRAM_START_TIME = [Time::HiRes::gettimeofday()];
-    } else {
-        $PROGRAM_START_TIME = time();
-    }
-
     # Check if we've got Sys::Hostname. If not, just punt.
     $HOSTNAME = "unknown.host";
     if(Log::Log4perl::Util::module_available("Sys::Hostname")) {
         require Sys::Hostname;
         $HOSTNAME = Sys::Hostname::hostname();
-    }
-}
-
-##################################################
-sub current_time {
-##################################################
-    # Return secs and optionally msecs if we have Time::HiRes
-    if($TIME_HIRES_AVAILABLE) {
-        return (Time::HiRes::gettimeofday());
-    } else {
-        return (time(), 0);
     }
 }
 
@@ -69,13 +47,21 @@ sub new {
     my $layout_string = @_ ? shift : '%m%n';
     
     my $self = {
-        time_function         => \&current_time,
         format                => undef,
         info_needed           => {},
         stack                 => [],
         CSPECS                => $CSPECS,
         dontCollapseArrayRefs => $options->{dontCollapseArrayRefs}{value},
+        last_time             => undef,
+        undef_column_value    => 
+            (exists $options->{ undef_column_value } 
+                ? $options->{ undef_column_value } 
+                : "[undef]"),
     };
+
+    $self->{timer} = Log::Log4perl::Util::TimeTracker->new(
+        time_function => $options->{time_function}
+    );
 
     if(exists $options->{ConversionPattern}->{value}) {
         $layout_string = $options->{ConversionPattern}->{value};
@@ -86,10 +72,6 @@ sub new {
           $options->{message_chomp_before_newline}->{value};
     } else {
         $self->{message_chomp_before_newline} = 1;
-    }
-
-    if(exists $options->{time_function}) {
-        $self->{time_function} = $options->{time_function};
     }
 
     bless $self, $class;
@@ -106,6 +88,10 @@ sub new {
     foreach my $f (keys %{$options->{cspec}}){
         $self->add_layout_cspec($f, $options->{cspec}{$f}{value});
     }
+
+    # non-portable line breaks
+    $layout_string =~ s/\\n/\n/g;
+    $layout_string =~ s/\\r/\r/g;
 
     $self->define($layout_string);
 
@@ -146,20 +132,40 @@ sub rep {
     # If it's a %d{...} construct, initialize a simple date
     # format formatter, so that we can quickly render later on.
     # If it's just %d, assume %d{yyyy/MM/dd HH:mm:ss}
-    my $sdf;
     if($op eq "d") {
         if(defined $curlies) {
-            $sdf = Log::Log4perl::DateFormat->new($curlies);
+            $curlies = Log::Log4perl::DateFormat->new($curlies);
         } else {
-            $sdf = Log::Log4perl::DateFormat->new("yyyy/MM/dd HH:mm:ss");
+            $curlies = Log::Log4perl::DateFormat->new("yyyy/MM/dd HH:mm:ss");
         }
+    } elsif($op eq "m") {
+        $curlies = $self->curlies_csv_parse($curlies);
     }
 
-    push @{$self->{stack}}, [$op, $sdf || $curlies];
+    push @{$self->{stack}}, [$op, $curlies];
 
     $self->{info_needed}->{$op}++;
 
     return "%${num}s";
+}
+
+###########################################
+sub curlies_csv_parse {
+###########################################
+    my($self, $curlies) = @_;
+
+    my $data = {};
+
+    if(defined $curlies and length $curlies) {
+        $curlies =~ s/\s//g;
+
+        for my $field (split /,/, $curlies) {
+            my($key, $value) = split /=/, $field;
+            $data->{$key} = $value;
+        }
+    }
+
+    return $data;
 }
 
 ##################################################
@@ -177,17 +183,21 @@ sub render {
 
     my @results = ();
 
+    my $caller_offset = Log::Log4perl::caller_depth_offset( $caller_level );
+
     if($self->{info_needed}->{L} or
        $self->{info_needed}->{F} or
        $self->{info_needed}->{C} or
        $self->{info_needed}->{l} or
        $self->{info_needed}->{M} or
+       $self->{info_needed}->{T} or
        0
       ) {
+
         my ($package, $filename, $line, 
             $subroutine, $hasargs,
             $wantarray, $evaltext, $is_require, 
-            $hints, $bitmask) = caller($caller_level);
+            $hints, $bitmask) = caller($caller_offset);
 
         # If caller() choked because of a whacko caller level,
         # correct undefined values to '[undef]' in order to prevent 
@@ -213,15 +223,23 @@ sub render {
             # logger, we need to go one additional level up.
             my $levels_up = 1; 
             {
-                $subroutine = (caller($caller_level+$levels_up))[3];
+                my @callinfo = caller($caller_offset+$levels_up);
+
+                if(_INTERNAL_DEBUG) {
+                    callinfo_dump( $caller_offset, \@callinfo );
+                }
+
+                $subroutine = $callinfo[3];
                     # If we're inside an eval, go up one level further.
                 if(defined $subroutine and
                    $subroutine eq "(eval)") {
+                    print "Inside an eval, one up\n" if _INTERNAL_DEBUG;
                     $levels_up++;
                     redo;
                 }
             }
             $subroutine = "main::" unless $subroutine;
+            print "Subroutine is '$subroutine'\n" if _INTERNAL_DEBUG;
             $info{M} = $subroutine;
             $info{l} = "$subroutine $filename ($line)";
         }
@@ -236,24 +254,31 @@ sub render {
     $info{P} = $$;
     $info{H} = $HOSTNAME;
 
-    if($self->{info_needed}->{r}) {
-        if($TIME_HIRES_AVAILABLE) {
-            $info{r} = 
-                int((Time::HiRes::tv_interval ( $PROGRAM_START_TIME ))*1000);
-        } else {
-            if(! $TIME_HIRES_AVAILABLE_WARNED) {
-                $TIME_HIRES_AVAILABLE_WARNED++;
-                # warn "Requested %r pattern without installed Time::HiRes\n";
-            }
-            $info{r} = time() - $PROGRAM_START_TIME;
+    my $current_time;
+
+    if($self->{info_needed}->{r} or $self->{info_needed}->{R}) {
+        if(!$TIME_HIRES_AVAILABLE_WARNED++ and 
+           !$self->{timer}->hires_available()) {
+            warn "Requested %r/%R pattern without installed Time::HiRes\n";
         }
+        $current_time = [$self->{timer}->gettimeofday()];
+    }
+
+    if($self->{info_needed}->{r}) {
+        $info{r} = $self->{timer}->milliseconds( $current_time );
+    }
+    if($self->{info_needed}->{R}) {
+        $info{R} = $self->{timer}->delta_milliseconds( $current_time );
     }
 
         # Stack trace wanted?
     if($self->{info_needed}->{T}) {
+        local $Carp::CarpLevel =
+              $Carp::CarpLevel + $caller_offset;
         my $mess = Carp::longmess(); 
         chomp($mess);
-        $mess =~ s/(?:\A\s*at.*\n|^\s*Log::Log4perl.*\n|^\s*)//mg;
+        # $mess =~ s/(?:\A\s*at.*\n|^\s*Log::Log4perl.*\n|^\s*)//mg;
+        $mess =~ s/(?:\A\s*at.*\n|^\s*)//mg;
         $mess =~ s/\n/, /g;
         $info{T} = $mess;
     }
@@ -272,15 +297,16 @@ sub render {
             $self->{curlies} = $curlies;
             $result = $self->{USER_DEFINED_CSPECS}->{$op}->($self, 
                               $message, $category, $priority, 
-                              $caller_level+1);
+                              $caller_offset+1);
         } elsif(exists $info{$op}) {
             $result = $info{$op};
             if($curlies) {
-                $result = $self->curly_action($op, $curlies, $info{$op});
+                $result = $self->curly_action($op, $curlies, $info{$op},
+                                              $self->{printformat}, \@results);
             } else {
                 # just for %d
                 if($op eq 'd') {
-                    $result = $info{$op}->format($self->{time_function}->());
+                    $result = $info{$op}->format($self->{timer}->gettimeofday());
                 }
             }
         } else {
@@ -288,11 +314,15 @@ sub render {
             $result = "FORMAT-ERROR";
         }
 
-        $result = "[undef]" unless defined $result;
+        $result = $self->{undef_column_value} unless defined $result;
         push @results, $result;
     }
 
-    #print STDERR "sprintf $self->{printformat}--$results[0]--\n";
+      # dbi appender needs that
+    if( scalar @results == 1 and
+        !defined $results[0] ) {
+        return undef;
+    }
 
     return (sprintf $self->{printformat}, @results);
 }
@@ -300,7 +330,7 @@ sub render {
 ##################################################
 sub curly_action {
 ##################################################
-    my($self, $ops, $curlies, $data) = @_;
+    my($self, $ops, $curlies, $data, $printformat, $results) = @_;
 
     if($ops eq "c") {
         $data = shrink_category($data, $curlies);
@@ -309,12 +339,23 @@ sub curly_action {
     } elsif($ops eq "X") {
         $data = Log::Log4perl::MDC->get($curlies);
     } elsif($ops eq "d") {
-        $data = $curlies->format($self->{time_function}->());
+        $data = $curlies->format( $self->{timer}->gettimeofday() );
     } elsif($ops eq "M") {
         $data = shrink_category($data, $curlies);
     } elsif($ops eq "m") {
-        if($curlies eq "chomp") {
+        if(exists $curlies->{chomp}) {
             chomp $data;
+        }
+        if(exists $curlies->{indent}) {
+            if(defined $curlies->{indent}) {
+                  # fixed indent
+                $data =~ s/\n/ "\n" . (" " x $curlies->{indent})/ge;
+            } else {
+                  # indent on the lead-in
+                no warnings; # trailing array elements are undefined
+                my $indent = length sprintf $printformat, @$results;
+                $data =~ s/\n/ "\n" . (" " x $indent)/ge;
+            }
         }
     } elsif($ops eq "F") {
         my @parts = File::Spec->splitdir($data);
@@ -323,6 +364,8 @@ sub curly_action {
             splice @parts, 0, @parts - $curlies;
         }
         $data = File::Spec->catfile(@parts);
+    } elsif($ops eq "p") {
+        $data = substr $data, 0, $curlies;
     }
 
     return $data;
@@ -447,10 +490,45 @@ sub add_layout_cspec {
     $self->{CSPECS} .= $letter;
 }
 
+###########################################
+sub callinfo_dump {
+###########################################
+    my($level, $info) = @_;
+
+    my @called_by = caller(0);
+
+    # Just for internal debugging
+    $called_by[1] = basename $called_by[1];
+    print "caller($level) at $called_by[1]-$called_by[2] returned ";
+
+    my @by_idx;
+
+    # $info->[1] = basename $info->[1] if defined $info->[1];
+
+    my $i = 0;
+    for my $field (qw(package filename line subroutine hasargs
+                      wantarray evaltext is_require hints bitmask)) {
+        $by_idx[$i] = $field;
+        $i++;
+    }
+
+    $i = 0;
+    for my $value (@$info) {
+        my $field = $by_idx[ $i ];
+        print "$field=", 
+              (defined $info->[$i] ? $info->[$i] : "[undef]"),
+              " ";
+        $i++;
+    }
+
+    print "\n";
+}
 
 1;
 
 __END__
+
+=encoding utf8
 
 =head1 NAME
 
@@ -462,7 +540,6 @@ Log::Log4perl::Layout::PatternLayout - Pattern Layout
 
   my $layout = Log::Log4perl::Layout::PatternLayout->new(
                                                    "%d (%F:%L)> %m");
-
 
 =head1 DESCRIPTION
 
@@ -478,6 +555,7 @@ replaced by the logging engine when it's time to log the message:
     %c Category of the logging event.
     %C Fully qualified package (or class) name of the caller
     %d Current date in yyyy/MM/dd hh:mm:ss format
+    %d{...} Current date in customized format (see below)
     %F File where the logging event occurred
     %H Hostname (if Sys::Hostname is available)
     %l Fully qualified name of the calling method followed by the
@@ -485,13 +563,17 @@ replaced by the logging engine when it's time to log the message:
        parentheses.
     %L Line number within the file where the log statement was issued
     %m The message to be logged
-    %m{chomp} The message to be logged, stripped off a trailing newline
+    %m{chomp} Log message, stripped off a trailing newline
+    %m{indent} Log message, multi-lines indented so they line up with first
+    %m{indent=n} Log message, multi-lines indented by n spaces
     %M Method or function where the logging request was issued
     %n Newline (OS-independent)
-    %p Priority of the logging event
+    %p Priority/level of the logging event (%p{1} shows the first letter)
     %P pid of the current process
     %r Number of milliseconds elapsed from program start to logging 
        event
+    %R Number of milliseconds elapsed from last logging event to
+       current logging event 
     %T A stack trace of functions called
     %x The topmost NDC (see below)
     %X{key} The entry 'key' of the MDC (see below)
@@ -556,43 +638,17 @@ looks like
 (which is slightly different from Log4j which uses C<yyyy-MM-dd HH:mm:ss,SSS>)
 you're free to fine-tune it in order to display only certain characteristics
 of a date, according to the SimpleDateFormat in the Java World
-(http://java.sun.com/j2se/1.3/docs/api/java/text/SimpleDateFormat.html):
+(http://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html):
 
     %d{HH:mm}     "23:45" -- Just display hours and minutes
     %d{yy, EEEE}  "02, Monday" -- Just display two-digit year 
                                   and spelled-out weekday
-Here's the symbols and their meaning, according to the SimpleDateFormat
-specification:
+    %d{e}         "1473741760" -- Epoch seconds
+    %d{h a}       "12 PM"      -- Hour and am/pm marker
+    ... and many more
 
-    Symbol   Meaning                 Presentation     Example
-    ------   -------                 ------------     -------
-    G        era designator          (Text)           AD
-    y        year                    (Number)         1996 
-    M        month in year           (Text & Number)  July & 07
-    d        day in month            (Number)         10
-    h        hour in am/pm (1-12)    (Number)         12
-    H        hour in day (0-23)      (Number)         0
-    m        minute in hour          (Number)         30
-    s        second in minute        (Number)         55
-    E        day in week             (Text)           Tuesday
-    D        day in year             (Number)         189
-    a        am/pm marker            (Text)           PM
-
-    (Text): 4 or more pattern letters--use full form, < 4--use short or 
-            abbreviated form if one exists. 
-
-    (Number): the minimum number of digits. Shorter numbers are 
-              zero-padded to this amount. Year is handled 
-              specially; that is, if the count of 'y' is 2, the 
-              Year will be truncated to 2 digits. 
-
-    (Text & Number): 3 or over, use text, otherwise use number. 
-
-There's also a bunch of pre-defined formats:
-
-    %d{ABSOLUTE}   "HH:mm:ss,SSS"
-    %d{DATE}       "dd MMM yyyy HH:mm:ss,SSS"
-    %d{ISO8601}    "yyyy-MM-dd HH:mm:ss,SSS"
+For an exhaustive list of all supported date features, look at
+L<Log::Log4perl::DateFormat>.
 
 =head2 Custom cspecs
 
@@ -622,7 +678,7 @@ If you're an API kind of person, there's also this call:
     Log::Log4perl::Layout::PatternLayout::
                     add_global_cspec('Z', sub {'zzzzzzzz'}); #snooze?
 
-When the log messages is being put together, your anonymous sub 
+When the log message is being put together, your anonymous sub 
 will be called with these arguments:
 
     ($layout, $message, $category, $priority, $caller_level);
@@ -634,12 +690,11 @@ will be called with these arguments:
     caller_level: how many levels back up the call stack you have 
         to go to find the caller
 
-There are currently some issues around providing API access to an 
-appender-specific cspec, but let us know if this is something you want.
-
 Please note that the subroutines you're defining in this way are going
 to be run in the C<main> namespace, so be sure to fully qualify functions
-and variables if they're located in different packages.
+and variables if they're located in different packages. I<Also make sure
+these subroutines aren't using Log4perl, otherwise Log4perl will enter 
+an infinite recursion.>
 
 With Log4perl 1.20 and better, cspecs can be written with parameters in
 curly braces. Writing something like
@@ -691,7 +746,7 @@ Here's a list of parameters:
 
 Takes a reference to a function returning the time for the time/date
 fields, either in seconds
-since the epoch or as a reference to an array, carrying seconds and 
+since the epoch or as an array, carrying seconds and 
 microseconds, just like C<Time::HiRes::gettimeofday> does.
 
 =item message_chomp_before_newline
@@ -737,10 +792,69 @@ This will add a single newline to every message, regardless if it
 complies with the Log4perl newline guidelines or not (thanks to 
 Tim Bunce for this idea).
 
-=head1 SEE ALSO
+=head2 Multi Lines
+
+If a log message consists of several lines, like
+
+    $logger->debug("line1\nline2\nline3");
+
+then by default, they get logged like this (assuming the the layout is
+set to "%d>%m%n"):
+
+      # layout %d>%m%n
+    2014/07/27 12:46:16>line1
+    line2
+    line3
+
+If you'd rather have the messages aligned like
+
+      # layout %d>%m{indent}%n
+    2014/07/27 12:46:16>line1
+                        line2
+                        line3
+
+then use the C<%m{indent}> option for the %m specifier. This option
+can also take a fixed value, as in C<%m{indent=2}>, which indents
+subsequent lines by two spaces:
+
+      # layout %d>%m{indent=2}%n
+    2014/07/27 12:46:16>line1
+      line2
+      line3
+
+Note that you can still add the C<chomp> option for the C<%m> specifier
+in this case (see above what it does), simply add it after a 
+separating comma, like in C<%m{indent=2,chomp}>.
+
+=head1 LICENSE
+
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
 
 =head1 AUTHOR
 
-Mike Schilli, E<lt>m@perlmeister.comE<gt>
+Please contribute patches to the project on Github:
 
-=cut
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+
