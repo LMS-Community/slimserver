@@ -101,38 +101,33 @@ my $unpackTemplate = 'U*';
 my $bidiR = qr/\p{BidiClass:R}/;
 my $bidiL = qr/\p{BidiClass:L}/;
 
-# Font size & Offsets -- Optimized for the free Japanese TrueType font
-# 'sazanami-gothic' from 'waka'.
-#
-# They seem to work pretty well for CODE2000 & Cyberbit as well. - dsully
-
 my %font2TTF = (
 
 	# The standard size - .1 is top line, .2 is bottom.
 	'standard.1' => {
-		'FTFontSize' => 9, # Code2000: max ascender 14, max descender 4
+		'FTFontSize' => 9,
 		'FTBaseline' => 8,
 	},
 
 	'standard.2' => {
-		'FTFontSize' => 14, # Code2000: max ascender 19, max descender 6
+		'FTFontSize' => 16,
 		'FTBaseline' => 28,
 	},
 
 	 # Small size - .1 is top line, .2 is bottom.
 	'light.1' => {
-		'FTFontSize' => 10, # Code2000: max ascender 14, max descender 4
+		'FTFontSize' => 10,
 		'FTBaseline' => 10,
 	},
 
 	'light.2' => {
-		'FTFontSize' => 11, # Code2000: max ascender 15, max descender 5
+		'FTFontSize' => 11,
 		'FTBaseline' => 29,
 	},
 
 	# Huge - only one line.
 	'full.2' => {
-		'FTFontSize' => 24, # Code2000: max ascender 32, max descender 10
+		'FTFontSize' => 24,
 		'FTBaseline' => 25,
 	},
 
