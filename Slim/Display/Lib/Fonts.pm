@@ -214,7 +214,7 @@ sub init {
 	for my $fontFolder (graphicsDirs()) {
 
 		# Try a few different fonts..
-		for my $fontFile (qw(arialuni.ttf ARIALUNI.TTF CODE2000.TTF Cyberbit.ttf CYBERBIT.TTF)) {
+		for my $fontFile (qw(arialuni.ttf ARIALUNI.TTF GoNotoCurrent-Regular.ttf CODE2000.TTF Cyberbit.ttf CYBERBIT.TTF)) {
 
 			my $file = catdir($fontFolder, $fontFile);
 
