@@ -214,6 +214,7 @@ sub init {
 			my $file = catdir($fontFolder, $fontFile);
 
 			if (-e $file) {
+				main::DEBUGLOG && $log->debug("selecting font: $file");
 				$TTFFontFile = $file;
 				last FONTDIRS;
 			}
