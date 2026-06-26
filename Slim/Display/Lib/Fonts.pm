@@ -66,7 +66,7 @@ my %measureTextCache;
 
 # Hebrew support
 my $hasHebrew;
-my $canUseHebrew = sub {
+sub _canUseHebrew {
 	return $hasHebrew if defined $hasHebrew;
 	main::DEBUGLOG && $log->debug('Loading Locale::Hebrew');
 	eval { require Locale::Hebrew };
@@ -78,7 +78,7 @@ my $canUseHebrew = sub {
 };
 
 my $hasFreeType;
-my $canUseFreeType = sub {
+sub _canUseFreeType {
 	return $hasFreeType if defined $hasFreeType;
 	main::DEBUGLOG && $log->debug('Loading Font::FreeType');
 	eval { require Font::FreeType };
@@ -101,38 +101,33 @@ my $unpackTemplate = 'U*';
 my $bidiR = qr/\p{BidiClass:R}/;
 my $bidiL = qr/\p{BidiClass:L}/;
 
-# Font size & Offsets -- Optimized for the free Japanese TrueType font
-# 'sazanami-gothic' from 'waka'.
-#
-# They seem to work pretty well for CODE2000 & Cyberbit as well. - dsully
-
 my %font2TTF = (
 
 	# The standard size - .1 is top line, .2 is bottom.
 	'standard.1' => {
-		'FTFontSize' => 9, # Code2000: max ascender 14, max descender 4
+		'FTFontSize' => 9,
 		'FTBaseline' => 8,
 	},
 
 	'standard.2' => {
-		'FTFontSize' => 14, # Code2000: max ascender 19, max descender 6
+		'FTFontSize' => 16,
 		'FTBaseline' => 28,
 	},
 
 	 # Small size - .1 is top line, .2 is bottom.
 	'light.1' => {
-		'FTFontSize' => 10, # Code2000: max ascender 14, max descender 4
+		'FTFontSize' => 10,
 		'FTBaseline' => 10,
 	},
 
 	'light.2' => {
-		'FTFontSize' => 11, # Code2000: max ascender 15, max descender 5
+		'FTFontSize' => 11,
 		'FTBaseline' => 29,
 	},
 
 	# Huge - only one line.
 	'full.2' => {
-		'FTFontSize' => 24, # Code2000: max ascender 32, max descender 10
+		'FTFontSize' => 24,
 		'FTBaseline' => 25,
 	},
 
@@ -209,21 +204,33 @@ sub init {
 	$initialized = 1;
 
 	loadFonts();
+}
+
+sub _getTTFFontFile {
+	return $TTFFontFile if defined $TTFFontFile;
+
+	$TTFFontFile ||= '';
 
 	FONTDIRS:
 	for my $fontFolder (graphicsDirs()) {
+		# Plugins can provide a fonts.conf file to specify which fonts they provide.
+		# Otherwise they'd have to match one of the font file names below.
+		my $fontsListFile = catfile($fontFolder, 'fonts.conf');
+		my @pluginFonts = grep { $_ } split(/\n/, read_file($fontsListFile)) if -e $fontsListFile;
 
 		# Try a few different fonts..
-		for my $fontFile (qw(arialuni.ttf ARIALUNI.TTF CODE2000.TTF Cyberbit.ttf CYBERBIT.TTF)) {
-
+		for my $fontFile (@pluginFonts, qw(arialuni.ttf ARIALUNI.TTF CODE2000.TTF Cyberbit.ttf CYBERBIT.TTF)) {
 			my $file = catdir($fontFolder, $fontFile);
 
 			if (-e $file) {
+				main::DEBUGLOG && $log->debug("selecting font: $file");
 				$TTFFontFile = $file;
 				last FONTDIRS;
 			}
 		}
 	}
+
+	return $TTFFontFile;
 }
 
 sub gfonthash {
@@ -318,7 +325,7 @@ sub string {
 
 	if (@ords && max(@ords) > 255) {
 
-		if ($TTFFontFile && exists $font2TTF{$defaultFontname} && $canUseFreeType->()) {
+		if (_getTTFFontFile() && exists $font2TTF{$defaultFontname} && _canUseFreeType()) {
 			$useTTFNow  = 1;
 			$FTFontSize = $font2TTF{$defaultFontname}->{'FTFontSize'};
 			$FTBaseline = $font2TTF{$defaultFontname}->{'FTBaseline'};
@@ -342,7 +349,7 @@ sub string {
 			}
 
 			# flip BiDi R text and decide if scrolling should be reversed
-			if ($string =~ $bidiR && $canUseHebrew->()) {
+			if ($string =~ $bidiR && _canUseHebrew()) {
 				$reverse = ($prefs->get('language') eq 'HE' || $string !~ $bidiL);
 				$string = Locale::Hebrew::hebrewflip($string);
 				@ords = ();
@@ -536,8 +543,8 @@ sub graphicsDirs {
 
 	# graphics files allowed in Graphics dir and root directory of plugins
 	return (
-		Slim::Utils::OSDetect::dirsFor('Graphics'),
 		Slim::Utils::PluginManager->dirsFor('Graphics'),
+		Slim::Utils::OSDetect::dirsFor('Graphics'),
 	);
 }
 
