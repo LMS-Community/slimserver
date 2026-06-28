@@ -78,6 +78,7 @@ sub grabFilters {
 	my ($class, $client, $params, $callback, @args) = @_;
 
 	my $MMSport = $prefs->get('port');
+	my $MMShost = $prefs->get('host') || 'localhost';
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&_gotFilters,
@@ -96,7 +97,7 @@ sub grabFilters {
 		}
 	);
 
-	$http->get( "http://localhost:$MMSport/api/filters" );
+	$http->get( "http://$MMShost:$MMSport/api/filters" );
 }
 
 sub getFilterList {

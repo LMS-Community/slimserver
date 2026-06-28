@@ -34,6 +34,7 @@ use constant MENU_WEIGHT => 95;
 
 my $initialized = 0;
 my $MMSport;
+my $MMShost;
 my $canPowerSearch;
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -145,7 +146,7 @@ sub initPlugin {
 
 	my $response = _syncHTTPRequest("/api/version");
 
-	main::INFOLOG && $log->info("Testing for API on localhost:$MMSport");
+	main::INFOLOG && $log->info("Testing for API on $MMShost:$MMSport");
 
 	if ($response->is_error) {
 
@@ -419,7 +420,7 @@ sub isMusicLibraryFileChanged {
 		},
 	);
 
-	$http->get( "http://localhost:$MMSport/api/cacheid?contents" );
+	$http->get( "http://$MMShost:$MMSport/api/cacheid?contents" );
 }
 
 sub _statusOK {
@@ -524,7 +525,7 @@ sub _cacheidOK {
 		},
 	);
 
-	$http->get( "http://localhost:$MMSport/api/getStatus" );
+	$http->get( "http://$MMShost:$MMSport/api/getStatus" );
 }
 
 sub _musicipError {
@@ -880,7 +881,7 @@ sub getMix {
 		$validMixTypes{$for} . '=' . Slim::Plugin::MusicMagic::Common::escape($id);
 	} @ids);
 
-	main::DEBUGLOG && $log->debug("Request http://localhost:$MMSport/api/mix?$mixArgs\&$argString");
+	main::DEBUGLOG && $log->debug("Request http://$MMShost:$MMSport/api/mix?$mixArgs\&$argString");
 
 	my $response = _syncHTTPRequest("/api/mix?$mixArgs\&$argString");
 
@@ -1420,12 +1421,13 @@ sub _syncHTTPRequest {
 	my $url = shift;
 
 	$MMSport = $prefs->get('port') unless $MMSport;
+	$MMShost = $prefs->get('host') || 'localhost' unless $MMShost;
 
 	my $http = LWP::UserAgent->new;
 
 	$http->timeout($prefs->get('timeout') || 5);
 
-	return $http->get("http://localhost:$MMSport$url");
+	return $http->get("http://$MMShost:$MMSport$url");
 }
 
 # This method is used for the in-process rescanner to update mixable status
@@ -1437,7 +1439,7 @@ sub checkSingleTrack {
 	Slim::Plugin::MusicMagic::Importer->initPlugin();
 
 	my $path   = Slim::Utils::Misc::pathFromFileURL($url);
-	my $apiurl = "http://localhost:$MMSport/api/getSong?file=" . uri_escape_utf8($path);
+	my $apiurl = "http://$MMShost:$MMSport/api/getSong?file=" . uri_escape_utf8($path);
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
