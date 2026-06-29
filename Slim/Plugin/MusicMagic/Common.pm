@@ -74,10 +74,14 @@ sub checkDefaults {
 	}, 'Slim::Plugin::MusicMagic::Prefs');
 }
 
+sub getBaseUrl {
+	my $host = $prefs->get('host') || 'localhost';
+	my $port = $prefs->get('port');
+	return "http://$host:$port/api";
+}
+
 sub grabFilters {
 	my ($class, $client, $params, $callback, @args) = @_;
-
-	my $MMSport = $prefs->get('port');
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&_gotFilters,
@@ -96,7 +100,7 @@ sub grabFilters {
 		}
 	);
 
-	$http->get( "http://localhost:$MMSport/api/filters" );
+	$http->get( getBaseUrl() . '/filters' );
 }
 
 sub getFilterList {

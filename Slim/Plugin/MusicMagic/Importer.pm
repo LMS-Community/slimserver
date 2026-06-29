@@ -27,7 +27,6 @@ use Slim::Utils::Versions;
 
 my $initialized = 0;
 my $MMMVersion  = 0;
-my $MMSport;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.musicip',
@@ -86,11 +85,9 @@ sub initPlugin {
 
 	Slim::Plugin::MusicMagic::Common::checkDefaults();
 
-	$MMSport = $prefs->get('port');
+	main::INFOLOG && $log->info("Testing for API on " . Slim::Plugin::MusicMagic::Common::getBaseUrl());
 
-	main::INFOLOG && $log->info("Testing for API on localhost:$MMSport");
-
-	my $initialized = get( "http://localhost:$MMSport/api/version", 5 );
+	my $initialized = get( Slim::Plugin::MusicMagic::Common::getBaseUrl() . '/version', 5 );
 
 	if (defined $initialized) {
 
@@ -169,7 +166,7 @@ sub doneScanning {
 
 	main::INFOLOG && $log->info("Done Scanning");
 
-	my $lastDate = get("http://localhost:$MMSport/api/cacheid?contents");
+	my $lastDate = get(Slim::Plugin::MusicMagic::Common::getBaseUrl() . '/cacheid?contents');
 
 	if ($lastDate) {
 
@@ -184,8 +181,6 @@ sub doneScanning {
 sub exportFunction {
 	my $class = shift;
 
-	$MMSport = $prefs->get('port') unless $MMSport;
-
 	$class->exportSongs;
 	$class->exportPlaylists;
 	$class->exportDuplicates;
@@ -199,7 +194,7 @@ sub exportSongs {
 	if ($fullRescan == 1 || $prefs->get('musicip') == 1) {
 		main::INFOLOG && $log->info("MusicIP mixable status full scan");
 
-		my $count = get("http://localhost:$MMSport/api/getSongCount");
+		my $count = get(Slim::Plugin::MusicMagic::Common::getBaseUrl() . '/getSongCount');
 		if ($count) {
 			# convert to integer
 			chomp($count);
@@ -222,7 +217,7 @@ sub exportSongs {
 			main::INFOLOG && $log->info("Fetching ALL song data via songs/extended..");
 
 			my $MMMSongData = catdir( preferences('server')->get('librarycachedir'), 'mmm-song-data.txt' );
-			my $MMMDataURL  = "http://localhost:$MMSport/api/songs?extended";
+			my $MMMDataURL  = Slim::Plugin::MusicMagic::Common::getBaseUrl() . '/songs?extended';
 
 			getstore($MMMDataURL, $MMMSongData);
 
@@ -258,7 +253,7 @@ sub exportSongs {
 			unlink($MMMSongData);
 		} else {
 			for (my $scan = 0; $scan <= $count; $scan++) {
-				my $content = get("http://localhost:$MMSport/api/getSong?index=$scan");
+				my $content = get(Slim::Plugin::MusicMagic::Common::getBaseUrl() . "/getSong?index=$scan");
 
 				$class->processSong($content, $progress);
 			}
@@ -297,7 +292,7 @@ sub exportSongs {
 			my $pathEnc = Slim::Plugin::MusicMagic::Common::escape($path);
 
 			# Set musicmagic_mixable on $track object and call $track->update to actually store it.
-			my $result = get("http://localhost:$MMSport/api/status?song=$pathEnc");
+			my $result = get(Slim::Plugin::MusicMagic::Common::getBaseUrl() . "/status?song=$pathEnc");
 
 			if ($result =~ /^(\w+)\s+(.*)/) {
 
@@ -489,7 +484,7 @@ sub processSong {
 sub exportPlaylists {
 	my $class = shift;
 
-	my @playlists = split(/\n/, get("http://localhost:$MMSport/api/playlists"));
+	my @playlists = split(/\n/, get(Slim::Plugin::MusicMagic::Common::getBaseUrl() . '/playlists'));
 
 	if (!scalar @playlists) {
 		return;
@@ -512,7 +507,7 @@ sub exportPlaylists {
 
 		my $listname = Slim::Plugin::MusicMagic::Common::decode($playlists[$i]);
 
-		my $playlist = get("http://localhost:$MMSport/api/getPlaylist?index=$i") || next;
+		my $playlist = get(Slim::Plugin::MusicMagic::Common::getBaseUrl() . "/getPlaylist?index=$i") || next;
 		my @songs    = split(/\n/, $playlist);
 
 		if ( main::INFOLOG && $log->is_info ) {
@@ -534,7 +529,7 @@ sub exportDuplicates {
 
 	main::INFOLOG && $log->info("Checking for duplicates.");
 
-	my @songs = split(/\n/, get("http://localhost:$MMSport/api/duplicates"));
+	my @songs = split(/\n/, get(Slim::Plugin::MusicMagic::Common::getBaseUrl() . '/duplicates'));
 
 	$class->_updatePlaylist(string('MUSICIP_DUPLICATES'), \@songs);
 
