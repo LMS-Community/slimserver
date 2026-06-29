@@ -572,10 +572,16 @@ SETUP_MUSICMAGICSCANINTERVAL_DESC
 	ZH_CN	当您的MusicIP数据库改变时，Lyrion Music Server将自动地导入最新音乐库信息。您可以指定Lyrion Music Server再装您的MusicIP数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_MMSHOST
+	DE	MusicIP-Host
 	EN	MusicIP Host
+	FR	Hôte MusicIP
+	NL	MusicIP-host
 
 SETUP_MMSHOST_DESC
-	EN	The hostname or IP address of the MusicIP server. Change this if MusicIP is running on a different host than Lyrion Music Server (e.g. in a separate Docker container or VM). Defaults to localhost.
+	DE	Der Hostname oder die IP-Adresse des MusicIP-Servers. Ändern Sie dies, wenn MusicIP auf einem anderen Host als Lyrion Music Server läuft (z. B. in einem separaten Docker-Container oder einer VM). Standardwert: localhost. Hinweis: Die Dateipfade zur Musik müssen auf beiden Hosts identisch sein. Docker-Benutzer sollten Volume-Mounts verwenden, um sicherzustellen, dass dieselben Pfade in beiden Containern sichtbar sind.
+	EN	The hostname or IP address of the MusicIP server. Change this if MusicIP is running on a different host than Lyrion Music Server (e.g. in a separate Docker container or VM). Defaults to localhost. Note: file paths to your music must be identical on both hosts. Docker users should ensure this by using matching volume mount paths in both containers.
+	FR	Le nom d'hôte ou l'adresse IP du serveur MusicIP. Modifiez ce paramètre si MusicIP s'exécute sur un hôte différent de Lyrion Music Server (par exemple dans un conteneur Docker séparé ou une VM). Par défaut : localhost. Remarque : les chemins d'accès aux fichiers musicaux doivent être identiques sur les deux hôtes. Les utilisateurs Docker doivent utiliser des montages de volumes identiques dans les deux conteneurs.
+	NL	De hostnaam of het IP-adres van de MusicIP-server. Wijzig dit als MusicIP op een andere host draait dan Lyrion Music Server (bijv. in een aparte Docker-container of VM). Standaard: localhost. Let op: de bestandspaden naar je muziek moeten identiek zijn op beide hosts. Docker-gebruikers dienen hiervoor overeenkomende volume-mounts in beide containers te gebruiken.
 
 SETUP_MMSPORT
 	CS	HTTP port MusicIP
