@@ -28,7 +28,7 @@ jobs:
       - name: Add `latest` tag to release candidate
         run: |
           docker buildx imagetools create lmscommunity/lyrionmusicserver:rc --tag lmscommunity/lyrionmusicserver:latest
-          docker buildx imagetools create ghcr.io/${{ github.repository_owner@L }}/lyrionmusicserver:rc --tag ghcr.io/${{ github.repository_owner@L }}/lyrionmusicserver:latest
+          docker buildx imagetools create ghcr.io/lms-community/lyrionmusicserver:rc --tag ghcr.io/lms-community/lyrionmusicserver:latest
 
       # should we remove the `rc` tag?
 
