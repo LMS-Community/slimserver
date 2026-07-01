@@ -1,14 +1,27 @@
-name: Prune old unpulled container package versions
+# Prune container package versions for LMS-Community/lyrionmusicserver
+# Criteria: untagged (no tags), never pulled (0 pulls), older than 90 days, or older than 1 year (regardless of pull count)
+# Safe behavior: by default the workflow only performs a dry-run and prints candidates.
+# To actually delete, run the workflow manually with `perform_delete: true` AND set a repository secret named PACKAGE_TOKEN
+# containing a personal access token (classic) with the `delete:packages` (or `packages:delete` depending on token type) scope
+# and sufficient org/package permissions. GITHUB_TOKEN may not have package-delete privileges for org-owned packages.
+
+name: Prune old container package versions
 
 on:
   schedule:
     - cron: '0 5 * * 0'     # Weekly on Sundays at 05:00 UTC
   workflow_dispatch:
+    inputs:
+      perform_delete:
+        description: 'Set to true to actually delete the matching package versions (default: false)'
+        required: false
+        default: 'false'
 
 jobs:
   prune:
     runs-on: ubuntu-latest
-    name: Delete old test images
+    if: false  # disabled for now, as it requires a PAT with package deletion rights
+    name: Delete old container images
     steps:
       - uses: snok/container-retention-policy@v3.1.0
         with:
@@ -18,3 +31,109 @@ jobs:
           cut-off: 180d
           tag-selection: untagged
           dry-run: true
+
+  prune2:
+    runs-on: ubuntu-latest
+    env:
+      ORG: LMS-Community
+      PACKAGE_NAME: lyrionmusicserver
+      PACKAGE_TYPE: container
+      DAYS_OLD: '90'
+      # Provide a PAT with package deletion rights in the repo secrets as PACKAGE_TOKEN
+      PACKAGE_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
+    steps:
+      - name: Prune old unpulled container package versions (dry-run by default)
+        uses: actions/github-script@v9
+        with:
+          script: |
+            // Configuration
+            const org = process.env.ORG;
+            const packageType = process.env.PACKAGE_TYPE;
+            const packageName = process.env.PACKAGE_NAME;
+            const days = parseInt(process.env.DAYS_OLD || '90', 10);
+            const yearDays = 365;
+
+            // Decide whether to actually delete. Default from workflow_dispatch input.
+            const performDelete = false; // (github.context.payload && github.context.payload.inputs && github.context.payload.inputs.perform_delete === 'true');
+
+            // Prefer an explicit PACKAGE_TOKEN (repo secret). Fallback to GITHUB_TOKEN (may lack delete rights for org packages).
+            const token = process.env.PACKAGE_TOKEN || process.env.GITHUB_TOKEN;
+            /*
+            if (!token) {
+              core.setFailed('No PACKAGE_TOKEN or GITHUB_TOKEN available. Add a PACKAGE_TOKEN secret with a PAT that can delete packages.');
+              return;
+            }
+              */
+
+            const octokit = github.getOctokit(token);
+
+            const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+            core.info(`Cutoff date: ${cutoff.toISOString()} (older than ${days} days)`);
+            const cutoffYear = new Date(Date.now() - yearDays * 24 * 60 * 60 * 1000);
+
+            // List all package versions for the org-owned package and paginate
+            const versions = await octokit.paginate(octokit.rest.packages.listPackageVersionsForPackageOwnedByOrg, {
+              org,
+              package_type: packageType,
+              package_name: packageName,
+              per_page: 100
+            });
+
+            core.info(`Found ${versions.length} total package versions`);
+
+            const candidates = [];
+            for (const v of versions) {
+              // metadata.container.tags is an array for container packages
+              const tags = (v.metadata && v.metadata.container && Array.isArray(v.metadata.container.tags)) ? v.metadata.container.tags : [];
+
+              if (tags.length > 0) continue;   // Skip versions with tags
+
+              const createdAt = v.created_at ? new Date(v.created_at) : (v.updated_at ? new Date(v.updated_at) : null);
+
+              // Pull count field varies; try common names, fallback to 0 if not present
+              let pullCount = 0;
+              if (v.metadata && v.metadata.container) {
+                // Known variants
+                pullCount = v.metadata.container.pull_count ?? v.metadata.container.pullCount ?? v.metadata.container.pulls ?? pullCount;
+              }
+              // Some API responses include a top-level `download_count` or `downloads` field — try those too
+              pullCount = v.download_count ?? v.downloads ?? pullCount;
+
+              if ( createdAt && (pullCount === 0 && createdAt < cutoff) || (createdAt < cutoffYear) ) {
+                candidates.push({ id: v.id, created_at: v.created_at, updated_at: v.updated_at, name: v.name || null, url: v.url });
+              }
+            }
+
+            if (candidates.length === 0) {
+              core.info('No untagged, never-pulled package versions older than cutoff found.');
+              return;
+            }
+
+            core.info(`Found ${candidates.length} candidate version(s) to delete:`);
+            for (const c of candidates) core.info(JSON.stringify(c));
+
+            if (!performDelete) {
+              core.info('DRY RUN: perform_delete was not set to true. No deletions performed. To delete, run the workflow manually and set perform_delete=true AND ensure PACKAGE_TOKEN secret is set.');
+              return;
+            }
+
+            core.info('perform_delete=true — attempting deletions now...');
+
+            for (const c of candidates) {
+              try {
+                core.info(`Deleting version id=${c.id} url=${c.url}`);
+                await octokit.rest.packages.deletePackageVersionForOrg({
+                  org,
+                  package_type: packageType,
+                  package_name: packageName,
+                  package_version_id: c.id
+                });
+                core.info(`Deleted version id=${c.id}`);
+              } catch (err) {
+                core.warning(`Failed to delete version id=${c.id}: ${err.message || err}`);
+              }
+            }
+
+            core.info('Done.');
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
