@@ -165,22 +165,23 @@ sub init {
 
 	# Load the DBIx::Class::Schema classes we've defined.
 	# If you add a class to the schema, you must add it here as well.
+	# Order matters with newer DBIx versions
 	$class->load_classes(qw/
 		Album
-		Comment
 		Contributor
-		ContributorAlbum
-		ContributorTrack
+		Work
 		Genre
-		GenreTrack
-		LibraryTrack
 		MetaInformation
 		Playlist
 		PlaylistTrack
 		Track
+		Comment
+		ContributorAlbum
+		ContributorTrack
+		GenreTrack
+		LibraryTrack
 		Year
 		Progress
-		Work
 		Composer
 	/);
 	$class->load_classes('TrackPersistent') unless (!main::STATISTICS);
