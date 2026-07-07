@@ -335,7 +335,8 @@ sub updateStandaloneArtwork {
 				Slim::Utils::Scheduler::unpause() if !main::SCANNER;
 			}
 			# cover art has disappeared
-			elsif ( !$newCoverId ) {
+			# check user setting whether or not to do it.
+			elsif ( !$newCoverId && !Slim::Utils::Prefs::preferences('server')->get('disableArtworkCleanup')) {
 				$sth_update_albums->execute( undef, $albumid );
 				$sth_update_tracks->execute( 0, undef, $albumid );
 
