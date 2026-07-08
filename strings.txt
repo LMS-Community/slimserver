@@ -19518,22 +19518,6 @@ SETUP_PRECACHEARTWORK_CUSTOM_SPECS
 	SV	Anpassade inställningar för förhandsbuffring
 	ZH_CN	自定义预缓存规格
 
-SETUP_DISABLEARTWORKCLEANUP
-	EN	Preserve artwork for tracks without a valid album
-	SV	Behåll omslagsbilder för låtar utan ett giltigt album
-
-SETUP_DISABLEARTWORKCLEANUP_DESC
-	EN	Keep embedded track artwork instead of replacing it when a track has no valid album tag.
-	SV	Behåll inbäddade omslagsbilder istället för att ersätta dem när en låt saknar en giltig albumtagg.
-
-SETUP_DISABLEARTWORKCLEANUP_DISABLED
-	EN	Use default artwork
-	SV	Använd standardbild
-
-SETUP_DISABLEARTWORKCLEANUP_ENABLED
-	EN	Preserve track artwork
-	SV	Behåll låtarnas omslagsbilder
-
 SETUP_IMAGEPROXY
 	CS	Změna velikosti obalů alb
 	DA	Skalering af albumcover

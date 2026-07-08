@@ -63,15 +63,6 @@
 		</table>
 	[% END; END %]
 
-	[% WRAPPER setting title="SETUP_DISABLEARTWORKCLEANUP" desc="SETUP_DISABLEARTWORKCLEANUP_DESC" %]
-		<select class="stdedit" name="pref_disableArtworkCleanup" id="disableArtworkCleanup">
-
-			<option [% IF NOT prefs.pref_disableArtworkCleanup %]selected [% END %]value="0">[% 'SETUP_DISABLEARTWORKCLEANUP_DISABLED' | getstring %]</option>
-			<option [% IF prefs.pref_disableArtworkCleanup %]selected [% END %]value="1">[% 'SETUP_DISABLEARTWORKCLEANUP_ENABLED' | getstring %]</option>
-
-		</select>
-	[% END %]
-
 	[% WRAPPER setting title="SETUP_IMAGEPROXY" desc="SETUP_IMAGEPROXY_DESC" %]
 		<select class="stdedit" name="pref_useLocalImageproxy" id="useLocalImageproxy" [% IF imageproxies.size <= 1 %]disabled[% END %]>
 
