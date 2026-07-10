@@ -4,7 +4,8 @@
 		<select name="pref_account">
 			<option value="0">[% "SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED" | string %]</option>
 		[% FOR global_account IN prefs.pref_accounts %]
-			<option value="[% global_account.username | html %]" [% IF global_account.username == prefs.pref_account %]selected="selected"[% END %] />[% global_account.username %]</option>
+			[% accountId = global_account.username _ '::' _ global_account.api_type _ '::' _ global_account.api_url %]
+			<option value="[% accountId | html %]" [% IF accountId == prefs.pref_account %]selected="selected"[% END %] />[% global_account.username %] ([% ("PLUGIN_AUDIOSCROBBLER_" _ global_account.api_type) | upper | string %])</option>
 		[% END %]
 		</select>
 
