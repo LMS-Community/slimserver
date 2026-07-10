@@ -49,6 +49,16 @@ runs:
         path: platforms
         ref: ${{ steps.getversion.outputs.GIT_BRANCH }}
 
+    - name: Apply LMS platform build patches
+      shell: bash
+      run: |
+        if compgen -G "server/.github/patches/slimserver-platforms-*.patch" > /dev/null; then
+          for patch_file in server/.github/patches/slimserver-platforms-*.patch; do
+            echo "Applying $patch_file"
+            patch -d platforms -p1 < "$patch_file"
+          done
+        fi
+
 
     - name: Check out pCP platform code
       if: ${{ startsWith(inputs.build-params, 'pcp') }}

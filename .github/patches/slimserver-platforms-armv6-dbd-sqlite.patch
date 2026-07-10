@@ -1,0 +1,23 @@
+diff --git a/buildme.pl b/buildme.pl
+--- a/buildme.pl
++++ b/buildme.pl
+@@ -33,7 +33,7 @@ my $dirsToExcludeForLinuxPackage = "$dirsToExcludeForLinuxTarball 5.10 5.12 5.1
+ my $dirsToExcludeForFreeBSDTarball = "MSWin32-x86-multi-thread MSWin32-x64-multi-thread PreventStandby i386-linux x86_64-linux i86pc-solaris-thread-multi-64int darwin darwin-x86_64 sparc-linux arm-linux armhf-linux powerpc-linux aarch64-linux icudt46b.dat";
+ my $dirsToExcludeForARMTarball = "MSWin32-x86-multi-thread MSWin32-x64-multi-thread PreventStandby i386-linux x86_64-linux i86pc-solaris-thread-multi-64int darwin darwin-x86_64 sparc-linux i386-freebsd-64int powerpc-linux icudt46b.dat icudt58b.dat";
+ my $dirsToExcludeForPPCTarball = "MSWin32-x86-multi-thread MSWin32-x64-multi-thread PreventStandby i386-linux x86_64-linux i86pc-solaris-thread-multi-64int darwin darwin-x86_64 sparc-linux arm-linux armhf-linux i386-freebsd-64int aarch64-linux icudt46l.dat icudt58l.dat";
+-my $dirsToExcludeForARMDeb = "$dirsToExcludeForARMTarball 5.10 5.12 5.14 5.16 5.18 5.20 5.22 5.24 5.26 5.38 5.42";
++my $dirsToExcludeForARMDeb = "$dirsToExcludeForARMTarball 5.10 5.12 5.14 5.16 5.18 5.20 5.22 5.24 5.26 5.38 5.42 CPAN/DBI.pm CPAN/DBI/ CPAN/arch/.*/DBI.pm CPAN/arch/.*/DBI/ auto/DBI/ CPAN/DBD/SQLite CPAN/arch/.*/DBD/SQLite.pm CPAN/arch/.*/DBD/SQLite auto/DBD/SQLite";
+ my $dirsToExcludeForx86_64Deb = "5.10 5.12 5.14 5.16 5.18 5.20 5.22 5.24 5.26 MSWin32-x86-multi-thread MSWin32-x64-multi-thread PreventStandby i386-linux i86pc-solaris-thread-multi-64int darwin darwin-x86_64 sparc-linux arm-linux armhf-linux i386-freebsd-64int powerpc-linux aarch64-linux icudt46b.dat icudt58b.dat";
+ my $dirsToExcludeFori386Deb = "5.10 5.12 5.14 5.16 5.18 5.20 5.22 5.28 5.30 5.32 5.34 5.36 5.38 5.40 5.42 MSWin32-x86-multi-thread MSWin32-x64-multi-thread PreventStandby x86_64-linux i86pc-solaris-thread-multi-64int darwin darwin-x86_64 sparc-linux arm-linux armhf-linux i386-freebsd-64int powerpc-linux aarch64-linux icudt46b.dat icudt58b.dat";
+ my $dirsToExcludeForLinuxNoCpanTarball = "i386-freebsd-64int MSWin32-x86-multi-thread MSWin32-x64-multi-thread i86pc-solaris-thread-multi-64int darwin darwin-x86_64 i386-linux sparc-linux x86_64-linux arm-linux armhf-linux powerpc-linux aarch64-linux /arch/ PreventStandby";
+diff --git a/debian/control b/debian/control
+--- a/debian/control
++++ b/debian/control
+@@ -8,7 +8,7 @@ Architecture: all
+ Conflicts: slimp3,slimserver,squeezecenter,squeezeboxserver,logitechmediaserver
+ Replaces: slimp3,slimserver,squeezecenter,squeezeboxserver,logitechmediaserver
+-Depends: ${misc:Depends}, perl (>= 5.14.0), adduser, libc6, libgcc1, libstdc++6, zlib1g, libio-socket-ssl-perl, ca-certificates, libcrypt-openssl-rsa-perl, procps, psmisc
++Depends: ${misc:Depends}, perl (>= 5.14.0), adduser, libc6, libgcc1, libstdc++6, zlib1g, libio-socket-ssl-perl, ca-certificates, libcrypt-openssl-rsa-perl, libdbi-perl, libdbd-sqlite3-perl, procps, psmisc
+ Pre-Depends: ${misc:Pre-Depends}
+ Description: Streaming Audio Server
+  Lyrion Music Server is a cross-platform streaming media server that supports a wide range
