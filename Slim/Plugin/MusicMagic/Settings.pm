@@ -45,7 +45,18 @@ sub handler {
 		return undef;
 	}
 
-	$params->{'filters'} = Slim::Plugin::MusicMagic::Common->getFilterList();
+	if ( $params->{'saveSettings'} ) {
+
+		my $selected = $params->{'pref_mix_genre_filter'};
+		my @genres   = ref $selected eq 'ARRAY' ? @$selected : (defined $selected ? ($selected) : ());
+
+		$prefs->set('mix_genre_filter', \@genres);
+	}
+
+	$params->{'filters'}    = Slim::Plugin::MusicMagic::Common->getFilterList();
+	$params->{'genre_list'} = Slim::Plugin::MusicMagic::Common::getGenreList();
+
+	$params->{'prefs'}->{'pref_mix_genre_filter'} = { map { $_ => 1 } @{ $prefs->get('mix_genre_filter') || [] } };
 
 	return $class->SUPER::handler($client, $params);
 }

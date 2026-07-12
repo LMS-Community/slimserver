@@ -78,6 +78,18 @@
 			</select>
 		[% END %]
 
+		[% WRAPPER settingGroup title="SETUP_MIX_GENRE_FILTER" desc="SETUP_MIX_GENRE_FILTER_DESC" %]
+			<select class="stdedit" name="pref_mix_genre_filter" id="mix_genre_filter" multiple="multiple" size="8">
+
+			[% FOREACH genre = genre_list %]
+
+				<option [% IF prefs.pref_mix_genre_filter.item(genre) %]selected [% END %]value="[% genre | html %]">[% genre | html %]</option>
+
+			[%- END -%]
+
+			</select>
+		[% END %]
+
 	[% END %]
 
 	[% WRAPPER settingSection %]

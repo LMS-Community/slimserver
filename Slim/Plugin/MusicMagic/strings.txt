@@ -158,6 +158,42 @@ SETUP_MIX_FILTER_DESC
 	SV	Du kan skapa olika uppsättningar filtervilkor i MusicIP och sedan använda dem med MusicIP Mix i Lyrion Music Server. Välj filter i listan.
 	ZH_CN	您可以利用MusicIP设立过滤器，并且从这表中选择应用在Lyrion Music Server内MusicIP混音的那些过滤器。
 
+SETUP_MIX_GENRE_FILTER
+	CS	Vyloučené žánry
+	DA	Udelukkede genrer
+	DE	Ausgeschlossene Musikstile
+	EN	Excluded Genres
+	ES	Géneros excluidos
+	FI	Poissuljetut genret
+	FR	Genres exclus
+	HE	סגנונות מוחרגים
+	HU	Kizárt műfajok
+	IT	Generi esclusi
+	NL	Uitgesloten genres
+	NO	Ekskluderte sjangre
+	PL	Wykluczone gatunki
+	RU	Исключённые жанры
+	SV	Exkluderade genrer
+	ZH_CN	排除的曲风
+
+SETUP_MIX_GENRE_FILTER_DESC
+	CS	Vyberte jeden nebo více žánrů z vaší hudební knihovny, které chcete vyloučit z MusicIP mixů. Pokud nevyberete žádný, budou povoleny všechny žánry.
+	DA	Vælg en eller flere genrer fra dit musikbibliotek, som skal udelukkes fra MusicIP-miks. Lad intet være valgt for at tillade alle genrer.
+	DE	Wählen Sie eine oder mehrere Musikstile aus Ihrer Musikbibliothek aus, die aus MusicIP-Mixes ausgeschlossen werden sollen. Wenn nichts ausgewählt ist, sind alle Musikstile zulässig.
+	EN	Select one or more genres from your music library to exclude from MusicIP Mixes. Leave nothing selected to allow all genres.
+	ES	Seleccione uno o más géneros de su biblioteca musical para excluirlos de las mezclas de MusicIP. Si no selecciona ninguno, se permitirán todos los géneros.
+	FI	Valitse musiikkikirjastostasi yksi tai useampi genre, jotka suljetaan pois MusicIP-mikseistä. Jos et valitse mitään, kaikki genret ovat sallittuja.
+	FR	Sélectionnez un ou plusieurs genres de votre bibliothèque musicale à exclure des mix MusicIP. Ne sélectionnez rien pour autoriser tous les genres.
+	HE	בחר סגנון אחד או יותר מספריית המוזיקה שלך שיוחרגו ממיקסים של MusicIP. אם לא תבחר דבר, כל הסגנונות יהיו מותרים.
+	HU	Válasszon ki egy vagy több műfajt a zenei könyvtárából, amelyeket ki szeretne zárni a MusicIP-keverékekből. Ha nem választ ki semmit, minden műfaj engedélyezett lesz.
+	IT	Selezionare uno o più generi dalla libreria musicale da escludere dalle raccolte MusicIP. Se non si seleziona nulla, saranno consentiti tutti i generi.
+	NL	Selecteer een of meer genres uit je muziekbibliotheek die je wilt uitsluiten van MusicIP-mixen. Als je niets selecteert, zijn alle genres toegestaan.
+	NO	Velg én eller flere sjangre fra musikkbiblioteket ditt som skal ekskluderes fra MusicIP-mikser. La ingenting være valgt for å tillate alle sjangre.
+	PL	Wybierz jeden lub kilka gatunków z biblioteki muzycznej, które mają być wykluczone ze składanek MusicIP. Jeśli nic nie zostanie wybrane, dozwolone będą wszystkie gatunki.
+	RU	Выберите один или несколько жанров из вашей музыкальной библиотеки, которые нужно исключить из миксов MusicIP. Если ничего не выбрано, разрешены все жанры.
+	SV	Välj en eller flera genrer från ditt musikbibliotek som ska exkluderas från MusicIP-mix. Lämna inget markerat om du vill tillåta alla genrer.
+	ZH_CN	从您的音乐库中选择一个或多个要从MusicIP混音中排除的曲风。如果不选择任何曲风，则允许所有曲风。
+
 SETUP_MIX_GENRE
 	CS	Mix žánru
 	DA	Miks: Genre
