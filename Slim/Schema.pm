@@ -245,6 +245,21 @@ sub init {
 			Slim::Schema::Album->addReleaseTypeStrings;
 		}, [['rescan'], ['done']] );
 	}
+	else {
+		my $mbDuplicates = $dbh->selectall_arrayref("select tracks.url, tracks.title, tracks.musicbrainz_id from tracks where tracks.musicbrainz_id is not NULL and tracks.musicbrainz_id IN (select tracks.musicbrainz_id from tracks group by tracks.musicbrainz_id Having count(*) > 1) order by tracks.musicbrainz_id");
+		my $prevmb;
+		Slim::Utils::Log::logError("MUSICBRAINZ_TRACKID analysis");
+		Slim::Utils::Log::logError("----------------------------");
+		foreach (@$mbDuplicates) {
+			if ($prevmb ne $_->[2]) {
+				Slim::Utils::Log::logError("MUSICBRAINZ_TRACKID=$_->[2]");
+				$prevmb = $_->[2];		
+			}
+			Slim::Utils::Log::logError("     Track Name=$_->[1]");
+			Slim::Utils::Log::logError("     URL=$_->[0]");
+		}
+#Slim::Utils::Log::logError("DK \$mbDuplicates=" . Data::Dump::dump($mbDuplicates));
+	}
 
 	$initialized = 1;
 
