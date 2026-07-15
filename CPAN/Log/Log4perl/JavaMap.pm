@@ -60,6 +60,8 @@ sub translate {
 1;
 
 
+=encoding utf8
+
 =head1 NAME
 
 Log::Log4perl::JavaMap - maps java log4j appenders to Log::Dispatch classes
@@ -127,11 +129,11 @@ These will probably not be implemented
 
 =head1 ROLL YOUR OWN
 
-Let's say you've in a mixed Java/Perl enviroment and you've
+Let's say you've in a mixed Java/Perl environment and you've
 come up with some custom Java appender with behavior you want to 
 use in both worlds, C<myorg.customAppender>.  You write a
 Perl appender with the same behavior C<Myorg::CustomAppender>. You
-want to use one config file accross both applications, so the
+want to use one config file across both applications, so the
 config file will have to say 'myorg.customAppender'.  But
 the mapping from C<myorg.customAppender> to C<Myorg::CustomAppender>
 isn't in this JavaMap class, so what do you do?
@@ -144,17 +146,39 @@ In  your Perl code, before you call Log::Log4perl::init(), do this:
 and you can use 'myorg.customAppender' in your config file with
 impunity.
 
-
-
-=head1 AUTHORS
-
-    Kevin Goess, <cpan@goess.org> 
-    Mike Schilli, <m@perlmeister.com>
-    
-    June, 2002
-
 =head1 SEE ALSO
 
 http://jakarta.apache.org/log4j/docs/
 
-=cut
+=head1 LICENSE
+
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
+
+=head1 AUTHOR
+
+Please contribute patches to the project on Github:
+
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

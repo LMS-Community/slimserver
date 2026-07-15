@@ -26,9 +26,12 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 
 use constant API_URL => 'https://api.listenbrainz.org';
+use constant MAX_FAILURES => 5;  # Maximum number of consecutive failures before giving up on submission
 
 my $log = logger('plugin.audioscrobbler');
 my $prefs = preferences('plugin.audioscrobbler');
+
+my $failures = 0;
 
 sub _apiUrl {
 	my ($self, $url) = @_;
@@ -229,39 +232,62 @@ sub submitScrobbleItems {
 # Success callback for single ListenBrainz item submission
 sub _submitScrobbleOK {
 	my $http = shift;
-	my $cb = $http->params('cb');
 	my $listens = $http->params('listens');
-	my $api_url = $http->params('api_url');
-	my $api_key = $http->params('api_key');
 
 	main::DEBUGLOG && $log->debug("ListenBrainz: Item 1 submitted successfully : " . $http->content);
 
+	$failures = 0;  # Reset failure count on success
 	shift @$listens;  # Remove the first item from the list
 
-	# Submit next item with a small delay to avoid hitting rate limits
-	Slim::Utils::Timers::setTimer(
-		undef,
-		time() + 0.1,  # 100ms delay between submissions
-		sub { submitScrobbleItems($listens, $api_url, $api_key, $cb); }
-	);
+	_rescheduleNextSubmission($http);
 }
 
 # Error callback for single ListenBrainz item submission
 sub _submitScrobbleError {
+	my $http = shift;
+
+	$log->error("ListenBrainz: Failed to submit item 1: " . $http->error);
+
+	$failures++;  # Increment failure count on error
+
+	if ($failures >= MAX_FAILURES) {
+		$log->error("ListenBrainz: Maximum consecutive failures reached ($failures). Giving up on submission.");
+		$failures = 0;  # Reset failure count
+		my $cb = $http->params('cb');
+		$cb->() if $cb;
+		return;
+	}
+
+	_rescheduleNextSubmission($http);
+}
+
+sub _rescheduleNextSubmission {
+	my ($http) = @_;
+
+	my $delay = 0.1;  # Default delay between submissions
+	my $xRateLimitRemaining = $http->headers && $http->headers->header('X-RateLimit-Remaining');
+
+	if (($http->error && $http->error =~ /429/) || (defined $xRateLimitRemaining && int($xRateLimitRemaining) <= 0)) {
+		$delay = int($http->headers && $http->headers->header('X-RateLimit-Reset-In')) || 2;  # Delay longer on error to avoid hammering the API
+	}
+
+	# Submit next item with a small delay to avoid hitting rate limits
+	Slim::Utils::Timers::killTimers($http, \&_submitScrobbleItems);
+	Slim::Utils::Timers::setTimer(
+		$http,
+		time() + $delay,
+		\&_submitScrobbleItems,
+	);
+}
+
+sub _submitScrobbleItems {
 	my $http = shift;
 	my $cb = $http->params('cb');
 	my $listens = $http->params('listens');
 	my $api_url = $http->params('api_url');
 	my $api_key = $http->params('api_key');
 
-	$log->error("ListenBrainz: Failed to submit item 1: " . $http->error);
-
-	# Continue with next item even if this one failed
-	Slim::Utils::Timers::setTimer(
-		undef,
-		time() + 0.1,  # 100ms delay between submissions
-		sub { submitScrobbleItems($listens, $api_url, $api_key, $cb); }
-	);
+	submitScrobbleItems($listens, $api_url, $api_key, $cb);
 }
 
 sub validate {

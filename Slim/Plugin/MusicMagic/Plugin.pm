@@ -33,7 +33,6 @@ use Slim::Utils::Favorites;
 use constant MENU_WEIGHT => 95;
 
 my $initialized = 0;
-my $MMSport;
 my $canPowerSearch;
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -143,9 +142,9 @@ sub initPlugin {
 	# but continue if it had never been initialized
 	return unless $enabled || !defined $enabled;
 
-	my $response = _syncHTTPRequest("/api/version");
+	my $response = _syncHTTPRequest("/version");
 
-	main::INFOLOG && $log->info("Testing for API on localhost:$MMSport");
+	main::INFOLOG && $log->info("Testing for API on " . Slim::Plugin::MusicMagic::Common::getBaseUrl());
 
 	if ($response->is_error) {
 
@@ -153,7 +152,7 @@ sub initPlugin {
 
 		$prefs->set('musicip', 0) if !defined $enabled;
 
-		$log->error("Can't connect to port $MMSport - MusicIP disabled.");
+		$log->error("Can't connect to " . Slim::Plugin::MusicMagic::Common::getBaseUrl() . " - MusicIP disabled.");
 
 	} else {
 
@@ -169,7 +168,7 @@ sub initPlugin {
 		$prefs->set('musicip', scalar @{ Slim::Utils::Misc::getAudioDirs() } ? 2 : 1)  if !defined $enabled;
 
 		# this query should return an API error if Power Search is not available
-		$response = _syncHTTPRequest("/api/mix?filter=?length>120&length=1");
+		$response = _syncHTTPRequest("/mix?filter=?length>120&length=1");
 
 		if ($response->is_success && $response->content !~ /MusicIP API error/i) {
 			$canPowerSearch = 1;
@@ -419,7 +418,7 @@ sub isMusicLibraryFileChanged {
 		},
 	);
 
-	$http->get( "http://localhost:$MMSport/api/cacheid?contents" );
+	$http->get( Slim::Plugin::MusicMagic::Common::getBaseUrl() . '/cacheid?contents' );
 }
 
 sub _statusOK {
@@ -524,7 +523,7 @@ sub _cacheidOK {
 		},
 	);
 
-	$http->get( "http://localhost:$MMSport/api/getStatus" );
+	$http->get( Slim::Plugin::MusicMagic::Common::getBaseUrl() . '/getStatus' );
 }
 
 sub _musicipError {
@@ -565,7 +564,7 @@ sub grabMoods {
 		return;
 	}
 
-	my $response = _syncHTTPRequest('/api/moods');
+	my $response = _syncHTTPRequest('/moods');
 
 	if ($response->is_success) {
 
@@ -880,9 +879,9 @@ sub getMix {
 		$validMixTypes{$for} . '=' . Slim::Plugin::MusicMagic::Common::escape($id);
 	} @ids);
 
-	main::DEBUGLOG && $log->debug("Request http://localhost:$MMSport/api/mix?$mixArgs\&$argString");
+	main::DEBUGLOG && $log->debug("Request " . Slim::Plugin::MusicMagic::Common::getBaseUrl() . "/mix?$mixArgs\&$argString");
 
-	my $response = _syncHTTPRequest("/api/mix?$mixArgs\&$argString");
+	my $response = _syncHTTPRequest("/mix?$mixArgs\&$argString");
 
 	if ($response->is_error) {
 
@@ -894,7 +893,7 @@ sub getMix {
 
 			$log->warn("No mix returned with filter involved - we might want to try without it");
 			$argString =~ s/filter=/xfilter=/;
-			$response = _syncHTTPRequest("/api/mix?$mixArgs\&$argString");
+			$response = _syncHTTPRequest("/mix?$mixArgs\&$argString");
 
 			Slim::Plugin::MusicMagic::Common->grabFilters();
 		}
@@ -1419,13 +1418,11 @@ sub _objectInfoHandler {
 sub _syncHTTPRequest {
 	my $url = shift;
 
-	$MMSport = $prefs->get('port') unless $MMSport;
-
 	my $http = LWP::UserAgent->new;
 
 	$http->timeout($prefs->get('timeout') || 5);
 
-	return $http->get("http://localhost:$MMSport$url");
+	return $http->get(Slim::Plugin::MusicMagic::Common::getBaseUrl() . $url);
 }
 
 # This method is used for the in-process rescanner to update mixable status
@@ -1437,7 +1434,7 @@ sub checkSingleTrack {
 	Slim::Plugin::MusicMagic::Importer->initPlugin();
 
 	my $path   = Slim::Utils::Misc::pathFromFileURL($url);
-	my $apiurl = "http://localhost:$MMSport/api/getSong?file=" . uri_escape_utf8($path);
+	my $apiurl = Slim::Plugin::MusicMagic::Common::getBaseUrl() . '/getSong?file=' . uri_escape_utf8($path);
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		sub {

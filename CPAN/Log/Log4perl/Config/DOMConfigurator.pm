@@ -11,7 +11,7 @@ our @ISA = qw(Log::Log4perl::Config::BaseConfigurator);
 # DONE in Config.pm re URL loading, steal from XML::DOM
 # DONE, OK see PropConfigurator re importing unlog4j, eval_if_perl
 # NO (is specified in DTD) - need to handle 0/1, true/false?
-# DONEsee Config, need to check version of XML::DOM
+# DONE see Config, need to check version of XML::DOM
 # OK user defined levels? see parse_level
 # OK make sure 2nd test is using log4perl constructs, not log4j
 # OK handle new filter stuff
@@ -111,7 +111,7 @@ sub parse {
 }
 
 #this is just for toplevel log4perl.PatternLayout tags
-#holding the custome cspecs
+#holding the custom cspecs
 sub parse_patternlayout {
     my ($l4p_tree, $node) = @_;
 
@@ -512,7 +512,7 @@ sub parse_boolean {
 sub subst {
     my $val = shift;
 
-    $val =~ s/\${(.*?)}/
+    $val =~ s/\$\{(.*?)}/
                       Log::Log4perl::Config::var_subst($1, {})/gex;
     return $val;
 }
@@ -520,6 +520,8 @@ sub subst {
 1;
 
 __END__
+
+=encoding utf8
 
 =head1 NAME
 
@@ -788,7 +790,7 @@ replaced three elements:
 
 handles #1) and accepts <PatternLayout>
 
-=item  <log4perl:appender> 
+=item <log4perl:appender> 
 
 accepts <param-nested> and <param-text>
 
@@ -872,12 +874,39 @@ Log::Log4perl::Config::PropertyConfigurator
 
 Log::Log4perl::Config::LDAPConfigurator (coming soon!)
 
-=head1 AUTHOR
-
-Kevin Goess, <cpan@goess.org> Jan-2003
-
 The code is brazenly modeled on log4j's DOMConfigurator class, (by 
 Christopher Taylor, Ceki Gülcü, and Anders Kristensen) and any
 perceived similarity is not coincidental.
 
-=cut
+=head1 LICENSE
+
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
+
+=head1 AUTHOR
+
+Please contribute patches to the project on Github:
+
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

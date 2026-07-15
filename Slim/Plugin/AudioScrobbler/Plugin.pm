@@ -176,7 +176,7 @@ sub setMode {
 	my $accounts = getAccounts($client);
 
 	for my $account ( @{$accounts} ) {
-		push @{$listRef}, $account->{username};
+		push @{$listRef}, getAccountId($account);
 	}
 
 	Slim::Buttons::Common::pushModeLeft( $client, 'INPUT.List', {
@@ -746,7 +746,7 @@ sub canScrobble {
 }
 
 sub getAccounts {
-	return $prefs->get('accounts') || [];
+	return \@{ $prefs->get('accounts') || [] };
 }
 
 sub getAccount {
@@ -758,10 +758,17 @@ sub getAccount {
 
 	my $accounts = getAccounts($client) || return;
 
-	my ($account) = grep { $_->{username} eq $username } @{$accounts};
+	my ($account) = grep { getAccountId($_) eq $username } @$accounts;
+
+	main::INFOLOG && $log->is_info && $log->info("getAccount: username=$username, account=" . ($account ? ($account->{username} . '->' . $account->{api_type}) : 'undef'));
+
 	return $account;
 }
 
+sub getAccountId {
+	my $account = shift;
+	return sprintf("%s::%s::%s", $account->{username}, $account->{api_type}, $account->{api_url});
+}
 
 sub getQueue {
 	my $client = shift;
@@ -856,14 +863,14 @@ sub jiveSettingsMenu {
 
 	for my $account (@$accounts) {
 		my $item = {
-			text    => $account->{username},
+			text    => sprintf('%s (%s)', $account->{username}, cstring($client, 'PLUGIN_AUDIOSCROBBLER_' . uc($account->{api_type}))),
 			radio   => ($selected eq $account->{username} && $enabled) + 0,
 			actions => {
 				do => {
 					player => 0,
 					cmd    => [ 'audioscrobbler' , 'account' ],
 					params => {
-						user => $account->{username},
+						user => getAccountId($account),
 					},
 				},
 			},

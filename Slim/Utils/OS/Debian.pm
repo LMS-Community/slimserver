@@ -111,6 +111,9 @@ sub installerExtension { 'deb' };
 sub installerOS {
 	my $class = shift;
 
+	# Old perl versions that are no longer supported in platform specific packages - sync with list in platforms/buildme.pl
+	return 'deb' if $^V lt v5.28.0;
+
 	if ( $class->{osDetails}->{osArch} =~ /^(arm|aarch64)/i ) {
 		return 'debarm';
 	}

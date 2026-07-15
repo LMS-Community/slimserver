@@ -13,8 +13,7 @@ use warnings;
 
 our @ISA = qw(Log::Log4perl::Appender);
 
-our $CVSVERSION   = '$Revision: 1.2 $';
-our ($VERSION)    = ($CVSVERSION =~ /(\d+\.\d+)/);
+our $VERSION    = '1.53';
 
 ###########################################
 sub new {
@@ -54,19 +53,25 @@ sub log {
 ###########################################
     my($self, %params) = @_;
 
+    local $Log::Log4perl::caller_depth =
+        $Log::Log4perl::caller_depth + 2;
+
         # Do we need to discard a message because there's already
         # max_size messages in the buffer?
     if(defined $self->{max_messages} and
        @{$self->{buffer}} == $self->{max_messages}) {
         shift @{$self->{buffer}};
     }
+        # Ask the appender to save a cached message in $cache
+    $self->{app}->SUPER::log(\%params,
+                         $params{log4p_category},
+                         $params{log4p_level}, \my $cache);
 
-        # Save event time for later
-    $params{log4p_logtime} = $self->{app}->{layout}->{time_function}->() if
-       exists $self->{app}->{layout}->{time_function};
-
-        # Save message and other parameters
-    push @{$self->{buffer}}, \%params;
+        # Save it in the appender's message buffer, but only if
+        # it hasn't been suppressed by an appender threshold
+    if( defined $cache ) {
+        push @{ $self->{buffer} }, $cache;
+    }
 
     $self->flush() if $self->{trigger}->($self, \%params);
 }
@@ -76,15 +81,9 @@ sub flush {
 ###########################################
     my($self) = @_;
 
-        # Log pending messages if we have any
-    for(@{$self->{buffer}}) {
-            # Trick the renderer into using the original event time
-        local $self->{app}->{layout}->{time_function};
-        $self->{app}->{layout}->{time_function} =
-                                    sub { $_->{log4p_logtime} };
-        $self->{app}->SUPER::log($_,
-                                 $_->{log4p_category},
-                                 $_->{log4p_level});
+        # Flush pending messages if we have any
+    for my $cache (@{$self->{buffer}}) {
+        $self->{app}->SUPER::log_cached($cache);
     }
 
         # Empty buffer
@@ -136,9 +135,11 @@ sub DESTROY {
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
-    Log::Log4perl::Appender::Buffer - Buffering Appender
+Log::Log4perl::Appender::Buffer - Buffering Appender
 
 =head1 SYNOPSIS
 
@@ -243,12 +244,35 @@ Custom filters are also applied to the composite appender only.
 They are I<not> applied to the sub-appender. Same applies to appender
 thresholds. This behaviour might change in the future.
 
-=head1 LEGALESE
+=head1 LICENSE
 
-Copyright 2004 by Mike Schilli, all rights reserved.
-This program is free software, you can redistribute it and/or
-modify it under the same terms as Perl itself.
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
 
 =head1 AUTHOR
 
-2004, Mike Schilli <m@perlmeister.com>
+Please contribute patches to the project on Github:
+
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

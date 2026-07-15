@@ -15,8 +15,7 @@ use Log::Log4perl::Util::Semaphore;
 
 our @ISA = qw(Log::Log4perl::Appender);
 
-our $CVSVERSION   = '$Revision: 1.12 $';
-our ($VERSION)    = ($CVSVERSION =~ /(\d+\.\d+)/);
+our $VERSION    = '1.53';
 
 ###########################################
 sub new {
@@ -93,9 +92,11 @@ sub post_init {
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
-    Log::Log4perl::Appender::Synchronized - Synchronizing other appenders
+Log::Log4perl::Appender::Synchronized - Synchronizing other appenders
 
 =head1 SYNOPSIS
 
@@ -256,12 +257,35 @@ Custom filters are also applied to the composite appender only.
 They are I<not> applied to the sub-appender. Same applies to appender
 thresholds. This behaviour might change in the future.
 
-=head1 LEGALESE
+=head1 LICENSE
 
-Copyright 2003 by Mike Schilli, all rights reserved.
-This program is free software, you can redistribute it and/or
-modify it under the same terms as Perl itself.
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
 
 =head1 AUTHOR
 
-2003, Mike Schilli <m@perlmeister.com>
+Please contribute patches to the project on Github:
+
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

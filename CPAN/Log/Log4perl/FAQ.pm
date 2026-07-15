@@ -2,14 +2,16 @@
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
 Log::Log4perl::FAQ - Frequently Asked Questions on Log::Log4perl
 
 =head1 DESCRIPTION
 
-This FAQ shows a wide variety of 
-commonly encountered logging tasks and how to solve them 
+This FAQ shows a wide variety of
+commonly encountered logging tasks and how to solve them
 in the most elegant way with Log::Log4perl. Most of the time, this will
 be just a matter of smartly configuring your Log::Log4perl configuration files.
 
@@ -32,7 +34,7 @@ logging in selected parts of the application, and not all across the
 board, because this kills performance. This is when people turn to
 Log::Log4perl, because it handles all of that.
 
-Avoid this costly switch. 
+Avoid this costly switch.
 
 Use C<Log::Log4perl> right from the start. C<Log::Log4perl>'s C<:easy>
 mode supports easy logging in simple scripts:
@@ -53,7 +55,7 @@ but will enter soon.
 =head2 What's the easiest way to use Log4perl?
 
 If you just want to get all the comfort of logging, without much
-overhead, use I<Stealth Loggers>. If you use Log::Log4perl in 
+overhead, use I<Stealth Loggers>. If you use Log::Log4perl in
 C<:easy> mode like
 
     use Log::Log4perl qw(:easy);
@@ -72,10 +74,10 @@ Every stealth logger's category will be equivalent to the name of the
 package it's located in.
 
 These stealth loggers
-will be absolutely silent until you initialize Log::Log4perl in 
-your main program with either 
+will be absolutely silent until you initialize Log::Log4perl in
+your main program with either
 
-        # Define any Log4perl behaviour
+        # Define any Log4perl behavior
     Log::Log4perl->init("foo.conf");
 
 (using a full-blown Log4perl config file) or the super-easy method
@@ -94,7 +96,7 @@ For more info, please check out L<Log::Log4perl/"Stealth Loggers">.
 =head2 How can I simply log all my ERROR messages to a file?
 
 After pulling in the C<Log::Log4perl> module, just initialize its
-behaviour by passing in a configuration to its C<init> method as a string
+behavior by passing in a configuration to its C<init> method as a string
 reference. Then, obtain a logger instance and write out a message
 with its C<error()> method:
 
@@ -109,7 +111,7 @@ with its C<error()> method:
         log4perl.appender.FileApp.layout.ConversionPattern = %d> %m%n
     );
 
-        # Initialize logging behaviour
+        # Initialize logging behavior
     Log::Log4perl->init( \$conf );
 
         # Obtain a logger instance
@@ -121,19 +123,19 @@ This will append something like
 
     2002/10/29 20:11:55> Oh my, a dreadful error!
 
-to the log file C<test.log>. How does this all work? 
+to the log file C<test.log>. How does this all work?
 
-While the Log::Log4perl C<init()> method typically 
+While the Log::Log4perl C<init()> method typically
 takes the name of a configuration file as its input parameter like
 in
 
     Log::Log4perl->init( "/path/mylog.conf" );
 
-the example above shows how to pass in a configuration as text in a 
+the example above shows how to pass in a configuration as text in a
 scalar reference.
 
 The configuration as shown
-defines a logger of the root category, which has an appender of type 
+defines a logger of the root category, which has an appender of type
 C<Log::Log4perl::Appender::File> attached. The line
 
     log4perl.logger = ERROR, FileApp
@@ -143,9 +145,9 @@ doesn't list a category, defining a root logger. Compare that with
     log4perl.logger.Bar.Twix = ERROR, FileApp
 
 which would define a logger for the category C<Bar::Twix>,
-showing probably different behaviour. C<FileApp> on
+showing probably different behavior. C<FileApp> on
 the right side of the assignment is
-an arbitrarily defined variable name, which is only used to somehow 
+an arbitrarily defined variable name, which is only used to somehow
 reference an appender defined later on.
 
 Appender settings in the configuration are defined as follows:
@@ -172,16 +174,16 @@ a space before the messages, which is then followed by a newline:
 
 Obtaining a logger instance and actually logging something is typically
 done in a different system part as the Log::Log4perl initialisation section,
-but in this example, it's just done right after init for the 
+but in this example, it's just done right after init for the
 sake of compactness:
 
         # Obtain a logger instance
     my $logger = get_logger("Bar::Twix");
     $logger->error("Oh my, a dreadful error!");
 
-This retrieves an instance of the logger of the category C<Bar::Twix>, 
-which, as all other categories, inherits behaviour from the root logger if no
-other loggers are defined in the initialization section. 
+This retrieves an instance of the logger of the category C<Bar::Twix>,
+which, as all other categories, inherits behavior from the root logger if no
+other loggers are defined in the initialization section.
 
 The C<error()>
 method fires up a message, which the root logger catches. Its
@@ -196,54 +198,14 @@ doesn't make it through, because the root logger sports a higher setting
 
 =head2 How can I install Log::Log4perl on Microsoft Windows?
 
-Log::Log4perl is fully supported on the Win32 platform. It has been tested 
-with Activestate perl 5.6.1 under Windows 98 and rumor has it that it
-also runs smoothly on all other major flavors (Windows NT, 2000, XP, etc.).
+You can install Log::Log4perl using the CPAN client.
 
-It also runs nicely with ActiveState 5.8.0, and, believe me, 
-we had to jump through some major hoops for that.
+Alternatively you can install it using
 
-Typically, Win32 systems don't have the C<make> utility installed,
-so the standard C<perl Makefile.PL; make install> on the downloadable
-distribution won't work. But don't despair, there's a very easy solution!
+    ppm install Log-Log4perl
 
-The C<Log::Log4perl> homepage provides a so-called PPD file for ActiveState's
-C<ppm> installer, which comes with ActiveState perl by default.
+if you're using ActiveState perl.
 
-=over 4
-
-=item Install on ActiveState 5.6.*
-
-The DOS command line
-
-    ppm install "http://log4perl.sourceforge.net/ppm/Log-Log4perl.ppd"
-
-will contact the Log4perl homepage, download the latest
-C<Log::Log4perl>
-distribution and install it. If your ActiveState installation
-lacks any of the modules C<Log::Log4perl> depends upon, C<ppm> will 
-automatically contact ActivateState and download them from their CPAN-like
-repository.
-
-=item Install on ActiveState 5.8.*
-
-ActiveState's "Programmer's Package Manager" can be called from
-Window's Start Menu:
-Start-E<gt>Programs->E<gt>ActiveState ActivePerl 5.8E<gt>Perl Package Manager
-will invoke ppm. Since Log::Log4perl hasn't made it yet into the standard
-ActiveState repository (and you probably don't want their outdated packages
-anyway), just tell ppm the first time you call it to add the Log4perl 
-repository
-
-    ppm> repository add http://log4perl.sourceforge.net/ppm
-
-Then, just tell it to install Log::Log4perl and it will resolve all
-dependencies automatically and fetch them from log4perl.sourceforge.net
-if it can't find them in the main archives:
-
-    ppm> install Log-Log4perl
-
-=back
 
 That's it! Afterwards, just create a Perl script like
 
@@ -253,12 +215,12 @@ That's it! Afterwards, just create a Perl script like
     my $logger = get_logger("Twix::Bar");
     $logger->debug("Watch me!");
 
-and run it. It should print something like 
+and run it. It should print something like
 
     2002/11/06 01:22:05 Watch me!
 
 If you find that something doesn't work, please let us know at
-log4perl-devel@lists.sourceforge.net -- we'll apprechiate it. Have fun!
+log4perl-devel@lists.sourceforge.net -- we'll appreciate it. Have fun!
 
 =head2 How can I include global (thread-specific) data in my log messages?
 
@@ -276,7 +238,7 @@ in the configuration file:
     log4perl.appender.FileApp.layout.ConversionPattern = %X{ip} %m%n
 
 The conversion specifier C<%X{ip}> references an entry under the key
-C<ip> in the global C<MDC> (mapped diagnostic context) table, which 
+C<ip> in the global C<MDC> (mapped diagnostic context) table, which
 you've set once via
 
     Log::Log4perl::MDC->put("ip", $r->connection->remote_ip);
@@ -292,7 +254,7 @@ model in 5.8.0 doesn't share global variables between threads unless
 they're explicitly marked as such, there's no problem with multi-threaded
 environments.
 
-For more details on the MDC, please refer to 
+For more details on the MDC, please refer to
 L<Log::Log4perl/"Mapped Diagnostic Context (MDC)"> and
 L<Log::Log4perl::MDC>.
 
@@ -309,7 +271,7 @@ Assuming that you already have a Log4perl configuration file like
 
 and log statements all over your code,
 it's very easy with Log4perl to have the same messages both printed to
-the logfile and the screen. No reason to change your code, of course, 
+the logfile and the screen. No reason to change your code, of course,
 just add another appender to the configuration file and you're done:
 
     log4perl.logger                    = DEBUG, FileApp, ScreenApp
@@ -329,9 +291,9 @@ active in the same logger hierarchy, in this case the C<root> category.
 But even if you've got file loggers defined in several parts of your system,
 belonging to different logger categories,
 each logging to different files, you can gobble up all logged messages
-by defining a root logger with a screen appender, which would duplicate 
-messages from all your file loggers to the screen due to Log4perl's 
-appender inheritance. Check 
+by defining a root logger with a screen appender, which would duplicate
+messages from all your file loggers to the screen due to Log4perl's
+appender inheritance. Check
 
     http://www.perl.com/pub/a/2002/09/11/log4perl.html
 
@@ -350,9 +312,9 @@ just use Log::Log4perl's fatal functions instead:
     open FILE, "<blah" or $log->logdie("Can't open blah -- bailing out!");
 
 This will both log the message with priority FATAL according to your current
-Log::Log4perl configuration and then call Perl's C<die()> 
-afterwards to terminate the program. It works the same with 
-stealth loggers (see L<Log::Log4perl/"Stealth Loggers">), 
+Log::Log4perl configuration and then call Perl's C<die()>
+afterwards to terminate the program. It works the same with
+stealth loggers (see L<Log::Log4perl/"Stealth Loggers">),
 all you need to do is call
 
     use Log::Log4perl qw(:easy);
@@ -370,14 +332,15 @@ C<$SIG{__DIE__}> pseudo signal handler
             # this message but catch it later
             return;
         }
-        $Log::Log4perl::caller_depth++;
+        local $Log::Log4perl::caller_depth =
+              $Log::Log4perl::caller_depth + 1;
         my $logger = get_logger("");
         $logger->fatal(@_);
         die @_; # Now terminate really
     };
 
 This will catch every C<die()>-Exception of your
-application or the modules it uses. In case you want to 
+application or the modules it uses. In case you want to
 It
 will fetch a root logger and pass on the C<die()>-Message to it.
 If you make sure you've configured with a root logger like this:
@@ -393,37 +356,38 @@ If you make sure you've configured with a root logger like this:
 
 then all C<die()> messages will be routed to a file properly. The line
 
-     $Log::Log4perl::caller_depth++;
+     local $Log::Log4perl::caller_depth =
+           $Log::Log4perl::caller_depth + 1;
 
 in the pseudo signal handler above merits a more detailed explanation. With
-the setup above, if a module calls C<die()> in one of its functions, 
+the setup above, if a module calls C<die()> in one of its functions,
 the fatal message will be logged in the signal handler and not in the
 original function -- which will cause the %F, %L and %M placeholders
 in the pattern layout to be replaced by the filename, the line number
 and the function/method name of the signal handler, not the error-throwing
-module. To adjust this, Log::Log4perl has the C<$caller_depth> variable, 
+module. To adjust this, Log::Log4perl has the C<$caller_depth> variable,
 which defaults to 0, but can be set to positive integer values
 to offset the caller level. Increasing
 it by one will cause it to log the calling function's parameters, not
-the ones of the signal handler. 
+the ones of the signal handler.
 See L<Log::Log4perl/"Using Log::Log4perl from wrapper classes"> for more
 details.
 
 =head2 How can I hook up the LWP library with Log::Log4perl?
 
 Or, to put it more generally: How can you utilize a third-party
-library's embedded logging and debug statements in Log::Log4perl? 
+library's embedded logging and debug statements in Log::Log4perl?
 How can you make them print
-to configurable appenders, turn them on and off, just as if they 
+to configurable appenders, turn them on and off, just as if they
 were regular Log::Log4perl logging statements?
 
 The easiest solution is to map the third-party library logging statements
 to Log::Log4perl's stealth loggers via a typeglob assignment.
 
-As an example, let's take LWP, one of the most popular Perl modules, 
+As an example, let's take LWP, one of the most popular Perl modules,
 which makes handling WWW requests and responses a breeze.
-Internally, LWP uses its own logging and debugging system, 
-utilizing the following calls 
+Internally, LWP uses its own logging and debugging system,
+utilizing the following calls
 inside the LWP code (from the LWP::Debug man page):
 
         # Function tracing
@@ -435,13 +399,13 @@ inside the LWP code (from the LWP::Debug man page):
         # Data going over the wire
     LWP::Debug::conns("read $n bytes: $data");
 
-First, let's assign Log::Log4perl priorities 
+First, let's assign Log::Log4perl priorities
 to these functions: I'd suggest that
-C<debug()> messages have priority C<INFO>, 
-C<trace()> uses C<DEBUG> and C<conns()> also logs with C<DEBUG> -- 
+C<debug()> messages have priority C<INFO>,
+C<trace()> uses C<DEBUG> and C<conns()> also logs with C<DEBUG> --
 although your mileage may certainly vary.
 
-Now, in order to transpartently hook up LWP::Debug with Log::Log4perl,
+Now, in order to transparently hook up LWP::Debug with Log::Log4perl,
 all we have to do is say
 
     package LWP::Debug;
@@ -454,8 +418,8 @@ all we have to do is say
     package main;
     # ... go on with your regular program ...
 
-at the beginning of our program. In this way, every time the, say, 
-C<LWP::UserAgent> module calls C<LWP::Debug::trace()>, it will implicitely 
+at the beginning of our program. In this way, every time the, say,
+C<LWP::UserAgent> module calls C<LWP::Debug::trace()>, it will implicitly
 call INFO(), which is the C<info()> method of a stealth logger defined for
 the Log::Log4perl category C<LWP::Debug>. Is this cool or what?
 
@@ -482,7 +446,7 @@ Here's a complete program:
     my $resp = $ua->request(GET "http://amazon.com");
 
     if($resp->is_success()) {
-        print "Success: Received ", 
+        print "Success: Received ",
               length($resp->content()), "\n";
     } else {
         print "Error: ", $resp->code(), "\n";
@@ -498,13 +462,13 @@ This will generate the following output on STDERR:
     859 DEBUG LWP::Protocol::collect-206 read 233 bytes
     863 DEBUG LWP::UserAgent::request-443 Simple response: Found
     869 INFO LWP::UserAgent::request-436 ()
-    871 INFO LWP::UserAgent::send_request-294 
+    871 INFO LWP::UserAgent::send_request-294
      GET http://www.amazon.com:80/exec/obidos/gateway_redirect
     872 DEBUG LWP::UserAgent::_need_proxy-1123 Not proxied
     873 INFO LWP::Protocol::http::request-122 ()
     1016 DEBUG LWP::UserAgent::request-443 Simple response: Found
     1020 INFO LWP::UserAgent::request-436 ()
-    1022 INFO LWP::UserAgent::send_request-294 
+    1022 INFO LWP::UserAgent::send_request-294
      GET http://www.amazon.com/exec/obidos/subst/home/home.html/
     1023 DEBUG LWP::UserAgent::_need_proxy-1123 Not proxied
     1024 INFO LWP::Protocol::http::request-122 ()
@@ -519,13 +483,13 @@ LWP can be utilized in any Log::Log4perl way you can think of. You can
 have them sent to different appenders, block them based on the
 category and everything else Log::Log4perl has to offer.
 
-Only drawback of this method: Steering logging behaviour via category 
+Only drawback of this method: Steering logging behavior via category
 is always based on the C<LWP::Debug> package. Although the logging
-statements reflect the package name of the issuing module properly, 
+statements reflect the package name of the issuing module properly,
 the stealth loggers in C<LWP::Debug> are all of the category C<LWP::Debug>.
-This implies that you can't control the logging behaviour based on the
+This implies that you can't control the logging behavior based on the
 package that's I<initiating> a log request (e.g. LWP::UserAgent) but only
-based on the package that's actually I<executing> the logging statement, 
+based on the package that's actually I<executing> the logging statement,
 C<LWP::Debug> in this case.
 
 To work around this conundrum, we need to write a wrapper function and
@@ -559,7 +523,7 @@ This hierarchy shift has to be compensated for by increasing
 C<$Log::Log4perl::caller_depth> by 2 before calling the log function
 and decreasing it by 2 right afterwards. Also, the C<l4p_wrapper>
 function shown above calls C<caller(1)> which determines the name
-of the package I<two> levels down the calling hierarchy (and 
+of the package I<two> levels down the calling hierarchy (and
 therefore compensates for both the wrapper function and the
 anonymous subroutine calling it).
 
@@ -569,15 +533,15 @@ upon redefining C<LWP::Debug>'s C<trace()>, C<debug()> and C<conns()>
 functions. In case you use a perl prior to 5.6.x, you need
 to manipulate C<$^W> instead.
 
-To make things easy for you when dealing with LWP, Log::Log4perl 0.47 
+To make things easy for you when dealing with LWP, Log::Log4perl 0.47
 introduces C<Log::Log4perl-E<gt>infiltrate_lwp()> which does exactly the
 above.
 
 =head2 What if I need dynamic values in a static Log4perl configuration file?
 
-Say, your application uses Log::Log4perl for logging and 
+Say, your application uses Log::Log4perl for logging and
 therefore comes with a Log4perl configuration file, specifying the logging
-behaviour.
+behavior.
 But, you also want it to take command line parameters to set values
 like the name of the log file.
 How can you have
@@ -656,7 +620,7 @@ shouldn't have execute rights, you might want to call
 
 before you call init(). This will prevent Log::Log4perl from
 executing I<any> Perl code in the config file (including
-code for custom conversion specifiers 
+code for custom conversion specifiers
 (see L<Log::Log4perl::Layout::PatternLayout/"Custom cspecs">).
 
 =head2 How can I roll over my logfiles automatically at midnight?
@@ -666,35 +630,35 @@ For backup and cleanup purposes, however, it is often desirable to move
 the current logfile to a different location from time to time and
 start writing a new one.
 
-This is a non-trivial task, because it has to happen in sync with 
+This is a non-trivial task, because it has to happen in sync with
 the logging system in order not to lose any messages in the process.
 
 Luckily, I<Mark Pfeiffer>'s C<Log::Dispatch::FileRotate> appender
 works well with Log::Log4perl to rotate your logfiles in a variety of ways.
 
 Note, however, that having the application deal with rotating a log
-file is not cheap. Among other things, it requires locking the log file 
+file is not cheap. Among other things, it requires locking the log file
 with every write to avoid race conditions.
 There are good reasons to use external rotators like C<newsyslog>
 instead.
 See the entry C<How can I rotate a logfile with newsyslog?> in the
 FAQ for more information on how to configure it.
 
-When using C<Log::Dispatch::FileRotate>, 
+When using C<Log::Dispatch::FileRotate>,
 all you have to do is specify it in your Log::Log4perl configuration file
 and your logfiles will be rotated automatically.
 
 You can choose between rolling based on a maximum size ("roll if greater
 than 10 MB") or based on a date pattern ("roll everyday at midnight").
-In both cases, C<Log::Dispatch::FileRotate> allows you to define a 
+In both cases, C<Log::Dispatch::FileRotate> allows you to define a
 number C<max> of saved files to keep around until it starts overwriting
 the oldest ones. If you set the C<max> parameter to 2 and the name of
 your logfile is C<test.log>, C<Log::Dispatch::FileRotate> will
 move C<test.log> to C<test.log.1> on the first rollover. On the second
 rollover, it will move C<test.log.1> to C<test.log.2> and then C<test.log>
-to C<test.log.1>. On the third rollover, it will move C<test.log.1> to 
-C<test.log.2> (therefore discarding the old C<test.log.2>) and 
-C<test.log> to C<test.log.1>. And so forth. This way, there's always 
+to C<test.log.1>. On the third rollover, it will move C<test.log.1> to
+C<test.log.2> (therefore discarding the old C<test.log.2>) and
+C<test.log> to C<test.log.1>. And so forth. This way, there's always
 going to be a maximum of 2 saved log files around.
 
 Here's an example of a Log::Log4perl configuration file, defining a
@@ -708,8 +672,8 @@ a maximum of 5 saved logfiles around:
     log4perl.appender.Logfile.DatePattern = yyyy-MM-dd
     log4perl.appender.Logfile.TZ          = PST
     log4perl.appender.Logfile.layout = \
-        Log::Log4perl::Layout::PatternLayout 
-    log4perl.appender.Logfile.layout.ConversionPattern = %d %m %n 
+        Log::Log4perl::Layout::PatternLayout
+    log4perl.appender.Logfile.layout.ConversionPattern = %d %m %n
 
 Please see the C<Log::Dispatch::FileRotate> documentation for details.
 C<Log::Dispatch::FileRotate> is available on CPAN.
@@ -717,8 +681,8 @@ C<Log::Dispatch::FileRotate> is available on CPAN.
 =head2 What's the easiest way to turn off all logging, even with a lengthy Log4perl configuration file?
 
 In addition to category-based levels and appender thresholds,
-Log::Log4perl supports system-wide logging thresholds. This is the 
-minimum level the system will require of any logging events in order for them 
+Log::Log4perl supports system-wide logging thresholds. This is the
+minimum level the system will require of any logging events in order for them
 to make it through to any configured appenders.
 
 For example, putting the line
@@ -726,11 +690,11 @@ For example, putting the line
     log4perl.threshold = ERROR
 
 anywhere in your configuration file will limit any output to any appender
-to events with priority of ERROR or higher (ERROR or FATAL that is). 
+to events with priority of ERROR or higher (ERROR or FATAL that is).
 
 However, in order to suppress all logging entirely, you need to use a
 priority that's higher than FATAL: It is simply called C<OFF>, and it is never
-used by any logger. By definition, it is higher than the highest 
+used by any logger. By definition, it is higher than the highest
 defined logger level.
 
 Therefore, if you keep the line
@@ -738,17 +702,49 @@ Therefore, if you keep the line
     log4perl.threshold = OFF
 
 somewhere in your Log::Log4perl configuration, the system will be quiet
-as a graveyard. If you deactivate the line (e.g. by commenting it out), 
-the system will, upon config reload, snap back to normal operation, providing 
+as a graveyard. If you deactivate the line (e.g. by commenting it out),
+the system will, upon config reload, snap back to normal operation, providing
 logging messages according to the rest of the configuration file again.
+
+=head2 How can I log DEBUG and above to the screen and INFO and above to a file?
+
+You need one logger with two appenders attached to it:
+
+    log4perl.logger = DEBUG, Screen, File
+
+    log4perl.appender.Screen   = Log::Log4perl::Appender::Screen
+    log4perl.appender.Screen.layout = SimpleLayout
+
+    log4perl.appender.File   = Log::Log4perl::Appender::File
+    log4perl.appender.File.filename = test.log
+    log4perl.appender.File.layout = SimpleLayout
+    log4perl.appender.Screen.Threshold = INFO
+
+Since the file logger isn't supposed to get any messages with a priority
+less than INFO, the appender's C<Threshold> setting blocks those out,
+although the logger forwards them.
+
+It's a common mistake to think you can define two loggers for this, but
+it won't work unless those two loggers have different categories. If you
+wanted to log all DEBUG and above messages from the Foo::Bar module to a file
+and all INFO and above messages from the Quack::Schmack module to the
+screen, then you could have defined two loggers with different levels
+C<log4perl.logger.Foo.Bar> (level INFO)
+and C<log4perl.logger.Quack.Schmack> (level DEBUG) and assigned the file
+appender to the former and the screen appender to the latter. But what we
+wanted to accomplish was to route all messages, regardless of which module
+(or category) they came from, to both appenders. The only
+way to accomplish this is to define the root logger with the lower
+level (DEBUG), assign both appenders to it, and block unwanted messages at
+the file appender (C<Threshold> set to INFO).
 
 =head2 I keep getting duplicate log messages! What's wrong?
 
-Having several settings for related categories in the Log4perl 
-configuration file sometimes leads to a phenomenon called 
+Having several settings for related categories in the Log4perl
+configuration file sometimes leads to a phenomenon called
 "message duplication". It can be very confusing at first,
 but if thought through properly, it turns out that Log4perl behaves
-as advertised. But, don't despair, of course there's a number of 
+as advertised. But, don't despair, of course there's a number of
 ways to avoid message duplication in your logs.
 
 Here's a sample Log4perl configuration file that produces the
@@ -771,23 +767,23 @@ Now imagine the following code in your program:
     $logger->warn("Warning!");
 
 What do you think will happen? An unexperienced Log4perl user
-might think: "Well, the message is being sent with level WARN, so the 
-C<Cat::Subcat> logger will accept it and forward it to the 
-attached C<Screen> appender. Then, the message will percolate up 
+might think: "Well, the message is being sent with level WARN, so the
+C<Cat::Subcat> logger will accept it and forward it to the
+attached C<Screen> appender. Then, the message will percolate up
 the logger hierarchy, find
 the C<Cat> logger, which will suppress the message because of its
 ERROR setting."
 But, perhaps surprisingly, what you'll get with the
-code snippet above is not one but two log messages written 
+code snippet above is not one but two log messages written
 to the screen:
 
     WARN - Warning!
     WARN - Warning!
 
-What happened? The culprit is that once the logger C<Cat::Subcat> 
-decides to fire, it will forward the message I<unconditionally> 
-to all directly or indirectly attached appenders. The C<Cat> logger 
-will never be asked if it wants the message or not -- the message 
+What happened? The culprit is that once the logger C<Cat::Subcat>
+decides to fire, it will forward the message I<unconditionally>
+to all directly or indirectly attached appenders. The C<Cat> logger
+will never be asked if it wants the message or not -- the message
 will just be pushed through to the appender attached to C<Cat>.
 
 One way to prevent the message from bubbling up the logger
@@ -804,12 +800,12 @@ C<0>:
 The message will now be accepted by the C<Cat::Subcat> logger,
 forwarded to its appender, but then C<Cat::Subcat> will suppress
 any further action. While this setting avoids duplicate messages
-as seen before, it is often not the desired behaviour. Messages
+as seen before, it is often not the desired behavior. Messages
 percolating up the hierarchy are a useful Log4perl feature.
 
 If you're defining I<different> appenders for the two loggers,
 one other option is to define an appender threshold for the
-higher-level appender. Typically it is set to be 
+higher-level appender. Typically it is set to be
 equal to the logger's level setting:
 
     log4perl.logger.Cat           = ERROR, Screen1
@@ -827,9 +823,9 @@ a priority less than ERROR, even if the logger in charge
 lets it through, the message percolating up the hierarchy is
 being blocked at the last minute and I<not> appended to C<Screen1>.
 
-So far, we've been operating well within the boundaries of the 
-Log4j standard, which Log4perl adheres to. However, if 
-you would really, really like to use a single appender 
+So far, we've been operating well within the boundaries of the
+Log4j standard, which Log4perl adheres to. However, if
+you would really, really like to use a single appender
 and keep the message percolation intact without having to deal
 with message duplication, there's a non-standard solution for you:
 
@@ -863,14 +859,14 @@ configuration file:
 The message of every log incident this appender gets
 will then be forwarded to the given
 email address. Check the C<Log::Dispatch::Email::MailSend> documentation
-for details. And please make sure there's not a flood of email messages 
-sent out by your application, filling up the receipient's inbox.
+for details. And please make sure there's not a flood of email messages
+sent out by your application, filling up the recipient's inbox.
 
 There's one caveat you need to know about: The C<Log::Dispatch::Email>
 hierarchy of appenders turns on I<buffering> by default. This means that
-the appender will not send out messages right away but wait until a 
+the appender will not send out messages right away but wait until a
 certain threshold has been reached. If you'd rather have your alerts
-sent out immeditately, use
+sent out immediately, use
 
     log4perl.appender.Mailer.buffered = 0
 
@@ -880,9 +876,9 @@ to turn buffering off.
 
 First off, Log::Log4perl comes with a set of standard appenders. Then,
 there's a lot of Log4perl-compatible appenders already
-available on CPAN: Just run a search for C<Log::Dispatch> on 
-http://search.cpan.org and chances are that what you're looking for 
-has already been developed, debugged and been used successfully 
+available on CPAN: Just run a search for C<Log::Dispatch> on
+http://search.cpan.org and chances are that what you're looking for
+has already been developed, debugged and been used successfully
 in production -- no need for you to reinvent the wheel.
 
 Also, Log::Log4perl ships with a nifty database appender named
@@ -895,7 +891,7 @@ than a couple of minutes.
 
 Say, we wanted to create an appender of the class
 C<ColorScreenAppender>, which logs messages
-to the screen in a configurable color. Just create a new class 
+to the screen in a configurable color. Just create a new class
 in C<ColorScreenAppender.pm>:
 
     package ColorScreenAppender;
@@ -924,7 +920,7 @@ new() to ColorScreenAppender.pm:
         return $self;
     }
 
-To initialize this appender, Log::Log4perl will call 
+To initialize this appender, Log::Log4perl will call
 and pass all attributes of the appender as defined in the configuration
 file to the constructor as name/value pairs (in this case just one):
 
@@ -935,8 +931,8 @@ The new() method listed above stores the contents of the
 instance data hash (referred to by $self).
 That's all for initializing a new appender with Log::Log4perl.
 
-Second, ColorScreenAppender needs to expose a 
-C<log()> method, which will be called by Log::Log4perl 
+Second, ColorScreenAppender needs to expose a
+C<log()> method, which will be called by Log::Log4perl
 every time it thinks the appender should fire. Along with the
 object reference (as usual in Perl's object world), log()
 will receive a list of name/value pairs, of which only the one
@@ -956,22 +952,22 @@ Term::ANSIColor module to colorize the output:
                       $self->{color});
     }
 
-The color (as configured in the Log::Log4perl configuration file) 
+The color (as configured in the Log::Log4perl configuration file)
 is available as $self-E<gt>{color} in the appender object. Don't
 forget to return
 
     1;
 
 at the end of ColorScreenAppender.pm and you're done. Install the new appender
-somewhere where perl can find it and try it with a test script like 
+somewhere where perl can find it and try it with a test script like
 
     use Log::Log4perl qw(:easy);
     Log::Log4perl->init("test.conf");
     ERROR("blah");
 
-to see the new colored output. Is this cool or what? 
+to see the new colored output. Is this cool or what?
 
-And it gets even better: You can write dynamically generated appender 
+And it gets even better: You can write dynamically generated appender
 classes using the C<Class::Prototyped> module. Here's an example of
 an appender prepending every outgoing message with a configurable
 number of bullets:
@@ -992,10 +988,10 @@ number of bullets:
 
     Log::Log4perl->init(\ q{
       log4perl.logger = INFO, Bully
-    
+
       log4perl.appender.Bully=MyAppenders::Bulletizer
       log4perl.appender.Bully.bullets=3
-    
+
       log4perl.appender.Bully.layout = PatternLayout
       log4perl.appender.Bully.layout.ConversionPattern=%m %n
     });
@@ -1005,7 +1001,7 @@ number of bullets:
 
 =head2 How can I drill down on references before logging them?
 
-If you've got a reference to a nested structure or object, then 
+If you've got a reference to a nested structure or object, then
 you probably don't want to log it as C<HASH(0x81141d4)> but rather
 dump it as something like
 
@@ -1023,7 +1019,7 @@ if the message is suppressed by Log::Log4perl, because Data::Dumper
 will perform its expensive operations in any case, because it doesn't
 know that its output will be thrown away immediately.
 
-As of Log::Log4perl 0.28, there's a better way: Use the 
+As of Log::Log4perl 0.28, there's a better way: Use the
 message output filter format as in
 
     $logger->debug( {filter => \&Data::Dumper::Dumper,
@@ -1033,7 +1029,7 @@ and Log::Log4perl won't call the filter function unless the message really
 gets written out to an appender. Just make sure to pass the whole slew as a
 reference to a hash specifying a filter function (as a sub reference)
 under the key C<filter> and the value to be passed to the filter function in
-C<value>). 
+C<value>).
 When it comes to logging, Log::Log4perl will call the filter function,
 pass the C<value> as an argument and log the return value.
 Saves you serious cycles.
@@ -1043,7 +1039,7 @@ Saves you serious cycles.
 Suppose you have employed Log4perl all over your system and you've already
 activated logging in various subsystems. On top of that, without disrupting
 any other settings, how can you collect all FATAL messages all over the system
-and send them to a separate log file? 
+and send them to a separate log file?
 
 If you define a root logger like this:
 
@@ -1056,11 +1052,11 @@ If you define a root logger like this:
 
 you'll be surprised to not only receive all FATAL messages
 issued anywhere in the system,
-but also everything else -- gazillions of 
+but also everything else -- gazillions of
 ERROR, WARN, INFO and even DEBUG messages will end up in
 your fatal.txt logfile!
-Reason for this is Log4perl's (or better: Log4j's) appender additivity. 
-Once a 
+Reason for this is Log4perl's (or better: Log4j's) appender additivity.
+Once a
 lower-level logger decides to fire, the message is going to be forwarded
 to all appenders upstream -- without further priority checks with their
 attached loggers.
@@ -1069,9 +1065,9 @@ There's a way to prevent this, however: If your appender defines a
 minimum threshold, only messages of this priority or higher are going
 to be logged. So, just add
 
-    log4perl.appender.File.Threshold = FATAL 
+    log4perl.appender.File.Threshold = FATAL
 
-to the configuration above, and you'll get what you wanted in the 
+to the configuration above, and you'll get what you wanted in the
 first place: An overall system FATAL message collector.
 
 =head2 How can I bundle several log messages into one?
@@ -1084,7 +1080,7 @@ So that something like
     $logger->error("Blah");
     $logger->error("Blah");
 
-won't be logged as 
+won't be logged as
 
     Blah
     Blah
@@ -1095,7 +1091,7 @@ but as
     [3] Blah
 
 instead? If you'd like to hold off on logging a message until it has been
-sent a couple of times, you can roll that out by creating a buffered 
+sent a couple of times, you can roll that out by creating a buffered
 appender.
 
 Let's define a new appender like
@@ -1117,7 +1113,7 @@ Let's define a new appender like
         return $self;
     }
 
-with two additional instance variables C<last_message> and 
+with two additional instance variables C<last_message> and
 C<last_message_count>, storing the content of the last message sent
 and a counter of how many times this has happened. Also, it features
 a configuration parameter C<maxcount> which defaults to 5 in the
@@ -1148,7 +1144,7 @@ by our appender:
         $self->{last_message} = $params{message};
 
             # Threshold exceeded? Print, reset counter
-        if($self->{last_message_count} >= 
+        if($self->{last_message_count} >=
            $self->{maxcount}) {
             print "[$self->{last_message_count}]: " .
                   "$params{message}";
@@ -1187,7 +1183,7 @@ which gets called at object destruction time:
         }
     }
 
-This will ensure that none of the buffered messages are lost. 
+This will ensure that none of the buffered messages are lost.
 Happy buffering!
 
 =head2 I want to log ERROR and WARN messages to different files! How can I do that?
@@ -1201,21 +1197,21 @@ Now, if you define two appenders C<AppWarn> and C<AppError>
 and assign them both to the root logger,
 messages bubbling up from any loggers below will be logged by both
 appenders because of Log4perl's message propagation feature. If you limit
-their exposure via the appender threshold mechanism and set 
+their exposure via the appender threshold mechanism and set
 C<AppWarn>'s threshold to C<WARN> and C<AppError>'s to C<ERROR>, you'll
 still get C<ERROR> messages in C<AppWarn>, because C<AppWarn>'s C<WARN>
 setting will just filter out messages with a I<lower> priority than
 C<WARN> -- C<ERROR> is higher and will be allowed to pass through.
 
-What we need for this is a Log4perl I<Custom Filter>, available with 
+What we need for this is a Log4perl I<Custom Filter>, available with
 Log::Log4perl 0.30.
 
 Both appenders need to verify that
-the priority of the oncoming messages exactly I<matches> the priority 
+the priority of the oncoming messages exactly I<matches> the priority
 the appender is supposed to log messages of. To accomplish this task,
 let's define two custom filters, C<MatchError> and C<MatchWarn>, which,
 when attached to their appenders, will limit messages passed on to them
-to those matching a given priority: 
+to those matching a given priority:
 
     log4perl.logger = WARN, AppWarn, AppError
 
@@ -1244,20 +1240,20 @@ to those matching a given priority:
 The appenders C<AppWarn> and C<AppError> defined above are logging to C</tmp/app.warn> and
 C</tmp/app.err> respectively and have the custom filters C<MatchWarn> and C<MatchError>
 attached.
-This setup will direct all WARN messages, issued anywhere in the system, to /tmp/app.warn (and 
+This setup will direct all WARN messages, issued anywhere in the system, to /tmp/app.warn (and
 ERROR messages to /tmp/app.error) -- without any overlaps.
 
 =head2 On our server farm, Log::Log4perl configuration files differ slightly from host to host. Can I roll them all into one?
 
-You sure can, because Log::Log4perl allows you to specify attribute values 
+You sure can, because Log::Log4perl allows you to specify attribute values
 dynamically. Let's say that one of your appenders expects the host's IP address
-as one of its attributes. Now, you could certainly roll out different 
+as one of its attributes. Now, you could certainly roll out different
 configuration files for every host and specify the value like
 
     log4perl.appender.MyAppender    = Log::Log4perl::Appender::SomeAppender
     log4perl.appender.MyAppender.ip = 10.0.0.127
 
-but that's a maintenance nightmare. Instead, you can have Log::Log4perl 
+but that's a maintenance nightmare. Instead, you can have Log::Log4perl
 figure out the IP address at configuration time and set the appender's
 value correctly:
 
@@ -1273,7 +1269,7 @@ If Log::Log4perl detects that an attribute value starts with something like
 C<"sub {...">, it will interpret it as a perl subroutine which is to be executed
 once at configuration time (not runtime!) and its return value is
 to be used as the attribute value. This comes in handy
-for rolling out applications whichs Log::Log4perl configuration files
+for rolling out applications where Log::Log4perl configuration files
 show small host-specific differences, because you can deploy the unmodified
 application distribution on all instances of the server farm.
 
@@ -1300,8 +1296,8 @@ and you're getting the following error message:
     Layout not specified for appender A1 at .../Config.pm line 342.
 
 What's wrong? The problem is that you're using a here-document with
-substitution enabled (C<E<lt>E<lt>END_HERE>) and that Perl won't 
-interpret backslashes at line-ends as continuation characters but 
+substitution enabled (C<E<lt>E<lt>END_HERE>) and that Perl won't
+interpret backslashes at line-ends as continuation characters but
 will essentially throw them out. So, in the code above, the layout line
 will look like
 
@@ -1309,7 +1305,7 @@ will look like
 
 to Log::Log4perl which causes it to report an error. To interpret the backslash
 at the end of the line correctly as a line-continuation character, use
-the non-interpreting mode of the here-document like in 
+the non-interpreting mode of the here-document like in
 
     # *** RIGHT! ***
 
@@ -1323,13 +1319,13 @@ the non-interpreting mode of the here-document like in
 
     # *** RIGHT! ***
 
-(note the single quotes around C<'END_HERE'>) or use C<q{...}> 
-instead of a here-document and Perl will treat the backslashes at 
+(note the single quotes around C<'END_HERE'>) or use C<q{...}>
+instead of a here-document and Perl will treat the backslashes at
 line-end as intended.
 
 =head2 I want to suppress certain messages based on their content!
 
-Let's assume you've plastered all your functions with Log4perl 
+Let's assume you've plastered all your functions with Log4perl
 statements like
 
     sub some_func {
@@ -1346,8 +1342,8 @@ each function. Now you want to suppress the message at the beginning
 and only keep the one at the end, what can you do? You can't use the category
 mechanism, because both messages are issued from the same package.
 
-Log::Log4perl's custom filters (0.30 or better) provide an interface for the 
-Log4perl user to step in right before a message gets logged and decide if 
+Log::Log4perl's custom filters (0.30 or better) provide an interface for the
+Log4perl user to step in right before a message gets logged and decide if
 it should be written out or suppressed, based on the message content or other
 parameters:
 
@@ -1367,8 +1363,8 @@ parameters:
         log4perl.appender.A1.Filter = M1
 EOT
 
-The last four statements in the configuration above are defining a custom 
-filter C<M1> of type C<Log::Log4perl::Filter::StringMatch>, which comes with 
+The last four statements in the configuration above are defining a custom
+filter C<M1> of type C<Log::Log4perl::Filter::StringMatch>, which comes with
 Log4perl right out of the box and allows you to define a text pattern to match
 (as a perl regular expression) and a flag C<AcceptOnMatch> indicating
 if a match is supposed to suppress the message or let it pass through.
@@ -1389,7 +1385,7 @@ For details on custom filters, check L<Log::Log4perl::Filter>.
 
 If a Perl module uses Log::Log4perl, it will typically rely on the
 calling program to initialize it. If it is using Log::Log4perl in C<:easy>
-mode, like in 
+mode, like in
 
     package MyMod;
     use Log::Log4perl qw(:easy);
@@ -1402,7 +1398,7 @@ mode, like in
 
 and the calling program doesn't initialize Log::Log4perl at all (e.g. because
 it has no clue that it's available), Log::Log4perl will silently
-ignore all logging messages. However, if the module is using Log::Log4perl 
+ignore all logging messages. However, if the module is using Log::Log4perl
 in regular mode like in
 
     package MyMod;
@@ -1423,35 +1419,38 @@ and the main program is just using the module like in
 then Log::Log4perl will also ignore all logging messages but
 issue a warning like
 
-    Log4perl: Seems like no initialization happened. 
+    Log4perl: Seems like no initialization happened.
     Forgot to call init()?
 
-(only once!) to remind novice users to not forget to initialize 
-the logging system before using it. 
+(only once!) to remind novice users to not forget to initialize
+the logging system before using it.
 However, if you want to suppress this message, just
 add the C<:nowarn> target to the module's C<use Log::Log4perl> call:
 
     use Log::Log4perl qw(get_logger :nowarn);
 
 This will have Log::Log4perl silently ignore all logging statements if
-no initialization has taken place. 
+no initialization has taken place. If, instead of using init(), you're
+using Log4perl's API to define loggers and appenders, the same
+notification happens if no call to add_appenders() is made, i.e. no
+appenders are defined.
 
-If the module wants to figure out if some other program part has 
+If the module wants to figure out if some other program part has
 already initialized Log::Log4perl, it can do so by calling
 
     Log::Log4perl::initialized()
 
-which will return a true value in case Log::Log4perl has been initialized 
+which will return a true value in case Log::Log4perl has been initialized
 and a false value if not.
 
 =head2 How can I synchronize access to an appender?
 
-If you're using the same instance of an appender in multiple processes, 
+If you're using the same instance of an appender in multiple processes,
 and each process is passing on messages to the appender in parallel,
 you might end up with overlapping log entries.
 
-Typical scenarios include a file appender that you create in the main 
-program, and which will then be shared between the parent and a 
+Typical scenarios include a file appender that you create in the main
+program, and which will then be shared between the parent and a
 forked child process. Or two separate processes, each initializing a
 Log4perl file appender on the same logfile.
 
@@ -1461,17 +1460,17 @@ buffer size and the size of your messages, there's a small chance of
 an overlap.
 
 The easiest way to prevent overlapping messages in logfiles written to
-by multiple processes is setting the 
-file appender's C<syswrite> flag along with a file write mode of C<"append">. 
+by multiple processes is setting the
+file appender's C<syswrite> flag along with a file write mode of C<"append">.
 This makes sure that
 C<Log::Log4perl::Appender::File> uses C<syswrite()> (which is guaranteed
 to run uninterrupted) instead of C<print()> which might buffer
 the message or get interrupted by the OS while it is writing. And in
 C<"append"> mode, the OS kernel ensures that multiple processes share
-one end-of-file marker, ensuring that each process writes to the I<real> 
-end of the file. (The value of C<"append"> 
-for the C<mode> parameter is the default setting in Log4perl's file 
-appender so you don't have to set it explicitely.)
+one end-of-file marker, ensuring that each process writes to the I<real>
+end of the file. (The value of C<"append">
+for the C<mode> parameter is the default setting in Log4perl's file
+appender so you don't have to set it explicitly.)
 
       # Guarantees atomic writes
 
@@ -1500,14 +1499,14 @@ Here's a sample configuration to synchronize access to a file appender:
     log4perl.appender.Syncer            = Log::Log4perl::Appender::Synchronized
     log4perl.appender.Syncer.appender   = Logfile
 
-C<Log::Log4perl::Appender::Synchronized> uses 
+C<Log::Log4perl::Appender::Synchronized> uses
 the C<IPC::Shareable> module and its semaphores, which will slow down writing
 the log messages, but ensures sequential access featuring atomic checks.
 Check L<Log::Log4perl::Appender::Synchronized> for details.
 
 =head2 Can I use Log::Log4perl with log4j's Chainsaw?
 
-Yes, Log::Log4perl can be configured to send its events to log4j's 
+Yes, Log::Log4perl can be configured to send its events to log4j's
 graphical log UI I<Chainsaw>.
 
 =for html
@@ -1540,12 +1539,12 @@ Install and start Chainsaw, which is part of the C<log4j> distribution now
 (see http://jakarta.apache.org/log4j ). Create a configuration file like
 
   <log4j:configuration debug="true">
-    <plugin name="XMLSocketReceiver" 
+    <plugin name="XMLSocketReceiver"
             class="org.apache.log4j.net.XMLSocketReceiver">
-      <param name="decoder" value="org.apache.log4j.xml.XMLDecoder"/> 
-      <param name="Port" value="4445"/> 
+      <param name="decoder" value="org.apache.log4j.xml.XMLDecoder"/>
+      <param name="Port" value="4445"/>
     </plugin>
-    <root> <level value="debug"/> </root> 
+    <root> <level value="debug"/> </root>
   </log4j:configuration>
 
 and name it e.g. C<config.xml>. Then start Chainsaw like
@@ -1582,7 +1581,7 @@ XMLSocketReceiver:
   my $logger = get_logger("Bar.Twix");
   $logger->error("One");
 
-The nasty hack shown in the code snippet above is currently (October 2003) 
+The nasty hack shown in the code snippet above is currently (October 2003)
 necessary, because Chainsaw expects XML messages to arrive in a format like
 
   <log4j:event logger="Bar.Twix"
@@ -1598,7 +1597,7 @@ necessary, because Chainsaw expects XML messages to arrive in a format like
     </log4j:locationInfo>
   </log4j:event>
 
-without a preceding 
+without a preceding
 
   <?xml version = "1.0" encoding = "iso8859-1"?>
 
@@ -1616,15 +1615,15 @@ Scott Deboy <sdeboy@comotivsystems.com> for his support!
 =head2 How can I run Log::Log4perl under mod_perl?
 
 In persistent environments it's important to play by the rules outlined
-in section L<Log::Log4perl/"Initialize once and only once">. 
-If you haven't read this yet, please go ahead and read it right now. It's 
+in section L<Log::Log4perl/"Initialize once and only once">.
+If you haven't read this yet, please go ahead and read it right now. It's
 very important.
 
 And no matter if you use a startup handler to init() Log::Log4perl or use the
 init_once() strategy (added in 0.42), either way you're very likely to have
 unsynchronized writes to logfiles.
 
-If Log::Log4perl is configured with a log file appender, and it is 
+If Log::Log4perl is configured with a log file appender, and it is
 initialized via
 the Apache startup handler, the file handle created initially will be
 shared among all Apache processes. Similarly, with the init_once()
@@ -1641,9 +1640,9 @@ not, here's two strategies:
 
 =item *
 
-Use the L<Log::Log4perl::Appender::Synchronized> appender to connect to 
-your file appenders. Here's the writeup: 
-http://log4perl.sourceforge.net/releases/Log-Log4perl/docs/html/Log/Log4perl/FAQ.html#23804 
+Use the L<Log::Log4perl::Appender::Synchronized> appender to connect to
+your file appenders. Here's the writeup:
+http://log4perl.sourceforge.net/releases/Log-Log4perl/docs/html/Log/Log4perl/FAQ.html#23804
 
 =item *
 
@@ -1657,7 +1656,7 @@ Use a different logfile for every process like in
 
 =head2 My program already uses warn() and die(). How can I switch to Log4perl?
 
-If your program already uses Perl's C<warn()> function to spew out 
+If your program already uses Perl's C<warn()> function to spew out
 error messages and you'd like to channel those into the Log4perl world,
 just define a C<__WARN__> handler where your program or module resides:
 
@@ -1669,16 +1668,16 @@ just define a C<__WARN__> handler where your program or module resides:
         WARN @_;
     };
 
-Why the C<local> setting of C<$Log::Log4perl::caller_depth>? 
+Why the C<local> setting of C<$Log::Log4perl::caller_depth>?
 If you leave that out,
 C<PatternLayout> conversion specifiers like C<%M> or C<%F> (printing
 the current function/method and source filename) will refer
-to where the __WARN__ handler resides, not the environment 
-Perl's C<warn()> function was issued from. Increasing C<caller_depth> 
-adjusts for this offset. Having it C<local>, makes sure the level 
+to where the __WARN__ handler resides, not the environment
+Perl's C<warn()> function was issued from. Increasing C<caller_depth>
+adjusts for this offset. Having it C<local>, makes sure the level
 gets set back after the handler exits.
 
-Once done, if your program does something like 
+Once done, if your program does something like
 
     sub some_func {
         warn "Here's a warning";
@@ -1692,7 +1691,7 @@ in the appropriate appender instead of having a screen full of STDERR
 messages. It also works with the C<Carp> module and its C<carp()>
 and C<cluck()> functions.
 
-If, on the other hand, catching C<die()> and friends is 
+If, on the other hand, catching C<die()> and friends is
 required, a C<__DIE__> handler is appropriate:
 
     $SIG{__DIE__} = sub {
@@ -1701,7 +1700,8 @@ required, a C<__DIE__> handler is appropriate:
             # this message but catch it later
             return;
         }
-        $Log::Log4perl::caller_depth++;
+        local $Log::Log4perl::caller_depth =
+            $Log::Log4perl::caller_depth + 1;
         LOGDIE @_;
     };
 
@@ -1724,21 +1724,21 @@ messages to STDERR instead, like
 
     1;
 
-there's still a way to capture these messages and funnel them 
+there's still a way to capture these messages and funnel them
 into Log::Log4perl, even without touching the module. What you need is
 a trapper module like
 
     ########################################
     package Trapper;
     ########################################
-    
+
     use Log::Log4perl qw(:easy);
-    
+
     sub TIEHANDLE {
         my $class = shift;
         bless [], $class;
     }
-    
+
     sub PRINT {
         my $self = shift;
         $Log::Log4perl::caller_depth++;
@@ -1758,17 +1758,17 @@ module along with regular Log::Log4perl initialization:
     use Log::Log4perl qw(:easy);
 
     Log::Log4perl->easy_init(
-        {level  => $DEBUG, 
+        {level  => $DEBUG,
          file   => 'stdout',   # make sure not to use stderr here!
          layout => "%d %M: %m%n",
         });
 
     tie *STDERR, "Trapper";
-    
+
 Make sure not to use STDERR as Log::Log4perl's file appender
-here (which would be the default in C<:easy> mode), because it would 
+here (which would be the default in C<:easy> mode), because it would
 end up in an endless recursion.
-    
+
 Now, calling
 
     IgnorantModule::some_method();
@@ -1779,7 +1779,7 @@ will result in the desired output
 
 =head2 How come PAR (Perl Archive Toolkit) creates executables which then can't find their Log::Log4perl appenders?
 
-If not instructed otherwise, C<Log::Log4perl> dynamically pulls in 
+If not instructed otherwise, C<Log::Log4perl> dynamically pulls in
 appender classes found in its configuration. If you specify
 
     #!/usr/bin/perl
@@ -1809,10 +1809,10 @@ you'll get an error message like
     ERROR: can't load appenderclass 'Log::Log4perl::Appender::Screen'
     Can't locate Log/Log4perl/Appender/Screen.pm in @INC ...
 
-Why? At compile time, C<pp> didn't realize that 
+Why? At compile time, C<pp> didn't realize that
 C<Log::Log4perl::Appender::Screen> would be needed later on and didn't
 wrap it into the executable created. To avoid this, either say
-C<use Log::Log4perl::Appender::Screen> in the script explicitely or
+C<use Log::Log4perl::Appender::Screen> in the script explicitly or
 compile it with
 
     pp -o mytest -M Log::Log4perl::Appender::Screen mytest.pl
@@ -1822,11 +1822,11 @@ to make sure the appender class gets included.
 =head2 How can I access a custom appender defined in the configuration?
 
 Any appender defined in the configuration file or somewhere in the code
-can be accessed later via 
+can be accessed later via
 C<Log::Log4perl-E<gt>appender_by_name("appender_name")>,
-which returns a reference the the appender object.
+which returns a reference of the appender object.
 
-Once you've got a hold of the object, it can be queried or modified to 
+Once you've got a hold of the object, it can be queried or modified to
 your liking. For example, see the custom C<IndentAppender> defined below:
 After calling C<init()> to define the Log4perl settings, the
 appender object is retrieved to call its C<indent_more()> and C<indent_less()>
@@ -1855,11 +1855,11 @@ methods to control indentation of messages:
     log4perl.appender.Indented = IndentAppender
     log4perl.appender.Indented.layout = Log::Log4perl::Layout::SimpleLayout
     );
-    
+
     Log::Log4perl::init(\$conf);
 
     my $appender = Log::Log4perl->appender_by_name("Indented");
-    
+
     DEBUG "No identation";
     $appender->indent_more();
     DEBUG "One more";
@@ -1880,7 +1880,7 @@ runtime.
 
 =head2 I don't know if Log::Log4perl is installed. How can I prepare my script?
 
-In case your script needs to be prepared for environments that may or may 
+In case your script needs to be prepared for environments that may or may
 not have Log::Log4perl installed, there's a trick.
 
 If you put the following BEGIN blocks at the top of the program,
@@ -1896,7 +1896,7 @@ turn into no-ops:
 
     BEGIN {
         eval { require Log::Log4perl; };
-    
+
         if($@) {
             print "Log::Log4perl not installed - stubbing.\n";
             no strict qw(refs);
@@ -1925,7 +1925,7 @@ the logging system.
 Typically, when C<Log::Log4perl::Appender::File> creates a new file,
 its permissions are set to C<rw-r--r-->. Why? Because your
 environment's I<umask> most likely defaults to
-C<0022>, that's the standard setting. 
+C<0022>, that's the standard setting.
 
 What's a I<umask>, you're asking? It's a template that's applied to
 the permissions of all newly created files. While calls like
@@ -1995,7 +1995,7 @@ set to utf-8 mode:
       # Or, in easy mode:
   Log::Log4perl->easy_init( {
     level => $DEBUG,
-    file  => ":utf8> test.log" 
+    file  => ":utf8> test.log"
   } );
 
 If the complaining appender is a screen appender, set its C<utf8> option:
@@ -2014,7 +2014,7 @@ Alternatively, C<binmode> does the trick:
 Some background on this: Perl's strings are either byte strings or
 Unicode strings. C<"Mike"> is a byte string.
 C<"\x{30DE}\x{30A4}\x{30AF}"> is a Unicode string. Unicode strings are
-marked specially and are UTF-8 encoded internally. 
+marked specially and are UTF-8 encoded internally.
 
 If you print a byte string to STDOUT,
 all is well, because STDOUT is by default set to byte mode. However,
@@ -2028,7 +2028,7 @@ characters as in
 
     perl -le 'print "\x{30DE}\x{30A4}\x{30AF}"'
 
-(coincidentally pronounced Ma-i-ku, the japanese pronounciation of 
+(coincidentally pronounced Ma-i-ku, the japanese pronunciation of
 "Mike"), STDOUT is in byte mode and the warning
 
     Wide character in print at ./script.pl line 14.
@@ -2037,7 +2037,7 @@ appears. Setting STDOUT to UTF-8 mode as in
 
     perl -le 'binmode(STDOUT, ":utf8"); print "\x{30DE}\x{30A4}\x{30AF}"'
 
-will silently print the Unicode string to STDOUT in UTF-8. To see the 
+will silently print the Unicode string to STDOUT in UTF-8. To see the
 characters printed, you'll need a UTF-8 terminal with a font including
 japanese Katakana characters.
 
@@ -2082,7 +2082,7 @@ as required.
 =head2 Where should I put my logfiles?
 
 Your log files may go anywhere you want them, but the effective
-user id of the calling process must have write access. 
+user id of the calling process must have write access.
 
 If the log file doesn't exist at program start, Log4perl's file appender
 will create it. For this, it needs write access to the directory where
@@ -2105,7 +2105,7 @@ To prepare your web server to use log4perl, we'd recommend:
 
 Then set your /etc/log4perl.conf file to include:
 
-    log4perl.appender.FileAppndr1.filename = 
+    log4perl.appender.FileAppndr1.filename =
         /var/log/cgiapps/<app-name>.log
 
 =head2 How can my file appender deal with disappearing log files?
@@ -2114,12 +2114,12 @@ The file appender that comes with Log4perl, L<Log::Log4perl::Appender::File>,
 will open a specified log file at initialization time and will
 keep writing to it via a file handle.
 
-In case the associated file goes way, messages written by a 
+In case the associated file goes way, messages written by a
 long-running process will still be written
-to the file handle. In case the file has been moved to a different 
+to the file handle. In case the file has been moved to a different
 location on the same file system, the writer will keep writing to
 it under the new filename. In case the file has been removed from
-the file system, the log messages will end up in nowhere land. This 
+the file system, the log messages will end up in nowhere land. This
 is not a bug in Log4perl, this is how Unix works. There is
 no error message in this case, because the writer has no idea that
 the file handle is not associated with a visible file.
@@ -2149,7 +2149,7 @@ handler can be set up:
     log4perl.appender.Logfile.recreate_check_signal = USR1
 
 This will install a signal handler which will recreate a missing log file
-immediatly when it receives the defined signal. 
+immediately when it receives the defined signal.
 
 Note that the init_and_watch() method for Log4perl's initialization
 can also be instructed to install a signal handler, usually using the
@@ -2159,7 +2159,7 @@ of them at the same time.
 =head2 How can I rotate a logfile with newsyslog?
 
 Here's a few things that need to be taken care of when using the popular
-log file rotating utilty C<newsyslog>
+log file rotating utility C<newsyslog>
 (http://www.courtesan.com/newsyslog) with Log4perl's file appender
 in long-running processes.
 
@@ -2168,14 +2168,14 @@ For example, with a newsyslog configuration like
     # newsyslog.conf
     /tmp/test.log 666  12  5  *  B
 
-and a call to 
+and a call to
 
     # newsyslog -f /path/to/newsyslog.conf
 
-C<newsyslog> will take action if C</tmp/test.log> is larger than the 
-specified 5K in size. It will move the current log file C</tmp/test.log> to 
+C<newsyslog> will take action if C</tmp/test.log> is larger than the
+specified 5K in size. It will move the current log file C</tmp/test.log> to
 C</tmp/test.log.0> and create a new and empty C</tmp/test.log> with
-the specified permissions (this is why C<newsyslog> needs to run as root). 
+the specified permissions (this is why C<newsyslog> needs to run as root).
 An already existing C</tmp/test.log.0> would be moved to
 C</tmp/test.log.1>, C</tmp/test.log.1> to C</tmp/test.log.2>, and so
 forth, for every one of a max number of 12 archived logfiles that have
@@ -2227,8 +2227,8 @@ for details.
 =head2 How can a process under user id A log to a file under user id B?
 
 This scenario often occurs in configurations where processes run under
-various user IDs but need to write to a log file under a fixed, but 
-different user id. 
+various user IDs but need to write to a log file under a fixed, but
+different user id.
 
 With a traditional file appender, the log file will probably be created
 under one user's id and appended to under a different user's id. With
@@ -2284,11 +2284,11 @@ C<Log::Log4perl> distribution, you can then send messages via syslog:
         log4perl.appender.app.Facility=user
         log4perl.appender.app.layout=SimpleLayout
     EOT
-    
+
         # Writes to /some/path/file.log
     ERROR "Message!";
 
-This way, the syslog daemon will solve the permission problem. 
+This way, the syslog daemon will solve the permission problem.
 
 Note that while it is possible to use syslog() without Log4perl (syslog
 supports log levels, too), traditional syslog setups have a
@@ -2301,12 +2301,16 @@ the place and slow down execution to a crawl at high debug levels.
 Remote-controlling logging in the hierarchical parts of an application
 via Log4perl's categories is one of its most distinguished features.
 It allows for enabling high debug levels in specified areas without
-noticable performance impact.
+noticeable performance impact.
 
 =head2 I want to use UTC instead of the local time!
 
 If a layout defines a date, Log::Log4perl uses local time to populate it.
 If you want UTC instead, set
+
+    log4perl.utcDateTimes = 1
+
+in your configuration. Alternatively, you can set
 
     $Log::Log4perl::DateFormat::GMTIME = 1;
 
@@ -2405,14 +2409,14 @@ the layout use C<Log::Log4perl::Layout::PatternLayout::Multiline>:
         Log::Log4perl::Layout::PatternLayout::Multiline
       log4perl.appender.Screen.layout.ConversionPattern = %d %m %n
     EOT
-    
+
     DEBUG "some\nmultiline\nmessage";
 
-and you'll get 
+and you'll get
 
-    2007/04/04 23:23:39 some 
-    2007/04/04 23:23:39 multiline 
-    2007/04/04 23:23:39 message 
+    2007/04/04 23:23:39 some
+    2007/04/04 23:23:39 multiline
+    2007/04/04 23:23:39 message
 
 instead.
 
@@ -2427,7 +2431,7 @@ If you're on Windows and are getting warning messages like
   Subroutine initialized redefined at
     C:/Programme/Perl/site/lib/Log/Log4Perl.pm line 207.
 
-then chances are that you're using 'Log::Log4Perl' (wrong uppercase P) 
+then chances are that you're using 'Log::Log4Perl' (wrong uppercase P)
 instead of the correct 'Log::Log4perl'. Perl on Windows doesn't
 handle this error well and spits out a slew of confusing warning
 messages. But now you know, just use the correct module name and
@@ -2445,9 +2449,9 @@ you might see confusing messages like
     /home/y/lib/perl5/site_perl/5.6.1/Log/Log4perl.pm line 134 during global
     destruction.
 
-when the program shuts down. What's going on? 
+when the program shuts down. What's going on?
 
-This phenomenon happens if you have circular references in your objects, 
+This phenomenon happens if you have circular references in your objects,
 which perl can't clean up when an object goes out of scope but waits
 until global destruction instead. At this time, however, Log4perl has
 already shut down, so you can't use it anymore.
@@ -2472,7 +2476,7 @@ Now, if the main program creates a self-referencing object, like in
 then you'll see the error message shown above during global destruction.
 How to tackle this problem?
 
-First, you should clean up your circular references before global 
+First, you should clean up your circular references before global
 destruction. They will not only cause objects to be destroyed in an order
 that's hard to predict, but also eat up memory until the program shuts
 down.
@@ -2491,7 +2495,7 @@ at the end or in an END handler. If that's hard to do, use weak references:
     my $a = A->new();
     $a->{selfref} = weaken $a;
 
-This allows perl to clean up the circular reference when the object 
+This allows perl to clean up the circular reference when the object
 goes out of scope, and doesn't wait until global destruction.
 
 =head2 How can I access POE heap values from Log4perl's layout?
@@ -2540,7 +2544,7 @@ The code snippet above defines a new layout placeholder (called
 'cspec' in Log4perl) %U which calls a subroutine, retrieves the active
 session, gets its heap and looks up the entry specified ('user').
 
-Starting with Log::Log4perl 1.20, cspecs also support parameters in 
+Starting with Log::Log4perl 1.20, cspecs also support parameters in
 curly braces, so you can say
 
     log4perl.appender.Screen.layout.ConversionPattern = %U{user} %U{id} %m%n
@@ -2565,11 +2569,11 @@ to end up at? STDOUT? STDERR? And are you sure you want to set in stone
 that this message needs to be printed, while someone else might
 find it annoying and wants to get rid of it?
 
-The truth is, there's always going to be someone who wants to log a 
+The truth is, there's always going to be someone who wants to log a
 messages at all cost, but also another person who wants to suppress it
-with equal vigilance. There's no good way to serve these two conflicting 
-desires, someone will always want to win at the cost of leaving 
-the other party dissappointed.
+with equal vigilance. There's no good way to serve these two conflicting
+desires, someone will always want to win at the cost of leaving
+the other party disappointed.
 
 So, the best Log4perl offers is the ALWAYS level for a message that even
 fires if the system log level is set to $OFF:
@@ -2580,11 +2584,63 @@ fires if the system log level is set to $OFF:
     ALWAYS "This gets logged always. Well, almost always";
 
 The logger won't fire, though, if Log4perl hasn't been initialized or
-if someone defines a custom log hurdle that's higher than $OFF. 
+if someone defines a custom log hurdle that's higher than $OFF.
 
-Bottom line: Leave the setting of the logging level to the initial Perl 
+Bottom line: Leave the setting of the logging level to the initial Perl
 script -- let their owners decided what they want, no matter how tempting
 it may be to decide it for them.
+
+=head2 Why doesn't my END handler remove my log file on Win32?
+
+If you have code like
+
+    use Log::Log4perl qw( :easy );
+    Log::Log4perl->easy_init( { level => $DEBUG, file => "my.log" } );
+    END { unlink "my.log" or die };
+
+then you might be in for a surprise when you're running it on
+Windows, because the C<unlink()> call in the END handler will complain that
+the file is still in use.
+
+What happens in Perl if you have something like
+
+    END { print "first end in main\n"; }
+    use Module;
+    END { print "second end in main\n"; }
+
+and
+
+    package Module;
+    END { print "end in module\n"; }
+    1;
+
+is that you get
+
+    second end in main
+    end in module
+    first end in main
+
+because perl stacks the END handlers in reverse order in which it
+encounters them in the compile phase.
+
+Log4perl defines an END handler that cleans up left-over appenders (e.g.
+file appenders which still hold files open), because those appenders have
+circular references and therefore aren't cleaned up otherwise.
+
+Now if you define an END handler after "use Log::Log4perl", it'll
+trigger before Log4perl gets a chance to clean up, which isn't a 
+problem on Unix where you can delete a file even if some process has a 
+handle to it open, but it's a problem on Win32, where the OS won't 
+let you do that.
+
+The solution is easy, just place the END handler I<before> Log4perl
+gets loaded, like in
+
+    END { unlink "my.log" or die };
+    use Log::Log4perl qw( :easy );
+    Log::Log4perl->easy_init( { level => $DEBUG, file => "my.log" } );
+
+which will call the END handlers in the intended order.
 
 =cut
 
@@ -2592,8 +2648,35 @@ it may be to decide it for them.
 
 Log::Log4perl
 
+=head1 LICENSE
+
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt>
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
 =head1 AUTHOR
 
-Mike Schilli, E<lt>log4perl@perlmeister.comE<gt>
+Please contribute patches to the project on Github:
 
-=cut
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches):
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull,
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter,
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope,
+Lars Thegler, David Viner, Mac Yang.
+

@@ -18,8 +18,17 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Login to ghcr.io
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Add `latest` tag to release candidate
-        run: docker buildx imagetools create lmscommunity/lyrionmusicserver:rc --tag lmscommunity/lyrionmusicserver:latest
+        run: |
+          docker buildx imagetools create lmscommunity/lyrionmusicserver:rc --tag lmscommunity/lyrionmusicserver:latest
+          docker buildx imagetools create ghcr.io/lms-community/lyrionmusicserver:rc --tag ghcr.io/lms-community/lyrionmusicserver:latest
 
       # should we remove the `rc` tag?
 
