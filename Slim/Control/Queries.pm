@@ -814,6 +814,7 @@ sub albumsQuery {
 				join(',', @linkRoleIds));
 			} else {
 				my @linkRoles = Slim::Schema::Contributor->allAlbumLinkRoles();
+#Slim::Utils::Log::logError("DK \@linkRoles=" . Data::Dump::dump(@linkRoles));
 				# when filtering by role and not by contributor, put that role at the head of the list if it wasn't in there yet
 				if ($roleID && !$contributorID) {
 					unshift @linkRoles, map { Slim::Schema::Contributor->roleToType($_) || $_ } split(/,/, $roleID);
@@ -840,6 +841,7 @@ sub albumsQuery {
 					%s
 					ORDER BY contributor_album.role, contributors.namesort
 				}, join(',', @linkRoleIds), $excludeDisplayArtists );
+#Slim::Utils::Log::logError("DK \$contributorSql=" . Data::Dump::dump($contributorSql));
 			}
 		}
 
@@ -965,6 +967,9 @@ sub albumsQuery {
 				}
 				@artists = Slim::Utils::Misc::uniq(@artists);
 				@artistIds = Slim::Utils::Misc::uniq(@artistIds);
+#Slim::Utils::Log::logError("DK =============================================================================================");
+#Slim::Utils::Log::logError("DK \@artists=" . Data::Dump::dump(@artists));
+#Slim::Utils::Log::logError("DK \@artistIds=" . Data::Dump::dump(@artistIds));
 
 				if ( $c->{'contributor_display.id'} ) {
 					my $displayArtistsSql = qq{
@@ -977,6 +982,9 @@ sub albumsQuery {
 					my $displayArtists = $dbh->selectall_arrayref($displayArtistsSth, { Slice => {} }, ( $c->{'albums.id'}, $c->{'contributor_display.id'} ) );
 					my $displayArtistsIds = join(',', map { $_->{id} } @$displayArtists);
 					my $displayArtistsNames = join(',', map { $_->{name} } @$displayArtists);
+					utf8::decode( $displayArtistsNames ) if $displayArtistsNames;
+#Slim::Utils::Log::logError("DK \$displayArtistsIds=" . Data::Dump::dump($displayArtistsIds));
+#Slim::Utils::Log::logError("DK \$displayArtistsNames=" . Data::Dump::dump($displayArtistsNames));
 					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'display_artist_artist_ids', $displayArtistsIds);
 					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'display_artist_artists', $displayArtistsNames);
 				}
