@@ -822,7 +822,7 @@ sub albumsQuery {
 				}
 
 				@linkRoleIds = map { Slim::Schema::Contributor->typeToRole($_) } @linkRoles;
-
+#ddd
 				my $excludeDisplayArtists = $tags =~ /3/
 					? qq{
 					AND NOT EXISTS(
@@ -6806,8 +6806,8 @@ sub _getTagDataForTracks {
 		my @albumTitleIds;
 
 		if ( $oneAlbum ) {
-			push @albumTitleNames, $c->{'album_contributor.name'};
-			push @albumTitleIds, $c->{'album_contributor.id'};
+#			push @albumTitleNames, $c->{'album_contributor.name'};
+#			push @albumTitleIds, $c->{'album_contributor.id'};
 			if ($c->{'aacd.name'}) {
 				$albumHeader->{display_artist} = $c->{'aacd.name'};
 				my $displayArtistsSql = qq{
@@ -6824,8 +6824,15 @@ sub _getTagDataForTracks {
 				@{$albumHeader->{display_artist_artists}} = map { $_->{name} } @$displayArtists;
 				@{$albumHeader->{display_artist_artist_ids}} = map { $_->{id} } @$displayArtists;
 			}
+			else {
+				push @albumTitleNames, $c->{'album_contributor.name'};
+				push @albumTitleIds, $c->{'album_contributor.id'};
+			}
+#Slim::Utils::Log::logError("DK \$albumHeader->{display_artist_artists}=" . Data::Dump::dump($albumHeader->{display_artist_artists}));
+#Slim::Utils::Log::logError("DK \$albumHeader->{display_artist_artist_ids}=" . Data::Dump::dump($albumHeader->{display_artist_artist_ids}));
 		}
-
+##ddd
+#Slim::Utils::Log::logError("DK \%values=" . Data::Dump::dump(%values)) if $oneAlbum;
 		while ( my ($id, $role) = each %values ) {
 			my $track = $results{$id};
 
@@ -6838,12 +6845,20 @@ sub _getTagDataForTracks {
 			}
 
 			if ( $oneAlbum ) {
+#Slim::Utils::Log::logError("DK \@albumTitleRoles=" . Data::Dump::dump(@albumTitleRoles));
+#Slim::Utils::Log::logError("DK \$role=" . Data::Dump::dump($role));
+#my @nonlinks = grep { my $f = $_; !grep $_ eq $f, @symbolic_files_found } @files_found;
 				foreach (@albumTitleRoles) {
-					push @albumTitleNames, @{$role->{$_}->{names}} if $role->{$_}->{names};
-					push @albumTitleIds, @{$role->{$_}->{ids}} if $role->{$_}->{ids};
+					if ( $_ !~ /1|5/ || !$c->{'aacd.name'} ) { #|| grep { my $v = $_; !grep $_ eq $v, @{$albumHeader->{display_artist_artist_ids}} } @{$role->{$_}->{ids}} ) {
+#Slim::Utils::Log::logError("DK \$role->{$_}=" . Data::Dump::dump($role->{$_}));
+						push @albumTitleNames, @{$role->{$_}->{names}} if $role->{$_}->{names};
+						push @albumTitleIds, @{$role->{$_}->{ids}} if $role->{$_}->{ids};
+					}
 				}
 			}
 		}
+#Slim::Utils::Log::logError("DK \@albumTitleNames=" . Data::Dump::dump(@albumTitleNames));
+#Slim::Utils::Log::logError("DK \@albumTitleIds=" . Data::Dump::dump(@albumTitleIds));
 		if ( scalar @albumTitleIds ) {
 			@{$albumHeader->{title_names}} = Slim::Utils::Misc::uniq(@albumTitleNames);
 			@{$albumHeader->{title_ids}} = Slim::Utils::Misc::uniq(@albumTitleIds);
