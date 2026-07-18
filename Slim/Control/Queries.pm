@@ -6821,7 +6821,7 @@ sub _getTagDataForTracks {
 					$sqllog->debug( "Tags A/S + 3 (display artists) query: $displayArtistsSql / [ $args->{albumId} $c->{'aacd.id'} ]" );
 				}
 				my $displayArtists = $dbh->selectall_arrayref($displayAlbumArtistsSth, { Slice => {} }, ( $args->{'albumId'}, $c->{'aacd.id'} ) );
-				@{$albumHeader->{display_artist_artists}} = map { $_->{name} } @$displayArtists;
+				@{$albumHeader->{display_artist_artists}} = map { my $name =utf8::decode($_->{name}); $_->{name} } @$displayArtists;
 				@{$albumHeader->{display_artist_artist_ids}} = map { $_->{id} } @$displayArtists;
 			}
 			else {
