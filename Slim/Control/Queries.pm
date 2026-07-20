@@ -2937,7 +2937,7 @@ sub playlistsQuery {
 		my $chunkCount = 0;
 
 		if ($start < $folderCount) {
-			while ($chunkCount <= $end && $chunkCount < $folderCount) {
+			while ($chunkCount <= $end && $start + $chunkCount < $folderCount) {
 				my $item = $folders[$start + $chunkCount];
 
 				$request->addResultLoop($loopname, $chunkCount, "id", $item->{url});
