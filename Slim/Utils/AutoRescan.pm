@@ -40,30 +40,6 @@ sub init {
 	Slim::Schema->init();
 
 	# Try to load a filesystem watch module
-=pod
-	# We should not even get here!
-	if ( main::ISMAC ) {
-		eval { require Slim::Utils::AutoRescan::OSX };
-		if ( $@ ) {
-			$log->error( "FSEvents is not supported on your version of OSX, falling back to stat-based monitoring ($@)" );
-		}
-		else {
-			$osclass = 'Slim::Utils::AutoRescan::OSX';
-		}
-	}
-	elsif ( main::ISWINDOWS ) {
-		# XXX I'm not happy with ChangeNotify, needs to be rewritten to use the ReadDirectoryChangesW API
-		# See http://www.perlmonks.org/?node=366446
-		eval { require Slim::Utils::AutoRescan::Win32 };
-		if ( $@ ) {
-			$log->error( "Error loading Win32 auto-rescan module, falling back to stat-based monitoring ($@)" );
-		}
-		else {
-			$osclass = 'Slim::Utils::AutoRescan::Win32';
-		}
-	}
-=cut
-
 	if ( Slim::Utils::OSDetect::isLinux() ) {
 		eval { require Slim::Utils::AutoRescan::Linux };
 		if ( $@ ) {
