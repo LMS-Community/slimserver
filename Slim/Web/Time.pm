@@ -22,7 +22,7 @@ package Slim::Web::Time;
 use strict;
 
 use HTTP::Status qw(RC_OK RC_NO_CONTENT RC_INTERNAL_SERVER_ERROR);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS;
 use Time::HiRes;
 
 use Slim::Web::HTTP;

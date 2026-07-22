@@ -9,7 +9,7 @@ package Slim::Utils::Progress;
 use strict;
 use base qw(Slim::Utils::Accessor);
 
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS;
 
 use Slim::Schema;
 use Slim::Utils::Unicode;
@@ -338,7 +338,7 @@ sub _write_json {
 	}
 
 	require File::Slurp;
-	File::Slurp::write_file( $file, to_json($progress_json) );
+	File::Slurp::write_file( $file, encode_json($progress_json) );
 }
 
 # Clear all progress information from previous runs

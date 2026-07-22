@@ -10,7 +10,7 @@ package Slim::Networking::Discovery::Players;
 
 use strict;
 
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS;
 
 use Slim::Control::Request;
 use Slim::Networking::Discovery::Server;
@@ -95,7 +95,7 @@ sub fetch_players {
 		}
 	);
 
-	my $postdata = to_json({
+	my $postdata = encode_json({
 		id     => 1,
 		method => 'slim.request',
 		params => [ '', ['players', 0, 999] ]
@@ -108,7 +108,7 @@ sub _players_done {
 	my $http   = shift;
 	my $server = $http->params('server');
 
-	my $res = eval { from_json( $http->content ) };
+	my $res = eval { decode_json( $http->content ) };
 
 	if ( $@ || ref $res ne 'HASH' || $res->{error} ) {
 		# don't log the same error more than once a day

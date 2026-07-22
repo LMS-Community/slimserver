@@ -12,7 +12,7 @@ package Slim::Formats::XML;
 use strict;
 use File::Slurp;
 use HTML::Entities;
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS;
 use Scalar::Util qw(weaken);
 use URI::Escape qw(uri_escape_utf8);
 use XML::Simple;
@@ -300,7 +300,7 @@ sub parseXMLIntoFeed {
 	my $xml;
 
 	if ( $type =~ /json/ ) {
-		$xml = from_json($$content);
+		$xml = decode_json($$content);
 	}
 	else {
 		$xml = xmlToHash($content);

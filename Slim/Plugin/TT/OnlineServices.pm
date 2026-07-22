@@ -9,7 +9,7 @@ package Slim::Plugin::TT::OnlineServices;
 use strict;
 use base qw(Template::Plugin);
 
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS;
 
 my $services;
 
@@ -29,7 +29,7 @@ sub getIconForId { if ($services) {
 } }
 
 sub getServiceIconProviders {
-	return $services ? to_json(Slim::Plugin::OnlineLibrary::Plugin->getServiceIconProviders()) : '""';
+	return $services ? encode_json(Slim::Plugin::OnlineLibrary::Plugin->getServiceIconProviders()) : '""';
 }
 
 1;

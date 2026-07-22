@@ -29,7 +29,7 @@ use strict;
 use Scalar::Util qw(blessed looks_like_number);
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename dirname);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS;
 
 use Slim::Utils::Alarm;
 use Slim::Utils::Log;
@@ -427,7 +427,7 @@ sub disconnectCommand {
 		{ timeout => 10 }
 	);
 
-	my $postdata = to_json({
+	my $postdata = encode_json({
 		id     => 1,
 		method => 'slim.request',
 		params => [ $remoteClient, ['connect', Slim::Utils::Network::hostAddr()] ]

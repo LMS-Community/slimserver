@@ -13,7 +13,7 @@ package Slim::Web::JSONRPC;
 use strict;
 
 use HTTP::Status qw(RC_OK RC_FORBIDDEN);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS;
 use Scalar::Util qw(blessed);
 use URI;
 use URI::QueryParam;
@@ -151,7 +151,7 @@ sub handleURI {
 	# Parse the input
 	# Convert JSON to Perl
 	# FIXME: JSON 1.0 accepts multiple requests ? How do we parse that efficiently?
-	my $procedure = from_json($input);
+	my $procedure = decode_json($input);
 
 
 	# Validate the procedure
@@ -318,7 +318,7 @@ sub writeResponse {
 	}
 
 	# convert Perl object into JSON
-	my $jsonResponse = to_json($responseRef);
+	my $jsonResponse = encode_json($responseRef);
 
 	main::DEBUGLOG && $isDebug && $log->info("JSON raw response: [$jsonResponse]");
 

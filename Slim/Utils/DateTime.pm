@@ -10,7 +10,7 @@ use strict;
 
 use Date::Parse;
 use HTTP::Status qw(RC_INTERNAL_SERVER_ERROR);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS;
 use POSIX qw(strftime);
 
 use Slim::Utils::Log;
@@ -496,7 +496,7 @@ sub getTimeZoneInformation {
 	Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
 			my $http = shift;
-			my $res  = eval { from_json($http->content) };
+			my $res  = eval { decode_json($http->content) };
 
 			if ($@ || ref $res ne 'HASH') {
 				$log->error($@ || 'Invalid JSON response: ' . $http->content);

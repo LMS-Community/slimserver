@@ -11,7 +11,7 @@ use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
 use XML::Simple;
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS;
 use Encode qw(encode);
 
 use Slim::Plugin::Podcast::Parser;
@@ -288,7 +288,7 @@ sub searchHandler {
 	Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
 			my $response = shift;
-			my $result = eval { from_json( $response->content ) };
+			my $result = eval { decode_json( $response->content ) };
 
 			$log->error($@) if $@;
 			main::DEBUGLOG && $log->is_debug && warn Data::Dump::dump($result);

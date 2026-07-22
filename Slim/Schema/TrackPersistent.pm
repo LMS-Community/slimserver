@@ -5,7 +5,7 @@ use strict;
 use base 'Slim::Schema::DBI';
 
 use File::Slurp qw(read_file);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS;
 use Scalar::Util qw(blessed);
 
 use Slim::Utils::DateTime;
@@ -46,7 +46,7 @@ sub import_json {
 	if ( main::SCANNER ) {
 		my ( $class, $json ) = @_;
 
-		my $tracks = eval { from_json( read_file($json) ) };
+		my $tracks = eval { decode_json( read_file($json) ) };
 		if ( $@ ) {
 			logError($@);
 			return;

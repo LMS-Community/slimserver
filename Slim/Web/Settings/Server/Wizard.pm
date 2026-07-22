@@ -13,7 +13,7 @@ use File::Slurp qw(read_file);
 use File::Spec::Functions qw(catfile);
 use FindBin qw($Bin);
 use HTTP::Status qw(RC_MOVED_TEMPORARILY);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -208,7 +208,7 @@ sub handler {
 	foreach (Slim::Utils::Misc::uniq(catfile($Bin, 'HTML'), Slim::Utils::OSDetect::dirsFor('HTML'))) {
 		my $path = catfile($_, 'EN', 'settings', 'wizard.json');
 		if (-f $path) {
-			$wzData = from_json(read_file($path));
+			$wzData = decode_json(read_file($path));
 			last if keys %$wzData; # stop if we got data, otherwise try next path
 		}
 	}

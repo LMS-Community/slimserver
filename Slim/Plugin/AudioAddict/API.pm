@@ -2,7 +2,7 @@ package Slim::Plugin::AudioAddict::API;
 
 use strict;
 
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS;
 use Tie::Cache::LRU::Expires;
 use URI::Escape qw(uri_escape_utf8);
 
@@ -155,7 +155,7 @@ sub _call {
 		sub {
 			my $response = shift;
 
-			my $result = eval { from_json($response->content) };
+			my $result = eval { decode_json($response->content) };
 
 			$@ && $log->error($@);
 			main::DEBUGLOG && $log->is_debug && $log->debug("got: " . Data::Dump::dump($result));
