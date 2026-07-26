@@ -99,6 +99,7 @@ jobs:
         if: ${{ matrix.flavour[0] == 'rpm' }}
         run: |
           dnf install -y git rpm-build rpmdevtools systemd-rpm-macros rsync jq unzip perl which
+          echo "%vendor Lyrion Community" >> /etc/rpm/macros
 
       # we must check out here, as  otherwise the build action is not available
       - name: Check out LMS code
