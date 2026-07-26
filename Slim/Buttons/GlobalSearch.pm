@@ -1,7 +1,7 @@
 package Slim::Buttons::GlobalSearch;
 
 #	Logitech Media Server Copyright 2001-2024 Logitech.
-#	Lyrion Music Server Copyright 2024 Lyrion Community.
+#	Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 #	All rights reserved.
 #
 #	This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,6 @@ package Slim::Buttons::GlobalSearch;
 #	You should have received a copy of the GNU General Public License
 #	along with this program; if not, see see
 #	<https://www.gnu.org/licenses/>.
-#
 
 =head1 NAME
 

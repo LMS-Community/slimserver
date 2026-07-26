@@ -1,6 +1,6 @@
 package Slim::Plugin::AudioScrobbler::API::ListenBrainz;
 
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
