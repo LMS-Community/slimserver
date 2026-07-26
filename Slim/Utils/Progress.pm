@@ -9,7 +9,7 @@ package Slim::Utils::Progress;
 use strict;
 use base qw(Slim::Utils::Accessor);
 
-use JSON::XS;
+use JSON::XS qw(encode_json);
 
 use Slim::Schema;
 use Slim::Utils::Unicode;

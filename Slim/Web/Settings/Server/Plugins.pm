@@ -8,8 +8,8 @@ package Slim::Web::Settings::Server::Plugins;
 
 use strict;
 
-use JSON::XS;
 use Digest::MD5;
+use JSON::XS qw(encode_json);
 
 use base qw(Slim::Web::Settings);
 

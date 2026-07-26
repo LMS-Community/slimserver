@@ -9,7 +9,7 @@ package Slim::Plugin::TT::OnlineServices;
 use strict;
 use base qw(Template::Plugin);
 
-use JSON::XS;
+use JSON::XS qw(encode_json);
 
 my $services;
 

@@ -27,7 +27,7 @@ use File::Basename;
 use File::Path;
 use File::Slurp;
 use File::Spec::Functions qw(catfile);
-use JSON::XS;
+use JSON::XS qw(encode_json);
 use Time::HiRes qw(sleep);
 
 use Slim::Utils::ArtworkCache;

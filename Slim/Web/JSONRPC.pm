@@ -13,7 +13,7 @@ package Slim::Web::JSONRPC;
 use strict;
 
 use HTTP::Status qw(RC_OK RC_FORBIDDEN);
-use JSON::XS;
+use JSON::XS qw(decode_json encode_json);
 use Scalar::Util qw(blessed);
 use URI;
 use URI::QueryParam;

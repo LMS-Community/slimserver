@@ -10,7 +10,7 @@ package Slim::Networking::Discovery::Players;
 
 use strict;
 
-use JSON::XS;
+use JSON::XS qw(decode_json encode_json);
 
 use Slim::Control::Request;
 use Slim::Networking::Discovery::Server;

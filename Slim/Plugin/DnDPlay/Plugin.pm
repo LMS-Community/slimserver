@@ -9,7 +9,7 @@ package Slim::Plugin::DnDPlay::Plugin;
 use strict;
 
 use File::Temp qw(tempfile);
-use JSON::XS;
+use JSON::XS qw(encode_json);
 use URI::QueryParam;
 
 use Slim::Utils::Log;

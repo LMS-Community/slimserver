@@ -11,7 +11,7 @@ use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
 use XML::Simple;
-use JSON::XS;
+use JSON::XS qw(decode_json);
 use Encode qw(encode);
 
 use Slim::Plugin::Podcast::Parser;

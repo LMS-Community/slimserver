@@ -3,7 +3,6 @@ package Slim::Plugin::RemoteLibrary::ProtocolHandler;
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);
 
-use JSON::XS;
 use Scalar::Util qw(blessed);
 
 use Slim::Networking::SimpleAsyncHTTP;

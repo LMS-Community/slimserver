@@ -9,7 +9,7 @@ package Slim::Plugin::PresetsEditor::Settings;
 use strict;
 
 use base qw(Slim::Web::Settings);
-use JSON::XS;
+use JSON::XS qw(encode_json);
 
 use Slim::Utils::Alarm;
 use Slim::Utils::Log;

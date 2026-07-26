@@ -13,7 +13,7 @@ use File::Slurp qw(read_file);
 use File::Spec::Functions qw(catfile);
 use FindBin qw($Bin);
 use HTTP::Status qw(RC_MOVED_TEMPORARILY);
-use JSON::XS;
+use JSON::XS qw(decode_json);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;

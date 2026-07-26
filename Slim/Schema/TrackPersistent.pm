@@ -5,7 +5,7 @@ use strict;
 use base 'Slim::Schema::DBI';
 
 use File::Slurp qw(read_file);
-use JSON::XS;
+use JSON::XS qw(decode_json);
 use Scalar::Util qw(blessed);
 
 use Slim::Utils::DateTime;

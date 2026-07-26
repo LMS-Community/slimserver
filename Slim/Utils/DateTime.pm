@@ -10,7 +10,7 @@ use strict;
 
 use Date::Parse;
 use HTTP::Status qw(RC_INTERNAL_SERVER_ERROR);
-use JSON::XS;
+use JSON::XS qw(decode_json);
 use POSIX qw(strftime);
 
 use Slim::Utils::Log;

@@ -16,7 +16,7 @@ than the local database.
 
 use strict;
 
-use JSON::XS;
+use JSON::XS qw(decode_json encode_json);
 use MIME::Base64 qw(encode_base64 decode_base64);
 
 use Slim::Menu::BrowseLibrary;

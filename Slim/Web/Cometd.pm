@@ -20,7 +20,7 @@ use strict;
 
 use bytes;
 use HTTP::Date;
-use JSON::XS;
+use JSON::XS qw(decode_json encode_json);
 use Scalar::Util qw(blessed);
 use URI::Escape qw(uri_unescape);
 

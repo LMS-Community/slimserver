@@ -46,7 +46,7 @@ use POSIX qw(setlocale LC_TIME LC_COLLATE);
 use File::Basename qw(dirname);
 use File::Slurp qw(read_file write_file);
 use File::Spec::Functions qw(catdir);
-use JSON::XS;
+use JSON::XS qw(decode_json encode_json);
 use Scalar::Util qw(blessed);
 use Storable;
 

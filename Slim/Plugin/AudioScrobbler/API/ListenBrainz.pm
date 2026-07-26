@@ -14,7 +14,7 @@ use strict;
 
 use base qw(Slim::Plugin::AudioScrobbler::API);
 
-use JSON::XS;
+use JSON::XS qw(decode_json encode_json);
 use Scalar::Util qw(blessed);
 use URI;
 use URI::Escape qw(uri_escape_utf8 uri_unescape);

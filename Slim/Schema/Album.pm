@@ -4,7 +4,7 @@ package Slim::Schema::Album;
 use strict;
 use base 'Slim::Schema::DBI';
 
-use JSON::XS;
+use JSON::XS qw(decode_json encode_json);
 
 use Slim::Schema::ResultSet::Album;
 

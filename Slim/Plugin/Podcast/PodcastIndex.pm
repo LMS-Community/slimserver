@@ -11,7 +11,7 @@ use strict;
 
 use base qw(Slim::Plugin::Podcast::Provider);
 
-use JSON::XS;
+use JSON::XS qw(decode_json);
 use Digest::SHA1 qw(sha1_hex);
 use MIME::Base64;
 use URI::Escape;

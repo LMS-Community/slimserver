@@ -10,7 +10,7 @@ use strict;
 
 use Data::URIEncode qw(complex_to_query);
 use HTTP::Status qw(RC_MOVED_TEMPORARILY);
-use JSON::XS;
+use JSON::XS qw(encode_json);
 
 use Slim::Utils::Cache;
 use Slim::Utils::Prefs;

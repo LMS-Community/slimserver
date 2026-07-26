@@ -4,7 +4,7 @@ use strict;
 
 use Config;
 use Digest::SHA1 qw(sha1_base64);
-use JSON::XS;
+use JSON::XS qw(encode_json);
 use List::Util qw(max);
 
 use base qw(Slim::Plugin::Base);

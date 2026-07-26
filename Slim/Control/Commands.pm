@@ -29,7 +29,7 @@ use strict;
 use Scalar::Util qw(blessed looks_like_number);
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename dirname);
-use JSON::XS;
+use JSON::XS qw(encode_json);
 
 use Slim::Utils::Alarm;
 use Slim::Utils::Log;

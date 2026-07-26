@@ -26,7 +26,7 @@ package Slim::Plugin::RadioArtwork::Plugin;
 =cut
 
 use strict;
-use JSON::XS;
+use JSON::XS qw(decode_json);
 use Tie::RegexpHash;
 use URI;
 use URI::QueryParam;

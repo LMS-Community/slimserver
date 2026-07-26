@@ -5,7 +5,7 @@ use File::Slurp qw(write_file);
 use Time::HiRes;
 use Digest::MD5;
 use File::Spec::Functions qw(splitpath catdir);
-use JSON::XS;
+use JSON::XS qw(decode_json);
 
 use Slim::Utils::Log;
 use Slim::Utils::OSDetect;

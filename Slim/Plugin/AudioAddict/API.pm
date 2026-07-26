@@ -2,7 +2,7 @@ package Slim::Plugin::AudioAddict::API;
 
 use strict;
 
-use JSON::XS;
+use JSON::XS qw(decode_json);
 use Tie::Cache::LRU::Expires;
 use URI::Escape qw(uri_escape_utf8);
 
