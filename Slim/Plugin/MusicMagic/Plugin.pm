@@ -869,12 +869,12 @@ sub getMix {
 		($prefs->client($client)->get('mix_genre_filter') || $prefs->get('mix_genre_filter')) :
 		$prefs->get('mix_genre_filter');
 
-	my %genreFilterHash = map { lc($_) => 1 } @{ $genreFilter || [] };
+	my $genreFilterHash = { map { lc($_) => 1 } @{ $genreFilter || [] } };
 
 	# genre exclusion happens after MusicIP has already picked the mix, so it can leave us
 	# short of the requested size - ask for extra up front so we've got a top-up pool to draw from
 	my $requestedSize = $args{'size'};
-	my $canTopUp = %genreFilterHash && $requestedSize && $args{'sizetype'} eq 'tracks';
+	my $canTopUp = keys %$genreFilterHash && $requestedSize && $args{'sizetype'} eq 'tracks';
 
 	$args{'size'} = $requestedSize * 3 if $canTopUp;
 
@@ -936,9 +936,7 @@ sub getMix {
 
 			my $url = Slim::Utils::Misc::fileURLFromPath($songs[$j]);
 
-			if (%genreFilterHash && _trackHasExcludedGenre($url, \%genreFilterHash)) {
-				next;
-			}
+			next unless $canTopUp && _trackHasExcludedGenre($url, $genreFilterHash);
 
 			push @mix, $url;
 		} else {
@@ -953,6 +951,8 @@ sub getMix {
 
 sub _trackHasExcludedGenre {
 	my ($url, $genreFilterHash) = @_;
+
+	return unless $url && ref $genreFilterHash eq 'HASH' && scalar keys %$genreFilterHash;
 
 	my $trackObj = Slim::Schema->objectForUrl($url);
 
