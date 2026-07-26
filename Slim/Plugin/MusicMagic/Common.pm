@@ -64,6 +64,7 @@ sub checkDefaults {
 		mix_style       => 20,
 		mix_variety     => 0,
 		mix_genre       => 0,
+		mix_genre_filter => [],
 		mix_size        => 12,
 		reject_size     => 12,
 		reject_type     => 0,
@@ -72,6 +73,12 @@ sub checkDefaults {
 		scan_interval   => 3600,
 		port            => 10002,
 	}, 'Slim::Plugin::MusicMagic::Prefs');
+}
+
+sub getGenreList {
+	my @genres = map { $_->name } Slim::Schema->rs('Genre')->search(undef, { order_by => 'me.namesort' })->all;
+
+	return \@genres;
 }
 
 sub getBaseUrl {

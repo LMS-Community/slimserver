@@ -865,6 +865,19 @@ sub getMix {
 		$args{'filter'} = Slim::Plugin::MusicMagic::Common::escape($filter);
 	}
 
+	my $genreFilter = defined $client ?
+		($prefs->client($client)->get('mix_genre_filter') || $prefs->get('mix_genre_filter')) :
+		$prefs->get('mix_genre_filter');
+
+	my %genreFilterHash = map { lc($_) => 1 } @{ $genreFilter || [] };
+
+	# genre exclusion happens after MusicIP has already picked the mix, so it can leave us
+	# short of the requested size - ask for extra up front so we've got a top-up pool to draw from
+	my $requestedSize = $args{'size'};
+	my $canTopUp = %genreFilterHash && $requestedSize && $args{'sizetype'} eq 'tracks';
+
+	$args{'size'} = $requestedSize * 3 if $canTopUp;
+
 	my $argString = join( '&', map { "$_=$args{$_}" } keys %args );
 
 	if (!$validMixTypes{$for}) {
@@ -920,13 +933,36 @@ sub getMix {
 		}
 
 		if ( -e $songs[$j] || -e Slim::Utils::Unicode::utf8encode_locale($songs[$j]) ) {
-			push @mix, Slim::Utils::Misc::fileURLFromPath($songs[$j]);
+
+			my $url = Slim::Utils::Misc::fileURLFromPath($songs[$j]);
+
+			if (%genreFilterHash && _trackHasExcludedGenre($url, \%genreFilterHash)) {
+				next;
+			}
+
+			push @mix, $url;
 		} else {
 			$log->error('MIP attempted to mix in a song at ' . $songs[$j] . ' that can\'t be found at that location');
 		}
+
+		last if $canTopUp && scalar(@mix) >= $requestedSize;
 	}
 
 	return \@mix;
+}
+
+sub _trackHasExcludedGenre {
+	my ($url, $genreFilterHash) = @_;
+
+	my $trackObj = Slim::Schema->objectForUrl($url);
+
+	return 0 unless blessed($trackObj) && $trackObj->can('genres');
+
+	for my $genre ($trackObj->genres) {
+		return 1 if $genreFilterHash->{lc $genre->name};
+	}
+
+	return 0;
 }
 
 sub musicmagic_moods {
