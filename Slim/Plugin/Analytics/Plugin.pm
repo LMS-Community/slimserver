@@ -4,7 +4,7 @@ use strict;
 
 use Config;
 use Digest::SHA1 qw(sha1_base64);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(encode_json);
 use List::Util qw(max);
 
 use base qw(Slim::Plugin::Base);
@@ -114,7 +114,7 @@ sub _report { if (!main::SCANNER) {
 		sprintf(REPORT_URL, $serverId),
 		'x-lms-id' => $serverId,
 		'Content-Type' => 'application/json',
-		to_json($data),
+		encode_json($data),
 	);
 } }
 

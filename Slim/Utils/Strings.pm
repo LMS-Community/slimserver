@@ -46,7 +46,7 @@ use POSIX qw(setlocale LC_TIME LC_COLLATE);
 use File::Basename qw(dirname);
 use File::Slurp qw(read_file write_file);
 use File::Spec::Functions qw(catdir);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(decode_json encode_json);
 use Scalar::Util qw(blessed);
 use Storable;
 
@@ -442,7 +442,7 @@ sub storeExtraStrings {
 	if ( !scalar( keys %{$extraStringsCache} ) && -e $extraCache ) {
 		main::DEBUGLOG && $log->is_debug && $log->debug('Reading extrastrings.json file');
 
-		$extraStringsCache = eval { from_json( read_file($extraCache) ) };
+		$extraStringsCache = eval { decode_json( read_file($extraCache) ) };
 		if ( $@ ) {
 			$log->error("Failed to read extrastrings.json file: $@");
 			$extraStringsCache = {};
@@ -489,7 +489,7 @@ sub _writeExtraStrings {
 	main::DEBUGLOG && $log->is_debug && $log->debug('Writing updated extrastrings.json file');
 
 	$extraStringsDirty = 0;
-	eval { write_file( $extraCache, to_json($extraStringsCache) ) };
+	eval { write_file( $extraCache, encode_json($extraStringsCache) ) };
 
 	$log->error("Failed to write extrastrings.json file: $@") if $@;
 };
@@ -505,7 +505,7 @@ sub loadExtraStrings {
 
 	my $cache = $extraStringsCache || {};
 	if ( !($cache && keys %$cache) && -e $extraCache ) {
-		$cache = eval { from_json( read_file($extraCache) ) };
+		$cache = eval { decode_json( read_file($extraCache) ) };
 	}
 
 	for my $string ( keys %{ $cache || {} } ) {

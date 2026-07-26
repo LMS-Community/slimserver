@@ -14,7 +14,7 @@ use strict;
 
 use base qw(Slim::Plugin::AudioScrobbler::API);
 
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(decode_json encode_json);
 use Scalar::Util qw(blessed);
 use URI;
 use URI::Escape qw(uri_escape_utf8 uri_unescape);
@@ -123,7 +123,7 @@ sub submitNowPlaying {
 		}],
 	};
 
-	my $json = to_json($payload);
+	my $json = encode_json($payload);
 
 	main::DEBUGLOG && $log->debug("Submitting Now Playing track to ListenBrainz: " . $meta->{title});
 
@@ -203,7 +203,7 @@ sub submitScrobbleItems {
 		payload     => [$listen],
 	};
 
-	my $json = to_json($payload);
+	my $json = encode_json($payload);
 
 	if ( main::DEBUGLOG && $log->is_debug ) {
 		$log->debug("ListenBrainz: Submitting item 1 of " . scalar(@$listens) . ": " . $listen->{track_metadata}->{track_name});
@@ -334,7 +334,7 @@ sub _validateOK {
 	# Parse JSON response
 	my $response;
 	eval {
-		$response = from_json($content);
+		$response = decode_json($content);
 	};
 
 	my $ecb = $params->{ecb} || sub {};

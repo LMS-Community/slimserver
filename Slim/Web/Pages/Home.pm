@@ -10,7 +10,7 @@ use strict;
 
 use Data::URIEncode qw(complex_to_query);
 use HTTP::Status qw(RC_MOVED_TEMPORARILY);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(encode_json);
 
 use Slim::Utils::Cache;
 use Slim::Utils::Prefs;
@@ -238,7 +238,7 @@ sub _updateInfoCB {
 		}
 
 		$response->content_type('application/json');
-		my $content = to_json($json);
+		my $content = encode_json($json);
 		$callback->($client, $params, \$content, $httpClient, $response);
 	}
 	else {

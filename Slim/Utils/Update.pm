@@ -5,7 +5,7 @@ use File::Slurp qw(write_file);
 use Time::HiRes;
 use Digest::MD5;
 use File::Spec::Functions qw(splitpath catdir);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(decode_json);
 
 use Slim::Utils::Log;
 use Slim::Utils::OSDetect;
@@ -99,7 +99,7 @@ sub checkVersionCB {
 
 		my $content = Slim::Utils::Unicode::utf8decode( $http->content() );
 
-		my $versions = from_json($content);
+		my $versions = decode_json($content);
 
 		my $osID = $os->installerOS() || 'default';
 		$versions = $versions->{$::VERSION} || $versions->{latest};

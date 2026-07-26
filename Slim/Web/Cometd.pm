@@ -20,7 +20,7 @@ use strict;
 
 use bytes;
 use HTTP::Date;
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(decode_json encode_json);
 use Scalar::Util qw(blessed);
 use URI::Escape qw(uri_unescape);
 
@@ -126,7 +126,7 @@ sub handler {
 		return;
 	}
 
-	my $objs = eval { from_json( $message ) };
+	my $objs = eval { decode_json( $message ) };
 	if ( $@ ) {
 		sendResponse(
 			@{$conn},
@@ -695,9 +695,9 @@ sub sendHTTPResponse {
 		);
 	}
 
-	$out = eval { to_json($out) };
+	$out = eval { encode_json($out) };
 	if ( $@ ) {
-		$out = to_json( [ { successful => JSON::XS::false, error => "$@" } ] );
+		$out = encode_json( [ { successful => JSON::XS::false, error => "$@" } ] );
 	}
 
 	my $sendheaders = 1; # should we send headers?
@@ -751,9 +751,9 @@ sub sendHTTPResponse {
 sub sendCLIResponse {
 	my ( $socket, $out ) = @_;
 
-	$out = eval { to_json($out) };
+	$out = eval { encode_json($out) };
 	if ( $@ ) {
-		$out = to_json( [ { successful => JSON::XS::false, error => "$@" } ] );
+		$out = encode_json( [ { successful => JSON::XS::false, error => "$@" } ] );
 	}
 
 	if ( main::DEBUGLOG && $log->is_debug ) {

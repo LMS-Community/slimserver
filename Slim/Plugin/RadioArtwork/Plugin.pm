@@ -26,7 +26,7 @@ package Slim::Plugin::RadioArtwork::Plugin;
 =cut
 
 use strict;
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(decode_json);
 use Tie::RegexpHash;
 use URI;
 use URI::QueryParam;
@@ -223,7 +223,7 @@ sub lookupArtwork {
 		sub {
 			my $response = shift;
 
-			my $json = eval { from_json($response->content) };
+			my $json = eval { decode_json($response->content) };
 
 			$log->warn($@) if $@;
 
@@ -267,7 +267,7 @@ sub updateKillWords {
 		sub {
 			my $response = shift;
 
-			my $json = eval { from_json($response->content) };
+			my $json = eval { decode_json($response->content) };
 
 			$log->warn($@) if $@;
 

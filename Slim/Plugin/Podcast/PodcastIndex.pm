@@ -11,7 +11,7 @@ use strict;
 
 use base qw(Slim::Plugin::Podcast::Provider);
 
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(decode_json);
 use Digest::SHA1 qw(sha1_hex);
 use MIME::Base64;
 use URI::Escape;
@@ -112,7 +112,7 @@ sub newsHandler {
 		Slim::Networking::SimpleAsyncHTTP->new(
 			sub {
 				my $response = shift;
-				my $result = eval { from_json( $response->content ) };
+				my $result = eval { decode_json( $response->content ) };
 
 				$log->warn("error parsing new episodes for $url", $@) if $@;
 				main::INFOLOG && $log->is_info && $log->info("found $result->{count} for $url");

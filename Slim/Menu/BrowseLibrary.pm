@@ -151,7 +151,6 @@ should be passed a reference to a real sub (not an anonymous one).
 
 
 use strict;
-use JSON::XS::VersionOneAndTwo;
 
 use Slim::Menu::BrowseLibrary::Releases;
 use Slim::Menu::BrowseLibrary::Works;

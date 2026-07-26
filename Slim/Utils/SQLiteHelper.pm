@@ -27,7 +27,7 @@ use File::Basename;
 use File::Path;
 use File::Slurp;
 use File::Spec::Functions qw(catfile);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(encode_json);
 use Time::HiRes qw(sleep);
 
 use Slim::Utils::ArtworkCache;
@@ -429,7 +429,7 @@ sub updateProgress {
 		$req->authorization_basic($username, $password);
 	}
 
-	$req->content( to_json( {
+	$req->content( encode_json( {
 		id     => 1,
 		method => 'slim.request',
 		params => [ '', [ 'scanner', 'notify', @_ ] ],

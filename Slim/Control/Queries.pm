@@ -33,7 +33,6 @@ use strict;
 use File::Basename qw(basename);
 use File::Spec::Functions qw(catdir);
 use Storable ();
-use JSON::XS::VersionOneAndTwo;
 use List::Util qw(first max min);
 use MIME::Base64 ();
 use Scalar::Util qw(blessed);
