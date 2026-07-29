@@ -377,7 +377,7 @@ sub albumsQuery {
 					push @roles, 'ARTIST' if $roleID eq 'ALBUMARTIST' && !$prefs->get('useUnifiedArtistsList');
 				}
 				elsif ($prefs->get('useUnifiedArtistsList')) {
-					@roles = Slim::Schema::Contributor->activeContributorRoles(1);
+					@roles = Slim::Utils::Misc::uniq(Slim::Schema::Contributor->activeContributorRoles(1), Slim::Schema::Contributor->allAlbumLinkRoles());
 				}
 				else {
 					@roles = Slim::Schema::Contributor->contributorRoles();
