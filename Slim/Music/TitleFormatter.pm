@@ -30,6 +30,8 @@ use Slim::Utils::Unicode;
 
 our ($elemstring, @elements, $elemRegex, %parsedFormats, $nocacheRegex, @noCache, %formatCache, $externalFormats);
 
+*utf8on = \&Slim::Utils::Unicode::utf8on;
+
 my $log = logger('database.info');
 
 sub init {
@@ -47,7 +49,7 @@ sub init {
 		$parsedFormats{uc($attr)} = sub {
 
 			if ( ref $_[0] eq 'HASH' ) {
-				return $_[0]->{ lc($attr) } || $_[0]->{ 'tracks.' . lc($attr) } || '';
+				return utf8on($_[0]->{ lc($attr) } || $_[0]->{ 'tracks.' . lc($attr) } || '');
 			}
 
 			my $output = $_[0]->get_column($attr);
@@ -76,7 +78,7 @@ sub init {
 	$parsedFormats{'ALBUM'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{album} || $_[0]->{'albums.title'} || '';
+			return utf8on($_[0]->{album} || $_[0]->{'albums.title'} || '');
 		}
 
 		my $output = '';
@@ -90,7 +92,7 @@ sub init {
 	$parsedFormats{'WORK'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{work} || $_[0]->{'works.title'} || '';
+			return utf8on($_[0]->{work} || $_[0]->{'works.title'} || '');
 		}
 
 		my $output = '';
@@ -104,7 +106,7 @@ sub init {
 	$parsedFormats{'ALBUMSORT'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{albumsort} || $_[0]->{'albums.titlesort'} || '';
+			return utf8on($_[0]->{albumsort} || $_[0]->{'albums.titlesort'} || '');
 		}
 
 		my $output = '';
@@ -120,7 +122,9 @@ sub init {
 	$parsedFormats{'DISCC'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{discc} || $_[0]->{'albums.discc'} || '';
+			my $discc = $_[0]->{discc} || $_[0]->{'albums.discc'} || '';
+			# suppress disc counts of 1 or less
+			return ($discc && $discc > 1 ? $discc : '');
 		}
 
 		my $output = '';
@@ -136,7 +140,10 @@ sub init {
 	$parsedFormats{'DISC'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{disc} || $_[0]->{'tracks.disc'} || '';
+			my $disc = $_[0]->{disc} || $_[0]->{'tracks.disc'} || '';
+			my $discc = $_[0]->{discc} || $_[0]->{'albums.discc'} || '';
+			# suppress disc when only 1 disc in set
+			return ($discc && $discc > 1 ? $disc : '');
 		}
 
 		my $disc = $_[0]->disc;
@@ -163,7 +170,7 @@ sub init {
 	$parsedFormats{'ARTIST'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{artist} || $_[0]->{albumartist} || $_[0]->{trackartist} || $_[0]->{'contributors.name'} || '';
+			return utf8on($_[0]->{artist} || $_[0]->{albumartist} || $_[0]->{trackartist} || $_[0]->{'contributors.name'} || '');
 		}
 
 		my @output  = ();
@@ -191,7 +198,7 @@ sub init {
 	$parsedFormats{'ARTISTSORT'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{artistsort} || $_[0]->{'contributors.titlesort'} || '';
+			return utf8on($_[0]->{artistsort} || $_[0]->{albumartistsort} || $_[0]->{trackartistsort} || $_[0]->{'contributors.namesort'} || '');
 		}
 
 		my @output  = ();
@@ -215,7 +222,7 @@ sub init {
 		$parsedFormats{uc($attr)} = sub {
 
 			if ( ref $_[0] eq 'HASH' ) {
-				return $_[0]->{$attr} || '';
+				return utf8on($_[0]->{$attr} || '');
 			}
 
 			my $output = '';
@@ -236,7 +243,7 @@ sub init {
 	$parsedFormats{'GENRE'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{genre} || $_[0]->{'genres.name'} || '';
+			return utf8on($_[0]->{genre} || $_[0]->{'genres.name'} || '');
 		}
 
 		my $output = '';
@@ -253,7 +260,7 @@ sub init {
 	# add comment
 	$parsedFormats{uc('COMMENT')} = sub {
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{comment} || $_[0]->{'tracks.comment'} || '';
+			return utf8on($_[0]->{comment} || $_[0]->{'tracks.comment'} || '');
 		}
 
 		my $output = $_[0]->comment();
@@ -263,7 +270,7 @@ sub init {
 	# duration - already formatted for local tracks, but often seconds only for remote tracks
 	$parsedFormats{'DURATION'} = sub {
 		if ( ref $_[0] eq 'HASH' ) {
-			my $duration = $_[0]->{duration} || $_[0]->{'tracks.duration'} || $_[0]->{'secs'} || '';
+			my $duration = $_[0]->{duration} || $_[0]->{'tracks.duration'} || $_[0]->{'secs'} || $_[0]->{'tracks.secs'} || '';
 
 			# format if we got a number only
 			return sprintf('%s:%02s', int($duration / 60), $duration % 60) if $duration * 1 eq $duration;
@@ -293,16 +300,17 @@ sub init {
 
 	# add file info
 	$parsedFormats{'VOLUME'} = sub {
+		my $url;
+		my $output = '';
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{volume} || '';
+			$url = $_[0]->{url} || $_[0]->{'tracks.url'};
+		}
+		else {
+			$url = $_[0]->get('url');
 		}
 
-		my $output = '';
-		my $url = $_[0]->get('url');
-
 		if ($url) {
-
 			if (Slim::Music::Info::isFileURL($url)) {
 				$url = Slim::Utils::Misc::pathFromFileURL($url);
 			}
@@ -310,71 +318,69 @@ sub init {
 			$output = (splitpath($url))[0];
 		}
 
-		return (defined $output ? $output : '');
+		return (defined $output ? utf8on($output) : '');
 	};
 
 	$parsedFormats{'PATH'} = sub {
-
-		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{path} || '';
-		}
-
-		my $output = '';
-		my $url = $_[0]->get('url');
-
-		if ($url) {
-
-			if (Slim::Music::Info::isFileURL($url)) {
-				$url = Slim::Utils::Misc::pathFromFileURL($url);
-			}
-
-			$output = (splitpath($url))[1];
-		}
-
-		return (defined $output ? $output : '');
-	};
-
-	$parsedFormats{'FILE'} = sub {
-
 		my $url;
+		my $output = '';
+
 		if ( ref $_[0] eq 'HASH' ) {
-			if ( $_[0]->{url} ) {
-				$url = $_[0]->{url};
-			}
-			else {
-				return $_[0]->{file} || '';
-			}
+			$url = $_[0]->{url} || $_[0]->{'tracks.url'};
 		}
 		else {
 			$url = $_[0]->get('url');
 		}
 
+		if ($url) {
+			if (Slim::Music::Info::isFileURL($url)) {
+				$url = Slim::Utils::Misc::pathFromFileURL($url);
+			}
+
+			$output = (splitpath($url))[1];
+			$output = Slim::Utils::Misc::unescape($output);
+		}
+
+		return (defined $output ? utf8on($output) : '');
+	};
+
+	$parsedFormats{'FILE'} = sub {
+		my $url;
 		my $output = '';
 
-		if ($url) {
+		if ( ref $_[0] eq 'HASH' ) {
+			$url = $_[0]->{url} || $_[0]->{'tracks.url'};
+			$output = $_[0]->{file} if !$url;
+		}
+		else {
+			$url = $_[0]->get('url');
+		}
 
+		if ($url) {
 			if (Slim::Music::Info::isFileURL($url)) {
 				$url = Slim::Utils::Misc::pathFromFileURL($url);
 			}
 
 			$output = (splitpath($url))[2];
 			$output =~ s/\.[^\.]*?$//;
+			$output = Slim::Utils::Misc::unescape($output);
 		}
 
-		return (defined $output ? $output : '');
+		return (defined $output ? utf8on($output) : '');
 	};
 
 	$parsedFormats{'EXT'} = sub {
+		my $url;
+		my $output = '';
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{ext} || '';
+			$url = $_[0]->{url} || $_[0]->{'tracks.url'};
+		}
+		else {
+			$url = $_[0]->get('url');
 		}
 
-		my $output = '';
-		my $url = $_[0]->get('url');
-
 		if ($url) {
-
 			if (Slim::Music::Info::isFileURL($url)) {
 				$url = Slim::Utils::Misc::pathFromFileURL($url);
 			}
@@ -383,7 +389,7 @@ sub init {
 			($output) = $file =~ /\.([^\.]*?)$/;
 		}
 
-		return (defined $output ? $output : '');
+		return (defined $output ? utf8on($output) : '');
 	};
 
 	# Add date/time elements
@@ -414,24 +420,27 @@ sub init {
 
 	# Add lightweight FILE.EXT format
 	$parsedFormats{'FILE.EXT'} = sub {
+		my $url;
+		my $output = '';
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return $_[0]->{'file.ext'} || '';
+			return utf8on($_[0]->{'file.ext'}) if $_[0]->{'file.ext'};
+			$url = $_[0]->{url} || $_[0]->{'tracks.url'};
+		}
+		else {
+			$url = $_[0]->get('url');
 		}
 
-		my $output = '';
-		my $url = $_[0]->get('url');
-
 		if ($url) {
-
 			if (Slim::Music::Info::isFileURL($url)) {
 				$url = Slim::Utils::Misc::pathFromFileURL($url);
 			}
 
 			$output = (splitpath($url))[2];
+			$output = Slim::Utils::Misc::unescape($output);
 		}
 
-		return (defined $output ? $output : '');
+		return (defined $output ? utf8on($output) : '');
 	};
 
 	# Define built in formats which should not be cached
@@ -686,7 +695,7 @@ sub infoFormat {
 		# Make sure all keys in meta are lowercase for format lookups
 		my @uckeys = grep { $_ =~ /[A-Z]/ } keys %{$meta};
 		for my $key ( @uckeys ) {
-			$meta->{lc($key)} = $meta->{$key};
+			$meta->{lc($key)} = delete $meta->{$key};
 		}
 
 		$output = $format->($meta) if ref($format) eq 'CODE';
