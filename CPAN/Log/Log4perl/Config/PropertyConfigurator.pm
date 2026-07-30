@@ -16,6 +16,8 @@ our %NOT_A_MULT_VALUE = map { $_ => 1 }
 
 use constant _INTERNAL_DEBUG => 0;
 
+our $COMMENT_REGEX = qr/[#;!]/;
+
 ################################################
 sub parse {
 ################################################
@@ -32,7 +34,7 @@ sub parse {
 
     while (@$text) {
         local $_ = shift @$text;
-        s/^\s*#.*//;
+        s/^\s*$COMMENT_REGEX.*//;
         next unless /\S/;
     
         my @parts = ();
@@ -41,7 +43,7 @@ sub parse {
             my $prev = $1;
             my $next = shift(@$text);
             $next =~ s/^ +//g;  #leading spaces
-            $next =~ s/^#.*//;
+            $next =~ s/^$COMMENT_REGEX.*//;
             $_ = $prev. $next;
             chomp;
         }
@@ -59,13 +61,6 @@ sub parse {
             $val =~ s/\$\{(.*?)\}/
                       Log::Log4perl::Config::var_subst($1, \%var_subst)/gex;
 
-            # for triggers, we want to compile them but not run them
-            # (is this worth putting into metadata somewhere?)
-            if ($key =~ /\.trigger$/ ){ 
-                $val = compile_if_perl($val)
-            }elsif ( $key !~ /\.(cspec\.)|warp_message|filter/){
-                $val = eval_if_perl($val)
-            }
             $key = unlog4j($key);
 
             my $how_deep = 0;
@@ -99,7 +94,9 @@ sub parse {
                 push (@{$ptr->{value}}, $val);
             }else{
                 if(defined $ptr->{value}) {
-                    die "$key_org redefined";
+                    if(! $Log::Log4perl::Logger::NO_STRICT) {
+                        die "$key_org redefined";
+                    }
                 }
                 $ptr->{value} = $val;
             }
@@ -140,6 +137,8 @@ sub value {
 1;
 
 __END__
+
+=encoding utf8
 
 =head1 NAME
 
@@ -187,9 +186,35 @@ Log::Log4perl::Config::DOMConfigurator
 
 Log::Log4perl::Config::LDAPConfigurator (tbd!)
 
+=head1 LICENSE
+
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
+
 =head1 AUTHOR
 
-Kevin Goess, <cpan@goess.org> Jan-2003
-Mike Schilli, <cpan@perlmeister.com>, 2007
+Please contribute patches to the project on Github:
 
-=cut
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

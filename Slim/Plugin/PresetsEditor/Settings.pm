@@ -9,7 +9,7 @@ package Slim::Plugin::PresetsEditor::Settings;
 use strict;
 
 use base qw(Slim::Web::Settings);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(encode_json);
 
 use Slim::Utils::Alarm;
 use Slim::Utils::Log;
@@ -68,7 +68,7 @@ sub handler {
 		$_->{items} && scalar @{$_->{items}}
 	} @$playlistOptions ];
 
-	$params->{urlToName} = to_json(\%urlToName);
+	$params->{urlToName} = encode_json(\%urlToName);
 
 	return $class->SUPER::handler( $client, $params );
 }

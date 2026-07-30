@@ -19,7 +19,6 @@ Base class for preference objects implementing methods which can be used on glob
 
 use strict;
 
-use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
 use Storable;
 

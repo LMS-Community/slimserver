@@ -9,7 +9,7 @@ package Slim::Plugin::DnDPlay::Plugin;
 use strict;
 
 use File::Temp qw(tempfile);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(encode_json);
 use URI::QueryParam;
 
 use Slim::Utils::Log;
@@ -176,7 +176,7 @@ sub handleUpload {
 
 	$log->error($result->{error}) if $result->{error};
 
-	my $content = to_json($result);
+	my $content = encode_json($result);
 	$response->header( 'Content-Length' => length($content) );
 	$response->code($result->{code} || 200);
 	$response->header('Connection' => 'close');

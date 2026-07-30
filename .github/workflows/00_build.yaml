@@ -20,6 +20,9 @@ on:
           - nightly
           - release
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   mac:
     name: Build LMS for Mac
@@ -86,7 +89,18 @@ jobs:
           - [tarball, "--noCPAN"]
           - [pcp, ""]
 
+    container:
+      image: ${{ matrix.flavour[0] == 'rpm' && 'fedora:44' || '' }}
+      volumes:
+        - ${{ github.workspace }}/publish:/home/runner/work/slimserver/slimserver/publish
+
     steps:
+      - name: Prepare build environment (RPM)
+        if: ${{ matrix.flavour[0] == 'rpm' }}
+        run: |
+          dnf install -y git rpm-build rpmdevtools systemd-rpm-macros rsync jq unzip perl which
+          echo "%vendor Lyrion Community" >> /etc/rpm/macros
+
       # we must check out here, as  otherwise the build action is not available
       - name: Check out LMS code
         uses: actions/checkout@v6
@@ -95,7 +109,7 @@ jobs:
           ref: ${{ inputs.branch }}
 
       - name: Prepare build environment
-        if: ${{ matrix.flavour[0] != 'tarball' && matrix.flavour[0] != 'pcp' }}
+        if: ${{ matrix.flavour[0] != 'tarball' && matrix.flavour[0] != 'pcp' && matrix.flavour[0] != 'rpm' }}
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: apt-transport-https debhelper devscripts
@@ -108,6 +122,8 @@ jobs:
           build-type: ${{ inputs.build_type }}
           AWS_KEY_ID: ${{ secrets.R2_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        env:
+          QA_RPATHS: 0x0003
 
   docker:
     name: Build LMS for Docker
@@ -122,16 +138,16 @@ jobs:
           ref: ${{ inputs.branch }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Login to ghcr.io
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -171,7 +187,7 @@ jobs:
         # we only sign for release builds - no need to do this for nightlies
         if: ${{ inputs.build-type == 'release' }}
         # needs to be run here as the above build action can't run upload twice
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         id: upload-artifact
         with:
           name: win64-signed
@@ -207,7 +223,7 @@ jobs:
     steps:
       # no easy way to avoid another checkout?
       - name: Check out LMS code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: server
           ref: ${{ inputs.branch }}

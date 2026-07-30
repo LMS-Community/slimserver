@@ -1,7 +1,7 @@
 package Slim::Utils::OS::Debian;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -111,14 +111,14 @@ sub installerExtension { 'deb' };
 sub installerOS {
 	my $class = shift;
 
+	# Old perl versions that are no longer supported in platform specific packages - sync with list in platforms/buildme.pl
+	return 'deb' if $^V lt v5.28.0;
+
 	if ( $class->{osDetails}->{osArch} =~ /^(arm|aarch64)/i ) {
 		return 'debarm';
 	}
 	elsif ( $class->{osDetails}->{osArch} =~ /^x86_64/i ) {
 		return 'debamd64';
-	}
-	elsif ( $class->{osDetails}->{osArch} =~ /^i[3-6]86/i ) {
-		return 'debi386';
 	}
 
 	return 'deb';

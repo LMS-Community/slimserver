@@ -1,7 +1,7 @@
 package Slim::Plugin::RadioArtwork::Plugin;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024-2025 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -26,7 +26,8 @@ package Slim::Plugin::RadioArtwork::Plugin;
 =cut
 
 use strict;
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(decode_json);
+use Tie::RegexpHash;
 use URI;
 use URI::QueryParam;
 use URI::Escape qw(uri_escape_utf8);
@@ -45,10 +46,14 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 my $prefs = preferences('plugin.radioartwork');
 
-use constant COVER_SEARCH_URL => 'https://api.lms-community.org/music/track/%s/%s/cover';
+use constant API_BASE_URL     => 'https://api.lms-community.org/music/';
+use constant COVER_SEARCH_URL => API_BASE_URL . 'track/%s/%s/cover';
+use constant KILLWORDS_URL    => API_BASE_URL . 'metadata/killwords';
 use constant FALLBACK_ARTWORK => 'https://i1.sndcdn.com/artworks-x8zI2HVC2pnkK7F5-4xKLyA-t1080x1080.jpg';
 
 my %queue;
+my $killWords = {};
+tie my %radioUrlsToIgnore, 'Tie::RegexpHash';
 
 sub initPlugin {
 	my ($class) = @_;
@@ -63,7 +68,12 @@ sub initPlugin {
 
 	$prefs->init({
 		ignoreStations => [],
+		killWords => {},
 	});
+
+	$killWords = $prefs->get('killWords') || {};
+
+	Slim::Utils::Timers::setTimer( $class, Time::HiRes::time() + rand(5), \&updateKillWords );
 }
 
 sub handleTrackCover {
@@ -129,6 +139,21 @@ sub validateRequest {
 	$artist = $class->artistCleanup($artist);
 	$title  = $class->titleCleanup($title);
 
+	if (!$artist || !$title) {
+		main::INFOLOG && $log->is_info && $log->info("Title info not available after cleanup: title \"$title\", artist \"$artist\"");
+		return;
+	}
+
+	if (length($artist) > 100 || length($title) > 100 || ($artist =~ /^\s*\d+\s*$/ && $title =~ /^\s*\d+\s*$/)) {
+		main::INFOLOG && $log->is_info && $log->info("Title info unlikely to be resolvable: title \"$title\", artist \"$artist\" - skipping lookup");
+		return;
+	}
+
+	if ($killWords->{lc($title)} || $killWords->{lc($artist)}) {
+		main::INFOLOG && $log->is_info && $log->info("Title or artist contains kill word(s), not looking up artwork for $titleInfo");
+		return;
+	}
+
 	my $artworkLookupUrl = sprintf(COVER_SEARCH_URL, uri_escape_utf8($title), uri_escape_utf8($artist));
 
 	return {
@@ -162,6 +187,7 @@ sub useCachedIfAvailable {
 	if (defined $cached) {
 		main::INFOLOG && $log->is_info && $log->info("Using cached title cover: $cached");
 
+		$args->{imageUrl} = $cached;
 		$class->gotArtwork($args, $client, $url, $titleInfo);
 
 		return 1;
@@ -197,7 +223,7 @@ sub lookupArtwork {
 		sub {
 			my $response = shift;
 
-			my $json = eval { from_json($response->content) };
+			my $json = eval { decode_json($response->content) };
 
 			$log->warn($@) if $@;
 
@@ -225,8 +251,43 @@ sub lookupArtwork {
 			delete $queue{$artworkLookupUrl};
 			$log->error("HTTP error looking up artwork for $artworkLookupUrl");
 			main::INFOLOG && $log->error(Data::Dump::dump(shift));
+		},
+		{
+			cache => 1,
 		}
 	)->get($artworkLookupUrl, %$headers);
+}
+
+sub updateKillWords {
+	my $class = shift;
+
+	my $headers = $class->getHeaders();
+
+	Slim::Networking::SimpleAsyncHTTP->new(
+		sub {
+			my $response = shift;
+
+			my $json = eval { decode_json($response->content) };
+
+			$log->warn($@) if $@;
+
+			main::INFOLOG && $log->is_info && $log->info("Received list of kill words");
+			main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($json));
+
+			if ($json && ref $json eq 'HASH' && scalar @{$json->{killWords} || []}) {
+				$killWords = { map { $_ => 1 } @{$json->{killWords}} };
+				$prefs->set('killWords', $killWords);
+
+				%radioUrlsToIgnore = map { qr/\Q$_\E/ => 1 } @{$json->{ignoreStations} || []}, @{$prefs->get('ignoreStations') || []};
+			}
+		},
+		sub {
+			$log->error("Error updating kill words: " . Data::Dump::dump(shift));
+		},
+		{
+			cache => 1,
+		}
+	)->get(KILLWORDS_URL, %$headers);
 }
 
 sub getHeaders {
@@ -279,7 +340,9 @@ sub gotArtwork {
 
 sub ignoreStation {
 	my ($class, $url) = @_;
-	return grep { lc($_) eq lc($url) } @{$prefs->get('ignoreStations') || []};
+	return 1 if $radioUrlsToIgnore{$url};
+	return 1 if grep { lc($_) eq lc($url) } @{$prefs->get('ignoreStations') || []};
+	return;
 }
 
 sub updateIgnoreStationList {

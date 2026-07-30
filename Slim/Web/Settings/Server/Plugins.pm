@@ -8,8 +8,8 @@ package Slim::Web::Settings::Server::Plugins;
 
 use strict;
 
-use JSON::XS::VersionOneAndTwo;
 use Digest::MD5;
+use JSON::XS qw(encode_json);
 
 use base qw(Slim::Web::Settings);
 
@@ -324,7 +324,7 @@ sub _addInfo {
 		} keys %$categories
 	);
 
-	$params->{'searchData'} = to_json($searchData);
+	$params->{'searchData'} = encode_json($searchData);
 	$params->{'categories'} = \@categories;
 	$params->{'updates'}  = \@updates;
 	$params->{'active'}   = $active;

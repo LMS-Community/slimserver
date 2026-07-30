@@ -1,7 +1,7 @@
 package Slim::Plugin::AudioScrobbler::Settings;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -9,7 +9,7 @@ package Slim::Plugin::AudioScrobbler::Settings;
 use strict;
 use base qw(Slim::Web::Settings);
 
-use Digest::MD5 qw(md5_hex);
+use Slim::Utils::Misc qw(safe_md5_hex);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -46,32 +46,36 @@ sub handler {
 				$delete = [ $delete ];
 			}
 
-			my $newlist = [];
-			ACCOUNT:
-			for my $account ( @{ $params->{pref_accounts} } ) {
-				for my $todelete ( @{$delete} ) {
-					if ( $todelete eq $account->{username} || (!$account->{username} && $todelete eq $account->{api_url}) ) {
-						main::DEBUGLOG && $log->debug( "Deleting account $todelete" );
-						next ACCOUNT;
-					}
-				}
+			$params->{pref_accounts} = [
+				grep {
+					my $account = $_;
+					my $accountId = Slim::Plugin::AudioScrobbler::Plugin::getAccountId($account);
 
-				push @{$newlist}, $account;
-			}
-
-			$params->{pref_accounts} = $newlist;
+					grep {
+						my $todelete = $_;
+						main::INFOLOG && $log->is_info && $log->info("Checking account $accountId for deletion: $todelete");
+						$todelete ne $accountId
+					} @$delete;
+				} @{ $params->{pref_accounts} }
+			];
 		}
 
 		my $service = $params->{pref_api_type} || 'lastfm';
 		my $serviceHandler;
 
-		# Last.fm Password (MD5)
-		if ( $params->{pref_password} && $service eq 'lastfm' ) {
-			$params->{pref_password} = md5_hex( $params->{pref_password} );
+		my $duplicateAccount = grep {
+			$_->{username} eq $params->{pref_username}
+				&& $_->{api_type} eq $service
+				&& (!$_->{api_url} || $_->{api_url} eq $params->{pref_api_url});
+		} @{ $params->{pref_accounts} };
+
+		if ( !$duplicateAccount && $params->{pref_password} && $service eq 'lastfm' ) {
+			# Last.fm Password (MD5)
+			$params->{pref_password} = safe_md5_hex( $params->{pref_password} );
 
 			$serviceHandler = 'Slim::Plugin::AudioScrobbler::API::LastFM';
 		}
-		elsif ( $params->{pref_password} && $service eq 'listenbrainz' ) {
+		elsif ( !$duplicateAccount && $params->{pref_password} && $service eq 'listenbrainz' ) {
 			# ListenBrainz API key
 			$params->{pref_password} = $params->{pref_password};
 
@@ -85,6 +89,7 @@ sub handler {
 				$log->error("Failed to load service handler $serviceHandler: $@");
 			}
 			else {
+				main::INFOLOG && $log->is_info && $log->info("Validating credentials for $service ($params->{pref_username})");
 				$serviceHandler->validate( {
 					username => $params->{pref_username},
 					password => $params->{pref_password},

@@ -399,6 +399,10 @@
 			[% WRAPPER settingGroup title="SETUP_REPLAYGAIN_REMOTE" desc="SETUP_REPLAYGAIN_REMOTE_DESC" %]
 				<input type="text" class="stdedit sliderInput_-20_20_0.1" name="pref_remoteReplayGain" id="pref_remoteReplayGain" value="[% prefs.pref_remoteReplayGain | html %]" size="5">
 			[% END %]
+
+			[% WRAPPER settingGroup title="SETUP_REPLAYGAIN_LOCAL" desc="SETUP_REPLAYGAIN_LOCAL_DESC" %]
+				<input type="text" class="stdedit sliderInput_-10_10_0.1" name="pref_localReplayGain" id="pref_localReplayGain" value="[% prefs.pref_localReplayGain | html %]" size="5">
+			[% END %]
 		[% END %]
 	[% END %]
 

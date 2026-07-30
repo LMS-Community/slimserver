@@ -5,7 +5,7 @@ use strict;
 # This code is derived from code with the following copyright message:
 #
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -442,8 +442,10 @@ sub findNextTime {
 	my $client = $self->client;
 
 	if (defined $self->{_days}) {
-		# Convert base time into a weekday number and time
-		my ($sec, $min, $hour, $mday, $mon, $year, $wday)  = localtime($baseTime);
+		# Convert base time into a weekday number and time, using the player's
+		# timezone if set, otherwise server time.
+		my $tz = $prefs->client($client)->get('timezone');
+		my ($sec, $min, $hour, $mday, $mon, $year, $wday) = Slim::Utils::DateTime::localtimeInTZ($baseTime, $tz);
 
 		# Find the first enabled alarm starting at baseTime's day num
 		my $day = $wday;
@@ -459,12 +461,12 @@ sub findNextTime {
 					my $relAlarmTime = $self->{_time} + $i * 86400;
 					my $absAlarmTime = $baseTime - $baseTimeSecs + $relAlarmTime;
 
-					main::DEBUGLOG && $isDebug && $log->debug(sub {'Potential next time found: ' . _timeStr($absAlarmTime)});
+					main::DEBUGLOG && $isDebug && $log->debug(sub {'Potential next time found: ' . _timeStr($absAlarmTime, $tz)});
 
 					# Make sure this isn't the alarm that's just sounded or another alarm with the
 					# same time.
 					my $lastAlarmTime = $client->alarmData->{lastAlarmTime};
-					main::DEBUGLOG && $isDebug && defined $lastAlarmTime && $log->debug(sub {'Last alarm due: ' . _timeStr($lastAlarmTime)});
+					main::DEBUGLOG && $isDebug && defined $lastAlarmTime && $log->debug(sub {'Last alarm due: ' . _timeStr($lastAlarmTime, $tz)});
 					if (! defined $lastAlarmTime || $absAlarmTime != $lastAlarmTime) {
 						$self->{_nextDue} = $absAlarmTime;
 						return $absAlarmTime;
@@ -607,12 +609,17 @@ sub sound {
 		# Set up volume
 		my $currentVolume = $prefs->client($client)->get('volume');
 		$self->{_originalVolume} = $currentVolume;
-		main::DEBUGLOG && $isDebug && $log->debug("Current vol: $currentVolume Alarm vol: " . $self->volume);
+		# Capture the alarm volume now so the restore check at alarm end uses the same value,
+		# even if alarmDefaultVolume changes mid-alarm (which would make $self->volume return
+		# a different value and cause the restore condition to fail).
+		my $alarmVolume = $self->volume;
+		$self->{_activeVolume} = $alarmVolume;
+		main::DEBUGLOG && $isDebug && $log->debug("Current vol: $currentVolume Alarm vol: $alarmVolume");
 
-		if ($currentVolume != $self->volume) {
-			main::DEBUGLOG && $isDebug && $log->debug("Changing volume from $currentVolume to " . $self->volume);
+		if ($currentVolume != $alarmVolume) {
+			main::DEBUGLOG && $isDebug && $log->debug("Changing volume from $currentVolume to $alarmVolume");
 			# Bug 15662: use mixer command to change volume so that synced volumes are correctly set
-			$client->execute(['mixer', 'volume', $self->volume]);
+			$client->execute(['mixer', 'volume', $alarmVolume]);
 		}
 
 		# Set the player shuffle mode prior to loading
@@ -842,14 +849,19 @@ sub stopSnooze {
 
 =head3
 
-stop( )
+stop( [ $continueAudio ] )
 
 Stops this alarm.  Has no effect if the alarm is not sounding.
+
+If $continueAudio is true, the player's playback, volume, power, and shuffle
+state are left untouched — the alarm UI is dismissed without interrupting what
+is playing.  Defaults to false (full restore).
 
 =cut
 
 sub stop {
 	my $self = shift;
+	my $continueAudio = shift;
 
 	my $client = $self->client;
 
@@ -875,37 +887,39 @@ sub stop {
 		$self->{_timeoutTimer} = undef;
 	}
 
-	# Restore analogOutMode to previous setting
-	if ($client->can('setAnalogOutMode') && $client->can('lineOutConnected')
-		&& $client->lineOutConnected()) {
-		# Restore in a second in order to avoid a blip that can occur if setAnalogOutMode
-		# is called during a power off volume fade.  Bug 9093.
-		Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 1, sub {
-			main::DEBUGLOG && $isDebug && $log->debug('Restoring previous line out mode');
-			$client->setAnalogOutMode();
-		});
-	}
-
-	# Restore original volume if the music is stopped at the end of the alarm and
-	# the volume hasn't been changed from the alarm volume level.  Do this after a pause
-	# to allow any volume fades to complete.
-	Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 1, sub {
-		# Get volume level directly via the pref as we don't care about temporary
-		# volume levels (vol is reported as 0 after a mute)
-		my $vol = $prefs->client($client)->get('volume');
-		if (! $client->isPlaying && $vol == $self->volume) {
-			main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm volume level: ' . $self->{_originalVolume});
-			$client->volume($self->{_originalVolume});
+	if (!$continueAudio) {
+		# Restore analogOutMode to previous setting
+		if ($client->can('setAnalogOutMode') && $client->can('lineOutConnected')
+			&& $client->lineOutConnected()) {
+			# Restore in a second in order to avoid a blip that can occur if setAnalogOutMode
+			# is called during a power off volume fade.  Bug 9093.
+			Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 1, sub {
+				main::DEBUGLOG && $isDebug && $log->debug('Restoring previous line out mode');
+				$client->setAnalogOutMode();
+			});
 		}
 
-		# Restore client shuffle mode
-		main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm shuffle mode: ' . $self->{_originalShuffleMode});
-		$client->execute(['playlist', 'shuffle', $self->{_originalShuffleMode}]);
+		# Restore original volume if the music is stopped at the end of the alarm and
+		# the volume hasn't been changed from the alarm volume level.  Do this after a pause
+		# to allow any volume fades to complete.
+		Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 1, sub {
+			# Get volume level directly via the pref as we don't care about temporary
+			# volume levels (vol is reported as 0 after a mute)
+			my $vol = $prefs->client($client)->get('volume');
+			if (! $client->isPlaying && $vol == ($self->{_activeVolume} // $self->volume)) {
+				main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm volume level: ' . $self->{_originalVolume});
+				$client->volume($self->{_originalVolume});
+			}
 
-		# Bug: 12760, 9569 - Return power state to that prior to the alarm
-		main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm power state: ' . ($self->{_originalPower} ? 'on' : 'off'));
-		$client->power($self->{_originalPower});
-	});
+			# Restore client shuffle mode
+			main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm shuffle mode: ' . $self->{_originalShuffleMode});
+			$client->execute(['playlist', 'shuffle', $self->{_originalShuffleMode}]);
+
+			# Bug: 12760, 9569 - Return power state to that prior to the alarm
+			main::DEBUGLOG && $isDebug && $log->debug('Restoring pre-alarm power state: ' . ($self->{_originalPower} ? 'on' : 'off'));
+			$client->power($self->{_originalPower});
+		});
+	}
 
 
 	my $class = ref $self;
@@ -1175,6 +1189,14 @@ sub init {
 	my $client = shift;
 
 	main::DEBUGLOG && $log->is_debug && $log->debug('Alarm initing...');
+
+	# Reschedule alarms when a player's timezone pref changes.
+	$prefs->setChange(sub {
+		my $client = $_[2];
+		return unless $client;
+		main::DEBUGLOG && $log->is_debug && $log->debug('Timezone changed for ' . $client->name . ' - rescheduling alarms');
+		Slim::Utils::Alarm->scheduleNext($client);
+	}, 'timezone');
 }
 
 # Subscribe to commands that should stop the alarm
@@ -1410,7 +1432,8 @@ sub scheduleNext {
 		}
 
 		if (defined $nextAlarm) {
-			main::DEBUGLOG && $isDebug && $log->debug(sub {'Next alarm is at ' . _timeStr($nextAlarm->{'_nextDue'})});
+			my $nextTZ = $prefs->client($nextAlarm->client)->get('timezone');
+			main::DEBUGLOG && $isDebug && $log->debug(sub {'Next alarm is at ' . _timeStr($nextAlarm->{'_nextDue'}, $nextTZ) . ' (' . ($nextTZ // 'server time') . ')'});
 
 			if ($nextAlarm->{_nextDue} <= $now) {
 				# The alarm is for this minute or the past, expectation here is that a client-side fallback (ip3K and squeezeplay-based both) will handle this failure
@@ -1914,13 +1937,13 @@ sub _checkTime {
 
 # Format a given time in a human readable way.  Used for debug only.
 sub _timeStr {
-	my $time = shift;
+	my ($time, $tz) = @_;
 
 	if ($time < 86400) {
 		my ($sec, $min, $hour, $mday, $mon, $year, $wday)  = gmtime($time);
 		return "$hour:$min:$sec";
 	} else {
-		my ($sec, $min, $hour, $mday, $mon, $year, $wday)  = localtime($time);
+		my ($sec, $min, $hour, $mday, $mon, $year, $wday) = Slim::Utils::DateTime::localtimeInTZ($time, $tz);
 		return "$hour:$min:$sec $mday/" . ($mon + 1) . '/' . ($year + 1900);
 	}
 

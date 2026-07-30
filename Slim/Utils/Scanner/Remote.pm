@@ -2,7 +2,7 @@ package Slim::Utils::Scanner::Remote;
 
 #
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, version 2.
 
@@ -216,7 +216,8 @@ sub scanURL {
 
 	my $timeout = preferences('server')->get('remotestreamtimeout');
 
-	my $send = sub {
+	my $send;
+	$send = sub {
 		my $http = Slim::Networking::Async::HTTP->new;
 		$http->send_request( {
 			request     => $request,
@@ -224,6 +225,14 @@ sub scanURL {
 			onHeaders   => \&readRemoteHeaders,
 			onError     => sub {
 				my ( $http, $error ) = @_;
+
+				# server might be expecting HTTP/1.1 ("426 Upgrade Required")
+				if ($http->response && $http->response->code == 426 && $request->protocol eq 'HTTP/1.0') {
+					main::INFOLOG && $log->is_info && $log->info("$error - Server doesn't like HTTP/1.0 - retrying with HTTP/1.1");
+					$request->protocol('HTTP/1.1');
+					$send->();
+					return;
+				}
 
 				logError("Can't connect to remote server to retrieve playlist for, ", $request->uri, ": $error.");
 

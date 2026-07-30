@@ -16,7 +16,7 @@ than the local database.
 
 use strict;
 
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(decode_json encode_json);
 use MIME::Base64 qw(encode_base64 decode_base64);
 
 use Slim::Menu::BrowseLibrary;
@@ -426,7 +426,7 @@ sub remoteRequest {
 
 	my $baseUrl = __PACKAGE__->baseUrl($remote_library);
 
-	my $postdata = to_json({
+	my $postdata = encode_json({
 		id     => 1,
 		method => 'slim.request',
 		params => $request,
@@ -436,7 +436,7 @@ sub remoteRequest {
 		sub {
 			my $http = shift;
 
-			my $res = eval { from_json( $http->content ) };
+			my $res = eval { decode_json( $http->content ) };
 
 			if ( $@ || ref $res ne 'HASH' ) {
 				$log->error( $@ || 'Invalid JSON response: ' . $http->content );

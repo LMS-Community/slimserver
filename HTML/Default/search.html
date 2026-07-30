@@ -80,7 +80,7 @@
 			});
 
 			[% IF query.defined && query != '' %]
-			sinput.validator('[% query | replace("'", " ") %]', true);
+			sinput.validator('[% query | html | replace("'", " ") %]', true);
 			[% END %]
 
 			new Ext.Button({

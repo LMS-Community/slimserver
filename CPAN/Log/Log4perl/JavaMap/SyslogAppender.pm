@@ -26,15 +26,25 @@ sub new {
         $facility = 'user';
     }
 
+    if (defined $data->{Ident}{value}) {
+        $ident = $data->{Ident}{value}
+    }elsif (defined $data->{ident}{value}){
+        $ident = $data->{ident}{value};
+    }else{
+        $ident = $0;
+    }
     
     return Log::Log4perl::Appender->new("Log::Dispatch::Syslog",
         name      => $appender_name,
         facility  => $facility,
+        ident     => $ident,
         min_level => 'debug',
     );
 }
 
 1;
+
+=encoding utf8
 
 =head1 NAME
 
@@ -59,17 +69,41 @@ Possible config properties for Log::Dispatch::Syslog are
     facility 
     socket   (defaults to 'inet')
 
-=head1 AUTHORS
-
-    Kevin Goess, <cpan@goess.org> 
-    Mike Schilli, <m@perlmeister.com>
-    
-    December, 2002
-
 =head1 SEE ALSO
 
 http://jakarta.apache.org/log4j/docs/
 
 Log::Log4perl::Javamap
 
-=cut
+=head1 LICENSE
+
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
+
+=head1 AUTHOR
+
+Please contribute patches to the project on Github:
+
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

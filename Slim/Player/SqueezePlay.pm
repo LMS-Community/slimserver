@@ -137,6 +137,10 @@ sub hasBalance {
 	return $client->balance || $client->model =~ /controller|fab4|baby/;
 }
 
+sub playerManagesTZ {
+	return $_[0]->model =~ /^(?:controller|fab4|baby)$/;
+}
+
 sub needsUpgrade {}
 
 sub init {

@@ -4,7 +4,7 @@ package Slim::Schema::Album;
 use strict;
 use base 'Slim::Schema::DBI';
 
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(decode_json encode_json);
 
 use Slim::Schema::ResultSet::Album;
 
@@ -127,7 +127,7 @@ sub addReleaseTypeMap {
 		'name' => 'releaseTypeMap'
 	} );
 
-	$last->value(to_json(\%releaseTypeMap));
+	$last->value(encode_json(\%releaseTypeMap));
 	$last->update;
 }
 
@@ -137,7 +137,7 @@ sub addReleaseTypeStrings {
 	} );
 
 	if ($stringsObj) {
-		my $strings = eval { from_json($stringsObj->value) };
+		my $strings = eval { decode_json($stringsObj->value) };
 		if ($strings && ref $strings) {
 			while (my ($token, $string) = each %$strings) {
 				next if $string == 1;

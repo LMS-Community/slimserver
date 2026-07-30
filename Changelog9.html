@@ -1,31 +1,63 @@
 <h2><a name="v9.2.0" id="v9.2.0"></a>Version 9.2.0</h2>
 <ul>
-	<li><a href="v9.1.1">Upstream fixes from Logitech Media Server 9.1.x</a></li>
+	<li><a href="v9.1.2">Upstream fixes from Logitech Media Server 9.1.x</a></li>
 	<br />
 
 	<li>New Features:</li>
 	<ul>
-		<li></li>
+		<li>Allow plugins to provide custom fonts to be used when rendering non-latin text on ip3k based players.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1286">#1286</a> - Display album cover for AudioAddict stations (inspired by some work by @mcduman)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1541">#1541</a> - Add per-player timezone support: players can now display date and time, and fire alarms, in their own timezone rather than the server's. (@boudekerk)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1546">#1546</a> - Add "Default Adjustment for Local Tracks" player option. (@SamInPgh)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1564">#1564</a> - Add Dismiss option to Jive alarm popup (@boudekerk)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1605">#1605</a> - MusicMagic: add configurable host for remote MusicIP instances (@jonstahl)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1612">#1612</a> - MusicMagic: add configurable genre filter (@jonstahl)</li>
 	</ul>
 	<br />
 
 	<li>Server Changes:</li>
 	<ul>
 		<li>More aggressively cache DNS lookups, re-use cached data even if expired, but if lookup fails.</li>
+		<li>Removed CODE2000 font. Use the optional "Render non-latin text on the Squeezebox..." plugin instead.</li>
+		<li>Improve <a href="https://forums.lyrion.org/forum/developer-forums/developers/1823228-possible-issue-with-http-1-1-keep-alive-and-small-body">HTTP/1.1 compatibility using keep-alive and SSL/TLS.</a></li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1548">#1548</a> - Updated Czech translation (@mipa87)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1549">#1549</a> - Update CODE2000 font to 1.176 (@mipa87)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1550">#1550</a> - Update wizard plugin JSON encoding to use UTF-8 for HTML templates (@mipa87)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1593">#1593</a> - Make external scanner startup failures visible (@maxxi-bit)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1615">#1615</a> - Improve UPnP/DLNA Media Renderer compatibility: use HTTP/1.1 (@stsichler)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1619">#1619</a> - Switch from JSON::XS::VersionOneAndTwo to JSON::XS (@mavit)</li>
 	</ul>
 	<br />
 
 	<li>Platform Support:</li>
 	<ul>
 		<li>Improve SSL support for Windows and macOS builds, updating Mozilla::CA to the latest version.</li>
+		<li>Add ARM64 sox binary for macOS (@ralphy)</li>
+		<li>Update Audio::Scan module to version 1.13 (Windows, macOS, Linux Perl 5.32 x86_64, 5.36 x86_64/aarch64, 5.40 x86_64) (@ralphy, @arigit, @cheesestraws)</li>
+		<li>RPM packages cleanup to better integrate with system standards (@mavit)</li>
+		<li>Removed unused Mac/Windows code from the auto-rescan process (@mavit)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/106">#106</a> - Removal of SYSV Init support and better systemd support in the RPM package for Red Hat/SUSE (@JohanSaaw, @mavit)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/1606">#1606</a> - Improve compatibility with newer DBIx::Class::Schema versions (@paulgevers)</li>
 	</ul>
 	<br />
 
 	<li>Bug Fixes:</li>
 	<ul>
+		<li>Fix an issue with the image resizer where an explicitly requested format was not honored when padding was needed.</li>
+		<li>On Debian based systems avoid downloading packages for unsupported Perl versions.</li>
+		<li>Do not try to decode http responses if Content-Encoding is "identity" (@505)</li>
+		<li>Fix TitleFormatter UTF8 encoding (@darrel-k)</li>
+		<li><a href="https://github.com/LMS-Community/Audio-Scan/pull/10">#10</a> - id3: Never add undef to tag hash for empty or invalid TXXX key (@cheesestraws)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1121">#1121</a> - Try to catch "426 - Upgrade Required" HTTP responses in the remote scanner</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1140">#1140</a> - Fix stat returning an empty size for most files (@jecaro)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1517">#1517</a> - Fix work images and artwork precaching (@darrell-k)</li>
-		<li><a href="https://github.com/LMS-Community/slimserver/pull/1527">#1527</a> - YAML::XS would turn booleans into read-only values on Perl 5.42</li>
-		<li></li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1553">#1553</a> - Allow plugins to shut down before closing the database (@SamInPgh)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1555">#1555</a> - Scanner: stop-gap to prevent contributor row poisoning when the MusicBrainz ID count does not match the artist name count. (@Rouzax)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1558">#1558</a> - Add album link for imported remote tracks (@SamInPgh)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1563">#1563</a> - Fix restoration of pre-alarm volume when changing the alarm volume while playing (@boudekerk)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1571">#1571</a> - Guard ReplayGain and URL tag processing against arrayrefs (@Rouzax)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1587">#1587</a> - Fix RSS feed parsing when a podcast URL contains wide characters (@robho)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1611">#1611</a> - Include album-link roles in unified artist list roles (@darrell-k)</li>
 	</ul>
 	<br />
 
@@ -37,7 +69,7 @@
 </ul>
 
 
-<h2><a name="v9.1.1" id="v9.1.1"></a>Version 9.1.1</h2>
+<h2><a name="v9.1.2" id="v9.1.2"></a>Version 9.1.2</h2>
 <ul>
 	<li>New Features:</li>
 	<ul>
@@ -59,14 +91,42 @@
 
 	<li>Bug Fixes:</li>
 	<ul>
-		<li>Some radio streams would redirect to web page when using a "Mozilla" user agent string.</li>
-		<li><a href="https://github.com/LMS-Community/slimserver/pull/1528">#1528</a> - Fix FLAC to MP3 transcoding for mono tracks (@jbylsma)</li>
+		<li>Make sure we encode user input in search queries to prevent XSS attacks.</li>
 	</ul>
 	<br />
 
 	<li>Other:</li>
 	<ul>
 		<li></li>
+	</ul>
+	<br />
+</ul>
+
+
+<h2><a name="v9.1.1" id="v9.1.1"></a>Version 9.1.1 - 2026-06-17 (1ceeaf1d6)</h2>
+<ul>
+	<li>Server Changes:</li>
+	<ul>
+		<li>Enable caching for radio artwork lookups.</li>
+	</ul>
+	<br />
+
+	<li>Platform Support:</li>
+	<ul>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1562">#1562</a> - Improve compatibility with newer versions of DBIx::Class (@paulgevers)</li>
+		<li></li>
+	</ul>
+	<br />
+
+	<li>Bug Fixes:</li>
+	<ul>
+		<li>Some radio streams would redirect to web page when using a "Mozilla" user agent string.</li>
+		<li>Fix software update check for Debian on i686 and older systems.</li>
+		<li>Fix scheduling scans to run at midnight.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1567">#1567</a> - Fix addition/deletion of favorites when the "item_id" comes with a session ID.</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1527">#1527</a> - YAML::XS would turn booleans into read-only values on Perl 5.42</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1528">#1528</a> - Fix FLAC to MP3 transcoding for mono tracks (@jbylsma)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/pull/1573">#1573</a> - Fix release types for Squeezeplay/Touch etc. (@darrell-k)</li>
 	</ul>
 	<br />
 </ul>

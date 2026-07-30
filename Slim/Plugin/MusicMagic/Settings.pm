@@ -1,7 +1,7 @@
 package Slim::Plugin::MusicMagic::Settings;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -31,8 +31,8 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(musicip scan_interval player_settings port mix_filter reject_size reject_type
-			   mix_genre mix_variety mix_style mix_type mix_size playlist_prefix playlist_suffix));
+	return ($prefs, qw(musicip scan_interval player_settings host port mix_filter reject_size reject_type
+			   mix_genre mix_genre_filter mix_variety mix_style mix_type mix_size playlist_prefix playlist_suffix));
 }
 
 sub handler {
@@ -45,7 +45,16 @@ sub handler {
 		return undef;
 	}
 
-	$params->{'filters'} = Slim::Plugin::MusicMagic::Common->getFilterList();
+	if ( $params->{'saveSettings'} && (my $selected = $params->{'pref_mix_genre_filter'}) ) {
+		# make sure we always store an arrayref, even if only one genre is selected
+		$params->{'pref_mix_genre_filter'} = [ $selected ] unless ref $selected && ref $selected eq 'ARRAY';
+	}
+
+	$params->{'filters'}    = Slim::Plugin::MusicMagic::Common->getFilterList();
+	$params->{'genre_list'} = Slim::Plugin::MusicMagic::Common::getGenreList();
+
+	my ($classPrefs) = $class->prefs($client);
+	$params->{'mix_genre_filter'} = { map { $_ => 1 } @{ $classPrefs->get('mix_genre_filter') || [] } };
 
 	return $class->SUPER::handler($client, $params);
 }

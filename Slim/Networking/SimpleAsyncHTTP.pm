@@ -1,7 +1,7 @@
 package Slim::Networking::SimpleAsyncHTTP;
 
 # Logitech Media Server Copyright 2003-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -192,8 +192,8 @@ my $http = Slim::Networking::SimpleAsyncHTTP->new(
 	\&exampleErrorCallback,
 	{
 		mydata'  => 'foo',
-		cache    => 1,		# optional, cache result of HTTP request
-		expires  => '1h',	# optional, specify the length of time to cache
+		cache    => 1,       # optional, cache result of HTTP request
+		expires  => 3600,    # optional, specify the length of time to cache (in seconds)
 		options  => { key/value },  # optional set of key/value pairs for the underlying socket
 		socks    => { key/value },  # optional use of socks tunnel
 		insecureHTTPS => 1,  # optional, allow HTTPS connections with invalid certificates

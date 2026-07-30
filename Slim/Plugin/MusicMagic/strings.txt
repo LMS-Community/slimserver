@@ -158,6 +158,42 @@ SETUP_MIX_FILTER_DESC
 	SV	Du kan skapa olika uppsättningar filtervilkor i MusicIP och sedan använda dem med MusicIP Mix i Lyrion Music Server. Välj filter i listan.
 	ZH_CN	您可以利用MusicIP设立过滤器，并且从这表中选择应用在Lyrion Music Server内MusicIP混音的那些过滤器。
 
+SETUP_MIX_GENRE_FILTER
+	CS	Vyloučené žánry
+	DA	Udelukkede genrer
+	DE	Ausgeschlossene Musikstile
+	EN	Excluded Genres
+	ES	Géneros excluidos
+	FI	Poissuljetut genret
+	FR	Genres exclus
+	HE	סגנונות מוחרגים
+	HU	Kizárt műfajok
+	IT	Generi esclusi
+	NL	Uitgesloten genres
+	NO	Ekskluderte sjangre
+	PL	Wykluczone gatunki
+	RU	Исключённые жанры
+	SV	Exkluderade genrer
+	ZH_CN	排除的曲风
+
+SETUP_MIX_GENRE_FILTER_DESC
+	CS	Vyberte jeden nebo více žánrů z vaší hudební knihovny, které chcete vyloučit z MusicIP mixů. Pokud nevyberete žádný, budou povoleny všechny žánry.
+	DA	Vælg en eller flere genrer fra dit musikbibliotek, som skal udelukkes fra MusicIP-miks. Lad intet være valgt for at tillade alle genrer.
+	DE	Wählen Sie eine oder mehrere Musikstile aus Ihrer Musikbibliothek aus, die aus MusicIP-Mixes ausgeschlossen werden sollen. Wenn nichts ausgewählt ist, sind alle Musikstile zulässig.
+	EN	Select one or more genres from your music library to exclude from MusicIP Mixes. Leave nothing selected to allow all genres.
+	ES	Seleccione uno o más géneros de su biblioteca musical para excluirlos de las mezclas de MusicIP. Si no selecciona ninguno, se permitirán todos los géneros.
+	FI	Valitse musiikkikirjastostasi yksi tai useampi genre, jotka suljetaan pois MusicIP-mikseistä. Jos et valitse mitään, kaikki genret ovat sallittuja.
+	FR	Sélectionnez un ou plusieurs genres de votre bibliothèque musicale à exclure des mix MusicIP. Ne sélectionnez rien pour autoriser tous les genres.
+	HE	בחר סגנון אחד או יותר מספריית המוזיקה שלך שיוחרגו ממיקסים של MusicIP. אם לא תבחר דבר, כל הסגנונות יהיו מותרים.
+	HU	Válasszon ki egy vagy több műfajt a zenei könyvtárából, amelyeket ki szeretne zárni a MusicIP-keverékekből. Ha nem választ ki semmit, minden műfaj engedélyezett lesz.
+	IT	Selezionare uno o più generi dalla libreria musicale da escludere dalle raccolte MusicIP. Se non si seleziona nulla, saranno consentiti tutti i generi.
+	NL	Selecteer een of meer genres uit je muziekbibliotheek die je wilt uitsluiten van MusicIP-mixen. Als je niets selecteert, zijn alle genres toegestaan.
+	NO	Velg én eller flere sjangre fra musikkbiblioteket ditt som skal ekskluderes fra MusicIP-mikser. La ingenting være valgt for å tillate alle sjangre.
+	PL	Wybierz jeden lub kilka gatunków z biblioteki muzycznej, które mają być wykluczone ze składanek MusicIP. Jeśli nic nie zostanie wybrane, dozwolone będą wszystkie gatunki.
+	RU	Выберите один или несколько жанров из вашей музыкальной библиотеки, которые нужно исключить из миксов MusicIP. Если ничего не выбрано, разрешены все жанры.
+	SV	Välj en eller flera genrer från ditt musikbibliotek som ska exkluderas från MusicIP-mix. Lämna inget markerat om du vill tillåta alla genrer.
+	ZH_CN	从您的音乐库中选择一个或多个要从MusicIP混音中排除的曲风。如果不选择任何曲风，则允许所有曲风。
+
 SETUP_MIX_GENRE
 	CS	Mix žánru
 	DA	Miks: Genre
@@ -570,6 +606,44 @@ SETUP_MUSICMAGICSCANINTERVAL_DESC
 	RU	При изменении базы данных MusicIP данные медиатеки автоматически импортируются в Lyrion Music Server. Для Lyrion Music Server можно задать минимальный интервал времени (в секундах) перед повторной загрузкой базы данных MusicIP. Значение 0 означает отмену повторной загрузки.
 	SV	När din MusicIP-databas ändras importeras biblioteksinformationen automatiskt till Lyrion Music Server. Du kan ange en minimitid (i sekunder) som Lyrion Music Server ska vänta mellan varje gång informationen från MusicIP-databasen uppdateras. Om värdet 0 anges avaktiveras uppdateringsfunktionen.
 	ZH_CN	当您的MusicIP数据库改变时，Lyrion Music Server将自动地导入最新音乐库信息。您可以指定Lyrion Music Server再装您的MusicIP数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
+
+SETUP_MMSHOST
+	CS	MusicIP host
+	DA	MusicIP-host
+	DE	MusicIP-Host
+	EN	MusicIP Host
+	ES	Host de MusicIP
+	FI	MusicIP-isäntä
+	FR	Hôte MusicIP
+	HE	מארח MusicIP
+	HU	MusicIP-kiszolgáló
+	IT	Host MusicIP
+	NL	MusicIP-host
+	NO	MusicIP-vert
+	PL	Host usługi MusicIP
+	PT	Host MusicIP
+	RU	Хост MusicIP
+	SV	MusicIP-värd
+	ZH_CN	MusicIP主机
+
+SETUP_MMSHOST_DESC
+	CS	Název hostitele nebo IP adresa serveru MusicIP. Změňte toto nastavení, pokud MusicIP běží na jiném hostiteli než Lyrion Music Server (např. v samostatném kontejneru Docker nebo VM). Výchozí hodnota je localhost. Poznámka: cesty k hudebním souborům musí být na obou hostitelích identické. Uživatelé Dockeru to mohou zajistit použitím stejných cest pro připojení svazků v obou kontejnerech.
+	DA	Værtsnavn eller IP-adresse på MusicIP-serveren. Skift dette, hvis MusicIP kører på en anden vært end Lyrion Music Server (f.eks. i en separat Docker-container eller VM). Standard er localhost. Bemærk: filstier til din musik skal være identiske på begge værter. Docker-brugere bør sikre dette ved at bruge matchende volume-monteringsstier i begge containere.
+	DE	Der Hostname oder die IP-Adresse des MusicIP-Servers. Ändern Sie dies, wenn MusicIP auf einem anderen Host als Lyrion Music Server läuft (z. B. in einem separaten Docker-Container oder einer VM). Standardwert: localhost. Hinweis: Die Dateipfade zur Musik müssen auf beiden Hosts identisch sein. Docker-Benutzer sollten Volume-Mounts verwenden, um sicherzustellen, dass dieselben Pfade in beiden Containern sichtbar sind.
+	EN	The hostname or IP address of the MusicIP server. Change this if MusicIP is running on a different host than Lyrion Music Server (e.g. in a separate Docker container or VM). Defaults to localhost. Note: file paths to your music must be identical on both hosts. Docker users should ensure this by using matching volume mount paths in both containers.
+	ES	El nombre de host o la dirección IP del servidor MusicIP. Cambie esto si MusicIP se ejecuta en un host diferente al de Lyrion Music Server (p. ej., en un contenedor Docker separado o en una VM). El valor predeterminado es localhost. Nota: las rutas de los archivos de música deben ser idénticas en ambos hosts. Los usuarios de Docker deben garantizarlo usando rutas de montaje de volumen coincidentes en ambos contenedores.
+	FI	MusicIP-palvelimen isäntänimi tai IP-osoite. Muuta tätä, jos MusicIP toimii eri isännällä kuin Lyrion Music Server (esim. erillisessä Docker-säiliössä tai VM:ssä). Oletusarvo on localhost. Huomio: musiikkitiedostojen polkujen täytyy olla identtiset molemmilla isännillä. Docker-käyttäjien tulee varmistaa tämä käyttämällä vastaavia volume-liitospolkuja molemmissa säiliöissä.
+	FR	Le nom d'hôte ou l'adresse IP du serveur MusicIP. Modifiez ce paramètre si MusicIP s'exécute sur un hôte différent de Lyrion Music Server (par exemple dans un conteneur Docker séparé ou une VM). Par défaut : localhost. Remarque : les chemins d'accès aux fichiers musicaux doivent être identiques sur les deux hôtes. Les utilisateurs Docker doivent utiliser des montages de volumes identiques dans les deux conteneurs.
+	HE	שם המארח או כתובת ה-IP של שרת MusicIP. שנה זאת אם MusicIP פועל במארח שונה מ-Lyrion Music Server (למשל, בקונטיינר Docker נפרד או VM). ברירת המחדל היא localhost. הערה: נתיבי הקבצים של המוזיקה חייבים להיות זהים בשני המארחים. משתמשי Docker צריכים להבטיח זאת על ידי שימוש בנתיבי עיגון כרכים תואמים בשני הקונטיינרים.
+	HU	A MusicIP-kiszolgáló gazdaneve vagy IP-címe. Módosítsa ezt, ha a MusicIP a Lyrion Music Servertől eltérő kiszolgálón fut (pl. külön Docker-tárolóban vagy VM-ben). Alapértelmezett érték: localhost. Megjegyzés: a zenefájlok elérési útjának mindkét kiszolgálón azonosnak kell lennie. Docker-felhasználóknak ezt a megfelelő kötetkötési útvonalak mindkét tárolóban való használatával kell biztosítaniuk.
+	IT	Il nome host o l'indirizzo IP del server MusicIP. Modificare questa impostazione se MusicIP è in esecuzione su un host diverso da Lyrion Music Server (ad es. in un contenitore Docker separato o in una VM). Il valore predefinito è localhost. Nota: i percorsi dei file musicali devono essere identici su entrambi gli host. Gli utenti Docker devono garantirlo utilizzando percorsi di montaggio del volume corrispondenti in entrambi i contenitori.
+	NL	De hostnaam of het IP-adres van de MusicIP-server. Wijzig dit als MusicIP op een andere host draait dan Lyrion Music Server (bijv. in een aparte Docker-container of VM). Standaard: localhost. Let op: de bestandspaden naar je muziek moeten identiek zijn op beide hosts. Docker-gebruikers dienen hiervoor overeenkomende volume-mounts in beide containers te gebruiken.
+	NO	Vertsnavn eller IP-adresse til MusicIP-serveren. Endre dette hvis MusicIP kjører på en annen vert enn Lyrion Music Server (f.eks. i en egen Docker-container eller VM). Standard er localhost. Merk: filbaner til musikken din må være identiske på begge verter. Docker-brukere bør sikre dette ved å bruke samsvarende volummonteringsstier i begge containerne.
+	PL	Nazwa hosta lub adres IP serwera MusicIP. Zmień to ustawienie, jeśli MusicIP działa na innym hoście niż Lyrion Music Server (np. w osobnym kontenerze Docker lub maszynie wirtualnej). Domyślna wartość to localhost. Uwaga: ścieżki do plików muzycznych muszą być identyczne na obu hostach. Użytkownicy Dockera powinni to zapewnić, używając identycznych ścieżek montowania woluminów w obu kontenerach.
+	PT	O nome do host ou o endereço IP do servidor MusicIP. Altere isto se o MusicIP estiver a ser executado num host diferente do Lyrion Music Server (por exemplo, num contentor Docker separado ou numa VM). A predefinição é localhost. Nota: os caminhos dos ficheiros de música têm de ser idênticos em ambos os hosts. Os utilizadores de Docker devem garantir isso utilizando caminhos de montagem de volume correspondentes em ambos os contentores.
+	RU	Имя хоста или IP-адрес сервера MusicIP. Измените это, если MusicIP работает на другом хосте, отличном от Lyrion Music Server (например, в отдельном контейнере Docker или виртуальной машине). По умолчанию используется localhost. Примечание: пути к музыкальным файлам должны быть одинаковыми на обоих хостах. Пользователям Docker необходимо обеспечить это с помощью совпадающих путей монтирования томов в обоих контейнерах.
+	SV	Värdnamnet eller IP-adressen för MusicIP-servern. Ändra detta om MusicIP körs på en annan värd än Lyrion Music Server (t.ex. i en separat Docker-container eller VM). Standard är localhost. Obs: filsökvägarna till din musik måste vara identiska på båda värdarna. Docker-användare bör säkerställa detta genom att använda matchande volymmonterade sökvägar i båda containrarna.
+	ZH_CN	MusicIP服务器的主机名或IP地址。如果MusicIP运行在与Lyrion Music Server不同的主机上（例如在单独的Docker容器或虚拟机中），请更改此设置。默认为localhost。注意：音乐文件路径在两台主机上必须完全相同。Docker用户应通过在两个容器中使用相同的卷挂载路径来确保这一点。
 
 SETUP_MMSPORT
 	CS	HTTP port MusicIP

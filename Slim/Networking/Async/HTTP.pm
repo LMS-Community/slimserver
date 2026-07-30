@@ -1,8 +1,7 @@
 package Slim::Networking::Async::HTTP;
 
-
 # Logitech Media Server Copyright 2003-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -511,8 +510,9 @@ sub _http_read {
 		# Body might also be empty but a keep-alive with no content-length in the response is an error
 		# if everything has already been read, _http_body_read will unsubscribe to event loop
 		# we just subscrive above ... a bit unefficient
-		if ( (!defined $self->response->headers->header('Connection') ||  $self->response->headers->header('Connection') =~ /keep-alive/i) &&
-			$self->socket->_rbuf_length == ($headers->content_length || 0) ) {
+		if ( (!defined $self->response->headers->header('Connection') ||  $self->response->headers->header('Connection') =~ /keep-alive/i)
+			&& ($self->socket->_rbuf_length > 0 || $self->socket->_rbuf_length == ($headers->content_length || 0)) )
+		{
 			_http_read_body( $self->socket, $self, $args )
 		}
 	}
@@ -521,101 +521,124 @@ sub _http_read {
 sub _http_read_body {
 	my ( $socket, $self, $args ) = @_;
 
-	my $result = $socket->read_entity_body( my $buf, BUFSIZE );
-	return if $result < 0;
+	my $iteration = 1;
 
-	Slim::Utils::Timers::killTimers( $socket, \&_http_socket_error );
-	Slim::Utils::Timers::killTimers( $socket, \&_http_read_timeout );
+	# BODY_READ label allows redo to drain SSL's internal plaintext buffer without
+	# recursion. When IO::Socket::SSL decrypts a TLS record it buffers more plaintext
+	# than read_entity_body returns in one call. The OS FD then appears unreadable to
+	# the event loop (libev), so the callback won't fire again even though data remains.
+	# redo re-executes the block from the top, consuming buffered data iteratively.
+	BODY_READ: {
 
-	if ( $result ) {
-		main::DEBUGLOG && $log->debug("Read body: [$result] bytes");
-	}
+		my $result = $socket->read_entity_body( my $buf, BUFSIZE );
+		return if $result < 0;
 
-	# Are we saving directly to a file?
-	if ( $result && $self->saveAs && !$self->fh ) {
-		open my $fh, '>', $self->saveAs or do {
-			return $self->_http_error( 'Unable to open ' . $self->saveAs . " for writing: $!", $args );
-		};
+		Slim::Utils::Timers::killTimers( $socket, \&_http_socket_error );
+		Slim::Utils::Timers::killTimers( $socket, \&_http_read_timeout );
 
-		binmode $fh;
-
-		if ( main::DEBUGLOG && $log->is_debug ) {
-			$log->debug("Writing response directly to " . $self->saveAs);
+		if ( $result ) {
+			main::DEBUGLOG && $log->debug("Read body: [$result] bytes");
 		}
 
-		$self->fh( $fh );
-	}
+		# Are we saving directly to a file?
+		if ( $result && $self->saveAs && !$self->fh ) {
+			open my $fh, '>', $self->saveAs or do {
+				return $self->_http_error( 'Unable to open ' . $self->saveAs . " for writing: $!", $args );
+			};
 
-	if ( $result && $self->saveAs ) {
-		# Write directly to a file
-		$self->fh->write( $buf, length $buf ) or do {
-			return $self->_http_error( 'Unable to write to ' . $self->saveAs . ": $!", $args );
-		};
-	}
-	elsif ( $args->{onStream} ) {
-		# The caller wants a callback on every chunk of data streamed
-		my $pt   = $args->{passthrough} || [];
-		if ( !$result ) {
-			$buf = defined $result ? "" : undef;
-		}
-		my $more = $args->{onStream}->( $self, \$buf, @{$pt} );
+			binmode $fh;
 
-		# onStream callback can signal to stop the stream by returning false
-		if ( !$more ) {
-			$result = 0;
-		}
-	}
-	else {
-		# Add buffer to Response object
-		$self->response->add_content( $buf );
-	}
+			if ( main::DEBUGLOG && $log->is_debug ) {
+				$log->debug("Writing response directly to " . $self->saveAs);
+			}
 
-	# Does the caller want us to quit reading early (i.e. for mp3 frames)?
-	if ( $args->{readLimit} && length( $self->response->content ) >= $args->{readLimit} ) {
-
-		# close and remove the socket
-		$self->disconnect;
-
-		if ( main::DEBUGLOG && $log->is_debug ) {
-			$log->debug(sprintf("Body read (stopped after %d bytes)", length( $self->response->content )));
+			$self->fh( $fh );
 		}
 
-		if ( my $cb = $args->{onBody} ) {
-			my $passthrough = $args->{passthrough} || [];
-			return $cb->( $self, @{$passthrough} );
+		if ( $result && $self->saveAs ) {
+			# Write directly to a file
+			$self->fh->write( $buf, length $buf ) or do {
+				return $self->_http_error( 'Unable to write to ' . $self->saveAs . ": $!", $args );
+			};
 		}
-	}
+		elsif ( $args->{onStream} ) {
+			# The caller wants a callback on every chunk of data streamed
+			my $pt   = $args->{passthrough} || [];
+			if ( !$result ) {
+				$buf = defined $result ? "" : undef;
+			}
+			my $more = $args->{onStream}->( $self, \$buf, @{$pt} );
 
-	if ( (defined $result && $result == 0) || (defined $self->response->headers->header('Content-Length') && length($self->response->content) == $self->response->headers->header('Content-Length')) ) {
-		# if here, we've reached the end of the body
-
-		# close and remove the socket if not keep-alive
-		if ( $self->response->headers->header('Connection') =~ /close/i || 
-		     ($self->request->headers->header('Connection') !~ /keep-alive/i && $self->request->protocol =~ m|HTTP/1.0|i) ) {
-			$self->fh->close if $self->fh;
-			$self->disconnect;
-			main::DEBUGLOG && $log->debug("closing mode");
+			# onStream callback can signal to stop the stream by returning false
+			if ( !$more ) {
+				$result = 0;
+			}
 		}
 		else {
-			Slim::Networking::Select::removeError( $self->socket );
-			Slim::Networking::Select::removeRead( $self->socket );
-			main::DEBUGLOG && $log->debug("keep-alive mode");
+			# Add buffer to Response object
+			$self->response->add_content( $buf );
 		}
 
-		main::DEBUGLOG && $log->debug("Body read");
+		# Does the caller want us to quit reading early (i.e. for mp3 frames)?
+		if ( $args->{readLimit} && length( $self->response->content ) >= $args->{readLimit} ) {
 
-		if ( my $cb = $args->{onBody} ) {
-			my $passthrough = $args->{passthrough} || [];
-			$cb->( $self, @{$passthrough} );
+			# close and remove the socket
+			$self->disconnect;
+
+			if ( main::DEBUGLOG && $log->is_debug ) {
+				$log->debug(sprintf("Body read (stopped after %d bytes)", length( $self->response->content )));
+			}
+
+			if ( my $cb = $args->{onBody} ) {
+				my $passthrough = $args->{passthrough} || [];
+				return $cb->( $self, @{$passthrough} );
+			}
 		}
-	}
-	else {
-		# More body data to read
 
-		# Some servers may never send EOF, but we want to return whatever data we've read
-		my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
-		Slim::Utils::Timers::setTimer( $socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self, $args );
-	}
+		if ( (defined $result && $result == 0) || (defined $self->response->headers->header('Content-Length') && length($self->response->content) == $self->response->headers->header('Content-Length')) ) {
+			# if here, we've reached the end of the body
+
+			# close and remove the socket if not keep-alive
+			if ( $self->response->headers->header('Connection') =~ /close/i ||
+				($self->request->headers->header('Connection') !~ /keep-alive/i && $self->request->protocol =~ m|HTTP/1.0|i) ) {
+				$self->fh->close if $self->fh;
+				$self->disconnect;
+				main::DEBUGLOG && $log->debug("closing mode");
+			}
+			else {
+				Slim::Networking::Select::removeError( $self->socket );
+				Slim::Networking::Select::removeRead( $self->socket );
+				main::DEBUGLOG && $log->debug("keep-alive mode");
+			}
+
+			main::DEBUGLOG && $log->debug("Body read");
+
+			if ( my $cb = $args->{onBody} ) {
+				my $passthrough = $args->{passthrough} || [];
+				$cb->( $self, @{$passthrough} );
+			}
+		}
+		else {
+			# More body data to read
+
+			# Some servers may never send EOF, but we want to return whatever data we've read
+			my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
+			Slim::Utils::Timers::setTimer( $socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self, $args );
+
+			# For SSL sockets, IO::Socket::SSL decrypts whole TLS records at once into an
+			# internal buffer. After read_entity_body returns, the OS FD may be empty (all
+			# TLS record bytes consumed) even though plaintext data remains in the SSL buffer.
+			# The event loop won't fire the callback again in that case, so we redo the read
+			# loop ourselves to drain whatever SSL has already buffered.
+			if ( $socket->can('pending') && $socket->pending() ) {
+				# avoid starving the event loop with a long-running read loop by yielding every 10 iterations
+				# this should never be needed, I've never seen more than 2 iterations in testing, but just in case ...
+				main::idle() if $iteration++ % 10 == 0;
+				redo BODY_READ;
+			}
+		}
+
+	} # end BODY_READ
 }
 
 sub _http_read_timeout {

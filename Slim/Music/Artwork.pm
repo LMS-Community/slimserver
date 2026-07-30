@@ -2,7 +2,7 @@ package Slim::Music::Artwork;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2025 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -19,7 +19,6 @@ L<Slim::Music::Artwork>
 
 use strict;
 
-use Digest::MD5 qw(md5_hex);
 use File::Basename qw(basename dirname);
 use File::Slurp;
 use File::Path qw(mkpath rmtree);
@@ -533,7 +532,7 @@ sub generateImageId {
 	}
 
 	if ( $mtime && $size ) {
-		$imageId = substr( md5_hex( $args->{url} . $mtime . $size ), 0, 8 );
+		$imageId = substr( safe_md5_hex( $args->{url} . $mtime . $size ), 0, 8 );
 	}
 
 	return $imageId;

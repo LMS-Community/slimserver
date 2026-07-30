@@ -1,7 +1,7 @@
 package Slim::Networking::SimpleHTTP::Base;
 
 # Logitech Media Server Copyright 2003-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -321,7 +321,8 @@ sub _cacheKey {
 sub unzip {
 	my ($response) = @_;
 
-	if ( my $ce = $response->header('Content-Encoding') ) {
+	my $ce = $response->header('Content-Encoding');
+	if ( $ce && $ce ne 'identity' ) {
 
 		my ($x, $status) = Compress::Raw::Zlib::Inflate->new( {
 			-WindowBits => -Compress::Raw::Zlib::MAX_WBITS(),

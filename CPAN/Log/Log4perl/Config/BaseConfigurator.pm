@@ -2,6 +2,11 @@ package Log::Log4perl::Config::BaseConfigurator;
 
 use warnings;
 use strict;
+use constant _INTERNAL_DEBUG => 0;
+
+*eval_if_perl      = \&Log::Log4perl::Config::eval_if_perl;
+*compile_if_perl   = \&Log::Log4perl::Config::compile_if_perl;
+*leaf_path_to_hash = \&Log::Log4perl::Config::leaf_path_to_hash;
 
 ################################################
 sub new {
@@ -9,13 +14,16 @@ sub new {
     my($class, %options) = @_;
 
     my $self = { 
+        utf8 => 0,
         %options,
-               };
+    };
+
+    bless $self, $class;
 
     $self->file($self->{file}) if exists $self->{file};
     $self->text($self->{text}) if exists $self->{text};
 
-    bless $self, $class;
+    return $self;
 }
 
 ################################################
@@ -40,9 +48,26 @@ sub file {
 ################################################
     my($self, $filename) = @_;
 
-    open FILE, "<$filename" or die "Cannot open $filename ($!)";
-    $self->{text} = [<FILE>];
-    close FILE;
+    open my $fh, "$filename" or die "Cannot open $filename ($!)";
+
+    if( $self->{ utf8 } ) {
+        binmode $fh, ":utf8";
+    }
+
+    $self->file_h_read( $fh );
+    close $fh;
+}
+
+################################################
+sub file_h_read {
+################################################
+    my($self, $fh) = @_;
+
+        # Dennis Gregorovic <dgregor@redhat.com> added this
+        # to protect apps which are tinkering with $/ globally.
+    local $/ = "\n";
+
+    $self->{text} = [<$fh>];
 }
 
 ################################################
@@ -53,9 +78,105 @@ sub parse {
         "in a derived class (currently: ", ref(shift), ")";
 }
 
+################################################
+sub parse_post_process {
+################################################
+    my($self, $data, $leaf_paths) = @_;
+    
+    #   [
+    #     'category',
+    #     'value',
+    #     'WARN, Logfile'
+    #   ],
+    #   [
+    #     'appender',
+    #     'Logfile',
+    #     'value',
+    #     'Log::Log4perl::Appender::File'
+    #   ],
+    #   [
+    #     'appender',
+    #     'Logfile',
+    #     'filename',
+    #     'value',
+    #     'test.log'
+    #   ],
+    #   [
+    #     'appender',
+    #     'Logfile',
+    #     'layout',
+    #     'value',
+    #     'Log::Log4perl::Layout::PatternLayout'
+    #   ],
+    #   [
+    #     'appender',
+    #     'Logfile',
+    #     'layout',
+    #     'ConversionPattern',
+    #     'value',
+    #     '%d %F{1} %L> %m %n'
+    #   ]
+
+    for my $path ( @{ Log::Log4perl::Config::leaf_paths( $data )} ) {
+
+        print "path=@$path\n" if _INTERNAL_DEBUG;
+
+        if(0) {
+        } elsif( 
+            $path->[0] eq "appender" and
+            $path->[2] eq "trigger"
+          ) {
+            my $ref = leaf_path_to_hash( $path, $data );
+            my $code = compile_if_perl( $$ref );
+
+            if(_INTERNAL_DEBUG) {
+                if($code) {
+                    print "Code compiled: $$ref\n";
+                } else {
+                    print "Not compiled: $$ref\n";
+                }
+            }
+
+            $$ref = $code if defined $code;
+        } elsif (
+            $path->[0] eq "filter"
+          ) {
+            # do nothing
+        } elsif (
+            $path->[0] eq "appender" and
+            $path->[2] eq "warp_message"
+          ) {
+            # do nothing
+        } elsif (
+            $path->[0] eq "appender" and
+            $path->[3] eq "cspec" or
+            $path->[1] eq "cspec"
+          ) {
+              # could be either
+              #    appender appndr layout cspec
+              # or 
+              #    PatternLayout cspec U value ...
+              #
+            # do nothing
+        } else {
+            my $ref = leaf_path_to_hash( $path, $data );
+
+            if(_INTERNAL_DEBUG) {
+                print "Calling eval_if_perl on $$ref\n";
+            }
+
+            $$ref = eval_if_perl( $$ref );
+        }
+    }
+
+    return $data;
+}
+
 1;
 
 __END__
+
+=encoding utf8
 
 =head1 NAME
 
@@ -190,9 +311,35 @@ Log::Log4perl::Config::DOMConfigurator
 
 Log::Log4perl::Config::LDAPConfigurator (tbd!)
 
+=head1 LICENSE
+
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
+
 =head1 AUTHOR
 
-Mike Schilli, <m@perlmeister.com>, 2004
-Kevin Goess, <cpan@goess.org> Jan-2003
+Please contribute patches to the project on Github:
 
-=cut
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

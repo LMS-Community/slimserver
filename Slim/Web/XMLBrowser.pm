@@ -2,7 +2,7 @@ package Slim::Web::XMLBrowser;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2025 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -161,9 +161,7 @@ sub handleWebIndex {
 	# Lookup this browse session in cache if user is browsing below top-level
 	# This avoids repated lookups to drill down the menu
 	my $index = $params->{args}->[1]->{index};
-	if ( $index && $index =~ /^([a-f0-9]{8})/ ) {
-		my $sid = $1;
-
+	if ( my $sid = Slim::Control::XMLBrowser::getSID($index) ) {
 		# Do not use cache if this is a search query
 		if ( $asyncArgs->[1]->{q} ) {
 			# Generate a new sid
@@ -218,9 +216,9 @@ sub handleFeed {
 
 		@index = split (/\./, $stash->{'index'});
 
-		if ( length( $index[0] ) >= 8 && $index[0] =~ /^[a-f0-9]{8}/ ) {
+		if ( $sid = Slim::Control::XMLBrowser::getSID( $index[0] ) ) {
 			# Session ID is first element in index
-			$sid = shift @index;
+			shift @index;
 		}
 	}
 	else {
@@ -1129,7 +1127,7 @@ sub handleSubFeed {
 	my $subFeed = $parent;
 	for my $i ( @{ $params->{'currentIndex'} } ) {
 		# Skip sid and sid + top-level search query
-		next if length($i) >= 8 && $i =~ /^[a-f0-9]{8}/;
+		next if Slim::Control::XMLBrowser::getSID($i);
 
 		# If an index contains a search query, strip it out
 		$i =~ s/_.+$//g;

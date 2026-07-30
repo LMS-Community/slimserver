@@ -1,7 +1,7 @@
 package Slim::Menu::BrowseLibrary;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2025 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -151,7 +151,6 @@ should be passed a reference to a real sub (not an anonymous one).
 
 
 use strict;
-use JSON::XS::VersionOneAndTwo;
 
 use Slim::Menu::BrowseLibrary::Releases;
 use Slim::Menu::BrowseLibrary::Works;
@@ -735,7 +734,7 @@ sub setMode {
 	$client->modeParam( handledTransition => 1 );
 }
 
-our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year only_album_years folder_id role_id library_id remote_library release_type work_id composer_id from_search subtitle grouping performance);
+our @topLevelArgs = qw(track_id artist_id genre_id album_id playlist_id year only_album_years folder_id role_id library_id remote_library release_type work_id composer_id from_search subtitle grouping performance menu_mode menu_roles);
 
 sub _topLevel {
 	my ($client, $callback, $args, $pt) = @_;

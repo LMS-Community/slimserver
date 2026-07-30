@@ -5,7 +5,7 @@
 			<div class="prefDesc">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DELETE" | string %]</div>
 		[% END %]
 		[% FOR account IN prefs.pref_accounts %]
-			<input type="checkbox" name="delete" value="[% (account.username || account.api_url) | html %]" /> [% account.username %] ([% ("PLUGIN_AUDIOSCROBBLER_" _ account.api_type) | upper | string %])<br /><br />
+			<input type="checkbox" name="delete" value="[% (account.username _ '::' _ account.api_type _ '::' _ account.api_url) | html %]" /> [% account.username %] ([% ("PLUGIN_AUDIOSCROBBLER_" _ account.api_type) | upper | string %])<br /><br />
 		[% END %]
 
 		<style>

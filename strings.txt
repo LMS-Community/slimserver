@@ -4289,6 +4289,34 @@ DECODER
 #
 # Player settings
 
+SETUP_PLAYER_TIMEZONE
+	CS	Časová zóna přehrávače
+	DE	Player-Zeitzone
+	EN	Player Timezone
+	FR	Fuseau horaire de la platine
+	NL	Tijdzone van de muziekspeler
+
+SETUP_PLAYER_TIMEZONE_DESC
+	CS	Časová zóna přehrávače. Používá se pro zobrazení hodin a budíků.
+	DE	Die Zeitzone des Players. Wird für die Uhr- und Weckeranzeige verwendet.
+	EN	The player timezone. Used for clock display and alarms.
+	FR	Le fuseau horaire de la platine, utilisé pour l'affichage de l'horloge et des alarmes.
+	NL	De tijdzone van de muziekspeler. Gebruikt voor de weergave van de klok en wekkers.
+
+SETUP_PLAYER_TIMEZONE_DESC_MANAGED
+	CS	Změňte časovou zónu přes nastavení zařízení.
+	DE	Ändern Sie die Zeitzone über die Einstellungen des Geräts.
+	EN	Change the timezone via the settings on the device.
+	FR	Modifier le fuseau horaire via les paramètres de l'appareil.
+	NL	Verander de tijdzone middels het menu op de speler.
+
+SETUP_PLAYER_TIMEZONE_SERVER
+	CS	Časová zóna serveru
+	DE	Zeitzone des Servers
+	EN	Server timezone
+	FR	Fuseau horaire du serveur
+	NL	Tijdzone van de server
+
 SETUP_PLAYERNAME
 	CS	Název přehrávače
 	DA	Afspillerens navn
@@ -5578,7 +5606,7 @@ SETUP_REPLAYGAINMODE_DESC
 	EN	Some audio tracks contain volume adjustment, or "Replay Gain", information that can be used during playback to make sure that tracks and albums sound equally loud. The player can use this information if it is present. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
 	ES	Algunas pistas de audio contienen información de ajuste de volumen, o "Replay Gain", que se puede usar durante la reproducción para garantizar que las pistas y los álbumes suenan con el mismo nivel de volumen. Si está presente, el reproductor puede usar esa información. "Track Gain" se puede usar para garantizar que todas las pistas suenen con el mismo nivel de volumen. "Album Gain" se puede usar para garantizar que todos los álbumes suenen con el mismo nivel de volumen, pero manteniendo las diferencias entre las pistas de un álbum. La selección "Smart Gain" usa la ganancia de un álbum si las canciones sucesivas de una lista de reproducción mezclada tienen la misma ganancia de álbum o de pista.
 	FI	Jotkin ääniraidat sisältävät tietoa äänen säätämisestä. Näiden tietojen avulla voidaan varmistaa, että kaikki raidat ja levyt toistuvat samalla äänenvoimakkuudella. Soitin voi käyttää näitä tietoja, jos ne ovat käytettävissä. Raidan äänenvoimakkuus -asetuksella voidaan varmistaa, että kaikki raidat kuuluvat samalla äänenvoimakkuudella. Levyn äänenvoimakkuus -asetuksella voidaan varmistaa, että kaikki levyt kuuluvat samalla äänenvoimakkuudella. Erot samalla levyllä olevien raitojen äänenvoimakkuudessa kuitenkin säilyvät. Älykkäillä äänenvoimakkuusasetuksilla soitin käyttää levyn äänenvoimakkuutta, jos soittoluettelossa on peräkkäin useita kappaleita samalta levyltä, tai raidan äänenvoimakkuutta, jos soittoluettelossa on sekaisin kappaleita eri levyiltä.
-	FR	Les fichiers audio peuvent contenir des informations d'ajustement du volume ou gain, appelées "Replay Gain", permettant de normaliser le volume apparent d'un morceau ou d'un album durant la lecture. La Squeezebox peut utiliser ces informations lorsqu'elles sont présentes. Le "gain morceau" permet de normaliser le volume de chaque morceau. Avec le "gain album", le volume de chaque album dans son ensemble est normalisé, mais les morceaux d'un même album conserveront leurs différences de volume. Le "gain intelligent" permet d'utiliser le "gain album" si des morceaux consécutifs sont issus d'un même album. Sinon, le "gain morceau" est utilisé.
+	FR	Les fichiers audio peuvent contenir des informations d'ajustement du volume ou gain, appelées "Replay Gain", permettant d'uniformiser le volume apparent des morceaux ou des albums durant la lecture. Les platines peuvent utiliser ces informations lorsqu'elles sont présentes. Le "gain morceau" permet d'uniformiser le volume de chaque morceau. Avec le "gain album", le volume des albums est uniformisé, mais les morceaux d'un même album conserveront leurs différences de volume. Le "gain intelligent" permet d'utiliser le "gain album" si des morceaux consécutifs sont issus d'un même album. Sinon, le "gain morceau" est utilisé.
 	HE	רצועות שמע מסוימות מכילה מידע אודות כוונונים של עוצמת הקול, או "הגברה להשמעה חוזרת", שניתן להשתמש בו במהלך השמעה כדי לוודא שעוצמת השמע של הרצועות והאלבומים זהה. הנגן יכול להשתמש במידע זה, אם קיים. ניתן להשתמש ב"הגברת רצועות" כדי לוודא שעוצמת הקול של כל הרצועות זהה. ניתן להשתמש ב"הגברת אלבום" כדי לוודא שעוצמת הקול של כל האלבומים זהה, אך שנשמרים הבדלי עוצמת הקול בין רצועות בכל אלבום. בחירת הגברה "חכמה" משתמשת בהגברת אלבום אם שירים עוקבים הם מאותו אלבום, או בהגברת רצועות עבור רשימת ההשמעה מעורבת.
 	HU	Egyes hangsávok hangerő-szabályozást vagy „Replay Gain” információt tartalmaznak, amelyek lejátszás közben használhatók annak biztosítására, hogy a műsorszámok és az albumok egyformán hangosak legyenek. A játékos felhasználhatja ezt az információt, ha jelen van. A "Track gain" segítségével megbizonyosodhat arról, hogy minden műsorszám egyformán hangos. Az "Album gain" segítségével megbizonyosodhat arról, hogy minden album egyformán hangosan szól, de az albumon belüli számok közötti hangerő-különbségek megmaradnak. Az "intelligens" erősítés kiválasztása az album erősítését használja, ha az egymást követő dalok ugyanarról az albumról vagy számerősítésről származnak egy vegyes lejátszási listához.
 	IT	Alcune tracce audio contengono una correzione del volume, detta replay gain, che può essere usata durante la riproduzione per assicurarsi che le tracce e gli album abbiano lo stesso livello sonoro. Il lettore può usare questa informazione se presente. Il guadagno traccia può essere usato per assicurarsi che tutte le tracce abbiano lo stesso livello sonoro. Il guadagno album può essere usato per assicurarsi che tutti gli album abbiano lo stesso livello sonoro ma che le differenze di volume tra le tracce di uno stesso album vengano mantenute. Il guadagno intelligente usa il guadagno album se i brani consecutivi appartengono allo stesso album o il guadagno traccia nel caso di una playlist mista.
@@ -5606,14 +5634,40 @@ SETUP_REPLAYGAIN_REMOTE_DESC
 	CS	Vzdálená streamovací služba často nepodporuje žádnou formu úpravy hlasitosti. Pokud přehráváte vzdálené skladby spolu s místními, může to vést k nežádoucím změnám hlasitosti. Definujte výchozí hodnotu, která by měla být použita pro každý vzdálený datový proud, který sám nedefinuje hodnotu úpravy hlasitosti.
 	DA	Internet streamingtjenester understøtter ofte ikke volumenregulering. Hvis du veksler mellem streaming og lokale musikfiler kan det medføre uønskede ændringer i volumen. Definér ønsket volumen for streamingtjenester, som ikke selv har defineret volumenjustering.
 	DE	Internet Streaming Dienste stellen selten Werte für die Lautstärken-Normalisierung zur Verfügung. Dies kann dazu führen, dass Musikstücke von Online-Diensten erheblich lauter wiedergegeben werden, als lokale Musikstücke. Definiere einen Standard-Wert, der bei Internet-Streams verwendet werden soll.
-	EN	Remote streaming service often don't support any form of volume adjustment. If you're playing remote tracks mixed in with local tracks, this can lead to undesired volume changes. Define a default value which should be applied to any remote stream not defining a volume adjustment value itself.
-	FR	La musique en streaming sur Internet donne rarement le gain pour ajuster le volume. Cela peut conduire à subir des variations importantes de volume entre des morceaux en ligne et de la musqique en local. Définir une valeur par défaut à utiliser pour le streaming sur Internet si l'information de normalisation est absente.
+	EN	Remote streaming services often don't support any form of volume adjustment. If you're playing remote tracks mixed in with local tracks, this can lead to undesired volume changes. Define a default value which should be applied to any remote stream not defining a volume adjustment value itself.
+	FR	La musique reçue en streaming depuis Internet inclut rarement des informations permettant d'uniformiser le volume des morceaux. Cela peut conduire à subir de fortes variations de volume entre les morceaux en ligne et ceux stockés en local. Définir ici la valeur d'ajustement à appliquer aux flux distants en l'absence d'informations du fournisseur.
 	HU	A távoli streaming szolgáltatás gyakran nem támogatja a hangerőszabályozás semmilyen formáját. Ha távoli számokat játszik le helyi számokkal keverve, ez nemkívánatos hangerő-változásokhoz vezethet. Határozzon meg egy alapértelmezett értéket, amelyet minden olyan távoli adatfolyamra alkalmazni kell, amely nem határozza meg magát a hangerő-beállítási értéket.
 	NL	Online streamingdiensten bieden meestal geen vorm van volumenormalisering aan. Internetstreams kunnen hierdoor duidelijk harder weergegeven worden dan lokale bestanden. Stel een standaardwaarde in die bij internetstreams moet worden gebruikt.
 	NO	Strømmetjenester støtter ofte ikke volumjustering. Du kan få uønskede volumendringer hvis du veksler mellom spor fra strømmetjenester og lokale musikkfiler. Sett et standardvolum som skal brukes på alle internettstrømmer.
 	PL	Zdalne strumienie często nie przesyłają żadnych danych, które pozwalałyby na automatyczne dopasowanie głośności. Odtwarzanie utworów ze zdalnych strumieni wymieszanych z lokalnymi utworami może doprowadzić do niepożądanych zmian głośności. Ustal domyślną wartość, która będzie użyta dla każdego zdalnego strumienia, który nie określa własnego poziomu głośności.
 	SV	Strömningstjänster understöder för det mesta inte volymnormalisering. Därför kan du uppleva plötsliga volymskillnader när du byter mellan lokal musik och strömningstjänster. Bestäm ett standardvärde för volymjustering som skall användas på strömningstjänster.
 	ZH_CN	远程流媒体服务通常不支持任何形式的音量调整。如果您在播放远程曲目与本地曲目混合时，这可能会导致不希望的音量变化。定义一个默认值，该值应适用于任何未定义音量调整值的远程流。
+
+SETUP_REPLAYGAIN_LOCAL
+	CS	Výchozí úprava pro místní skladby
+	DA	Tilpasning af volumen for lokale musikfiler
+	DE	Anpassung für lokale Musikdateien
+	EN	Default Adjustment for Local Tracks
+	FR	Ajustement du volume pour les morceaux locaux
+	HU	A helyi számok alapértelmezett beállítása
+	NL	Aanpassing voor lokale muziekbestanden
+	NO	Standardvolum for lokale musikkfiler
+	PL	Domyślna wartość dla lokalnych utworów
+	SV	Standardanpassning av volymen för lokala spår
+	ZH_CN	本地曲目默认调整
+
+SETUP_REPLAYGAIN_LOCAL_DESC
+	CS	Ne všechny místní skladby obsahují informace „Replay Gain“. Při použití režimu „Zesílení skladby“ nebo „Inteligentní zesílení“ při přehrávání směsi skladeb, které tyto informace obsahují i neobsahují, může docházet k velkým změnám hlasitosti mezi skladbami. Definujte výchozí hodnotu úpravy, která se použije na skladby bez informací „Replay Gain“, aby se toto chování zmírnilo.
+	DA	Ikke alle lokale musikfiler indeholder oplysninger om "Replay Gain". Hvis du bruger "Forstærkning af nummer" eller "Dynamisk forstærkning" til at afspille en blanding af numre med og uden disse oplysninger, kan der forekomme store ændringer i lydstyrken mellem numrene. Definér en standardværdi for justering, som skal anvendes på numre uden "Replay Gain"-oplysninger for at mindske dette.
+	DE	Nicht alle lokale Musikdateien enthalten "Replay Gain" Informationen. Wenn einer der Lautstärken-Normalisierung-Modi "Titel-Normalisierung" oder "Intelligente Normalisierung" verwendet wird, kann es beim Abspielen eines Mix von Musikdateien mit und ohne "Replay Gain" Informationen zu großen Lautstärkeunterschieden kommen. Definiere einen Standardwert, der bei Musikdateien ohne "Replay Gain" Informationen angewandt wird, um diese Unterschiede auszugleichen.
+	EN	All local tracks may not contain "Replay Gain" information. When using "Track gain" or "Smart gain" mode to play a mixture of tracks that do and do not contain this information, large volume changes may occur between tracks. Define a default adjustment value which should be applied to tracks without "Replay Gain" information in order to mitigate this behavior.
+	FR	Tous les morceaux locaux ne contiennent pas forcément d'informations de "Replay Gain". Lors de l'utilisation du mode "gain morceau" ou "gain intelligent" pour lire un mélange de morceaux avec et sans ces informations, d'importantes variations de volume peuvent se produire entre les morceaux. Définir ici la valeur d'ajustement à appliquer aux morceaux locaux sans informations de "Replay Gain" afin d'atténuer ce comportement.
+	HU	Nem minden helyi műsorszám tartalmaz „Replay Gain” információt. Ha a „Track gain” vagy az „intelligens” erősítés módot használja olyan műsorszámok vegyes lejátszásához, amelyek tartalmazzák ezt az információt, illetve amelyek nem, nagy hangerőkülönbségek léphetnek fel a számok között. Adjon meg egy alapértelmezett korrekciós értéket, amelyet a „Replay Gain” információ nélküli műsorszámokra kell alkalmazni ennek mérséklésére.
+	NL	Niet alle lokale muziekbestanden bevatten 'Replay Gain'-informatie. Wanneer je 'volumeaanpassing van nummers' of 'slimme' aanpassingsselectie gebruikt om een mix van nummers met en zonder deze informatie af te spelen, kunnen er grote volumeverschillen tussen nummers ontstaan. Stel een standaardwaarde in die moet worden toegepast op nummers zonder 'Replay Gain'-informatie om dit effect te beperken.
+	NO	Ikke alle lokale musikkfiler inneholder «Replay Gain»-informasjon. Hvis du bruker «Track gain» eller «Smart gain» når du spiller av en blanding av spor med og uten denne informasjonen, kan det oppstå store volumendringer mellom sporene. Sett en standardjustering som skal brukes på spor uten «Replay Gain»-informasjon for å redusere dette.
+	PL	Nie wszystkie lokalne utwory zawierają informacje „Replay Gain”. Podczas korzystania z opcji „Wzmocnienie utworu” lub „Inteligentne” dotyczącej wzmocnienia do odtwarzania mieszanki utworów z tymi informacjami i bez nich mogą wystąpić duże zmiany głośności między utworami. Ustal domyślną wartość korekty, która będzie stosowana do utworów bez informacji „Replay Gain”, aby ograniczyć to zjawisko.
+	SV	Alla lokala spår innehåller inte information om "Replay Gain". När du använder "Volymutjämning av spår" eller "Smart volymjustering" för att spela en blandning av spår med och utan denna information kan stora volymskillnader uppstå mellan spåren. Ange ett standardvärde för volymjustering som ska användas för spår utan "Replay Gain"-information för att minska detta.
+	ZH_CN	并非所有本地曲目都包含“回放增益”信息。当使用“曲目增益”或“智能”增益模式播放同时包含和不包含此信息的曲目时，曲目之间可能会出现较大的音量变化。定义一个默认调整值，该值应应用于没有“回放增益”信息的曲目，以减轻这种情况。
 
 REPLAYGAIN_DISABLED
 	CS	Žádná úprava hlasitosti
@@ -5693,7 +5747,7 @@ REPLAYGAIN_SMART_GAIN
 	EN	Smart Gain
 	ES	Selección de ganancia inteligente
 	FI	Älykäs äänenvoimakkuus
-	FR	Gain intelligent
+	FR	Utiliser le gain intelligent
 	HE	בחירת הגברה חכמה
 	HU	Okos kiegyenlítés
 	IT	Guadagno intelligente
@@ -6906,7 +6960,7 @@ SETUP_PLAYLISTRESCAN
 	ZH_CN	重新扫描播放表而已。
 
 RESCAN_ALBUM
-	CS	Znovu naskenovat album
+	CS	Znovu prohledat album
 	DE	Album neu einlesen
 	EN	Rescan Album
 	FR	Réanalyser l'album
@@ -18615,6 +18669,7 @@ UNSYNC
 	ZH_CN	非同步
 
 SETUP_USETIT1ASWORK_DESC
+	CS	Pro soubory s ID3 tagy nastavte tuto možnost tak, aby odpovídala chování vašeho tagovacího programu. Některé používají TIT1 pro Dílo, jiné pro Seskupení (a u některých je to konfigurovatelné).
 	DE	Bei Dateien mit ID3-Tags passen Sie diese Einstellung an das Verhalten Ihres Taggers an. Manche verwenden TIT1 für den Werkstitel, andere für die Gruppierung (und bei manchen ist dies konfigurierbar).
 	EN	For files using ID3 tags, set this to match your tagger's behaviour. Some will use TIT1 for Work, some for Grouping (and in some it is configurable).
 	ES	Para archivos que usan etiquetas ID3, configure esto para que coincida con el comportamiento de su etiquetador. Algunos usarán TIT1 para Trabajo, otros para Agrupación (y en algunos casos es configurable).
@@ -18622,6 +18677,7 @@ SETUP_USETIT1ASWORK_DESC
 	NL	Voor bestanden die ID3-tags gebruiken, moet u dit aanpassen aan het gedrag van uw tagger. Sommige gebruiken TIT1 voor Werk, andere voor Groepering (en in sommige gevallen is dit configureerbaar).
 
 SETUP_USETIT1ASWORK_1
+	CS	Považovat MP3 tag TIT1 za Dílo a MP3 tag GRP1 za Seskupení
 	DE	Behandle das MP3-Tag TIT1 als Werk und das MP3-Tag GRP1 als Gruppierung.
 	EN	Treat MP3 tag TIT1 as Work and MP3 tag GRP1 as Grouping
 	ES	Trate la etiqueta MP3 TIT1 como Trabajo y la etiqueta MP3 GRP1 como Agrupación
@@ -18629,6 +18685,7 @@ SETUP_USETIT1ASWORK_1
 	NL	Behandel MP3-tag TIT1 als Werk en MP3-tag GRP1 als Groepering
 
 SETUP_USETIT1ASWORK_0
+	CS	Považovat MP3 tag TIT1 za Seskupení (vytvořte uživatelský tag WORK, pokud potřebujete i Dílo)
 	DE	Behandle das MP3-Tag TIT1 als Gruppierung (erstellen Sie ein benutzerdefiniertes Tag WORK, falls Sie auch Werk benötigen).
 	EN	Treat MP3 tag TIT1 as Grouping (create a user-defined tag of WORK if you also need Work)
 	ES	Trate la etiqueta MP3 TIT1 como Agrupación (cree una etiqueta definida por el usuario de WORK si también necesita Trabajo)
@@ -18653,7 +18710,7 @@ SETUP_USETPE2ASALBUMARTIST_DESC
 	ZH_CN	MP3标签格式没有提供标准的方式来定义专辑艺术家。一些MP3标签工具使用TPE2字段来存储专辑艺术家（例如iTunes，Winamp，Windows Media Player），而其他工具则将其用于表示乐队/乐队。选择Lyrion Music Server应使用的含义。更改此设置将重新扫描音乐库。
 
 SETUP_USETPE2ASALBUMARTIST_1
-	CS	Považovat tag TPE2 MP3 za Interpreta alba
+	CS	Považovat tag TPE2 MP3 za Interpreta alba (vytvořte uživatelský tag BAND, pokud potřebujete i Skupinu/orchestr)
 	DA	Opfat TPE2 MP3-koder som Albumkunstner
 	DE	TPE2 MP3-Tag als Interpreten des Albums behandeln
 	EN	Treat TPE2 MP3 tag as Album Artist (create a user-defined tag of BAND if you also need band/orchestra)

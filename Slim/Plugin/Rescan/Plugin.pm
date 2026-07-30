@@ -6,7 +6,7 @@ package Slim::Plugin::Rescan::Plugin;
 # This code is derived from code with the following copyright message:
 #
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -579,9 +579,9 @@ sub checkScanTimer {
 
 	if ($prefs->get('scheduled')) {
 
-		my $scantime = $prefs->get('time');
+		my $scantime = $prefs->get('time') || 0;
 
-		if ($scantime && $time == $scantime) {
+		if ($time == $scantime) {
 
 			# alarm is done, so reset to find the beginning of a minute
 			if ($time == $scantime + 60) {

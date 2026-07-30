@@ -1,7 +1,7 @@
 package Slim::Control::Jive;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -2462,10 +2462,11 @@ sub jiveAlarmCommand {
 	my $request    = shift;
 	my $client     = $request->client || return;
 
-	# this command can issue either a snooze or a cancel
-	my $snooze      = $request->getParam('snooze') ? 1 : undef;
-	my $stop        = $request->getParam('stop')   ? 1 : undef;
-	my $fadein      = $request->getParam('fadein');
+	# this command can issue either a snooze or a stop
+	my $snooze        = $request->getParam('snooze')        ? 1 : undef;
+	my $stop          = $request->getParam('stop')          ? 1 : undef;
+	my $continueAudio = $request->getParam('continueAudio') ? 1 : 0;
+	my $fadein        = $request->getParam('fadein');
 
 	my $alarm       = Slim::Utils::Alarm->getCurrentAlarm($client);
 
@@ -2473,7 +2474,7 @@ sub jiveAlarmCommand {
 		if ( defined($snooze) ) {
 			$alarm->snooze();
 		} elsif ( defined ($stop) ) {
-			$alarm->stop();
+			$alarm->stop($continueAudio);
 		}
 	}
 

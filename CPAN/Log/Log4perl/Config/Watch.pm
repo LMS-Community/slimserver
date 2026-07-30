@@ -28,9 +28,14 @@ sub new {
             # We're in signal mode, set up the handler
         print "Setting up signal handler for '$self->{signal}'\n" if
             _INTERNAL_DEBUG;
+
+        # save old signal handlers; they belong to other appenders or
+        # possibly something else in the consuming application
+        my $old_sig_handler = $SIG{$self->{signal}};
         $SIG{$self->{signal}} = sub { 
-            print "Caught signal\n" if _INTERNAL_DEBUG;
+            print "Caught $self->{signal} signal\n" if _INTERNAL_DEBUG;
             $self->force_next_check();
+            $old_sig_handler->(@_) if $old_sig_handler and ref $old_sig_handler eq 'CODE';
         };
             # Reset the marker. The handler is going to modify it.
         $self->{signal_caught} = 0;
@@ -200,6 +205,8 @@ sub check {
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
 Log::Log4perl::Config::Watch - Detect file changes
@@ -310,22 +317,37 @@ been replaced by a new file in the meantime.
     }
 
 The parameters C<check_interval> and C<signal> limit the number of physical 
-file system checks, simililarily as with C<change_detected()>.
+file system checks, similarily as with C<change_detected()>.
 
-=head1 SEE ALSO
+=head1 LICENSE
 
-=head1 AUTHOR
-
-    Mike Schilli, <log4perl@perlmeister.com>
-
-=cut
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2003 by Mike Schilli E<lt>m@perlmeister.comE<gt> and Kevin Goess
-E<lt>cpan@goess.orgE<gt>.
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 
 
-=cut
+=head1 AUTHOR
+
+Please contribute patches to the project on Github:
+
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

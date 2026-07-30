@@ -152,6 +152,8 @@ sub purge {
 sub _key {
 	my ( $key ) = @_;
 
+	utf8::encode($key) if utf8::is_utf8($key);
+
 	# Get a 60-bit unsigned int from MD5 (SQLite uses 64-bit signed ints for the key)
 	# Have to concat 2 values here so it works on a 32-bit machine
 	my $md5 = Digest::MD5::md5_hex($key);

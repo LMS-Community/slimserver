@@ -4,7 +4,7 @@
 	<name>PLUGIN_ROCKRADIO_NAME</name>
 	<module>Slim::Plugin::RockRadio::Plugin</module>
 	<icon>plugins/RockRadio/html/icon.png</icon>
-	<version>1.0</version>
+	<version>1.1</version>
 	<description>PLUGIN_ROCKRADIO_DESC</description>
 	<creator>Lyrion Community</creator>
 	<category>radio</category>

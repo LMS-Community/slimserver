@@ -138,8 +138,9 @@ sub resize {
 	main::idleStreams() unless main::RESIZER;
 
 	if ( $mode eq 'm' || $mode eq 'p' ) {
-		# Bug 17140, switch to png if image will contain any padded space
-		if ( $format ne 'png' ) {
+		# Bug 17140, switch to png if image will contain any padded space.
+		# But if a format was explicitly requested in the URL/spec, honor it.
+		if ( !$explicit_format && $format ne 'png' ) {
 			if ( $width && $in_width && ($in_height / $in_width) != ($height / $width) ) {
 				$format = 'png';
 			}

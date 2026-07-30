@@ -1,7 +1,7 @@
 package Slim::Schema::Track;
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2025 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -9,7 +9,6 @@ package Slim::Schema::Track;
 use strict;
 use base 'Slim::Schema::DBI';
 
-use Digest::MD5 qw(md5_hex);
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU::Expires;
 

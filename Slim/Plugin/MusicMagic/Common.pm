@@ -2,7 +2,7 @@ package Slim::Plugin::MusicMagic::Common;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -64,6 +64,7 @@ sub checkDefaults {
 		mix_style       => 20,
 		mix_variety     => 0,
 		mix_genre       => 0,
+		mix_genre_filter => [],
 		mix_size        => 12,
 		reject_size     => 12,
 		reject_type     => 0,
@@ -74,10 +75,20 @@ sub checkDefaults {
 	}, 'Slim::Plugin::MusicMagic::Prefs');
 }
 
+sub getGenreList {
+	my @genres = map { $_->name } Slim::Schema->rs('Genre')->search(undef, { order_by => 'me.namesort' })->all;
+
+	return \@genres;
+}
+
+sub getBaseUrl {
+	my $host = $prefs->get('host') || 'localhost';
+	my $port = $prefs->get('port');
+	return "http://$host:$port/api";
+}
+
 sub grabFilters {
 	my ($class, $client, $params, $callback, @args) = @_;
-
-	my $MMSport = $prefs->get('port');
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&_gotFilters,
@@ -96,7 +107,7 @@ sub grabFilters {
 		}
 	);
 
-	$http->get( "http://localhost:$MMSport/api/filters" );
+	$http->get( getBaseUrl() . '/filters' );
 }
 
 sub getFilterList {

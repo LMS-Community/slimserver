@@ -1,7 +1,7 @@
 package Slim::Utils::SQLiteHelper;
 
 # Logitech Media Server Copyright 2003-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -27,7 +27,7 @@ use File::Basename;
 use File::Path;
 use File::Slurp;
 use File::Spec::Functions qw(catfile);
-use JSON::XS::VersionOneAndTwo;
+use JSON::XS qw(encode_json);
 use Time::HiRes qw(sleep);
 
 use Slim::Utils::ArtworkCache;
@@ -110,20 +110,6 @@ sub on_connect_do {
 	# Default temp_store is to create disk files to save memory
 	# Highmem we'll let it use memory
 	push @{$sql}, 'PRAGMA temp_store = MEMORY' if $prefs->get('dbhighmem');
-
-	# We create this even if main::STATISTICS is not false so that the SQL always works
-	# Track Persistent data is in another file, in the prefs folder rather than cache
-	my $persistentdb = $class->dbFile('persist.db', 'persistent');
-
-	# we need to move the persist.db out of the cache folder
-	_migrateDBFile($class->dbFile('persist.db'), $persistentdb);
-
-	# we need to migrate long 7.6.0 file names to shorter 7.6.1 filenames: Windows can't handle the long version
-	_migrateDBFile($class->dbFile('squeezebox-persistent.db'), $persistentdb);
-
-	push @{$sql}, "ATTACH '$persistentdb' AS persistentdb";
-	push @{$sql}, 'PRAGMA persistentdb.journal_mode = WAL';
-	push @{$sql}, 'PRAGMA persistentdb.cache_size = ' . $class->_cacheSize;
 
 	return $sql;
 }
@@ -354,6 +340,20 @@ sub postConnect {
 
 	$dbh->func( 'MD5', 1, sub { md5_hex( $_[0] ) }, 'create_function' );
 
+	# We create this even if main::STATISTICS is not false so that the SQL always works
+	# Track Persistent data is in another file, in the prefs folder rather than cache
+	my $persistentdb = $class->dbFile('persist.db', 'persistent');
+
+	# we need to move the persist.db out of the cache folder
+	_migrateDBFile($class->dbFile('persist.db'), $persistentdb);
+
+	# we need to migrate long 7.6.0 file names to shorter 7.6.1 filenames: Windows can't handle the long version
+	_migrateDBFile($class->dbFile('squeezebox-persistent.db'), $persistentdb);
+
+	$dbh->do("ATTACH '$persistentdb' AS persistentdb");
+	$dbh->do('PRAGMA persistentdb.journal_mode = WAL');
+	$dbh->do('PRAGMA persistentdb.cache_size = ' . $class->_cacheSize);
+
 	# http://search.cpan.org/~adamk/DBD-SQLite-1.33/lib/DBD/SQLite.pm#Transaction_and_Database_Locking
 	$dbh->{sqlite_use_immediate_transaction} = 1;
 
@@ -429,7 +429,7 @@ sub updateProgress {
 		$req->authorization_basic($username, $password);
 	}
 
-	$req->content( to_json( {
+	$req->content( encode_json( {
 		id     => 1,
 		method => 'slim.request',
 		params => [ '', [ 'scanner', 'notify', @_ ] ],

@@ -24,6 +24,7 @@ our $DEFAULT_WATCH_DELAY = 60; # seconds
 our $OPTS = {};
 our $OLD_CONFIG;
 our $LOGGERS_DEFINED;
+our $UTF8 = 0;
 
 ###########################################
 sub init {
@@ -33,6 +34,16 @@ sub init {
     undef $WATCHER; # just in case there's a one left over (e.g. test cases)
 
     return _init(@_);
+}
+
+###########################################
+sub utf8 {
+###########################################
+    my( $class, $flag ) = @_;
+
+    $UTF8 = $flag if defined $flag;
+
+    return $UTF8;
 }
 
 ###########################################
@@ -109,7 +120,6 @@ sub _init {
     $LOGGERS_DEFINED = 0;
 
     print "Calling _init\n" if _INTERNAL_DEBUG;
-    $Log::Log4perl::Logger::INITIALIZED = 1;
 
     #keep track so we don't create the same one twice
     my %appenders_created = ();
@@ -169,12 +179,20 @@ sub _init {
                         $data->{oneMessagePerAppender}->{value};
     }
 
+    if(exists $data->{utcDateTimes}) {
+        require Log::Log4perl::DateFormat;
+          # Need to split this up in two lines, or CVS will
+          # mess it up.
+        $Log::Log4perl::DateFormat::GMTIME = 
+          !!$data->{utcDateTimes}->{value};
+    }
+
         # Boolean filters 
     my %boolean_filters = ();
 
         # Continue with lower level loggers. Both 'logger' and 'category'
         # are valid keywords. Also 'additivity' is one, having a logger
-        # attached. We'll differenciate between the two further down.
+        # attached. We'll differentiate between the two further down.
     for my $key (qw(logger category additivity PatternLayout filter)) {
 
         if(exists $data->{$key}) {
@@ -214,7 +232,7 @@ sub _init {
     }
 
         # Now go over all filters found by name
-    for my $filter_name (keys %filter_names) {
+    for my $filter_name (sort keys %filter_names) {
 
         print "Checking filter $filter_name\n" if _INTERNAL_DEBUG;
 
@@ -251,7 +269,7 @@ sub _init {
             $filter = $type->new(name => $filter_name,
                 map { $_ => $data->{filter}->{$filter_name}->{$_}->{value} } 
                 grep { $_ ne "value" } 
-                keys %{$data->{filter}->{$filter_name}});
+                sort keys %{$data->{filter}->{$filter_name}});
         }
             # Register filter with the global filter registry
         $filter->register();
@@ -259,7 +277,7 @@ sub _init {
 
         # Initialize boolean filters (they need the other filters to be
         # initialized to be able to compile their logic)
-    for my $name (keys %boolean_filters) {
+    for my $name (sort keys %boolean_filters) {
         my $logic = $data->{filter}->{$name}->{logic}->{value};
         die "No logic defined for boolean filter $name" unless defined $logic;
         my $filter = Log::Log4perl::Filter::Boolean->new(
@@ -279,7 +297,7 @@ sub _init {
             'dont_reset_all');
 
         if(exists $additivity{$name}) {
-            $logger->additivity($additivity{$name});
+            $logger->additivity($additivity{$name}, 1);
         }
 
         for my $appname (@appnames) {
@@ -310,6 +328,8 @@ sub _init {
 
         # Successful init(), save config for later
     $OLD_CONFIG = $data;
+
+    $Log::Log4perl::Logger::INITIALIZED = 1;
 }
 
 ##################################################
@@ -358,7 +378,7 @@ sub create_appender_instance {
             # It's Perl
             my @params = grep { $_ ne "layout" and
                                 $_ ne "value"
-                              } keys %{$data->{appender}->{$appname}};
+                              } sort keys %{$data->{appender}->{$appname}};
     
             my %param = ();
             foreach my $pname (@params){
@@ -380,7 +400,7 @@ sub create_appender_instance {
                                                         {$pname}
                                                         {$_}
                                                         {value}} 
-                                     keys %{$data->{appender}
+                                     sort keys %{$data->{appender}
                                                    {$appname}
                                                    {$pname}}
                                      };
@@ -433,6 +453,12 @@ sub create_appender_instance {
        # Check for appender thresholds
     my $threshold = 
        $data->{appender}->{$appname}->{Threshold}->{value};
+
+    if(defined $system_wide_threshold and
+       !defined $threshold) {
+        $threshold = $system_wide_threshold;
+    }
+
     if(defined $threshold) {
             # Need to split into two lines because of CVS
         $appender->threshold($
@@ -449,13 +475,19 @@ sub create_appender_instance {
         $appender->filter($filter);
     }
 
-    if($system_wide_threshold) {
+    if(defined $system_wide_threshold and
+       defined $threshold and
+       $
+        Log::Log4perl::Level::PRIORITY{$system_wide_threshold} > 
+       $
+         Log::Log4perl::Level::PRIORITY{$threshold}
+      ) {
         $appender->threshold($
             Log::Log4perl::Level::PRIORITY{$system_wide_threshold});
     }
 
-    if($data->{appender}->{$appname}->{threshold}) {
-            die "threshold keyword needs to be uppercase";
+    if(exists $data->{appender}->{$appname}->{threshold}) {
+        die "invalid keyword 'threshold' - perhaps you meant 'Threshold'?";
     }
 
     return $appender;
@@ -481,12 +513,11 @@ sub add_layout_by_name {
             $layout_class = "Log::Log4perl::Layout::$layout_class";
         } else {
             die "ERROR: trying to set layout for $appender_name to " .
-                "'$layout_class' failed";
+                "'$layout_class' failed ($@)";
         }
     }
-
-    eval "require $layout_class" or 
-        die "Require to $layout_class failed ($!)";
+    Log::Log4perl::Util::module_available($layout_class) or
+        die "Require to $layout_class failed ($@)";
 
     $appender->layout($layout_class->new(
         $data->{appender}->{$appender_name}->{layout},
@@ -547,16 +578,26 @@ sub config_read {
     die "Configuration not defined" unless defined $config;
 
     my @text;
+    my $parser;
 
     $CONFIG_FILE_READS++;  # Count for statistical purposes
+
+    my $base_configurator = Log::Log4perl::Config::BaseConfigurator->new(
+        utf8 => $UTF8,
+    );
 
     my $data = {};
 
     if (ref($config) eq 'HASH') {   # convert the hashref into a list 
                                     # of name/value pairs
         print "Reading config from hash\n" if _INTERNAL_DEBUG;
-        @text = map { $_ . '=' . $config->{$_} } keys %{$config};
-
+        @text = ();
+        for my $key ( sort keys %$config ) {
+            if( ref( $config->{$key} ) eq "CODE" ) {
+                $config->{$key} = $config->{$key}->();
+            }
+            push @text, $key . '=' . $config->{$key} . "\n";
+        }
     } elsif (ref $config eq 'SCALAR') {
         print "Reading config from scalar\n" if _INTERNAL_DEBUG;
         @text = split(/\n/,$$config);
@@ -565,7 +606,7 @@ sub config_read {
              ref $config eq 'IO::File') {
             # If we have a file handle, just call the reader
         print "Reading config from file handle\n" if _INTERNAL_DEBUG;
-        config_file_read($config, \@text);
+        @text = @{ $base_configurator->file_h_read( $config ) };
 
     } elsif (ref $config) {
             # Caller provided a config parser object, which already
@@ -574,8 +615,7 @@ sub config_read {
         $data = $config->parse();
         return $data;
 
-    #TBD
-    }elsif ($config =~ m|^ldap://|){
+    } elsif ($config =~ m|^ldap://|){
        if(! Log::Log4perl::Util::module_available("Net::LDAP")) {
            die "Log4perl: missing Net::LDAP needed to parse LDAP urls\n$@\n";
        }
@@ -585,7 +625,7 @@ sub config_read {
 
        return Log::Log4perl::Config::LDAPConfigurator->new->parse($config);
 
-    }else{
+    } else {
 
         if ($config =~ /^(https?|ftp|wais|gopher|file):/){
             my ($result, $ua);
@@ -613,12 +653,13 @@ sub config_read {
                 die "Log4perl couln't get $config, ".
                      $res->message." ";
             }
-        }else{
+        } else {
             print "Reading config from file '$config'\n" if _INTERNAL_DEBUG;
-            open FILE, "<$config" or die "Cannot open config file '$config'";
             print "Reading ", -s $config, " bytes.\n" if _INTERNAL_DEBUG;
-            config_file_read(\*FILE, \@text);
-            close FILE;
+              # Use the BaseConfigurator's file reader to avoid duplicating
+              # utf8 handling here.
+            $base_configurator->file( $config );
+            @text = @{ $base_configurator->text() };
         }
     }
     
@@ -637,27 +678,16 @@ sub config_read {
         require Log::Log4perl::Config::DOMConfigurator;
 
         XML::DOM->VERSION($Log::Log4perl::DOM_VERSION_REQUIRED);
-        my $parser = Log::Log4perl::Config::DOMConfigurator->new();
+        $parser = Log::Log4perl::Config::DOMConfigurator->new();
         $data = $parser->parse(\@text);
     } else {
-        my $parser = Log::Log4perl::Config::PropertyConfigurator->new();
+        $parser = Log::Log4perl::Config::PropertyConfigurator->new();
         $data = $parser->parse(\@text);
     }
 
+    $data = $parser->parse_post_process( $data, leaf_paths($data) );
+
     return $data;
-}
-
-
-###########################################
-sub config_file_read {
-###########################################
-    my($handle, $linesref) = @_;
-
-        # Dennis Gregorovic <dgregor@redhat.com> added this
-        # to protect apps which are tinkering with $/ globally.
-    local $/ = "\n";
-
-    @$linesref = <$handle>;
 }
 
 ###########################################
@@ -698,7 +728,7 @@ sub leaf_paths {
         my($node, $path) = @$item;
 
         if(ref($node) eq "HASH") { 
-            for(keys %$node) {
+            for(sort keys %$node) {
                 push @stack, [$node->{$_}, [@$path, $_]];
             }
         } else {
@@ -706,6 +736,20 @@ sub leaf_paths {
         }
     }
     return \@result;
+}
+
+###########################################
+sub leaf_path_to_hash {
+###########################################
+    my($leaf_path, $data) = @_;
+
+    my $ref = \$data;
+
+    for my $part ( @$leaf_path[0..$#$leaf_path-1] ) {
+        $ref = \$$ref->{ $part };
+    }
+
+    return $ref;
 }
 
 ###########################################
@@ -766,7 +810,7 @@ sub compile_in_safe_cpt {
     $safe->permit_only( @{ $allowed_ops } );
  
     # share things with the compartment
-    for( keys %{ Log::Log4perl::Config->vars_shared_with_safe_compartment() } ) {
+    for( sort keys %{ Log::Log4perl::Config->vars_shared_with_safe_compartment() } ) {
         my $toshare = Log::Log4perl::Config->vars_shared_with_safe_compartment($_);
         $safe->share_from( $_, $toshare )
             or die "Can't share @{ $toshare } with Safe compartment";
@@ -925,6 +969,8 @@ sub var_subst {
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
 Log::Log4perl::Config - Log4perl configuration file syntax
@@ -938,8 +984,25 @@ The format is the same as the one as used for C<log4j>, just with
 a few perl-specific extensions, like enabling the C<Bar::Twix>
 syntax instead of insisting on the Java-specific C<Bar.Twix>.
 
-Comment lines (starting with arbitrary whitespace and a #) and
-blank lines (all whitespace or empty) are ignored.
+Comment lines and blank lines (all whitespace or empty) are ignored.
+
+Comment lines may start with arbitrary whitespace followed by one of:
+
+=over 4
+
+=item # - Common comment delimiter
+
+=item ! - Java .properties file comment delimiter accepted by log4j
+
+=item ; - Common .ini file comment delimiter
+
+=back
+
+Comments at the end of a line are not supported. So if you write
+
+    log4perl.appender.A1.filename=error.log #in current dir
+
+you will find your messages in a file called C<error.log #in current dir>.
 
 Also, blanks between syntactical entities are ignored, it doesn't 
 matter if you write
@@ -981,7 +1044,10 @@ accomplished by simply omitting the name:
     log4perl.logger = FATAL, Database, Mailer 
 
 This sets the root appender's level to C<FATAL> and also attaches the 
-later-to-be-defined appenders C<Database> and C<Mailer> to it.
+later-to-be-defined appenders C<Database> and C<Mailer> to it. Alternatively,
+the root logger can be addressed as C<rootLogger>:
+
+    log4perl.rootLogger = FATAL, Database, Mailer
 
 The additivity flag of a logger is set or cleared via the 
 C<additivity> keyword:
@@ -1094,11 +1160,21 @@ certainly override it:
     log4perl.appender.A1.layout=Log::Log4perl::Layout::SimpleLayout
 
 C<write> is the C<mode> that has C<Log::Log4perl::Appender::File>
-explicitely clobber the log file if it exists.
+explicitly clobber the log file if it exists.
 
-=head1 AUTHOR
+=head2 Configuration files encoded in utf-8
 
-Mike Schilli, E<lt>log4perl@perlmeister.comE<gt>
+If your configuration file is encoded in utf-8 (which matters if you 
+e.g. specify utf8-encoded appender filenames in it), then you need to 
+tell Log4perl before running init():
+
+    use Log::Log4perl::Config;
+    Log::Log4perl::Config->utf( 1 );
+
+    Log::Log4perl->init( ... );
+
+This makes sure Log4perl interprets utf8-encoded config files correctly.
+This setting might become the default at some point.
 
 =head1 SEE ALSO
 
@@ -1108,4 +1184,35 @@ Log::Log4perl::Config::DOMConfigurator
 
 Log::Log4perl::Config::LDAPConfigurator (coming soon!)
 
-=cut
+=head1 LICENSE
+
+Copyright 2002-2013 by Mike Schilli E<lt>m@perlmeister.comE<gt> 
+and Kevin Goess E<lt>cpan@goess.orgE<gt>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
+
+=head1 AUTHOR
+
+Please contribute patches to the project on Github:
+
+    http://github.com/mschilli/log4perl
+
+Send bug reports or requests for enhancements to the authors via our
+
+MAILING LIST (questions, bug reports, suggestions/patches): 
+log4perl-devel@lists.sourceforge.net
+
+Authors (please contact them via the list above, not directly):
+Mike Schilli <m@perlmeister.com>,
+Kevin Goess <cpan@goess.org>
+
+Contributors (in alphabetical order):
+Ateeq Altaf, Cory Bennett, Jens Berthold, Jeremy Bopp, Hutton
+Davidson, Chris R. Donnelly, Matisse Enzer, Hugh Esco, Anthony
+Foiani, James FitzGibbon, Carl Franks, Dennis Gregorovic, Andy
+Grundman, Paul Harrington, Alexander Hartmaier  David Hull, 
+Robert Jacobson, Jason Kohles, Jeff Macdonald, Markus Peter, 
+Brett Rann, Peter Rabbitson, Erik Selberg, Aaron Straup Cope, 
+Lars Thegler, David Viner, Mac Yang.
+

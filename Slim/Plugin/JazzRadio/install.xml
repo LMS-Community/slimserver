@@ -4,7 +4,7 @@
 	<name>PLUGIN_JAZZRADIO_NAME</name>
 	<module>Slim::Plugin::JazzRadio::Plugin</module>
 	<icon>plugins/JazzRadio/html/icon.png</icon>
-	<version>1.0</version>
+	<version>1.1</version>
 	<description>PLUGIN_JAZZRADIO_DESC</description>
 	<creator>Lyrion Community</creator>
 	<category>radio</category>

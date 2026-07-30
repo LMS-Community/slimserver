@@ -31,7 +31,7 @@ L<Slim::Utils::Misc> serves as a collection of miscellaneous utility
 use strict;
 use Exporter::Lite;
 
-our @EXPORT = qw(assert msg msgf errorMsg specified dumpFiltered);
+our @EXPORT = qw(assert msg msgf errorMsg specified dumpFiltered safe_md5_hex);
 
 use File::Basename qw(basename);
 use File::Spec::Functions qw(:ALL);
@@ -46,6 +46,7 @@ use Time::HiRes;
 use URI;
 use URI::Escape;
 use URI::file;
+use Digest::MD5 qw(md5_hex);
 use Digest::SHA1 qw(sha1_hex);
 
 # These must be 'required', as they use functions from the Misc module!
@@ -1232,14 +1233,24 @@ sub userAgentString {
 sub apiHeaders {
 	my ($module) = @_;
 
-	if (!$apiHeaders) {
-		$apiHeaders = {};
-		if (Slim::Utils::PluginManager->isConfiguredEnabled('Analytics')) {
-			$apiHeaders->{'X-LMS-ID'} = Slim::Plugin::Analytics::Plugin::getServerId();
+	eval {
+		if (!$apiHeaders) {
+			$apiHeaders = {};
+			if (Slim::Utils::PluginManager->isConfiguredEnabled('Analytics')) {
+				$apiHeaders->{'X-LMS-ID'} = Slim::Plugin::Analytics::Plugin::getServerId();
+			}
 		}
-	}
 
-	$apiHeaders->{'X-LMS-Plugin-ID'} = $module;
+		$apiHeaders->{'X-LMS-Plugin-ID'} = $module;
+	};
+
+	# we might be called before the analytics module was available - don't cache the header data to force re-initialization
+	if ($@) {
+		$apiHeaders = undef;
+		return (
+			'X-LMS-Plugin-ID' => $module,
+		);
+	}
 
 	return %$apiHeaders
 }
@@ -1525,6 +1536,10 @@ Generate a new UUID and return it.
 sub createUUID {
 	require Slim::Utils::Network;
 	return substr( sha1_hex( Time::HiRes::time() . $$ . Slim::Utils::Network::hostName() ), 0, 8 );
+}
+
+sub safe_md5_hex {
+	return md5_hex(Slim::Utils::Unicode::utf8off($_[0] || ''));
 }
 
 =head2 round ( )

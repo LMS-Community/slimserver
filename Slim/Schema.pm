@@ -2,7 +2,7 @@ package Slim::Schema;
 
 
 # Logitech Media Server Copyright 2001-2024 Logitech.
-# Lyrion Music Server Copyright 2025 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -28,7 +28,6 @@ use strict;
 use base qw(DBIx::Class::Schema);
 
 use DBIx::Migration;
-use Digest::MD5 qw(md5_hex);
 use File::Basename qw(basename dirname);
 use File::Spec::Functions qw(:ALL);
 use List::Util qw(max);
@@ -166,22 +165,23 @@ sub init {
 
 	# Load the DBIx::Class::Schema classes we've defined.
 	# If you add a class to the schema, you must add it here as well.
+	# Order matters with newer DBIx versions
 	$class->load_classes(qw/
 		Album
-		Comment
 		Contributor
-		ContributorAlbum
-		ContributorTrack
+		Work
 		Genre
-		GenreTrack
-		LibraryTrack
 		MetaInformation
 		Playlist
 		PlaylistTrack
 		Track
+		Comment
+		ContributorAlbum
+		ContributorTrack
+		GenreTrack
+		LibraryTrack
 		Year
 		Progress
-		Work
 		Composer
 	/);
 	$class->load_classes('TrackPersistent') unless (!main::STATISTICS);
@@ -1305,6 +1305,7 @@ sub _createOrUpdateAlbum {
 		# Bug 8034, this used to not change gain/peak values if they were already set,
 		# bug we do want to update album gain tags if they are changed.
 		if ( $attributes->{$gainTag} ) {
+			$attributes->{$gainTag} = $attributes->{$gainTag}[0] if ref $attributes->{$gainTag} eq 'ARRAY';
 			$attributes->{$gainTag} =~ s/\s*dB//gi;
 			$attributes->{$gainTag} =~ s/\s//g;  # bug 15965
 			$attributes->{$gainTag} =~ s/,/\./g; # bug 6900, change comma to period
@@ -1755,7 +1756,7 @@ sub _newTrack {
 	# Tag and rename set URL to the Amazon image path. Smack that.
 	# We don't use it anyways.
 	$columnValueHash{'url'} = $url;
-	$columnValueHash{'urlmd5'} = md5_hex($url);
+	$columnValueHash{'urlmd5'} = safe_md5_hex($url);
 
 	# Use an explicit record id if it was passed as an argument.
 	if ($trackId) {
@@ -1948,7 +1949,7 @@ sub updateOrCreateBase {
 	}
 
 	# make sure we always have an up to date md5 hash value
-	$attributeHash->{urlmd5} = md5_hex($url);
+	$attributeHash->{urlmd5} = safe_md5_hex($url);
 
 	# Short-circuit for remote tracks
 	if (!$integrateRemote && Slim::Music::Info::isRemoteURL($url)) {
@@ -2807,6 +2808,7 @@ sub _preCheckAttributes {
 	# Bug: 2605 - Get URL out of the attributes - some programs, and
 	# services such as www.allofmp3.com add it.
 	if ($attributes->{'URL'}) {
+		$attributes->{'URL'} = $attributes->{'URL'}[0] if ref $attributes->{'URL'} eq 'ARRAY';
 
 		push @$rawcomments, delete $attributes->{'URL'};
 	}
@@ -2926,6 +2928,7 @@ sub processReplayGainTags {
 		   $shortTag =~ s/^REPLAYGAIN_TRACK_(\w+)$/REPLAY_$1/;
 
 		if (defined $attributes->{$gainTag}) {
+			$attributes->{$gainTag} = $attributes->{$gainTag}[0] if ref $attributes->{$gainTag} eq 'ARRAY';
 
 			$attributes->{$shortTag} = delete $attributes->{$gainTag};
 			$attributes->{$shortTag} =~ s/\s*dB//gi;

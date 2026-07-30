@@ -8,7 +8,7 @@ package Slim::Plugin::Favorites::Plugin;
 # This code is derived from code with the following copyright message:
 #
 # Logitech Media Server Copyright 2005-2024 Logitech.
-# Lyrion Music Server Copyright 2024 Lyrion Community.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -879,7 +879,13 @@ sub cliAdd {
 
 		if (defined $i) {
 
-			splice @$level, $i, 0, $entry;
+			# is the target element a sub-folder? if so add to that sub-folder, otherwise insert before it
+			if ($level->[$i] && $level->[$i]->{outline} && ref $level->[$i]->{outline} eq 'ARRAY') {
+				push @{$level->[$i]->{outline}}, $entry;
+			}
+			else {
+				splice @$level, $i, 0, $entry;
+			}
 
 		} else { # with no specific index, place automatically at the end
 
