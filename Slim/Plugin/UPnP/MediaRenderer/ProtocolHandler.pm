@@ -1,5 +1,11 @@
 package Slim::Plugin::UPnP::MediaRenderer::ProtocolHandler;
 
+# Logitech Media Server Copyright 2003-2024 Logitech.
+# Lyrion Music Server Copyright 2024-2026 Lyrion Community.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);
 
