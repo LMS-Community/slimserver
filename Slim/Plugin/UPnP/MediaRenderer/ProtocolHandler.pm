@@ -4,12 +4,113 @@ use strict;
 use base qw(Slim::Player::Protocols::HTTP);
 
 use Slim::Utils::Cache;
+use Slim::Utils::Errno;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+
+use constant MAX_RAW_READ => 32768;
 
 my $log = logger('plugin.upnp');
 
 sub isRemote { 1 }
+
+# Always proxy through the server so the outgoing connection to the source uses
+# the same IP address that was published for this player via UPnP, and so we can
+# use the HTTP/1.1 + chunked transfer-encoding capable persistent connection.
+sub canDirectStream { 0 }
+
+sub _normalizeRequestToHttp11 {
+	my ( $class, $request ) = @_;
+	$request =~ s/^(\S+ \S+) HTTP\/1\.0\r\n/$1 HTTP\/1.1\r\n/;
+	return $request;
+}
+
+# The server's own outgoing connection to the DLNA source (see canDirectStream
+# above) is built and sent by this class, never handed to player firmware, so
+# upgrading it to HTTP/1.1 requires no firmware support. HTTP/1.1 is required
+# to allow the source to reply with "Transfer-Encoding: chunked" (chunked
+# responses are undefined in HTTP/1.0).
+sub requestString {
+	my $class = shift;
+	my $request = $class->SUPER::requestString(@_);
+	return $class->_normalizeRequestToHttp11($request);
+}
+
+# This primary connection is always read as a raw byte stream by
+# Slim::Player::Protocols::HTTP (see readPersistentChunk), with no knowledge of
+# HTTP chunked Transfer-Encoding. If the source replied with chunked encoding
+# (detected below), transparently strip the chunk framing here before the
+# bytes reach the audio decoder.
+#
+# Slim::Player::Protocols::HTTP::response() re-parses $request into the
+# HTTP::Request object it keeps for the persistent/proxied connection, so its
+# protocol is picked up straight from the request line. Rewrite that line to
+# HTTP/1.1 here (same substitution as requestString() above) instead of
+# patching the base class, keeping the HTTP/1.1 upgrade local to this plugin.
+sub response {
+	my $self = shift;
+	my ($args, $request, @headers) = @_;
+
+	$request = $self->_normalizeRequestToHttp11($request);
+
+	if ( grep { /^Transfer-Encoding\s*:\s*chunked/i } @headers ) {
+		${*$self}{'_dechunk'} = { raw => '', out => '', pending => undef, eof => 0 };
+		main::INFOLOG && $log->info('Response is chunked, decoding Transfer-Encoding on the fly');
+	}
+
+	return $self->SUPER::response($args, $request, @headers);
+}
+
+sub _sysread {
+	my $self    = $_[0];
+	my $dechunk = ${*$self}{'_dechunk'} || return $self->SUPER::_sysread($_[1], $_[2], $_[3]);
+
+	my $wantLen = $_[2];
+	my $offset  = $_[3] || 0;
+
+	if ( !length $dechunk->{'out'} && !$dechunk->{'eof'} ) {
+		my $raw = $self->SUPER::_sysread( my $buf, MAX_RAW_READ, 0 );
+
+		# propagate "no data yet" (EWOULDBLOCK/EINTR) and real read errors as-is
+		return $raw unless $raw;
+
+		$dechunk->{'raw'} .= $buf;
+
+		# extract as many complete chunks as are currently buffered
+		while (1) {
+			if ( !defined $dechunk->{'pending'} ) {
+				last unless $dechunk->{'raw'} =~ s/^([0-9A-Fa-f]+)[^\r\n]*\r\n//;
+				my $size = hex($1);
+
+				if ( !$size ) {
+					$dechunk->{'eof'} = 1;
+					last;
+				}
+
+				$dechunk->{'pending'} = $size;
+			}
+
+			last if length( $dechunk->{'raw'} ) < $dechunk->{'pending'} + 2;
+
+			$dechunk->{'out'} .= substr( $dechunk->{'raw'}, 0, $dechunk->{'pending'}, '' );
+			substr( $dechunk->{'raw'}, 0, 2, '' ); # discard the CRLF following each chunk's data
+			$dechunk->{'pending'} = undef;
+		}
+	}
+
+	if ( length $dechunk->{'out'} ) {
+		$_[1] = '' unless defined $_[1];
+		substr( $_[1], $offset ) = substr( $dechunk->{'out'}, 0, $wantLen, '' );
+		return length($_[1]) - $offset;
+	}
+
+	return 0 if $dechunk->{'eof'};
+
+	# no complete chunk decoded yet, ask caller to retry shortly
+	$_[1] = '' unless $offset;
+	$! = EWOULDBLOCK;
+	return undef;
+}
 
 sub getFormatForURL {
 	my $class = shift;
