@@ -228,7 +228,7 @@ sub init {
 			if ( ref $_[0] eq 'HASH' ) {
 				my $contributor = $_[0]->{$attr} || '';
 				my $rtn = ref $contributor && scalar @$contributor ? join(' & ', @$contributor) : $contributor ? $contributor : '';
-				return utf8on$rtn);
+				return utf8on($rtn);
 			}
 
 			my $output = '';
