@@ -4109,6 +4109,12 @@ sub statusQuery {
 		if (defined $trackGain) {
 			$request->addResult('replay_gain', $trackGain);
 		}
+		
+		my $bitrate = $song->streambitrate();
+		if (defined $bitrate) {
+			$bitrate = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
+			$request->addResult('bitrate', $bitrate);
+		}
 	}
 
 	if ($client->currentSleepTime()) {
