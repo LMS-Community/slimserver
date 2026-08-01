@@ -75,6 +75,9 @@ sub findStandaloneArtwork {
 	my $art = $findArtCache{$discCacheKey};
 
 	if ( !defined $art ) {
+
+		my $dbh = Slim::Schema->dbh;
+		my $image_sth = $dbh->prepare("SELECT name FROM scanned_pics WHERE directory = ?");
 		my $parentDir = Path::Class::dir( Slim::Utils::Misc::pathFromFileURL($dirurl) );
 
 		# Files to look for
@@ -105,7 +108,6 @@ sub findStandaloneArtwork {
 					push @cols, ( "albums.title", "albums.titlesort", "albums.discc", "works.title");
 					my $cols = join(', ', @cols);
 
-					my $dbh = Slim::Schema->dbh;
 					my $meta_sth = $dbh->prepare( qq{
 						SELECT $cols
 						FROM tracks
@@ -196,18 +198,7 @@ sub findStandaloneArtwork {
 		if ( !$art ) {
 			# Find all image files in the file directory
 
-			my $types = qr/\.(?:jpe?g|png|gif)$/i;
-
-			my $files = File::Next::files( {
-				file_filter    => sub { Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $types, undef, 1) },
-				descend_filter => sub { 0 },
-			}, $parentDir );
-
-			my @found;
-
-			while ( my $image = $files->() ) {
-				push @found, $image;
-			}
+			my @found = map { $_->[0] } @{ $dbh->selectall_arrayref($image_sth, undef, $parentDir) };
 
 			# Prefer cover/folder/album/thumb, then just take the first image
 			my $filelist = join( '|', @files );

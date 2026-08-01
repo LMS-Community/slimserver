@@ -27,6 +27,8 @@ DELETE FROM unreadable_tracks;
 
 DELETE FROM scanned_files;
 
+DELETE FROM scanned_pics;
+
 DELETE FROM works;
 
 UPDATE metainformation SET value = 0 WHERE name = 'lastRescanTime';

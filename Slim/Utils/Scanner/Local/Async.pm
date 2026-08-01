@@ -16,6 +16,7 @@ use strict;
 use File::Next;
 use File::Spec ();
 use Path::Class ();
+use File::Basename qw(dirname);
 
 use Slim::Music::Info;
 use Slim::Utils::Misc;
@@ -45,7 +46,15 @@ sub find {
 		(?, ?, ?)
 	} );
 
-	my $types = Slim::Music::Info::validTypeExtensions( $args->{types} || 'audio' );
+	my $picsth = $dbh->prepare_cached( qq{
+		INSERT INTO scanned_pics
+		(directory, name, timestamp, filesize)
+		VALUES
+		(?, ?, ?, ?)
+	} );
+
+	my $types = Slim::Music::Info::validTypeExtensions( $args->{types} || 'audio', 1 );
+	my $ptypes = qr/\.(?:jpe?g|png|gif)$/i;
 
 	my $progress;
 	if ( $args->{progress} ) {
@@ -160,11 +169,21 @@ sub find {
 		my $mtime = $stat[9] || 0;
 		my $size  = -d $file ? 0 : ($stat[7] || 0);
 
-		$sth->execute(
-			Slim::Utils::Misc::fileURLFromPath($file),
-			$mtime,
-			$size,
-		);
+		if ($file !~ /$ptypes/) {
+			$sth->execute(
+				Slim::Utils::Misc::fileURLFromPath($file),
+				$mtime,
+				$size,
+			);
+		}
+		else {
+			$picsth->execute(
+				dirname($file),
+				$file,
+				$mtime,
+				$size,
+			);
+		}
 
 		return 1;
 	};
