@@ -81,6 +81,12 @@ sub findStandaloneArtwork {
 			if ( $coverFormat =~ /^%(.*?)(\..*?){0,1}$/ ) {
 				my $suffix = $2 ? $2 : '.jpg';
 
+				if ($trackAttributes && $trackAttributes->{_track}) {
+					# If we have a track object, we can use it to get the attributes
+					$trackAttributes = $trackAttributes->{_track}->deflateToHash;
+					delete $trackAttributes->{_track};
+				}
+
 				# Merge attributes to use with TitleFormatter
 				# XXX This may break for some people as it's not using a Track object anymore
 				my $meta = { %{$trackAttributes}, %{$deferredAttributes} };
@@ -283,11 +289,8 @@ sub updateStandaloneArtwork {
 				my $track = Slim::Schema->find('Track', $trackid);
 
 				if ($track) {
-					my %columnValueHash = map { $_ => $track->$_() } keys %{$track->attributes};
-					$columnValueHash{primary_artist} = $columnValueHash{primary_artist}->id if $columnValueHash{primary_artist};
-
 					my $newCover = Slim::Music::Artwork->findStandaloneArtwork(
-						\%columnValueHash,
+						{ _track => $track },	# pass track object to avoid deflation unless necessary
 						{},
 						Slim::Utils::Misc::fileURLFromPath(
 							dirname(Slim::Utils::Misc::pathFromFileURL($url))

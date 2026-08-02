@@ -131,6 +131,49 @@ sub attributes {
 	return { map { $_ => 1 } @allColumns };
 }
 
+sub deflateToHash {
+	my $self = shift;
+
+	my %columnValueHash = map { $_ => $self->$_ } keys %{$self->attributes};
+
+	if (blessed($self->primary_artist)) {
+		$columnValueHash{TRACKARTIST} = $self->primary_artist->name;
+		$columnValueHash{TRACKARTISTSORT} = $self->primary_artist->namesort;
+		$columnValueHash{primary_artist} = $self->primary_artist->id;
+	}
+
+	if (blessed($self->album)) {
+		$columnValueHash{ALBUM} = $self->album->title;
+		$columnValueHash{ALBUMARTIST} = $self->album->contributor->name if $self->album->contributor;
+		delete $columnValueHash{album};
+	}
+
+	if (blessed($self->work)) {
+		$columnValueHash{WORK} = $self->work->title;
+		delete $columnValueHash{work};
+	}
+
+	if (blessed(my $band = $self->band)) {
+		$columnValueHash{BAND} = $band->first->name;
+		delete $columnValueHash{band};
+	}
+
+	if (blessed(my $composer = $self->composer)) {
+		$columnValueHash{COMPOSER} = $composer->first->name;
+		delete $columnValueHash{composer};
+	}
+
+	if (blessed(my $conductor = $self->conductor)) {
+		$columnValueHash{CONDUCTOR} = $conductor->first->name;
+		delete $columnValueHash{conductor};
+	}
+
+	$columnValueHash{GENRE} = $self->genrename;
+	$albumCache{$self->id . '_deflated'} = \%columnValueHash if main::SCANNER;
+
+	return \%columnValueHash;
+}
+
 sub albumid {
 	my $self = shift;
 

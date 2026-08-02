@@ -38,9 +38,6 @@ sub init {
 
 	%parsedFormats = ();
 
-	# for relating track attributes to album/artist attributes
-	my @trackAttrs = ();
-
 	require Slim::Schema::Track;
 
 	# Subs for all regular track attributes
