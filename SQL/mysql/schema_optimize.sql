@@ -3,6 +3,8 @@
 -- This is done here as it is faster to do in sql than in the server.
 --
 
+DELETE FROM scanned_pics;
+
 -- XXX This appears to not be needed anymore as contributors are properly
 -- removed by the new scanner
 

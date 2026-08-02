@@ -13,6 +13,7 @@ package Slim::Utils::Scanner::Local::Async;
 
 use strict;
 
+use File::Basename qw(fileparse);
 use File::Next;
 use File::Spec ();
 use Path::Class ();
@@ -38,14 +39,21 @@ sub find {
 	# Scanned files are stored in the database, use raw DBI to improve performance here
 	my $dbh = Slim::Schema->dbh;
 
-	my $sth = $dbh->prepare_cached( qq{
+	my $audioSth = $dbh->prepare_cached( qq{
 		INSERT INTO scanned_files
 		(url, timestamp, filesize)
 		VALUES
 		(?, ?, ?)
 	} );
 
-	my $types = Slim::Music::Info::validTypeExtensions( $args->{types} || 'audio' );
+	my $imageSth = $dbh->prepare_cached( qq{
+		INSERT INTO scanned_pics
+		(url, timestamp, filesize)
+		VALUES
+		(?, ?, ?)
+	} );
+
+	my $types = Slim::Music::Info::validTypeExtensions( ($args->{types} || 'audio') . '|image' );
 
 	my $progress;
 	if ( $args->{progress} ) {
@@ -159,6 +167,9 @@ sub find {
 
 		my $mtime = $stat[9] || 0;
 		my $size  = -d $file ? 0 : ($stat[7] || 0);
+
+		my ($ext) = $file =~ /\.([^.]+)$/;
+		my $sth = ($ext && Slim::Music::Info::isImage($file, lc($ext))) ? $imageSth : $audioSth;
 
 		$sth->execute(
 			Slim::Utils::Misc::fileURLFromPath($file),

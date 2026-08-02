@@ -1333,6 +1333,17 @@ sub isContainer {
 	return 0;
 }
 
+sub isImage {
+	my $pathOrObj = shift;
+	my $type      = shift || _isContentTypeHelper($pathOrObj);
+
+	$type =~ s/jpeg/jpg/i if $type;
+
+	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'image') {
+		return $type;
+	}
+}
+
 # Return a list of valid extensions for a particular type as listed in types.conf
 sub validTypeExtensions {
 	my $findTypes  = shift || 'list|audio';
@@ -1430,7 +1441,7 @@ sub typeFromSuffix {
 	my $defaultType = shift || 'unk';
 
 	if (defined $path && $path =~ m%\.([^./]+)$%) {
-		return $suffixes{lc($1)} || $defaultType;		
+		return $suffixes{lc($1)} || $defaultType;
 	}
 
 	return $defaultType;
