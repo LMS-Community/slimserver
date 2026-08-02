@@ -921,6 +921,19 @@ sub getMix {
 	}
 
 	my @songs = split(/\n/, $response->content);
+
+	# MusicIP may itself be running under Wine (e.g. in a Linux Docker container),
+	# in which case it reports paths in Windows drive-letter form (Wine maps the
+	# Linux filesystem root to a drive, typically Z:\). Translate such paths back
+	# to native Linux paths so they resolve correctly. Regular Linux paths (which
+	# already start with '/') are left untouched.
+	unless (main::ISWINDOWS) {
+		for my $song (@songs) {
+			$song =~ s|^[A-Za-z]:||;
+			$song =~ s|\\|/|g;
+		}
+	}
+
 	my $count = scalar @songs;
 
 	for (my $j = 0; $j < $count; $j++) {

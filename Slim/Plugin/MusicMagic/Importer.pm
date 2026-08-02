@@ -438,6 +438,14 @@ sub processSong {
 	}
 	else {
 		$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
+
+		# MusicIP may itself be running under Wine (e.g. in a Linux Docker container),
+		# in which case it reports paths in Windows drive-letter form (Wine maps the
+		# Linux filesystem root to a drive, typically Z:\). Translate such paths back
+		# to native Linux paths so they resolve correctly. Regular Linux paths (which
+		# already start with '/') are left untouched.
+		$songInfo{'file'} =~ s|^[A-Za-z]:||;
+		$songInfo{'file'} =~ s|\\|/|g;
 	}
 
 	main::DEBUGLOG && $log->debug("Exporting song: $songInfo{'file'}");
