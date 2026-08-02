@@ -4,6 +4,7 @@ PLUGIN_CLASSICALRADIO_NAME
 PLUGIN_CLASSICALRADIO_DESC
 	CS	ClassicalRadio.com – Krásně vybraná klasická hudba
 	DA	ClassicalRadio.com - Smukt arrangeret klassisk musik
+	DE	ClassicalRadio.com - Wunderschön zusammengestellte klassische Musik
 	EN	ClassicalRadio.com - Beautifully Curated Classical Music
 	FR	ClassicalRadio.com - Musique classique magnifiquement organisée
 	NL	ClassicalRadio.com - Prachtig samengestelde klassieke muziek
@@ -13,6 +14,7 @@ PLUGIN_CLASSICALRADIO_DESC
 PLUGIN_CLASSICALRADIO_MISSING_CREDS
 	CS	Prosím, navštivte ClassicalRadio.com v nastavení Lyrion Music Serveru a přidejte své přihlašovací údaje.
 	DA	Besøg ClassicalRadio.com i Lyrion Music Server indstillinger for at tilføje dine loginoplysninger.
+	DE	Bitte rufen Sie ClassicalRadio.com in den Einstellungen des Lyrion Music Servers auf, um Ihre Anmeldedaten hinzuzufügen.
 	EN	Please visit ClassicalRadio.com in the Lyrion Music Server Settings to add your credentials.
 	FR	Veuillez vous rendre dans ClassicalRadio.com dans les paramètres de Lyrion Music Server pour ajouter vos informations d'identification.
 	NL	Ga naar ClassicalRadio.com in de Lyrion Music Server Instellingen om je gegevens toe te voegen.
@@ -22,6 +24,7 @@ PLUGIN_CLASSICALRADIO_MISSING_CREDS
 PLUGIN_CLASSICALRADIO_LINK
 	CS	Chcete-li si vytvořit nebo spravovat svůj účet, navštivte <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
 	DA	Besøg <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a> for at oprette eller administrere din konto.
+	DE	Um ein Konto zu erstellen oder Ihr Konto zu verwalten, besuchen Sie bitte <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
 	EN	To create or manage your account please visit <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
 	FR	Pour créer ou gérer votre compte, veuillez accéder à <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
 	NL	Ga om een account aan te maken of te beheren naar <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
