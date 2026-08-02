@@ -61,7 +61,7 @@ my $imageTypesRegex;
 sub findStandaloneArtwork {
 	my ( $class, $trackAttributes, $deferredAttributes, $dirurl ) = @_;
 
-	return 0 if !Slim::Music::Info::isFileURL($dirurl);
+	return wantarray ? () : 0 if !Slim::Music::Info::isFileURL($dirurl);
 
 	my $isInfo = main::INFOLOG && $log->is_info;
 
@@ -111,7 +111,7 @@ sub findStandaloneArtwork {
 						$candidateForArtfolder = $coverName;
 
 						# add the content of the artwork folder to our scanned picture table
-						if (!$artFolderRead) {
+						if (main::SCANNER && !$artFolderRead) {
 							Slim::Utils::Scanner::Local::Async->find( $artDir, {
 								types => 'image',
 								no_async => 1,
@@ -135,16 +135,27 @@ sub findStandaloneArtwork {
 			}
 		}
 
+
+		if (wantarray) {
+			my @artFiles = _findStandaloneArtwork($parentDir, \@files);
+			if ($candidateForArtfolder) {
+				push @artFiles, _findStandaloneArtwork($artDir, [$candidateForArtfolder]);
+			}
+			push @artFiles, _findStandaloneArtwork($parentDir);
+
+			return @artFiles;
+		}
+
 		# look up "artist name" (or whatever the template), cover, album, etc. in music folder first
-		$art ||= _findArtworkInScannedTable($parentDir, \@files);
+		$art ||= _findStandaloneArtwork($parentDir, \@files);
 
 		# check for "artist name" (or whatever) in the artwork folder (if defined)
 		if ( !$art && $candidateForArtfolder && $artFolderRead ) {
-			$art = _findArtworkInScannedTable($artDir, [$candidateForArtfolder]);
+			$art = _findStandaloneArtwork($artDir, [$candidateForArtfolder]);
 		}
 
 		# pick any picture in music folder
-		$art ||= _findArtworkInScannedTable($parentDir);
+		$art ||= _findStandaloneArtwork($parentDir);
 
 		# Cache found artwork for this directory to speed up later tracks
 		# No caching if using a user-defined artwork format, the user may have multiple
@@ -160,7 +171,7 @@ sub findStandaloneArtwork {
 	return $art || 0;
 }
 
-sub _findArtworkInScannedTable {
+sub _findStandaloneArtwork {
 	my ($parentDir, $filenameTemplates, $folder) = @_;
 	my $dbh = Slim::Schema->dbh;
 
@@ -171,34 +182,41 @@ sub _findArtworkInScannedTable {
 		my @variations;
 
 		if ($name =~ $imageTypesRegex) {
-			push @variations, Slim::Utils::Misc::fileURLFromPath(catfile($parentDir, $name));
+			push @variations, catfile($parentDir, $name);
 		}
 		else {
 			@variations = map {(
-				Slim::Utils::Misc::fileURLFromPath(catfile($parentDir, "$name.$_")),
-				Slim::Utils::Misc::fileURLFromPath(catfile($parentDir, $name . '.' . uc($_))),
+				catfile($parentDir, "$name.$_"),
+				catfile($parentDir, $name . '.' . uc($_)),
 			)} ('jpg', 'jpeg', 'png', 'gif');
 		}
 
 		@variations;
 	} @$filenameTemplates : ();
 
-	my $sql = 'SELECT url FROM scanned_pics WHERE url ';
-	if (scalar @candidates) {
-		$sql .= sprintf('IN (%s)', join(',', map { '?' } @candidates));
+	my @images;
+
+	if (main::SCANNER) {
+		my $sql = 'SELECT url FROM scanned_pics WHERE url ';
+		if (scalar @candidates) {
+			$sql .= sprintf('IN (%s)', join(',', map { '?' } @candidates));
+		}
+		else {
+			$sql .= 'LIKE ?';
+			push @candidates, Slim::Utils::Misc::fileURLFromPath($parentDir) . '/%';
+		}
+
+		my $sth = Slim::Schema->dbh->prepare_cached($sql);
+
+		@images = Slim::Utils::Misc::uniq(map {
+			Slim::Utils::Misc::pathFromFileURL($_->[0]);
+		} @{
+			$dbh->selectall_arrayref($sth, undef, map { Slim::Utils::Misc::fileURLFromPath($_) } @candidates)
+		});
 	}
 	else {
-		$sql .= 'LIKE ?';
-		push @candidates, Slim::Utils::Misc::fileURLFromPath($parentDir) . '/%';
+		@images = Slim::Utils::Misc::uniq(grep { -f $_ } @candidates);
 	}
-
-	my $sth = Slim::Schema->dbh->prepare_cached($sql);
-
-	my @images = Slim::Utils::Misc::uniq(map {
-		Slim::Utils::Misc::pathFromFileURL($_->[0]);
-	} @{
-		$dbh->selectall_arrayref($sth, undef, @candidates)
-	});
 
 	# keep sort order from the templates list
 	if (scalar @images > 1) {
@@ -212,7 +230,7 @@ sub _findArtworkInScannedTable {
 		} @images;
 	}
 
-	return $images[0] || 0;
+	return wantarray ? @images : ($images[0] || 0);
 }
 
 sub updateStandaloneArtwork {
@@ -569,114 +587,18 @@ sub _readCoverArtFiles {
 
 	my $isInfo = main::INFOLOG && $log->is_info;
 
-	my @names      = qw(cover Cover thumb Thumb album Album folder Folder);
-	my @ext        = qw(png jpg jpeg gif);
-
-	my $file       = file($path);
-	my $parentDir  = $file->dir;
-	my $trackId    = $track->id;
+	my $parentDir  = file($path)->dir;
 
 	$isInfo && $log->info("Looking for image files in $parentDir");
 
-	my %nameslist  = map { $_ => [do { my $t = $_; map { "$t.$_" } @ext }] } @names;
+	my @candidates = $class->findStandaloneArtwork({ _track => $track }, {}, Slim::Utils::Misc::fileURLFromPath($path));
 
-	# these seem to be in a particular order - not sure if that means anything.
-	my @filestotry = map { @{$nameslist{$_}} } @names;
-	my $artwork    = $prefs->get('coverArt');
-
-	# If the user has specified a pattern to match the artwork on, we need
-	# to generate that pattern. This is nasty.
-	if (defined($artwork) && $artwork =~ /^%(.*?)(\..*?){0,1}$/) {
-
-		my $suffix = $2 ? $2 : ".jpg";
-
-		if (my $prefix = Slim::Music::TitleFormatter::infoFormat(
-				Slim::Utils::Misc::fileURLFromPath($track->url), $1)) {
-
-			$artwork = $prefix . $suffix;
-
-			$isInfo && $log->info("Variable cover: $artwork from $1");
-
-			if (main::ISWINDOWS) {
-				# Remove illegal characters from filename.
-				$artwork =~ s/\\|\/|\:|\*|\?|\"|<|>|\|//g;
-			}
-
-			# Generating a pathname from tags is dangerous because the filesystem
-			# encoding may not match the locale, but that is the best guess that we have.
-			$artwork = Slim::Utils::Unicode::encode_locale($artwork);
-
-			my $artPath = $parentDir->file($artwork)->stringify;
-
-			my ($body, $contentType) = $class->getImageContentAndType($artPath);
-
-			my $artDir  = dir($prefs->get('artfolder'));
-
-			if (!$body && defined $artDir) {
-
-				$artPath = $artDir->file($artwork)->stringify;
-
-				($body, $contentType) = $class->getImageContentAndType($artPath);
-			}
-
-			if ($body && $contentType) {
-
-				$isInfo && $log->info("Found image file: $artPath");
-
-				return ($body, $contentType, $artPath);
-			}
-		} else {
-
-			$isInfo && $log->info("Variable cover: no match from $1");
-		}
-
-	} elsif (defined $artwork) {
-
-		unshift @filestotry, $artwork;
-	}
-
-	if (defined $artworkDir && $artworkDir eq $parentDir) {
-
-		if (exists $lastFile{$trackId} && $lastFile{$trackId} ne 1) {
-
-			$isInfo && $log->info("Using existing image: $lastFile{$trackId}");
-
-			my ($body, $contentType) = $class->getImageContentAndType($lastFile{$trackId});
-
-			return ($body, $contentType, $lastFile{$trackId});
-
-		} elsif (exists $lastFile{$trackId}) {
-
-			$isInfo && $log->info("No image in $artworkDir");
-
-			return undef;
-		}
-
-	} else {
-
-		$artworkDir = $parentDir;
-		%lastFile = ();
-	}
-
-	for my $file (@filestotry) {
-
-		$file = $parentDir->file($file)->stringify;
-
-		next unless -f $file;
-
-		my ($body, $contentType) = $class->getImageContentAndType($file);
+	foreach my $artPath (@candidates) {
+		my ($body, $contentType) = $class->getImageContentAndType($artPath);
 
 		if ($body && $contentType) {
-
-			$isInfo && $log->info("Found image file: $file");
-
-			$lastFile{$trackId} = $file;
-
-			return ($body, $contentType, $file);
-
-		} else {
-
-			$lastFile{$trackId} = 1;
+			$isInfo && $log->info("Found image file: $artPath");
+			return ($body, $contentType, $artPath);
 		}
 	}
 
