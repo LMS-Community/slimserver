@@ -79,19 +79,16 @@ sub findStandaloneArtwork {
 			# If the user has specified a pattern to match the artwork on, we need
 			# to generate that pattern. This is nasty.
 			if ( $coverFormat =~ /^%(.*?)(\..*?){0,1}$/ ) {
+				my $formatStr = $1;
 				my $suffix = $2 ? $2 : '.jpg';
 
-				if ($trackAttributes && $trackAttributes->{_track}) {
-					# If we have a track object, we can use it to get the attributes
-					$trackAttributes = $trackAttributes->{_track}->deflateToHash;
-					delete $trackAttributes->{_track};
-				}
+				my $track = $trackAttributes && delete $trackAttributes->{_track};
 
 				# Merge attributes to use with TitleFormatter
 				# XXX This may break for some people as it's not using a Track object anymore
-				my $meta = { %{$trackAttributes}, %{$deferredAttributes} };
+				my $meta = { %{$trackAttributes}, %{$deferredAttributes} } unless $track;
 
-				if ( my $prefix = Slim::Music::TitleFormatter::infoFormat( undef, $1, undef, $meta ) ) {
+				if ( my $prefix = Slim::Music::TitleFormatter::infoFormat( $track, $formatStr, undef, $meta ) ) {
 					$coverFormat = $prefix . $suffix;
 
 					if ( main::ISWINDOWS ) {
