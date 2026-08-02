@@ -24,6 +24,8 @@ DELETE FROM comments;
 
 DELETE FROM scanned_files;
 
+DELETE FROM scanned_pics;
+
 DELETE FROM works;
 
 DELETE FROM library_track;

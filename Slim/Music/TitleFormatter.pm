@@ -170,7 +170,9 @@ sub init {
 	$parsedFormats{'ARTIST'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return utf8on(my $v = $_[0]->{artist} || $_[0]->{albumartist} || $_[0]->{trackartist} || $_[0]->{'contributors.name'} || '');
+			my $artists = $_[0]->{artist} || $_[0]->{albumartist} || $_[0]->{trackartist} || $_[0]->{'contributors.name'} || '';
+			my $rtn = ref $artists && scalar @$artists ? join(' & ', @$artists) : $artists ? $artists : '';
+			return  utf8on($rtn);
 		}
 
 		my @output  = ();
@@ -198,7 +200,9 @@ sub init {
 	$parsedFormats{'ARTISTSORT'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return utf8on(my $v = $_[0]->{artistsort} || $_[0]->{albumartistsort} || $_[0]->{trackartistsort} || $_[0]->{'contributors.namesort'} || '');
+			my $artistsort = $_[0]->{artistsort} || $_[0]->{albumartistsort} || $_[0]->{trackartistsort} || $_[0]->{'contributors.namesort'} || '';
+			my $rtn = ref $artistsort && scalar @$artistsort ? join(' & ', @$artistsort) : $artistsort ? $artistsort : '';
+			return utf8on($rtn);
 		}
 
 		my @output  = ();
@@ -222,13 +226,16 @@ sub init {
 		$parsedFormats{uc($attr)} = sub {
 
 			if ( ref $_[0] eq 'HASH' ) {
-				return utf8on(my $v = $_[0]->{$attr} || '');
+				my $contributor = $_[0]->{$attr} || '';
+				my $rtn = ref $contributor && scalar @$contributor ? join(' & ', @$contributor) : $contributor ? $contributor : '';
+				return utf8on($rtn);
 			}
 
 			my $output = '';
 
 			eval {
 				my ($item) = $_[0]->$attr();
+				my @items = $_[0]->$attr();
 
 				if ($item) {
 					$output = $item->name();
@@ -322,11 +329,39 @@ sub init {
 	};
 
 	$parsedFormats{'PATH'} = sub {
+
 		my $url;
 		my $output = '';
 
 		if ( ref $_[0] eq 'HASH' ) {
 			$url = $_[0]->{url} || $_[0]->{'tracks.url'};
+		}
+		else {
+			$url = $_[0]->get('url');
+		}
+
+		if ($url) {
+
+			if (Slim::Music::Info::isFileURL($url)) {
+				$url = Slim::Utils::Misc::pathFromFileURL($url);
+			}
+
+			$output = (splitpath($url))[1];
+			$output = Slim::Utils::Misc::unescape($output);
+			utf8::decode($output);
+		}
+
+		return (defined $output ? $output : '');
+	};
+
+	$parsedFormats{'FILE'} = sub {
+
+		my $url;
+		my $output = '';
+
+		if ( ref $_[0] eq 'HASH' ) {
+			$url = $_[0]->{url} || $_[0]->{'tracks.url'};
+			return $_[0]->{file} || '' if !$url;
 		}
 		else {
 			$url = $_[0]->get('url');
@@ -435,7 +470,6 @@ sub init {
 			if (Slim::Music::Info::isFileURL($url)) {
 				$url = Slim::Utils::Misc::pathFromFileURL($url);
 			}
-
 			$output = (splitpath($url))[2];
 			$output = Slim::Utils::Misc::unescape($output);
 		}

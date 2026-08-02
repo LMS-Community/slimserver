@@ -1336,6 +1336,7 @@ sub isContainer {
 # Return a list of valid extensions for a particular type as listed in types.conf
 sub validTypeExtensions {
 	my $findTypes  = shift || 'list|audio';
+	my $addImages  = shift;
 
 	my @extensions = ();
 	my $disabled   = disabledExtensions($findTypes);
@@ -1368,6 +1369,10 @@ sub validTypeExtensions {
 	# Always look for cue sheets when looking for audio.
 	if ('audio' =~ /$findTypes/ && !$disabled->{'cue'}) {
 		push @extensions, 'cue';
+	}
+
+	if ($addImages) {
+		push @extensions, ('jpe?g','png','gif');
 	}
 
 	if ( wantarray ) {

@@ -64,6 +64,7 @@ sub find {
 		# XXX how best to delete files in non-recursive mode?
 		# Delete the directory itself and all children
 		$dbh->do("DELETE FROM scanned_files WHERE url = '${file}' OR url LIKE '${file}/%'");
+		$dbh->do("DELETE FROM scanned_pics WHERE name LIKE '${path}/%'");
 	}
 
 	stat $path;

@@ -2778,6 +2778,7 @@ sub rescanCommand {
 			types     => 'audio',
 			recursive => 0,
 		} ) if scalar @paths;
+		Slim::Music::Artwork->precacheAllArtwork if scalar @paths;
 	}
 	else {
 		# In-process scan
