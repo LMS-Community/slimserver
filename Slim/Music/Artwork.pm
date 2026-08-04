@@ -135,7 +135,6 @@ sub findStandaloneArtwork {
 			}
 		}
 
-
 		if (wantarray) {
 			my @artFiles = _findStandaloneArtwork($parentDir, \@files);
 			if ($candidateForArtfolder) {
@@ -172,7 +171,7 @@ sub findStandaloneArtwork {
 }
 
 sub _findStandaloneArtwork {
-	my ($parentDir, $filenameTemplates, $folder) = @_;
+	my ($parentDir, $filenameTemplates) = @_;
 	my $dbh = Slim::Schema->dbh;
 
 	$imageTypesRegex ||= Slim::Music::Info::validTypeExtensions('image');
@@ -216,6 +215,20 @@ sub _findStandaloneArtwork {
 	}
 	else {
 		@images = Slim::Utils::Misc::uniq(grep { -f $_ } @candidates);
+
+		# read the folder anyway, as we don't have the full list of images in the database table
+		if (!scalar @images && !$filenameTemplates) {
+			my $files = File::Next::files( {
+				file_filter    => sub { Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $imageTypesRegex, undef, 1) },
+				descend_filter => sub { 0 },
+			}, $parentDir );
+
+			while ( my $image = $files->() ) {
+				# just take the first image found...
+				push @images, $image;
+				last;
+			}
+		}
 	}
 
 	# keep sort order from the templates list
