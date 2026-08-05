@@ -659,9 +659,11 @@ sub infoFormat {
 	my $fileOrObj = shift; # item whose information will be formatted
 	my $str       = shift; # format string to use
 	my $safestr   = shift; # format string to use in the event that after filling the first string, there is nothing left
-	my $meta      = shift; # optional metadata hash to use instead of object data
+	my $_meta     = shift; # optional metadata hash to use instead of object data
 	my $output    = '';
 	my $format;
+
+	my $meta = Storable::dclone($_meta) if $_meta;
 
 	# use a safe format string if none specified
 	# Bug: 1146 - Users can input strings in any locale - we need to convert that to
