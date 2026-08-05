@@ -203,9 +203,9 @@ sub _findStandaloneArtwork {
 		}
 		else {
 			# doing a range search helps us avoid a LIKE query, which would result in a scan
-			$sql .= '>= ? AND url < ?';
+			$sql .= '>= ? AND url < ? AND instr(substr(url, length(?)+2), "/") < 1';
 			my $pathUrl = Slim::Utils::Misc::fileURLFromPath($parentDir);
-			push @candidates, $pathUrl,  $pathUrl . chr(0xff);
+			push @candidates, $pathUrl,  $pathUrl . chr(0xff), $pathUrl;
 		}
 
 		my $sth = Slim::Schema->dbh->prepare_cached($sql);
