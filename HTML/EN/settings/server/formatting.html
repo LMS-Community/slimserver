@@ -8,6 +8,13 @@
 		<input type="text" class="stdedit selectFolder" name="pref_artfolder" id="artfolder" value="[% prefs.pref_artfolder | html %]" size="40">
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_BOXSET_ARTWORK" desc="SETUP_BOXSET_ARTWORK_DESC" %]
+		<select class="stdedit" name="pref_updateBoxsetArtwork" id="updateBoxsetArtwork">
+			<option [% IF !prefs.pref_updateBoxsetArtwork %]selected [% END %]value="0">[% "SETUP_BOXSET_ARTWORK_OFF" | string %]</option>
+			<option [% IF prefs.pref_updateBoxsetArtwork %]selected [% END %]value="1">[% "SETUP_BOXSET_ARTWORK_ON" | string %]</option>
+		</select>
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_NO_PORTRAITS" desc="" %]
 		<select class="stdedit" name="pref_noContributorPictures" id="noContributorPictures">
 			<option [% IF !prefs.noContributorPictures %]selected [% END %]value="0">[% "SETUP_NO_PORTRAITS_OFF" | string %]</option>

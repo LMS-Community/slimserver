@@ -6765,6 +6765,34 @@ SETUP_ARTFOLDER_DESC
 	SV	Du kan välja att spara alla albumomslag i en och samma mapp med hjälp av alternativet för variabla filnamn ovan. Ange sökvägen till omslagsfilerna här. Oavsett sökvägen du anger här kommer Lyrion Music Server att söka efter omslagsbilder i samma mapp som var och en av ljudfilerna om inget omslag hittas i mappen för omslagsfiler.
 	ZH_CN	您可以利用以上的文件名变量选项，把所有的图象集中存放在一个文件夹内。请在这里输入图象文件所在地点。如果服务器未能在所指定的封面图象文件夹中找到匹配图象，便会在各个音像文件所属的文件夹中寻找匹配的图象。
 
+SETUP_BOXSET_ARTWORK
+	DE	Boxset-Artwork
+	EN	Box Set Artwork
+	FR	Illustration du coffret
+	NL	Boxset-artwork
+	SV	Boxset-omslag
+
+SETUP_BOXSET_ARTWORK_DESC
+	DE	Die meisten Alben haben ein einzelnes Cover, manche Veröffentlichungen enthalten jedoch mehrere Bilder. So kann ein Boxset für jede Disc ein anderes Artwork haben, oder eine Playlist bzw. ein klassisches Album kann Artwork für einzelne Titel oder Werke enthalten. Lyrion Music Server kann versuchen, solches Artwork in übergeordneten Ordnern oder unter bestimmten Namen (z. B. "boxset.jpg") zu finden.
+	EN	Most albums have a single cover, but some releases include multiple images. For example, a box set may have different artwork for each disc, or a playlist or classical release may have artwork for individual tracks or works. Lyrion Music Server can try to find such artwork in parent folders, or given specific names (eg. "boxset.jpg").
+	FR	La plupart des albums ont une seule pochette, mais certaines parutions incluent plusieurs images. Par exemple, un coffret peut avoir une illustration différente pour chaque disque, ou une playlist ou une publication classique peut avoir des illustrations pour des pistes ou des œuvres individuelles. Lyrion Music Server peut essayer de trouver de telles illustrations dans les dossiers parents, ou à partir de noms spécifiques (par ex. "boxset.jpg").
+	NL	De meeste albums hebben één hoes, maar sommige releases bevatten meerdere afbeeldingen. Zo kan een boxset voor elke schijf andere artwork hebben, of kan een afspeellijst of klassieke release artwork hebben voor afzonderlijke tracks of werken. Lyrion Music Server kan proberen zulke artwork te vinden in bovenliggende mappen, of met specifieke namen (bijv. "boxset.jpg").
+	SV	De flesta album har ett enda omslag, men vissa utgåvor innehåller flera bilder. Ett boxset kan till exempel ha olika omslag för varje skiva, eller så kan en spellista eller en klassisk utgåva ha bilder för enskilda spår eller verk. Lyrion Music Server kan försöka hitta sådan bildkonst i överordnade mappar eller med angivna namn (t.ex. "boxset.jpg").
+
+SETUP_BOXSET_ARTWORK_ON
+	DE	Nach gemeinsamen Covern in übergeordneten Ordnern suchen
+	EN	Search for common artwork in parent folders
+	FR	Rechercher des illustrations communes dans les dossiers parents
+	NL	Zoek naar gemeenschappelijke hoesafbeeldingen in bovenliggende mappen
+	SV	Sök efter gemensamma omslag i överordnade mappar
+
+SETUP_BOXSET_ARTWORK_OFF
+	DE	Nicht nach gemeinsamen Covern suchen
+	EN	Don't search for common artwork
+	FR	Ne pas rechercher d'illustrations communes
+	NL	Niet zoeken naar gemeenschappelijke hoesafbeeldingen
+	SV	Sök inte efter gemensamma omslag
+
 SETUP_NO_PORTRAITS
 	CS	Portréty umělců
 	DE	Künstlerbilder
@@ -10366,7 +10394,7 @@ SETUP_IGNORE_RELEASE_TYPES_1
 	NL	Releasetypes voor albums uitschakelen
 	PT	Ignore o tipo de lançamento dos albuns
 	PT	Ignore o tipo de lançamento dos albuns
-	SV	Ignorera Utgåvetyper för album 
+	SV	Ignorera Utgåvetyper för album
 	ZH_CN	忽略专辑发行类型
 
 SETUP_CLEANUP_RELEASE_TYPES
@@ -21885,6 +21913,13 @@ UPDATESTANDALONEARTWORK_PROGRESS
 	PL	Wyszukaj zaktualizowane pliki okładek
 	SV	Hitta uppdaterade skivomslag
 	ZH_CN	查找更新的封面艺术文件
+
+UPDATEBOXSETARTWORK_PROGRESS
+	DE	Suche übergeordnete Cover für Boxsets, digitale Sammlungen usw.
+	EN	Find top level artwork for box sets, digital compilations etc.
+	FR	Rechercher les illustrations de niveau supérieur pour les coffrets, les compilations numériques, etc.
+	NL	Zoek bovenliggende hoesafbeeldingen voor boxsets, digitale compilaties enz.
+	SV	Sök överordnade omslagsbilder för boxset, digitala samlingar osv.
 
 PRECACHEARTWORK_PROGRESS
 	CS	Příprava ukládání obalů alb do mezipaměti

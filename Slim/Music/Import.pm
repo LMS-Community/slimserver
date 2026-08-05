@@ -508,6 +508,11 @@ sub runScanPostProcessing {
 	$importsRunning{'precacheArtwork'} = Time::HiRes::time();
 	Slim::Music::Artwork->precacheAllArtwork;
 
+	if ($prefs->get('updateBoxsetArtwork')) {
+		$importsRunning{'updateBoxsetArtwork'} = Time::HiRes::time();
+		Slim::Music::Artwork->updateBoxsetArtwork();
+	}
+
 	# Always run an optimization pass at the end of our scan.
 	$log->error("Starting Database optimization.");
 
