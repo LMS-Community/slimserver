@@ -38,9 +38,6 @@ sub init {
 
 	%parsedFormats = ();
 
-	# for relating track attributes to album/artist attributes
-	my @trackAttrs = ();
-
 	require Slim::Schema::Track;
 
 	# Subs for all regular track attributes
@@ -49,7 +46,7 @@ sub init {
 		$parsedFormats{uc($attr)} = sub {
 
 			if ( ref $_[0] eq 'HASH' ) {
-				return utf8on($_[0]->{ lc($attr) } || $_[0]->{ 'tracks.' . lc($attr) } || '');
+				return utf8on(my $v = $_[0]->{ lc($attr) } || $_[0]->{ 'tracks.' . lc($attr) } || '');
 			}
 
 			my $output = $_[0]->get_column($attr);
@@ -78,7 +75,7 @@ sub init {
 	$parsedFormats{'ALBUM'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return utf8on($_[0]->{album} || $_[0]->{'albums.title'} || '');
+			return utf8on(my $v = $_[0]->{album} || $_[0]->{'albums.title'} || '');
 		}
 
 		my $output = '';
@@ -92,7 +89,7 @@ sub init {
 	$parsedFormats{'WORK'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return utf8on($_[0]->{work} || $_[0]->{'works.title'} || '');
+			return utf8on(my $v = $_[0]->{work} || $_[0]->{'works.title'} || '');
 		}
 
 		my $output = '';
@@ -106,7 +103,7 @@ sub init {
 	$parsedFormats{'ALBUMSORT'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return utf8on($_[0]->{albumsort} || $_[0]->{'albums.titlesort'} || '');
+			return utf8on(my $v = $_[0]->{albumsort} || $_[0]->{'albums.titlesort'} || '');
 		}
 
 		my $output = '';
@@ -170,7 +167,7 @@ sub init {
 	$parsedFormats{'ARTIST'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return utf8on($_[0]->{artist} || $_[0]->{albumartist} || $_[0]->{trackartist} || $_[0]->{'contributors.name'} || '');
+			return utf8on(my $v = $_[0]->{artist} || $_[0]->{albumartist} || $_[0]->{trackartist} || $_[0]->{'contributors.name'} || '');
 		}
 
 		my @output  = ();
@@ -198,7 +195,7 @@ sub init {
 	$parsedFormats{'ARTISTSORT'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return utf8on($_[0]->{artistsort} || $_[0]->{albumartistsort} || $_[0]->{trackartistsort} || $_[0]->{'contributors.namesort'} || '');
+			return utf8on(my $v = $_[0]->{artistsort} || $_[0]->{albumartistsort} || $_[0]->{trackartistsort} || $_[0]->{'contributors.namesort'} || '');
 		}
 
 		my @output  = ();
@@ -222,7 +219,7 @@ sub init {
 		$parsedFormats{uc($attr)} = sub {
 
 			if ( ref $_[0] eq 'HASH' ) {
-				return utf8on($_[0]->{$attr} || '');
+				return utf8on(my $v = $_[0]->{$attr} || '');
 			}
 
 			my $output = '';
@@ -243,7 +240,7 @@ sub init {
 	$parsedFormats{'GENRE'} = sub {
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return utf8on($_[0]->{genre} || $_[0]->{'genres.name'} || '');
+			return utf8on(my $v = $_[0]->{genre} || $_[0]->{'genres.name'} || '');
 		}
 
 		my $output = '';
@@ -260,7 +257,7 @@ sub init {
 	# add comment
 	$parsedFormats{uc('COMMENT')} = sub {
 		if ( ref $_[0] eq 'HASH' ) {
-			return utf8on($_[0]->{comment} || $_[0]->{'tracks.comment'} || '');
+			return utf8on(my $v = $_[0]->{comment} || $_[0]->{'tracks.comment'} || '');
 		}
 
 		my $output = $_[0]->comment();
@@ -424,7 +421,7 @@ sub init {
 		my $output = '';
 
 		if ( ref $_[0] eq 'HASH' ) {
-			return utf8on($_[0]->{'file.ext'}) if $_[0]->{'file.ext'};
+			return utf8on(my $v = $_[0]->{'file.ext'}) if $_[0]->{'file.ext'};
 			$url = $_[0]->{url} || $_[0]->{'tracks.url'};
 		}
 		else {
@@ -662,9 +659,11 @@ sub infoFormat {
 	my $fileOrObj = shift; # item whose information will be formatted
 	my $str       = shift; # format string to use
 	my $safestr   = shift; # format string to use in the event that after filling the first string, there is nothing left
-	my $meta      = shift; # optional metadata hash to use instead of object data
+	my $_meta     = shift; # optional metadata hash to use instead of object data
 	my $output    = '';
 	my $format;
+
+	my $meta = Storable::dclone($_meta) if $_meta;
 
 	# use a safe format string if none specified
 	# Bug: 1146 - Users can input strings in any locale - we need to convert that to

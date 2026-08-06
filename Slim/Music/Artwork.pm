@@ -79,13 +79,16 @@ sub findStandaloneArtwork {
 			# If the user has specified a pattern to match the artwork on, we need
 			# to generate that pattern. This is nasty.
 			if ( $coverFormat =~ /^%(.*?)(\..*?){0,1}$/ ) {
+				my $formatStr = $1;
 				my $suffix = $2 ? $2 : '.jpg';
+
+				my $track = $trackAttributes && delete $trackAttributes->{_track};
 
 				# Merge attributes to use with TitleFormatter
 				# XXX This may break for some people as it's not using a Track object anymore
-				my $meta = { %{$trackAttributes}, %{$deferredAttributes} };
+				my $meta = { %{$trackAttributes}, %{$deferredAttributes} } unless $track;
 
-				if ( my $prefix = Slim::Music::TitleFormatter::infoFormat( undef, $1, undef, $meta ) ) {
+				if ( my $prefix = Slim::Music::TitleFormatter::infoFormat( $track, $formatStr, undef, $meta ) ) {
 					$coverFormat = $prefix . $suffix;
 
 					if ( main::ISWINDOWS ) {
@@ -283,11 +286,8 @@ sub updateStandaloneArtwork {
 				my $track = Slim::Schema->find('Track', $trackid);
 
 				if ($track) {
-					my %columnValueHash = map { $_ => $track->$_() } keys %{$track->attributes};
-					$columnValueHash{primary_artist} = $columnValueHash{primary_artist}->id if $columnValueHash{primary_artist};
-
 					my $newCover = Slim::Music::Artwork->findStandaloneArtwork(
-						\%columnValueHash,
+						{ _track => $track },	# pass track object to avoid deflation unless necessary
 						{},
 						Slim::Utils::Misc::fileURLFromPath(
 							dirname(Slim::Utils::Misc::pathFromFileURL($url))

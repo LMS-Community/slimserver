@@ -78,7 +78,18 @@ sub _sysread {
 		my $raw = $self->SUPER::_sysread( my $buf, MAX_RAW_READ, 0 );
 
 		# propagate "no data yet" (EWOULDBLOCK/EINTR) and real read errors as-is
-		return $raw unless $raw;
+		if ( !$raw ) {
+			# A closed socket ($raw defined as 0) or a hard read error (undef $raw
+			# with an errno other than "try again") before we ever saw the chunk
+			# stream's own 0-size terminator below means the source dropped the
+			# connection rather than ending the stream gracefully. Undo the
+			# isLive(0) set by parseHeaders() so StreamingController::_RetryOrNext()
+			# reconnects, same as it would for any other isLive stream that got cut off.
+			if ( ( defined($raw) || ( $! != EWOULDBLOCK && $! != EINTR ) ) && ( my $song = ${*$self}{'song'} ) ) {
+				$song->isLive(1);
+			}
+			return $raw;
+		}
 
 		$dechunk->{'raw'} .= $buf;
 
@@ -164,7 +175,32 @@ sub scanUrl {
 
 sub audioScrobblerSource { 'P' }
 
-# XXX parseHeaders, needed?
+# Slim::Player::Protocols::HTTP::parseHeaders() sets isLive(1) whenever no
+# Content-Length is known, which is also the case for chunked-encoded streams.
+#
+# StreamingController::_RetryOrNext() treats isLive tracks as infinite radio
+# and, once played for more than 10s, tries to reconnect to the same URI.
+# DLNA/UPnP tracks are finite, discrete tracks despite lacking a known length,
+# so we override parseHeaders() to set isLive(0) for them instead.
+#
+# Only chunked responses get this treatment: they're the only ones where
+# _sysread() can tell a graceful stream end (its own EOF chunk) apart from a
+# genuine connection abort, and re-arms isLive(1) itself when it sees the
+# latter, so a real disconnect still triggers a reconnect.
+# For any other response (fixed Content-Length, or no chunking), leave
+# isLive exactly as the base class set it.
+sub parseHeaders {
+        my $self = shift;
+        my $ret  = $self->SUPER::parseHeaders(@_);
+
+        if ( grep { /^Transfer-Encoding\s*:\s*chunked/i } @_ ) {
+                if ( my $song = ${*$self}{'song'} ) {
+                        $song->isLive(0);
+                }
+        }
+
+        return $ret;
+}
 
 # XXX parseDirectHeaders, needed?
 
