@@ -163,6 +163,8 @@ sub init {
 
 	my $update = $class->migrateDB;
 
+	$class->_ensurePersistentDBSchema if main::STATISTICS;
+
 	# Load the DBIx::Class::Schema classes we've defined.
 	# If you add a class to the schema, you must add it here as well.
 	# Order matters with newer DBIx versions
@@ -501,6 +503,91 @@ sub migrateDB {
 	}
 
 	return 0;
+}
+
+sub _ensurePersistentDBSchema {
+	my $class = shift;
+
+	return unless main::STATISTICS;
+
+	my ($driver) = $class->sourceInformation;
+	return unless lc($driver || '') eq 'sqlite';
+
+	my $dbh = eval { $class->storage->dbh } || return;
+
+	my ($tableExists) = eval {
+		$dbh->selectrow_array( q{
+			SELECT 1
+			FROM persistentdb.sqlite_master
+			WHERE type = 'table' AND name = 'tracks_persistent'
+		} );
+	};
+
+	return if $@;
+
+	if (!$tableExists) {
+		main::INFOLOG && $log->is_info && $log->info('Recreating missing tracks_persistent table in persist.db');
+
+		eval {
+			$dbh->do(q{
+				CREATE TABLE IF NOT EXISTS persistentdb.tracks_persistent (
+				  id INTEGER PRIMARY KEY AUTOINCREMENT,
+				  url text NOT NULL,
+				  musicbrainz_id varchar(40),
+				  added int(10),
+				  rating tinyint(1),
+				  playCount int(10),
+				  lastPlayed int(10),
+				  urlmd5 char(32) NOT NULL default '0'
+				)
+			});
+		};
+
+		if ($@) {
+			logError("Failed to recreate tracks_persistent table: $@");
+			return;
+		}
+	}
+
+	my $columns = eval { $dbh->selectall_arrayref('PRAGMA persistentdb.table_info(tracks_persistent)') } || [];
+	my %columnByName = map { lc($_->[1] || '') => 1 } @{$columns};
+
+	if (!$columnByName{'urlmd5'}) {
+		main::INFOLOG && $log->is_info && $log->info('Adding missing urlmd5 column to tracks_persistent');
+		eval {
+			$dbh->do(q{ALTER TABLE persistentdb.tracks_persistent ADD urlmd5 char(32) NOT NULL default '0'});
+			$dbh->do(q{CREATE INDEX IF NOT EXISTS persistentdb.urlmd5Index ON tracks_persistent (urlmd5)});
+			$dbh->do(q{UPDATE tracks_persistent SET urlmd5 = MD5(url)});
+		};
+
+		if ($@) {
+			logError("Failed to add urlmd5 column to tracks_persistent: $@");
+		}
+	}
+
+	my %indexes = (
+		trackMusicBrainzIndex => 'musicbrainz_id',
+		trackUrlIndex         => 'url',
+		trackAddedIndex       => 'added',
+		trackRatingIndex      => 'rating',
+		trackPlayCountIndex   => 'playCount',
+		trackLastPlayedIndex  => 'lastPlayed',
+		urlmd5Index           => 'urlmd5',
+	);
+
+	while (my ($index, $column) = each %indexes) {
+		eval {
+			$dbh->do( sprintf(
+				"CREATE INDEX IF NOT EXISTS persistentdb.%s ON tracks_persistent (%s)",
+				$index,
+				$column,
+			));
+		};
+
+		if ($@) {
+			logError("Failed to ensure persistent index $index: $@");
+		}
+	}
 }
 
 =head2 rs( $class )
@@ -1373,11 +1460,11 @@ sub _createOrUpdateAlbum {
 		$albumHash->{title} = $title;
 	}
 
-	# Link album cover to track cover
-	# Future TODO: if an album has multiple images i.e. Ghosts,
-	# prefer cover.jpg instead of embedded artwork for album?
-	# Would require an additional cover column in the albums table
-	if ( $trackColumns->{coverid} || ($trackColumns->{cover} && $trackColumns->{cover} =~ /^https?/) ) {
+	# Link album cover to track cover unless a parent-level cover has been set
+	# When albums.cover is populated (box-set parent artwork), keep using that coverid
+	# so targeted rescans do not overwrite the album artwork with embedded track art
+	my $hasParentCover = defined $albumHash->{cover} && length $albumHash->{cover};
+	if ( !$hasParentCover && ($trackColumns->{coverid} || ($trackColumns->{cover} && $trackColumns->{cover} =~ /^https?/) ) ) {
 		$albumHash->{artwork} = $trackColumns->{coverid} || $trackColumns->{cover};
 	}
 

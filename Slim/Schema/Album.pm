@@ -27,6 +27,7 @@ my $log = logger('database.info');
 		compilation
 		year
 		artwork
+		cover
 		disc
 		discc
 		musicmagic_mixable

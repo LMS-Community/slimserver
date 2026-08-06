@@ -22,7 +22,8 @@ use strict;
 use File::Basename qw(basename dirname);
 use File::Slurp;
 use File::Path qw(mkpath rmtree);
-use File::Spec::Functions qw(catfile catdir);
+use File::Spec::Functions qw(catfile catdir canonpath splitdir);
+use List::Util qw(min);
 use Path::Class;
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
@@ -63,10 +64,36 @@ sub findStandaloneArtwork {
 
 	my $isInfo = main::INFOLOG && $log->is_info;
 
-	my $art = $findArtCache{$dirurl};
+	my $discNumber   = _normalizedDiscNumber( $trackAttributes->{disc} // $trackAttributes->{'tracks.disc'} );
+	if ( !defined $discNumber ) {
+		my $pathCandidate = $trackAttributes->{path} // $trackAttributes->{'tracks.path'};
+		$pathCandidate ||= $trackAttributes->{url} // $trackAttributes->{'tracks.url'};
+		$pathCandidate = Slim::Utils::Misc::pathFromFileURL($pathCandidate) if $pathCandidate && $pathCandidate =~ m{^\w+://};
+		$discNumber = _discNumberFromPath($pathCandidate) if $pathCandidate;
+	}
+	my $discCacheKey = defined $discNumber ? $dirurl . '|disc:' . $discNumber : undef;
+	my $art;
+
+	if ( defined $discCacheKey && exists $findArtCache{$discCacheKey} ) {
+		$art = $findArtCache{$discCacheKey};
+	}
+	elsif ( exists $findArtCache{$dirurl} ) {
+		$art = $findArtCache{$dirurl};
+	}
 
 	# Files to look for
 	my @files = qw(cover folder album thumb);
+	my @discSpecificNames = $class->_discArtworkBasenames($discNumber);
+	my $discSubtitleAttr = $trackAttributes->{discsubtitle} // $trackAttributes->{'tracks.discsubtitle'};
+	my @subtitleNames = $class->_discSubtitleArtworkBasenames($discSubtitleAttr);
+	push @discSpecificNames, @subtitleNames if @subtitleNames;
+
+	my $dirPathForLog = Slim::Utils::Misc::pathFromFileURL($dirurl) || $dirurl;
+	my $nameListForLog = @discSpecificNames ? join(',', @discSpecificNames) : 'none';
+	$log->error("StandaloneArtwork candidates for $dirPathForLog -> disc=" . (defined $discNumber ? $discNumber : 'undef') . " subtitle='" . (defined $discSubtitleAttr ? $discSubtitleAttr : '') . "' names=$nameListForLog") if main::SCANNER;
+	if ( @discSpecificNames ) {
+		@files = ( @discSpecificNames, @files );
+	}
 
 	# User-defined artwork format
 	my $coverFormat = $prefs->get('coverArt');
@@ -129,27 +156,20 @@ sub findStandaloneArtwork {
 			}
 		}
 
+		my %discLookup = map { lc $_ => 1 } @discSpecificNames;
+		my $discSpecificArt = 0;
+
 		if ( !$art ) {
-			# Find all image files in the file directory
-			my $types = qr/\.(?:jpe?g|png|gif)$/i;
+			my ( $foundArt, $matchedBase ) = _findPreferredArtworkFile({
+				directories => [ $parentDir ],
+				names       => \@files,
+			});
 
-			my $files = File::Next::files( {
-				file_filter    => sub { Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $types, undef, 1) },
-				descend_filter => sub { 0 },
-			}, $parentDir );
-
-			my @found;
-			while ( my $image = $files->() ) {
-				push @found, $image;
-			}
-
-			# Prefer cover/folder/album/thumb, then just take the first image
-			my $filelist = join( '|', @files );
-			if ( my @preferred = grep { basename($_) =~ qr/^(?:$filelist)\./i } @found ) {
-				$art = $preferred[0];
-			}
-			else {
-				$art = $found[0] || 0;
+			if ( $foundArt ) {
+				$art = $foundArt;
+				if ( defined $matchedBase && $discLookup{ lc $matchedBase } ) {
+					$discSpecificArt = 1;
+				}
 			}
 		}
 
@@ -158,7 +178,8 @@ sub findStandaloneArtwork {
 		# files in a single directory with different artwork
 		if ( !$coverFormat ) {
 			%findArtCache = () if scalar keys %findArtCache > 32;
-			$findArtCache{$dirurl} = $art;
+			my $cacheKey = ( $discSpecificArt && $discCacheKey ) ? $discCacheKey : $dirurl;
+			$findArtCache{$cacheKey} = $art;
 		}
 	}
 
@@ -168,8 +189,10 @@ sub findStandaloneArtwork {
 }
 
 sub updateStandaloneArtwork {
-	my $class = shift;
-	my $cb    = shift; # optional callback when done (main process async mode)
+	my ($class, %args) = @_;
+	my $cb = delete $args{cb};
+	$cb = undef unless ref $cb eq 'CODE';
+	my $albumFilterArg = delete $args{albums};
 
 	my $dbh = Slim::Schema->dbh;
 
@@ -212,7 +235,8 @@ sub updateStandaloneArtwork {
 			tracks.coverid,
 			albums.id AS albumid,
 			albums.title AS album_title,
-			albums.artwork AS album_artwork
+			albums.artwork AS album_artwork,
+			albums.cover AS album_cover
 		FROM  tracks
 		JOIN  albums ON (tracks.album = albums.id)
 		WHERE $where
@@ -251,10 +275,10 @@ sub updateStandaloneArtwork {
 	} );
 
 	my $sth = $dbh->prepare($sql);
-	$sth->execute;
+	$sth->execute();
 
-	my ($trackid, $url, $cover, $coverid, $albumid, $album_title, $album_artwork);
-	$sth->bind_columns(\$trackid, \$url, \$cover, \$coverid, \$albumid, \$album_title, \$album_artwork);
+	my ($trackid, $url, $cover, $coverid, $albumid, $album_title, $album_artwork, $album_cover);
+	$sth->bind_columns(\$trackid, \$url, \$cover, \$coverid, \$albumid, \$album_title, \$album_artwork, \$album_cover);
 
 	my $i = 0;
 	my $t = 0;
@@ -309,7 +333,7 @@ sub updateStandaloneArtwork {
 				# Make sure album.artwork points to this track, as it may not
 				# be pointing there now because we did not join tracks via the
 				# artwork column.
-				if ( ($album_artwork || '') ne $newCoverId ) {
+				if ( !$album_cover && ($album_artwork || '') ne $newCoverId ) {
 					$sth_update_albums->execute( $newCoverId, $albumid );
 				}
 
@@ -324,7 +348,7 @@ sub updateStandaloneArtwork {
 
 				Slim::Utils::Scheduler::unpause() if !main::SCANNER;
 			}
-			elsif ( $cover =~ /^https?:/ && (!$album_artwork || $album_artwork ne $cover) ) {
+			elsif ( !$album_cover && $cover =~ /^https?:/ && (!$album_artwork || $album_artwork ne $cover) ) {
 				$sth_update_albums->execute( $newCoverId, $albumid );
 
 				if ( ++$i % 50 == 0 ) {
@@ -335,7 +359,7 @@ sub updateStandaloneArtwork {
 				Slim::Utils::Scheduler::unpause() if !main::SCANNER;
 			}
 			# cover art has disappeared
-			elsif ( !$newCoverId ) {
+			elsif ( !$album_cover && !$newCoverId ) {
 				$sth_update_albums->execute( undef, $albumid );
 				$sth_update_tracks->execute( 0, undef, $albumid );
 
@@ -362,6 +386,386 @@ sub updateStandaloneArtwork {
 		# Run async in main process
 		Slim::Utils::Scheduler::add_ordered_task($work);
 	}
+}
+
+=head2 updateDiscSetArtwork()
+
+Finds albums with tracks in multiple subdirectories (e.g., multi-disc box sets)
+and looks for artwork in their common parent directory. This allows box sets
+to have album-level artwork (e.g., folder.jpg in the parent) while individual
+discs retain their own track-level artwork.
+
+=cut
+
+sub updateDiscSetArtwork {
+	my ($class, %args) = @_;
+	my $cb = delete $args{cb};
+	$cb = undef unless ref $cb eq 'CODE';
+	my $albumFilterArg = delete $args{albums};
+
+	my $dbh = Slim::Schema->dbh;
+	my $log = logger('scan.artwork');
+
+	$log->info("Starting updateDiscSetArtwork scan");
+
+	# Find multi-disc albums (disc count > 1). They might span multiple directories
+	# or keep everything in a single folder with disc-specific artwork.
+	my @bind;
+	my $albumFilterSql = '';
+	if ( my @albumFilter = _sanitizeAlbumIds( $albumFilterArg ) ) {
+		my $placeholders = join(',', ('?') x @albumFilter);
+		$albumFilterSql = "AND albums.id IN ($placeholders)";
+		push @bind, @albumFilter;
+	}
+
+	my $baseSql = qq{
+		FROM albums
+		JOIN tracks ON tracks.album = albums.id
+		WHERE tracks.url LIKE 'file://%'
+		AND   albums.discc > 1
+		$albumFilterSql
+	};
+
+	my $countSql = qq{
+		SELECT COUNT(*) FROM (
+			SELECT albums.id
+			$baseSql
+			GROUP BY albums.id
+		) AS t1
+	};
+
+	my $sth_update_albums = $dbh->prepare( qq{
+		UPDATE albums SET artwork = ?, cover = ? WHERE id = ?
+	} );
+
+	my ($count) = $dbh->selectrow_array( $countSql, undef, @bind );
+	$log->info("Found $count multi-disc albums to check for parent artwork");
+
+	if (!$count) {
+		main::SCANNER && Slim::Music::Import->endImporter('updateDiscSetArtwork');
+		$cb && $cb->();
+		return;
+	}
+
+	my $dataSql = qq{
+		SELECT
+			albums.id,
+			albums.title,
+			albums.artwork,
+			albums.cover,
+			albums.discc,
+			GROUP_CONCAT(DISTINCT tracks.url) AS directories
+		$baseSql
+		GROUP BY albums.id, albums.title, albums.artwork, albums.cover, albums.discc
+		ORDER BY albums.id
+	};
+
+	my $sth = $dbh->prepare($dataSql);
+	$sth->execute(@bind);
+
+	my ($album_id, $album_title, $album_artwork, $album_cover, $album_discs, $directory_blob);
+	$sth->bind_columns(
+		\$album_id,
+		\$album_title,
+		\$album_artwork,
+		\$album_cover,
+		\$album_discs,
+		\$directory_blob,
+	);
+
+	my $progress = Slim::Utils::Progress->new({
+		type  => 'importer',
+		name  => 'updateDiscSetArtwork',
+		total => $count,
+		bar   => 1,
+	});
+
+	my $work = sub {
+		if ( $sth->fetch ) {
+			next unless ($album_discs || 0) > 1;
+
+			$progress->update($album_title);
+
+			my @paths = _albumDirectoriesToPaths($directory_blob);
+			return 1 unless @paths;
+
+			my $commonParent = @paths == 1 ? $paths[0] : _findCommonParent(\@paths);
+			return 1 unless $commonParent && -d $commonParent;
+
+			my $parentArtwork = _findArtworkInDirectory($commonParent);
+			return 1 unless $parentArtwork;
+
+			my @stat = stat($parentArtwork);
+			my $mtime = $stat[9] || 0;
+			my $size = $stat[7] || 0;
+			my $coverid = __PACKAGE__->generateImageId({
+				image => $parentArtwork,
+				url   => Slim::Utils::Misc::fileURLFromPath($parentArtwork),
+				mtime => $mtime,
+				size  => $size,
+			});
+
+			unless ($coverid) {
+				$log->warn("Failed to generate coverid for '$parentArtwork'");
+				return 1;
+			}
+
+			$log->info("Found parent artwork for '$album_title': $parentArtwork (coverid: $coverid)");
+			$sth_update_albums->execute($coverid, $parentArtwork, $album_id);
+
+			return 1;
+		}
+
+		$sth->finish;
+		$progress->final;
+		$cb && $cb->();
+		return 0;
+	};
+
+	if (main::SCANNER) {
+		while ($work->()) { }
+		Slim::Music::Import->endImporter('updateDiscSetArtwork');
+	}
+	else {
+		Slim::Utils::Scheduler::add_ordered_task($work);
+	}
+}
+
+sub _albumDirectoriesToPaths {
+	my ($blob) = @_;
+	return () unless defined $blob && length $blob;
+
+	my @urls = split /,(?=file:\/\/)/, $blob;
+	my @paths;
+
+	for my $url (@urls) {
+		next unless $url =~ /^file:\/\//;
+		my $path = Slim::Utils::Misc::pathFromFileURL($url);
+		next unless $path;
+
+		my $dir = eval { Path::Class::file($path)->dir->stringify };
+		next unless $dir;
+
+		push @paths, $dir;
+	}
+
+	return Slim::Utils::Misc::uniq(@paths);
+}
+
+sub _findPreferredArtworkFile {
+	my ( $args ) = @_;
+	return (0, undef) unless $args && ref $args eq 'HASH';
+
+	my $directories = $args->{directories} || [];
+	my $names       = $args->{names} || [];
+
+	return (0, undef) unless @$directories;
+
+	my %namePriority;
+	for my $idx ( 0 .. $#$names ) {
+		my $key = lc $names->[$idx];
+		$namePriority{$key} //= $idx;
+	}
+
+	my $filelist = @$names ? join( '|', @$names ) : undef;
+	my $types    = qr/\.(?:jpe?g|png|gif)$/i;
+
+	for my $dirObj ( @$directories ) {
+		my $dir = $dirObj;
+		if ( !ref $dir || !$dir->can('stringify') ) {
+			$dir = Path::Class::dir($dir);
+		}
+
+		next unless $dir && -d $dir;
+
+		my $files = File::Next::files( {
+			file_filter    => sub { Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $types, undef, 1) },
+			descend_filter => sub { 0 },
+		}, $dir );
+
+		my @found;
+		while ( my $image = $files->() ) {
+			push @found, $image;
+		}
+
+		next unless @found;
+
+		my $selected;
+		my $matchedBase;
+
+		if ( $filelist ) {
+			if ( my @preferred = grep { basename($_) =~ qr/^(?:$filelist)\./i } @found ) {
+				@preferred = sort {
+					my $abase = basename($a);
+					$abase =~ s/\.[^.]+$//;
+					my $bbase = basename($b);
+					$bbase =~ s/\.[^.]+$//;
+					($namePriority{lc $abase} // scalar @$names) <=> ($namePriority{lc $bbase} // scalar @$names);
+				} @preferred;
+				$selected = $preferred[0];
+				if ( $selected ) {
+					$matchedBase = basename($selected);
+					$matchedBase =~ s/\.[^.]+$//;
+				}
+			}
+		}
+
+		if ( !$selected ) {
+			$selected = $found[0] || 0;
+			if ( $selected ) {
+				$matchedBase = basename($selected);
+				$matchedBase =~ s/\.[^.]+$//;
+			}
+		}
+
+		return ( $selected, $matchedBase ) if $selected;
+	}
+
+	return (0, undef);
+}
+
+sub _findCommonParent {
+	my $paths = shift;
+	return undef unless ref $paths eq 'ARRAY' && @$paths >= 2;
+
+	my @split_paths = map {
+		my $normalized = canonpath($_);
+		[splitdir($normalized)];
+	} @$paths;
+
+	my @common;
+	my $min_len = min(map { scalar @$_ } @split_paths);
+
+	for my $i (0 .. $min_len - 1) {
+		my $component = $split_paths[0][$i];
+		my $all_same = 1;
+
+		for my $path (@split_paths) {
+			if ($path->[$i] ne $component) {
+				$all_same = 0;
+				last;
+			}
+		}
+
+		last unless $all_same;
+		push @common, $component;
+	}
+
+	return @common ? catdir(@common) : undef;
+}
+
+sub _findArtworkInDirectory {
+	my $dir = shift;
+	return undef unless $dir && -d $dir;
+
+	# Same list as findStandaloneArtwork: cover, folder, album, thumb
+	my @names = qw(cover folder album thumb);
+	
+	# Also add any user-defined cover pattern (without % prefix)
+	my $coverFormat = $prefs->get('coverArt');
+	if ($coverFormat && $coverFormat !~ /^%/) {
+		push @names, $coverFormat;
+	}
+
+	my ( $artwork ) = _findPreferredArtworkFile({
+		directories => [ Path::Class::dir($dir) ],
+		names       => \@names,
+	});
+
+	return $artwork || undef;
+}
+
+sub _normalizedDiscNumber {
+	my $value = shift;
+	return undef unless defined $value;
+
+	if ( !ref $value ) {
+		$value =~ s/^\s+|\s+$//g;
+	}
+
+	if ( defined $value && $value =~ /(\d+)/ ) {
+		my $disc = int($1);
+		return $disc if $disc > 0;
+	}
+
+	return undef;
+}
+
+sub _discNumberFromPath {
+	my $path = shift;
+	return undef unless defined $path && length $path;
+
+	my $candidate = $path;
+	if ( Slim::Music::Info::isFileURL($candidate) ) {
+		$candidate = Slim::Utils::Misc::pathFromFileURL($candidate) || $candidate;
+	}
+
+	my $base = eval { basename($candidate) } || $candidate;
+	return _normalizedDiscNumber($1) if defined $base && $base =~ /^\s*(\d+)[-_]/;
+	return _normalizedDiscNumber($1) if defined $base && $base =~ /^(?:disc|cd)\s*(\d+)/i;
+
+	return undef;
+}
+
+sub _discArtworkBasenames {
+	my ( $class, $value ) = @_;
+	my $disc = _normalizedDiscNumber($value);
+	return () unless $disc;
+
+	my $padded = sprintf('%02d', $disc);
+	my @templates = (
+		'cover-disc%s', 'cover_disc%s', 'coverdisc%s',
+		'folder-disc%s', 'folder_disc%s', 'folderdisc%s',
+		'disc%s', 'cd%s'
+	);
+
+	my @names;
+	my %seen;
+	for my $template (@templates) {
+		for my $token ($disc, $padded) {
+			my $candidate = sprintf($template, $token);
+			next if $seen{$candidate}++;
+			push @names, $candidate;
+		}
+	}
+
+	return @names;
+}
+
+sub _discSubtitleArtworkBasenames {
+	my ( $class, $subtitle ) = @_;
+	return () unless defined $subtitle && length $subtitle;
+
+	my $normalized = lc $subtitle;
+	$normalized =~ s/^\s+|\s+$//g;
+	$normalized =~ s/[^a-z0-9]+/-/g;
+	$normalized =~ s/-+/-/g;
+	$normalized =~ s/^-|-$//g;
+	return () unless length $normalized;
+
+	my $compact = $normalized;
+	$compact =~ s/-//g;
+
+	my @tokens = ($normalized);
+	push @tokens, $compact if length $compact && $compact ne $normalized;
+
+	my @templates = (
+		'cover-%s', 'cover_%s', 'cover%s',
+		'folder-%s', 'folder_%s', 'folder%s',
+		'%s'
+	);
+
+	my @names;
+	my %seen;
+	for my $template (@templates) {
+		for my $token (@tokens) {
+			my $candidate = sprintf($template, $token);
+			next if $seen{$candidate}++;
+			push @names, $candidate;
+		}
+	}
+
+	return @names;
 }
 
 sub getImageContentAndType {
@@ -522,6 +926,29 @@ sub _readCoverArtFiles {
 	my $isInfo = main::INFOLOG && $log->is_info;
 
 	my @names      = qw(cover Cover thumb Thumb album Album folder Folder);
+	my $discNumber = _normalizedDiscNumber( eval { $track->disc } );
+	if ( !defined $discNumber ) {
+		my $pathFromTrack = eval { $track->path };
+		$discNumber = _discNumberFromPath($pathFromTrack) if $pathFromTrack;
+	}
+	my @discNames  = $class->_discArtworkBasenames($discNumber);
+	my $discSubtitle = eval { $track->discsubtitle };
+	my @subtitleNames = $class->_discSubtitleArtworkBasenames($discSubtitle);
+	my @discSpecificNames = ( @discNames, @subtitleNames );
+	my $hasDiscSpecific = scalar @discSpecificNames;
+
+	if ( $hasDiscSpecific ) {
+		my @caseAware;
+		for my $name (@discSpecificNames) {
+			push @caseAware, $name;
+			push @caseAware, ucfirst($name);
+			push @caseAware, uc($name);
+		}
+
+		my %seen;
+		@caseAware = grep { !$seen{$_}++ } @caseAware;
+		@names = ( @caseAware, @names );
+	}
 	my @ext        = qw(png jpg jpeg gif);
 
 	my $file       = file($path);
@@ -584,7 +1011,12 @@ sub _readCoverArtFiles {
 
 	} elsif (defined $artwork) {
 
-		unshift @filestotry, $artwork;
+		if ( $hasDiscSpecific ) {
+			push @filestotry, $artwork unless grep { $_ eq $artwork } @filestotry;
+		}
+		else {
+			unshift @filestotry, $artwork;
+		}
 	}
 
 	if (defined $artworkDir && $artworkDir eq $parentDir) {
@@ -657,7 +1089,8 @@ sub precacheAllArtwork {
 			tracks.coverid,
 			albums.id AS albumid,
 			albums.title AS album_title,
-			albums.artwork AS album_artwork
+			albums.artwork AS album_artwork,
+			albums.cover AS album_cover
 		FROM   tracks
 		JOIN   albums ON (tracks.album = albums.id)
 		WHERE  tracks.cover != '0'
@@ -721,8 +1154,8 @@ sub precacheAllArtwork {
 	my $sth = $dbh->prepare($sql);
 	$sth->execute;
 
-	my ($url, $cover, $coverid, $albumid, $album_title, $album_artwork);
-	$sth->bind_columns(\$url, \$cover, \$coverid, \$albumid, \$album_title, \$album_artwork);
+	my ($url, $cover, $coverid, $albumid, $album_title, $album_artwork, $album_cover);
+	$sth->bind_columns(\$url, \$cover, \$coverid, \$albumid, \$album_title, \$album_artwork, \$album_cover);
 
 	my $i = 0;
 
@@ -733,11 +1166,14 @@ sub precacheAllArtwork {
 			# Make sure album.artwork points to this track, as it may not
 			# be pointing there now because we did not join tracks via the
 			# artwork column.
-			if ( $album_artwork && $album_artwork ne $coverid ) {
+			# BUT: skip this if albums.cover is set (parent directory artwork)
+			# because we want to keep that coverid, not overwrite with track coverid.
+			if ( !$album_cover && $album_artwork && $album_artwork ne $coverid ) {
 				$sth_update_albums->execute( $coverid, $albumid );
 			}
 
-			$artCount{$albumid}++;
+			$artCount{$albumid}->{count}++;
+			$artCount{$albumid}->{has_parent_cover} ||= $album_cover ? 1 : 0;
 
 			# Callback after resize is finished, needed for async resizing
 			my $finished = sub {
@@ -790,10 +1226,15 @@ sub precacheAllArtwork {
 					}
 				}
 
-				# Image to resize is either a cover path or the audio file
-				my $path = $cover =~ /^\d+$/
-					? Slim::Utils::Misc::pathFromFileURL($url)
-					: $cover;
+				# Image to resize is either:
+				# 1. a cover path (standalone artwork file)
+				# 2. the audio file (embedded artwork)
+				my $path;
+				if ($cover =~ /^\d+$/) {
+					$path = Slim::Utils::Misc::pathFromFileURL($url);
+				} else {
+					$path = $cover;
+				}
 
 				$isDebug && $importlog->debug( "Pre-caching artwork for " . $album_title . " from $path" );
 
@@ -821,9 +1262,10 @@ sub precacheAllArtwork {
 
 	 	$i = 0;
 
-		while ( my ($albumId, $trackCount) = each %artCount ) {
+		while ( my ($albumId, $artInfo) = each %artCount ) {
 
-			next unless $trackCount > 1;
+			next unless $artInfo->{count} && $artInfo->{count} > 1;
+			next if $artInfo->{has_parent_cover};
 
 			$sth_get_album_art->execute($albumId);
 			my ($coverId) = $sth_get_album_art->fetchrow_array;
@@ -858,6 +1300,22 @@ sub precacheAllArtwork {
 		# Run async in main process
 		Slim::Utils::Scheduler::add_ordered_task($work);
 	}
+}
+
+sub _sanitizeAlbumIds {
+	my $candidates = shift;
+	return () unless $candidates && ref $candidates eq 'ARRAY';
+
+	my %seen;
+	my @valid;
+	for my $id (@$candidates) {
+		next unless defined $id;
+		next unless $id =~ /^\d+$/;
+		next if $seen{$id}++;
+		push @valid, $id;
+	}
+
+	return @valid;
 }
 
 sub getResizeSpecs {

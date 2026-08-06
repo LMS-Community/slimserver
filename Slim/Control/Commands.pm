@@ -37,6 +37,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Scanner::Local;
+use Slim::Music::Artwork;
 
 my $log = logger('control.command');
 
@@ -2755,11 +2756,17 @@ sub rescanCommand {
 
 		my $dbh = Slim::Schema->dbh;
 		my $sth = $dbh->prepare_cached('DELETE FROM scanned_files WHERE url = ?');
+		my %albumIds;
 		my @paths = Slim::Utils::Misc::uniq(
 			map {
 				# reset the track's timestamp so changes are certainly picked up
 				$_->timestamp(0);
 				$_->update;
+
+				if ( my $album = $_->album ) {
+					my $albumId = $album->id;
+					$albumIds{$albumId} = 1 if defined $albumId;
+				}
 
 				# delete entry in scanned_files - otherwise rescan doesn't handle deletions for non-recursive scans
 				$sth->execute($_->url);
@@ -2778,6 +2785,11 @@ sub rescanCommand {
 			types     => 'audio',
 			recursive => 0,
 		} ) if scalar @paths;
+
+		my @albumIds = keys %albumIds;
+		if ( @albumIds ) {
+			Slim::Music::Artwork->updateDiscSetArtwork( albums => \@albumIds );
+		}
 	}
 	else {
 		# In-process scan

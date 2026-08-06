@@ -54,7 +54,8 @@ sub _cached {
 	# force reading from cache when using the external resizer daemon
 	return if !main::SCANNER && main::NOBROWSECACHE && !$force;
 
-	my $isInfo = main::INFOLOG && $log->is_info;
+	my $isInfo  = main::INFOLOG && $log->is_info;
+	my $isDebug = main::DEBUGLOG && $log->is_debug;
 
 	if ( my $cached = $cache->get($path) ) {
 		if ( $path =~ m|^music/[a-f0-9]{8}/cover| && $cached->{mtime} == 0 ) {
@@ -205,11 +206,12 @@ sub artworkRequest {
 		# Fetch the url and cover values
 		my $sth;
 		my ($url, $cover);
+		my $isCoverId = $id =~ /^[0-9a-f]{8}$/ ? 1 : 0;
 
 		if ($fullpath) {
 			# nothing to do here!
 		}
-		elsif ( $id =~ /^[0-9a-f]{8}$/ ) {
+		elsif ( $isCoverId ) {
 			# ID is a coverid
 			$sth = Slim::Schema->dbh->prepare_cached( qq{
 				SELECT url, cover FROM tracks WHERE coverid = ?
@@ -266,10 +268,31 @@ sub artworkRequest {
 			}
 		}
 
+		# Check albums.cover for parent directory artwork (e.g., box set covers)
+		# This overrides track artwork when set, allowing album-level artwork
+		if ( $isCoverId ) {
+			$isDebug && $log->debug("Graphics: Checking albums.cover for coverid $id");
+			my $album_cover_sth = Slim::Schema->dbh->prepare_cached( qq{
+				SELECT cover FROM albums WHERE artwork = ? AND cover IS NOT NULL AND cover != ''
+			} );
+			$album_cover_sth->execute($id);
+			my ($album_cover) = $album_cover_sth->fetchrow_array;
+			$album_cover_sth->finish;
+			
+			$isDebug && $log->debug("Graphics: album_cover query returned: " . ($album_cover // 'undef'));
+			
+			if ($album_cover && -r $album_cover) {
+				main::INFOLOG && $isInfo && $log->info("Graphics: Using album cover: $album_cover");
+				$cover = $album_cover;
+			} elsif ($album_cover) {
+				$log->warn("Graphics: album_cover file not readable or missing: $album_cover");
+			}
+		}
+
 		if ($fullpath) {
 			# happy path - nothing to do here
 		}
-		elsif ( !$url || !$cover ) {
+		elsif ( !$cover ) {
 			# Invalid ID or no cover available, use generic CD image
 			if ($id =~ /^-/) {
 				$path = 'html/images/radio_';
