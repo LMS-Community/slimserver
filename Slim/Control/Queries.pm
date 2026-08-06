@@ -4120,6 +4120,7 @@ sub statusQuery {
 				$bitrate = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
 				$request->addResult('bitrate', $bitrate);
 			}
+		}
 			
 			# Add other technical song attributes here, e.g. 'type', 'samplerate' and 'samplesize'
 	}
