@@ -4105,16 +4105,23 @@ sub statusQuery {
 			$request->addResult('can_seek', 1);
 		}
 
-		my $trackGain = $song->replayGain();
-		if (defined $trackGain) {
-			$request->addResult('replay_gain', $trackGain);
-		}
+		my $techInfo = $request->getParam('techInfo');  # see if the user requested technical song info
 		
-		my $bitrate = $song->streambitrate();
-		if (defined $bitrate) {
-			$bitrate = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
-			$request->addResult('bitrate', $bitrate);
+		if (!defined $techInfo || $techInfo) {  # return replay gain unless explicitly directed not to
+			my $trackGain = $song->replayGain();
+			if (defined $trackGain) {
+				$request->addResult('replay_gain', $trackGain);
+			}
 		}
+
+		if ($techInfo) {  # add additional tech info from song object only if requested
+			my $bitrate = $song->streambitrate();
+			if (defined $bitrate && $bitrate) {
+				$bitrate = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
+				$request->addResult('bitrate', $bitrate);
+			}
+			
+			# Add other technical song attributes here, e.g. 'type', 'samplerate' and 'samplesize'
 	}
 
 	if ($client->currentSleepTime()) {
