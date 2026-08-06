@@ -246,6 +246,21 @@ sub init {
 			Slim::Schema::Album->addReleaseTypeStrings;
 		}, [['rescan'], ['done']] );
 	}
+	else {
+		my $mbDuplicates = $dbh->selectall_arrayref("select tracks.url, tracks.title, tracks.musicbrainz_id from tracks where tracks.musicbrainz_id is not NULL and tracks.musicbrainz_id IN (select tracks.musicbrainz_id from tracks group by tracks.musicbrainz_id Having count(*) > 1) order by tracks.musicbrainz_id");
+		my $prevmb;
+		Slim::Utils::Log::logError("MUSICBRAINZ_TRACKID analysis");
+		Slim::Utils::Log::logError("----------------------------");
+		foreach (@$mbDuplicates) {
+			if ($prevmb ne $_->[2]) {
+				Slim::Utils::Log::logError("MUSICBRAINZ_TRACKID=$_->[2]");
+				$prevmb = $_->[2];		
+			}
+			Slim::Utils::Log::logError("     Track Name=$_->[1]");
+			Slim::Utils::Log::logError("     URL=$_->[0]");
+		}
+#Slim::Utils::Log::logError("DK \$mbDuplicates=" . Data::Dump::dump($mbDuplicates));
+	}
 
 	$initialized = 1;
 
@@ -930,7 +945,7 @@ sub _objForDbUrl {
 }
 
 sub _createOrUpdateAlbum {
-	my ($self, $attributes, $trackColumns, $isCompilation, $contributorId, $hasAlbumArtist, $create, $track, $basename) = @_;
+	my ($self, $attributes, $trackColumns, $isCompilation, $contributorId, $hasAlbumArtist, $create, $track, $basename, $aaDisplayID) = @_;
 
 	my $dbh = $self->dbh;
 
@@ -1296,6 +1311,7 @@ sub _createOrUpdateAlbum {
 	}
 
 	$albumHash->{musicbrainz_id} = $attributes->{MUSICBRAINZ_ALBUM_ID};
+	$albumHash->{display_contributor} = $aaDisplayID;
 
 	# Handle album gain tags.
 	for my $gainTag ( qw(REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK) ) {
@@ -1794,10 +1810,14 @@ sub _newTrack {
 	# Walk through the valid contributor roles, adding them to the database.
 	my $contributors = $self->_mergeAndCreateContributors($deferredAttributes, $isCompilation, 1);
 
+	my $aaDisplayID = $self->_getOrCreateDisplayContributor($deferredAttributes->{ALBUMARTISTS}) if $deferredAttributes->{ALBUMARTISTS};
+	my $taDisplayID = $self->_getOrCreateDisplayContributor($deferredAttributes->{ARTISTS}) if $deferredAttributes->{ARTISTS};
+
 	# Set primary_artist for the track
 	if ( my $artist = $contributors->{ARTIST} || $contributors->{TRACKARTIST} ) {
 		$columnValueHash{primary_artist} = $artist->[0];
 	}
+	$columnValueHash{display_contributor} = $taDisplayID if $taDisplayID;
 
 	### Create Work rows
 	my $workID;
@@ -1834,6 +1854,7 @@ sub _newTrack {
 		1,																		# create
 		undef,																	# Track
 		$dirname,
+		$aaDisplayID,
 	);
 
 	### Create Track row
@@ -1842,7 +1863,7 @@ sub _newTrack {
 	$trackId = $self->_createTrack(\%columnValueHash, \%persistentColumnValueHash, $source);
 
 	### Create ContributorTrack & ContributorAlbum rows
-	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId);
+	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId, $aaDisplayID, $taDisplayID);
 
 	### Create Genre rows
 	$self->_createGenre($deferredAttributes->{'GENRE'}, $trackId, 1);
@@ -2048,9 +2069,9 @@ sub updateOrCreateBase {
 		if (!$playlist) {
 
 			$self->_postCheckAttributes({
-				'track'      => $track,
-				'attributes' => $deferredAttributes,
-				'integrateRemote' => $integrateRemote
+				'track'              => $track,
+				'attributes'         => $deferredAttributes,
+				'integrateRemote'    => $integrateRemote,
 			});
 		}
 
@@ -2717,6 +2738,23 @@ sub _preCheckAttributes {
 		}
 	}
 
+	for my $tag (Slim::Schema::Contributor->contributorRoles, qw(ALBUMARTISTS ARTISTS)) {
+		if ($attributes->{$tag}) {
+			my @tag = Slim::Music::Info::splitTag($attributes->{$tag});
+			$attributes->{$tag} = \@tag;
+		}
+	}
+	for my $tag (qw(ALBUMARTIST ARTIST)) {
+		if ( $prefs->get('usePluralArtistTags') && $attributes->{$tag} && scalar(@{$attributes->{$tag}}) == 1 && $attributes->{$tag . 'S'} ) {
+				my $displayArtist = $attributes->{$tag}->[0];
+				$attributes->{$tag} = $attributes->{$tag . 'S'};
+				$attributes->{$tag . 'S'} = $displayArtist;
+		}
+		else {
+			delete $attributes->{$tag . 'S'};
+		}
+	}
+
 	if ($attributes->{'TITLE'}) {
 		# Create a canonical title to search against.
 		$attributes->{'TITLESEARCH'} = Slim::Utils::Text::ignoreCase($attributes->{'TITLE'}, 1);
@@ -2844,6 +2882,7 @@ sub _preCheckAttributes {
 			MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUMARTIST_ID MUSICBRAINZ_ALBUM_ID
 			MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS RELEASETYPE
 			ALBUM_EXTID ARTIST_EXTID WORK WORKSORT
+			ARTISTS ALBUMARTISTS
 		))
 	{
 
@@ -3067,6 +3106,13 @@ sub _postCheckAttributes {
 		$cols{primary_artist} = $artist->[0];
 	}
 
+	my $aaDisplayID = $self->_getOrCreateDisplayContributor($attributes->{ALBUMARTISTS}) if $attributes->{ALBUMARTISTS};
+	my $taDisplayID = $self->_getOrCreateDisplayContributor($attributes->{ARTISTS}) if $attributes->{ARTISTS};
+
+	if ($taDisplayID) {
+		$track->display_contributor($taDisplayID);
+	}
+
 	#Work
 	if (defined $attributes->{'WORK'}) {
 		if ( _workRequired($attributes->{'GENRE'}) ) {
@@ -3086,10 +3132,12 @@ sub _postCheckAttributes {
 	my $albumId = $self->_createOrUpdateAlbum($attributes,
 		\%cols,																	# trackColumns
 		$isCompilation,
-		$artist->[0],	                                          # primary contributor-id
+		$artist->[0],															# primary contributor-id
 		defined $contributors->{'ALBUMARTIST'}->[0] ? 1 : 0,					# hasAlbumArtist
 		$create,																# create
 		$track,																	# Track
+		undef,																	# basename
+		$aaDisplayID,
 	);
 
 	# Don't add an album to container tracks - See bug 2337
@@ -3097,7 +3145,7 @@ sub _postCheckAttributes {
 		$track->album($albumId);
 	}
 
-	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId);
+	$self->_createContributorRoleRelationships($contributors, $trackId, $albumId, $aaDisplayID, $taDisplayID);
 
 	# Save any changes - such as album.
 	$track->update;
@@ -3132,6 +3180,9 @@ sub _mergeAndCreateContributors {
 			main::DEBUGLOG && $isDebug && $log->debug(sprintf("-- Contributor '%s' of role 'ARTIST' transformed to role 'TRACKARTIST'",
 				$attributes->{'TRACKARTIST'},
 			));
+		}
+		if  ( !$attributes->{'ALBUMARTISTS'} && !$attributes->{'ALBUMARTIST'} && $attributes->{'ARTISTS'} ) {
+			$attributes->{'ALBUMARTISTS'} = delete $attributes->{'ARTISTS'}
 		}
 	}
 
@@ -3192,9 +3243,31 @@ sub _mergeAndCreateContributors {
 	return \%contributors;
 }
 
+sub _getOrCreateDisplayContributor {
+	my ($self, $displayName) = @_;
+	return undef if !$prefs->get('usePluralArtistTags');
+
+	my $sth = $self->dbh->prepare_cached(
+		'SELECT id FROM contributor_display WHERE UPPER(name) = ?'
+	);
+	$sth->execute(uc($displayName));
+	my ($id) = $sth->fetchrow_array;
+	$sth->finish;
+
+	if (!$id) {
+		my $insert = $self->dbh->prepare_cached(
+			'INSERT INTO contributor_display (name) VALUES (?)'
+		);
+		$insert->execute($displayName);
+		$id = $self->dbh->last_insert_id(undef, undef, undef, undef);
+	}
+
+	return $id;
+}
+
 sub _createContributorRoleRelationships {
 
-	my ($self, $contributors, $trackId, $albumId) = @_;
+	my ($self, $contributors, $trackId, $albumId, $aaDisplayID, $taDisplayID) = @_;
 
 	if (!keys %$contributors) {
 		main::DEBUGLOG && $log->debug('Attempt to set empty contributor set for trackid=', $trackId);
@@ -3207,6 +3280,13 @@ sub _createContributorRoleRelationships {
 	my $sth_delete_tracks = $self->dbh->prepare_cached( qq{
 		DELETE
 		FROM contributor_track
+		WHERE track = ?
+	} );
+	$sth_delete_tracks->execute($trackId);
+	# And for contributor_track_display
+	$sth_delete_tracks = $self->dbh->prepare_cached( qq{
+		DELETE
+		FROM contributor_track_display
 		WHERE track = ?
 	} );
 	$sth_delete_tracks->execute($trackId);
@@ -3234,6 +3314,19 @@ sub _createContributorRoleRelationships {
 		VALUES
 		(?, ?, ?)
 	} );
+	my $sth_album_display = $self->dbh->prepare_cached( qq{
+		REPLACE INTO contributor_album_display
+		(contributor_display, contributor, album)
+		VALUES
+		(?, ?, ?)
+	} ) if $aaDisplayID;
+
+	my $sth_track_display = $self->dbh->prepare_cached( qq{
+		REPLACE INTO contributor_track_display
+		(contributor_display, contributor, track)
+		VALUES
+		(?, ?, ?)
+	} ) if $taDisplayID;
 
 	while (my ($role, $contributorList) = each %{$contributors}) {
 		my $roleId = Slim::Schema::Contributor->typeToRole($role);
@@ -3245,6 +3338,13 @@ sub _createContributorRoleRelationships {
 
 			# The following is retained at present to add mappings for BMF, entries created will be deleted in the optimise phase
 			$sth_album->execute( $roleId, $contributor, $albumId );
+
+			if ( $aaDisplayID && ($role eq 'ALBUMARTIST' || $role eq 'ARTIST') ) {
+				$sth_album_display->execute( $aaDisplayID, $contributor, $albumId );
+			}
+			if ( $taDisplayID && ($role eq 'ARTIST' || $role eq 'TRACKARTIST') ) {
+				$sth_track_display->execute( $taDisplayID, $contributor, $trackId );
+			}
 		}
 	}
 }

@@ -353,6 +353,21 @@ sub rescan {
 						JOIN tracks ON tracks.id = contributor_track.track
 						JOIN changed_albums ON tracks.album = changed_albums.album
 			} );
+			# ... and contributor_album_display
+			$dbh->do( qq{
+				DELETE FROM contributor_album_display
+				WHERE contributor_album_display.album IN (SELECT album FROM changed_albums)
+			} );
+
+			$dbh->do( qq{
+				INSERT INTO contributor_album_display (contributor_display,contributor,album)
+					SELECT albums.display_contributor, contributor_album.contributor, albums.id
+					FROM albums
+						JOIN contributor_display ON contributor_display.id = albums.display_contributor
+						JOIN contributor_album on contributor_album.album = albums.id
+						JOIN changed_albums ON albums.id = changed_albums.album
+						WHERE contributor_album.role IN (1, 5)
+			} );
 
 			main::SCANNER && Slim::Schema->forceCommit;
 		}

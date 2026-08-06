@@ -647,6 +647,12 @@ sub albumsQuery {
 		$c->{'contributors.name'} = 1;
 	}
 
+	if ( $tags =~ /3/ ) {
+		$sql .= 'LEFT JOIN contributor_display ON albums.display_contributor = contributor_display.id ';
+		$c->{'contributor_display.name'} = 1;
+		$c->{'contributor_display.id'} = 1;
+	}
+
 	if ( $tags =~ /s/ ) {
 		$c->{'albums.titlesort'} = 1;
 	}
@@ -788,7 +794,7 @@ sub albumsQuery {
 			);
 		};
 
-		my ($contributorSql, $contributorSth, $contributorNameSth, $contributorRoleSth, @linkRoleIds);
+		my ($contributorSql, $contributorSth, $contributorRoleSth, @linkRoleIds, $displayArtistsSth);
 		if ( $tags =~ /(?:aa|SS)/ ) {
 			# Override $contributorSql if we're dealing with a Work: output Artist, Orchestra, Conductor in that order.
 			if ($work) {
@@ -807,6 +813,7 @@ sub albumsQuery {
 				join(',', @linkRoleIds));
 			} else {
 				my @linkRoles = Slim::Schema::Contributor->allAlbumLinkRoles();
+#Slim::Utils::Log::logError("DK \@linkRoles=" . Data::Dump::dump(@linkRoles));
 				# when filtering by role and not by contributor, put that role at the head of the list if it wasn't in there yet
 				if ($roleID && !$contributorID) {
 					unshift @linkRoles, map { Slim::Schema::Contributor->roleToType($_) || $_ } split(/,/, $roleID);
@@ -814,15 +821,26 @@ sub albumsQuery {
 				}
 
 				@linkRoleIds = map { Slim::Schema::Contributor->typeToRole($_) } @linkRoles;
-
+#ddd
+				my $excludeDisplayArtists = $tags =~ /3/
+					? qq{
+					AND NOT EXISTS(
+						SELECT * FROM contributor_album_display
+						WHERE contributor_album_display.album = :album
+						AND contributor_album_display.contributor = contributor_album.contributor
+						AND contributor_album.role IN (1,5))
+					}
+					: "";
 				$contributorSql = sprintf( qq{
 					SELECT contributor_album.role AS role, contributors.name AS name, contributors.id AS id
 					FROM contributor_album
 					JOIN contributors ON contributors.id = contributor_album.contributor
 					WHERE contributor_album.album = :album
 					AND contributor_album.role IN (%s)
+					%s
 					ORDER BY contributor_album.role, contributors.namesort
-				}, join(',', @linkRoleIds) );
+				}, join(',', @linkRoleIds), $excludeDisplayArtists );
+#Slim::Utils::Log::logError("DK \$contributorSql=" . Data::Dump::dump($contributorSql));
 			}
 		}
 
@@ -835,6 +853,7 @@ sub albumsQuery {
 			utf8::decode( $c->{'composer.name'} ) if exists $c->{'composer.name'};
 			utf8::decode( $c->{'tracks.performance'} ) if exists $c->{'tracks.performance'};
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
+			utf8::decode( $c->{'contributor_display.name'} ) if exists $c->{'contributor_display.name'};
 			$request->addResultLoop($loopname, $chunkCount, 'id', $c->{'albums.id'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_id', $c->{'tracks.work'});
 			$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'work_name', $c->{'works.title'});
@@ -898,6 +917,8 @@ sub albumsQuery {
 			if ( !$work ) {
 				$tags =~ /S/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist_id', $c->{'albums.contributor'});
 				$tags =~ /a/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $c->{'contributors.name'});
+				$tags =~ /3/ && $c->{'contributor_display.name'} && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'display_artist', $c->{'contributor_display.name'});
+				$tags =~ /3/ && $c->{'contributor_display.id'} && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'display_artist_id', $c->{'contributor_display.id'});
 				$tags =~ /4/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'portraitid', $c->{'contributors.portraitid'});
 			}
 
@@ -939,12 +960,33 @@ sub albumsQuery {
 					}
 				}
 				# if not dealing with a work, put the main album artist at the top of the list
-				if (!$work) {
+				if (!$work && !$c->{'contributor_display.id'}) {
 					unshift @artists, $c->{'contributors.name'} if $c->{'contributors.name'};
 					unshift @artistIds, $c->{'albums.contributor'} if $c->{'albums.contributor'};
 				}
 				@artists = Slim::Utils::Misc::uniq(@artists);
 				@artistIds = Slim::Utils::Misc::uniq(@artistIds);
+#Slim::Utils::Log::logError("DK =============================================================================================");
+#Slim::Utils::Log::logError("DK \@artists=" . Data::Dump::dump(@artists));
+#Slim::Utils::Log::logError("DK \@artistIds=" . Data::Dump::dump(@artistIds));
+
+				if ( $c->{'contributor_display.id'} ) {
+					my $displayArtistsSql = qq{
+						SELECT contributors.id, contributors.name FROM contributor_album_display
+						JOIN contributors ON contributors.id = contributor_album_display.contributor
+						WHERE contributor_album_display.album = ?
+						AND contributor_album_display.contributor_display = ?
+					};
+					$displayArtistsSth ||= $dbh->prepare_cached($displayArtistsSql);
+					my $displayArtists = $dbh->selectall_arrayref($displayArtistsSth, { Slice => {} }, ( $c->{'albums.id'}, $c->{'contributor_display.id'} ) );
+					my $displayArtistsIds = join(',', map { $_->{id} } @$displayArtists);
+					my $displayArtistsNames = join(',', map { $_->{name} } @$displayArtists);
+					utf8::decode( $displayArtistsNames ) if $displayArtistsNames;
+#Slim::Utils::Log::logError("DK \$displayArtistsIds=" . Data::Dump::dump($displayArtistsIds));
+#Slim::Utils::Log::logError("DK \$displayArtistsNames=" . Data::Dump::dump($displayArtistsNames));
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'display_artist_artist_ids', $displayArtistsIds);
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'display_artist_artists', $displayArtistsNames);
+				}
 
 				# XXX - what if the artist name itself contains ','?
 				if ( $tags =~ /aa/ && scalar @artists ) {
@@ -5704,10 +5746,12 @@ my %tagMap = (
 
 	  'k' => ['comment',           'COMMENT',         'comment'],                       #->comment_object
 	  '2' => [1],                                                                       # to trigger addition of the input parameter
+	  '3' => [1],                                                                       # to trigger addition of the input parameter
 
 	# Tags handled in code only
 	#--------------------------------------------------------------------------------------------------
 	# '2': contiguity of tracks on album
+	# '3': display_contributor
 	# 'CC': counts of an entity
 
 );
@@ -5793,6 +5837,11 @@ sub _songDataFromHash {
 					$returnHash{$role} = $res->{$role};
 				}
 			}
+		}
+		elsif ( $tag eq '3' ) {
+			$returnHash{display_trackartist} = $res->{'tacd.name'} if $res->{'tacd.name'} && $res->{'trackartist'};
+			$returnHash{display_albumartist} = $res->{'aacd.name'} if $res->{'aacd.name'} && $res->{'albumartist'};
+			$returnHash{display_artist} = $res->{'tacd.name'} || $res->{'aacd.name'} if ($res->{'tacd.name'} || $res->{'aacd.name'}) && $res->{'artist'};
 		}
 		elsif ( $tag eq 'S' ) {
 			for my $role ( @contributorRoles ) {
@@ -6385,7 +6434,7 @@ sub _getTagDataForTracks {
 	my $join_contributors = sub {
 		$join_contributor_tracks->();
 
-		if ( $sql !~ /JOIN contributors/ ) {
+		if ( $sql !~ /JOIN contributors ON/ ) {
 			$sql .= 'LEFT JOIN contributors ON contributors.id = tracks.primary_artist ';
 		}
 	};
@@ -6393,6 +6442,27 @@ sub _getTagDataForTracks {
 	my $join_albums = sub {
 		if ( $sql !~ /JOIN albums/ ) {
 			$sql .= 'LEFT JOIN albums ON albums.id = tracks.album ';
+		}
+	};
+
+	my $join_album_contributor = sub {
+		$join_albums->();
+
+		if ( $sql !~ /JOIN contributors AS album_contributor/ ) {
+			$sql .= 'LEFT JOIN contributors AS album_contributor ON album_contributor.id = albums.contributor ';
+		}
+	};
+
+	my $join_contributor_display = sub {
+		if ( $sql !~ /JOIN contributor_display AS aacd/ ) {
+			$join_albums->();
+			$sql .= 'LEFT JOIN contributor_display AS aacd ON albums.display_contributor = aacd.id ';
+		}
+	};
+
+	my $join_track_contributor_display = sub {
+		if ( $sql !~ /JOIN contributor_display AS tacd/ ) {
+			$sql .= 'LEFT JOIN contributor_display AS tacd ON tracks.display_contributor = tacd.id ';
 		}
 	};
 
@@ -6444,6 +6514,12 @@ sub _getTagDataForTracks {
 	if ( my $trackIds = $args->{trackIds} ) {
 		# Filter out negative tracks (remote tracks)
 		push @{$w}, 'tracks.id IN (' . join( ',', grep { $_ > 0 } @{$trackIds} ) . ')';
+	}
+	
+	if ($oneAlbum) {
+		$join_album_contributor->();
+		$c->{'album_contributor.id'} = 1;
+		$c->{'album_contributor.name'} = 1;
 	}
 
 	# Process tags and add columns/joins as needed
@@ -6518,6 +6594,15 @@ sub _getTagDataForTracks {
 		push @{$p}, map { Slim::Schema::Contributor->typeToRole($_) } @roles;
 		push @{$w}, '(contributors.id = tracks.primary_artist OR tracks.primary_artist IS NULL)' if $args->{trackIds};
 		push @{$w}, 'contributor_track.role IN (' . join(', ', map {'?'} @roles) . ')';
+	};
+
+	$tags =~ /3/ && do {
+		$join_contributor_display->();
+		$join_track_contributor_display->();
+		$c->{'aacd.id'} = 1;
+		$c->{'aacd.name'} = 1;
+		$c->{'tacd.id'} = 1;
+		$c->{'tacd.name'} = 1;
 	};
 
 	$tags =~ /s/ && do {
@@ -6660,10 +6745,13 @@ sub _getTagDataForTracks {
 			utf8::decode( $c->{'tracks.lyrics'} ) if exists $c->{'tracks.lyrics'};
 			utf8::decode( $c->{'albums.title'} ) if exists $c->{'albums.title'};
 			utf8::decode( $c->{'contributors.name'} ) if exists $c->{'contributors.name'};
+			utf8::decode( $c->{'aacd.name'} ) if exists $c->{'aacd.name'};
+			utf8::decode( $c->{'tacd.name'} ) if exists $c->{'tacd.name'};
 			utf8::decode( $c->{'genres.name'} ) if exists $c->{'genres.name'};
 			utf8::decode( $c->{'comments.value'} ) if exists $c->{'comments.value'};
 			utf8::decode( $c->{'tracks.discsubtitle'}) if exists $c->{'tracks.discsubtitle'};
 			utf8::decode( $c->{'tracks.grouping'}) if exists $c->{'tracks.grouping'};
+			utf8::decode( $c->{'album_contributor.name'} ) if exists $c->{'album_contributor.name'};
 		}
 
 		my $id = $c->{'tracks.id'};
@@ -6716,6 +6804,34 @@ sub _getTagDataForTracks {
 		my @albumTitleNames;
 		my @albumTitleIds;
 
+		if ( $oneAlbum ) {
+#			push @albumTitleNames, $c->{'album_contributor.name'};
+#			push @albumTitleIds, $c->{'album_contributor.id'};
+			if ($c->{'aacd.name'}) {
+				$albumHeader->{display_artist} = $c->{'aacd.name'};
+				my $displayArtistsSql = qq{
+					SELECT contributors.id, contributors.name FROM contributor_album_display
+					JOIN contributors ON contributors.id = contributor_album_display.contributor
+					WHERE contributor_album_display.album = ?
+					AND contributor_album_display.contributor_display = ?
+				};
+				my $displayAlbumArtistsSth = $dbh->prepare_cached($displayArtistsSql);
+				if ( main::DEBUGLOG && $sqllog->is_debug ) {
+					$sqllog->debug( "Tags A/S + 3 (display artists) query: $displayArtistsSql / [ $args->{albumId} $c->{'aacd.id'} ]" );
+				}
+				my $displayArtists = $dbh->selectall_arrayref($displayAlbumArtistsSth, { Slice => {} }, ( $args->{'albumId'}, $c->{'aacd.id'} ) );
+				@{$albumHeader->{display_artist_artists}} = map { my $name =utf8::decode($_->{name}); $_->{name} } @$displayArtists;
+				@{$albumHeader->{display_artist_artist_ids}} = map { $_->{id} } @$displayArtists;
+			}
+			else {
+				push @albumTitleNames, $c->{'album_contributor.name'};
+				push @albumTitleIds, $c->{'album_contributor.id'};
+			}
+#Slim::Utils::Log::logError("DK \$albumHeader->{display_artist_artists}=" . Data::Dump::dump($albumHeader->{display_artist_artists}));
+#Slim::Utils::Log::logError("DK \$albumHeader->{display_artist_artist_ids}=" . Data::Dump::dump($albumHeader->{display_artist_artist_ids}));
+		}
+##ddd
+#Slim::Utils::Log::logError("DK \%values=" . Data::Dump::dump(%values)) if $oneAlbum;
 		while ( my ($id, $role) = each %values ) {
 			my $track = $results{$id};
 
@@ -6728,31 +6844,39 @@ sub _getTagDataForTracks {
 			}
 
 			if ( $oneAlbum ) {
+#Slim::Utils::Log::logError("DK \@albumTitleRoles=" . Data::Dump::dump(@albumTitleRoles));
+#Slim::Utils::Log::logError("DK \$role=" . Data::Dump::dump($role));
+#my @nonlinks = grep { my $f = $_; !grep $_ eq $f, @symbolic_files_found } @files_found;
 				foreach (@albumTitleRoles) {
-					push @albumTitleNames, @{$role->{$_}->{names}} if $role->{$_}->{names};
-					push @albumTitleIds, @{$role->{$_}->{ids}} if $role->{$_}->{ids};
+					if ( $_ !~ /1|5/ || !$c->{'aacd.name'} ) { #|| grep { my $v = $_; !grep $_ eq $v, @{$albumHeader->{display_artist_artist_ids}} } @{$role->{$_}->{ids}} ) {
+#Slim::Utils::Log::logError("DK \$role->{$_}=" . Data::Dump::dump($role->{$_}));
+						push @albumTitleNames, @{$role->{$_}->{names}} if $role->{$_}->{names};
+						push @albumTitleIds, @{$role->{$_}->{ids}} if $role->{$_}->{ids};
+					}
 				}
 			}
 		}
+#Slim::Utils::Log::logError("DK \@albumTitleNames=" . Data::Dump::dump(@albumTitleNames));
+#Slim::Utils::Log::logError("DK \@albumTitleIds=" . Data::Dump::dump(@albumTitleIds));
 		if ( scalar @albumTitleIds ) {
 			@{$albumHeader->{title_names}} = Slim::Utils::Misc::uniq(@albumTitleNames);
 			@{$albumHeader->{title_ids}} = Slim::Utils::Misc::uniq(@albumTitleIds);
 		}
-		elsif ( $oneAlbum ) {
-			# We've been asked for a specific album but for some reason we don't have any artists for the header: get from the album
-			$sql = "SELECT albums.contributor, contributors.name FROM albums JOIN contributors ON albums.contributor = contributors.id WHERE albums.id = ?";
-			my $album_contrib_sth = $dbh->prepare($sql);
+#		elsif ( $oneAlbum ) {
+#			# We've been asked for a specific album but for some reason we don't have any artists for the header: get from the album
+#			$sql = "SELECT albums.contributor, contributors.name FROM albums JOIN contributors ON albums.contributor = contributors.id WHERE albums.id = ?";
+#			my $album_contrib_sth = $dbh->prepare($sql);
 
-			if ( main::DEBUGLOG && $sqllog->is_debug ) {
-				$sqllog->debug( "Tag A/S (album contributor) query: $sql / $args->{albumId}" );
-			}
+#			if ( main::DEBUGLOG && $sqllog->is_debug ) {
+#				$sqllog->debug( "Tag A/S (album contributor) query: $sql / $args->{albumId}" );
+#			}
 
-			$album_contrib_sth->execute($args->{albumId});
-			if ( my ($id, $name) = $album_contrib_sth->fetchrow_array ) {
-				@{$albumHeader->{title_names}} = $name;
-				@{$albumHeader->{title_ids}} = $id;
-			}
-		}
+#			$album_contrib_sth->execute($args->{albumId});
+#			if ( my ($id, $name) = $album_contrib_sth->fetchrow_array ) {
+#				@{$albumHeader->{title_names}} = $name;
+#				@{$albumHeader->{title_ids}} = $id;
+#			}
+#		}
 	}
 
 	# Same thing for G/P, multiple genres requires another query

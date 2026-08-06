@@ -8703,6 +8703,18 @@ SETUP_NOROLEFILTER_DESC
 	SV	När du bläddrar genom "Artister" kan du filtrera så att bara album och låtar som matchar den valda rollen ("ALBUMARTIST", "COMPOSER", etc.) visas.
 	ZH_CN	在浏览艺术家时，可以过滤并只显示和所选角色匹配的专辑和音轨（例如，ALBUMARTIST，COMPOSER等）。
 
+SETUP_USEPLURALARTISTTAGS
+	EN	Use Plural Artist Tags
+
+SETUP_USEPLURALARTISTTAGS_DESC
+	EN	When your music files contain both a display name (e.g. ALBUMARTIST = "John Lennon & Yoko Ono") and a list of individual artists (ALBUMARTISTS/ARTISTS tags), LMS normally creates a single artist entry from the display name. Enable this setting to use the individual artist list instead, so each artist gets their own entry in the library. The display name is still shown in the UI. Requires a rescan after changing. Most taggers (Picard, SongKong, Mp3tag) can write these tags.
+
+SETUP_USEPLURALARTISTTAGS_0
+	EN	Disabled
+
+SETUP_USEPLURALARTISTTAGS_1
+	EN	Enabled
+
 SETUP_ROLESINARTISTS
 	CS	Interpret skladby, Skladatel, Skupina a Orchestr v Interpretech
 	DA	Nummerets kunstner, Komponist, band og orkester i Kunstnere

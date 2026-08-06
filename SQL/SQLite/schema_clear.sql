@@ -31,6 +31,12 @@ DELETE FROM library_album;
 DELETE FROM library_contributor;
 DELETE FROM library_genre;
 
+DELETE FROM contributor_display;
+
+DELETE FROM contributor_album_display;
+
+DELETE FROM contributor_track_display;
+
 -- these table are created by the Fulltext Search plugin
 DROP TABLE IF EXISTS fulltext;
 DROP TABLE IF EXISTS fulltext_terms;
