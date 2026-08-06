@@ -460,9 +460,9 @@ sub updateBoxsetArtwork {
 	my $boxsetSql = qq{
 		SELECT album
 		FROM tracks
-		WHERE album IS NOT NULL AND coverid IS NOT NULL AND substr(url, 0, 8) = 'file://'
+		WHERE album IS NOT NULL AND substr(url, 0, 8) = 'file://'
 		GROUP BY album
-		HAVING COUNT(DISTINCT coverid) > 1
+		HAVING COUNT(DISTINCT coverid) > 1 OR COUNT(coverid) = 0
 	};
 
 	my ($count) = $dbh->selectrow_array( qq{
@@ -520,6 +520,10 @@ sub updateBoxsetArtwork {
 
 			# don't look for artwork in the root folder or on a Windows drive letter, as that is likely to be a false positive
 			@paths = grep { $_ && $_ ne '/' && !Slim::Utils::Misc::isWinDrive(substr($_, 0, 2)) } @paths;
+
+			if (main::DEBUGLOG && $log->is_debug) {
+				$log->debug("Track folders and common parent for album:\n" . Data::Dump::dump(@paths));
+			}
 
 			$progress->update( $paths[0] || '' );
 
