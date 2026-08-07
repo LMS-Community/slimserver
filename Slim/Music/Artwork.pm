@@ -135,12 +135,16 @@ sub findStandaloneArtwork {
 			}
 		}
 
+		$isInfo && $log->info("Looking for artwork in $parentDir: " . join(', ', @files));
+
 		if (wantarray) {
 			my @artFiles = _findStandaloneArtwork($parentDir, \@files);
 			if ($candidateForArtfolder) {
 				push @artFiles, _findStandaloneArtwork($artDir, [$candidateForArtfolder]);
 			}
 			push @artFiles, _findStandaloneArtwork($parentDir);
+
+			$isInfo && $log->info("Found artwork files: " . join(', ', @artFiles));
 
 			return @artFiles;
 		}
