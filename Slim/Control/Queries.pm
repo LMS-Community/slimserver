@@ -4108,7 +4108,7 @@ sub statusQuery {
 
 		my $trackGain = $song->replayGain();
 		if (defined $trackGain) {
-				$request->addResult('replay_gain', $trackGain);
+			$request->addResult('replay_gain', $trackGain);
 		}
 
 		if ($tags =~ /b/) {   # get the song's current bitrate
