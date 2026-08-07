@@ -335,6 +335,31 @@ sub fileURLFromPath {
 	return $file;
 }
 
+sub commonParentPath {
+	my ($pathsOrUrls, $maxLevels) = @_;
+	$maxLevels = 999 unless defined $maxLevels;
+
+	my @paths = uniq(map { Slim::Music::Info::isFileURL($_) ? pathFromFileURL($_) : $_ } @{$pathsOrUrls || []});
+	return '' unless @paths;
+
+	my @common = splitdir(shift @paths);
+	my $popCount = 0;
+
+	for my $path (@paths) {
+		my @parts = splitdir($path);
+
+		while (@common && (
+			@parts < @common ||
+			grep { $common[$_] ne $parts[$_] } 0 .. $#common
+		)) {
+			pop @common;
+			return '' if ++$popCount > $maxLevels;
+		}
+	}
+
+	return catdir(@common);
+}
+
 ########
 
 # other people call us externally.

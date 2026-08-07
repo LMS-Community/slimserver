@@ -23,7 +23,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(coverArt artfolder noContributorPictures));
+	return ($prefs, qw(coverArt artfolder updateBoxsetArtwork noContributorPictures));
 }
 
 sub handler {

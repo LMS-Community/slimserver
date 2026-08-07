@@ -38,6 +38,7 @@ use Slim::Utils::Unicode;
 use Slim::Utils::OSDetect;
 
 use constant MAX_RETRIES => 5;
+use constant MAX_LEVELS_FOR_BOX_ARTWORK => 3;
 
 # Global caches:
 my $artworkDir = '';
@@ -59,7 +60,7 @@ my $imageTypesRegex;
 
 # Public class methods
 sub findStandaloneArtwork {
-	my ( $class, $trackAttributes, $deferredAttributes, $dirurl ) = @_;
+	my ( $class, $trackAttributes, $deferredAttributes, $dirurl, $args ) = @_;
 
 	return wantarray ? () : 0 if !Slim::Music::Info::isFileURL($dirurl);
 
@@ -68,7 +69,7 @@ sub findStandaloneArtwork {
 	my $art = $findArtCache{$dirurl};
 
 	# Files to look for
-	my @files = qw(cover album folder thumb);
+	my @files = @{$args->{coverFiles} || []} || qw(cover album folder thumb);
 
 	# User-defined artwork format
 	my $coverFormat = $prefs->get('coverArt');
@@ -180,7 +181,7 @@ sub _findStandaloneArtwork {
 
 	$imageTypesRegex ||= Slim::Music::Info::validTypeExtensions('image');
 
-	my @candidates = $filenameTemplates ? map {
+	my @candidates = $filenameTemplates ? Slim::Utils::Misc::uniq(map {
 		my $name = $_;
 		my @variations;
 
@@ -195,7 +196,7 @@ sub _findStandaloneArtwork {
 		}
 
 		@variations;
-	} @$filenameTemplates : ();
+	} @$filenameTemplates) : ();
 
 	my @images;
 
@@ -206,9 +207,9 @@ sub _findStandaloneArtwork {
 		}
 		else {
 			# doing a range search helps us avoid a LIKE query, which would result in a scan
-			$sql .= '>= ? AND url < ?';
+			$sql .= '>= ? AND url < ? AND instr(substr(url, length(?)+2), "/") < 1';
 			my $pathUrl = Slim::Utils::Misc::fileURLFromPath($parentDir);
-			push @candidates, $pathUrl,  $pathUrl . chr(0xff);
+			push @candidates, $pathUrl,  $pathUrl . chr(0xff), $pathUrl;
 		}
 
 		my $sth = Slim::Schema->dbh->prepare_cached($sql);
@@ -320,13 +321,13 @@ sub updateStandaloneArtwork {
 		SELECT COUNT(*) FROM ( $sql ) AS t1
 	} );
 
-	$log->error("Starting updateStandaloneArtwork for $count albums");
-
 	if ( !$count ) {
 		$cb && $cb->();
 		main::SCANNER && Slim::Music::Import->endImporter('updateStandaloneArtwork');
 		return;
 	}
+
+	$log->error("Starting updateStandaloneArtwork for $count albums");
 
 	my $progress = Slim::Utils::Progress->new( {
 		type  => 'importer',
@@ -442,6 +443,156 @@ sub updateStandaloneArtwork {
 		while ( $work->() ) { }
 
 		Slim::Music::Import->endImporter('updateStandaloneArtwork');
+	}
+	else {
+		# Run async in main process
+		Slim::Utils::Scheduler::add_ordered_task($work);
+	}
+}
+
+sub updateBoxsetArtwork {
+	my $class = shift;
+	my $cb    = shift; # optional callback when done (main process async mode)
+
+	my $dbh = Slim::Schema->dbh;
+
+	# get singledir parameter from the scanner if available
+	# shortcut for online library scan only - we don't have the necessary information
+	my $singledir = main::SCANNER ? $ARGV[-1] : undef;
+	my $skipUpdate = $singledir && $singledir eq 'onlinelibrary';
+
+	my $boxsetSql = qq{
+		SELECT album
+		FROM tracks
+		WHERE album IS NOT NULL AND substr(url, 0, 8) = 'file://'
+		GROUP BY album
+		HAVING COUNT(DISTINCT coverid) > 1 OR COUNT(coverid) = 0
+	};
+
+	my ($count) = $dbh->selectrow_array( qq{
+		SELECT COUNT(*) FROM ( $boxsetSql ) AS t1
+	} ) unless $skipUpdate;
+
+	if ( !$count ) {
+		$cb && $cb->();
+		main::SCANNER && Slim::Music::Import->endImporter('updateBoxsetArtwork');
+		return;
+	}
+
+	my ($isPrecachingEnabled, $specs) = _initPrecacheArtworkIfEnabled();
+
+	$log->error("Starting updateBoxsetArtwork for $count albums");
+
+	my $progress = Slim::Utils::Progress->new( {
+		type  => 'importer',
+		name  => 'updateBoxsetArtwork',
+		total => $count,
+		bar   => 1,
+	} );
+
+	my $sth_boxset = $dbh->prepare_cached($boxsetSql);
+	$sth_boxset->execute;
+
+	my $sth_album_tracks = $dbh->prepare_cached( qq{
+		SELECT url FROM tracks WHERE album = ?
+	} );
+
+	my $sth_update_albums = $dbh->prepare( qq{
+		UPDATE albums
+		SET    artwork = ?
+		WHERE  id = ?
+	} );
+
+	my $albumId;
+	$sth_boxset->bind_columns(\$albumId);
+
+	my $t = 0;
+
+	my $work = sub {
+		if ( $sth_boxset->fetch ) {
+			$sth_album_tracks->execute($albumId);
+
+			# get unique folder names for this album, as we may have multiple folders for a boxset
+			my @paths = Slim::Utils::Misc::uniq(
+				map {
+					dirname(Slim::Utils::Misc::pathFromFileURL($_->[0]))
+				} @{$sth_album_tracks->fetchall_arrayref()}
+			);
+
+			# put parent folder first in list if we have multiple folders for this album
+			unshift @paths, Slim::Utils::Misc::commonParentPath(\@paths, MAX_LEVELS_FOR_BOX_ARTWORK) if scalar @paths > 1;
+
+			# don't look for artwork in the root folder or on a Windows drive letter, as that is likely to be a false positive
+			@paths = grep { $_ && $_ ne '/' && !Slim::Utils::Misc::isWinDrive(substr($_, 0, 2)) } @paths;
+
+			if (main::DEBUGLOG && $log->is_debug) {
+				$log->debug("Track folders and common parent for album:\n" . Data::Dump::dump(@paths));
+			}
+
+			$progress->update( $paths[0] || '' );
+
+			if ( $t < time ) {
+				Slim::Schema->forceCommit;
+				$t = time + 5;
+			}
+
+			my ($newCover, $folder);
+			foreach (@paths) {
+				$newCover = Slim::Music::Artwork->findStandaloneArtwork({}, {}, Slim::Utils::Misc::fileURLFromPath($_), {
+					coverFiles => [qw(boxset album cover folder)],
+				});
+
+				if ($newCover) {
+					$folder = $_;
+					last;
+				}
+			}
+
+			my $newCoverId = $class->generateImageId({
+				image => $newCover,
+				url   => Slim::Utils::Misc::fileURLFromPath($newCover),
+			}) if $newCover;
+
+			if ($newCoverId) {
+				my ($coverTrackExists) = $dbh->selectrow_array( qq{
+					SELECT 1 FROM tracks WHERE coverid = ?
+				}, undef, $newCoverId );
+
+				# In order to avoid the need for another schema change in albums, we create a track object
+				# for the album folder and store the coverid there. This is a bit of a hack, but it works.
+				my $trackObjForAlbum = Slim::Schema->objectForUrl({
+					url => Slim::Utils::Misc::fileURLFromPath($folder),
+					create => 1,
+					readTags => 0,
+					playlist => 0,
+					checkMTime => 0,
+				});
+
+				$trackObjForAlbum->content_type('dir');   # directories should not show up anywhere (audio, lists, images...)
+				$trackObjForAlbum->coverid($newCoverId);
+				$trackObjForAlbum->cover($newCover);
+				$trackObjForAlbum->update;
+
+				$sth_update_albums->execute( $newCoverId, $albumId );
+
+				Slim::Utils::ImageResizer->resize($newCover, "music/$newCoverId/cover_", $specs) if $isPrecachingEnabled;
+			}
+
+			return 1;
+		}
+
+		$progress->final;
+
+		$cb && $cb->();
+
+		return 0;
+	};
+
+	if ( main::SCANNER ) {
+		# Non-async mode in scanner
+		while ( $work->() ) { }
+
+		Slim::Music::Import->endImporter('updateBoxsetArtwork');
 	}
 	else {
 		# Run async in main process
@@ -631,7 +782,7 @@ sub precacheAllArtwork {
 
 	my $isDebug = main::DEBUGLOG && $importlog->is_debug;
 
-	my $isEnabled = $prefs->get('precacheArtwork');
+	my ($isEnabled, $specs) = _initPrecacheArtworkIfEnabled();
 
 	my $dbh = Slim::Schema->dbh;
 
@@ -700,12 +851,6 @@ sub precacheAllArtwork {
 	# 2. 50x50_o (small web artwork)
 	# 3+ SqueezePlay/Jive size artwork
 	my @specs;
-
-	if ($isEnabled) {
-		@specs = getResizeSpecs();
-
-		require Slim::Utils::ImageResizer;
-	}
 
 	my $sth = $dbh->prepare($sql);
 	$sth->execute;
@@ -789,7 +934,7 @@ sub precacheAllArtwork {
 				# have scheduler wait for the finished callback
 				Slim::Utils::Scheduler::pause() if !main::SCANNER;
 
-				Slim::Utils::ImageResizer->resize($path, "music/$coverid/cover_", join(',', @specs), $finished);
+				Slim::Utils::ImageResizer->resize($path, "music/$coverid/cover_", $specs, $finished);
 			}
 			else {
 				$finished->();
@@ -890,6 +1035,13 @@ sub getResizeSpecs {
 	main::DEBUGLOG && $log->is_debug && $log->debug("Full list of artwork pre-cache specs:\n" . Data::Dump::dump(@specs));
 
 	return @specs;
+}
+
+sub _initPrecacheArtworkIfEnabled {
+	return (0, undef) unless $prefs->get('precacheArtwork');
+
+	require Slim::Utils::ImageResizer;
+	return (1, join(',', getResizeSpecs()));
 }
 
 1;
