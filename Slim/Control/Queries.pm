@@ -4009,6 +4009,7 @@ sub statusQuery {
 	# get the initial parameters
 	my $client = $request->client();
 	my $menu = $request->getParam('menu');
+	my $tags = $request->getParam('tags') || '';
 
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
@@ -4105,16 +4106,12 @@ sub statusQuery {
 			$request->addResult('can_seek', 1);
 		}
 
-		my $techInfo = $request->getParam('techInfo');  # see if the user requested technical song info
-		
-		if (!defined $techInfo || $techInfo) {  # return replay gain unless explicitly directed not to
-			my $trackGain = $song->replayGain();
-			if (defined $trackGain) {
+		my $trackGain = $song->replayGain();
+		if (defined $trackGain) {
 				$request->addResult('replay_gain', $trackGain);
-			}
 		}
 
-		if ($techInfo) {  # add additional tech info from song object only if requested
+		if ($tags =~ /b/) {   # get the song's current bitrate
 			my $bitrate = $song->streambitrate();
 			if (defined $bitrate && $bitrate) {
 				$bitrate = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
@@ -4122,7 +4119,7 @@ sub statusQuery {
 			}
 		}
 			
-			# Add other technical song attributes here, e.g. 'type', 'samplerate' and 'samplesize'
+		# Add other technical song attributes here, e.g. 'type', 'samplerate' and 'samplesize'
 	}
 
 	if ($client->currentSleepTime()) {
@@ -4326,7 +4323,6 @@ sub statusQuery {
 
 		main::DEBUGLOG && $isDebug && $log->debug("statusQuery(): setup non-zero player response");
 		# get the other parameters
-		my $tags     = $request->getParam('tags') || '';
 		my $index    = $request->getParam('_index');
 		my $quantity = $request->getParam('_quantity');
 
