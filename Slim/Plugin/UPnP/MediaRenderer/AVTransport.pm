@@ -388,6 +388,14 @@ sub SetAVTransportURI {
 		}
 	}
 
+	# With repeat enabled, we may accidentally wrap back to index 0 whenever
+	# the next track hasn't been inserted yet, but the DLNA server already ended 
+	# the connection of the current track, making LMS re-connect and repeat the 
+	# still current track instead of waiting for SetNextAVTransportURI.
+	# Repeat is meaningless here anyway since the Control Point, not LMS,
+	# dictates which track to play.
+	Slim::Player::Playlist::repeat( $client, 0 );
+
 	# Event notification, on a timer so playlist clear comes first and deletes everything
 	# then this resets the new data.
 	Slim::Utils::Timers::setTimer( undef, Time::HiRes::time, sub {
@@ -467,6 +475,9 @@ sub SetNextAVTransportURI {
 			main::DEBUGLOG && $log->is_debug && $log->debug("NextURI set " . $trackId . ":" . $meta->{title});
 		}
 	}
+
+	# see SetAVTransportURI
+	Slim::Player::Playlist::repeat( $client, 0 );
 
 	# Change state variables
 	$class->changeState( $client, {
