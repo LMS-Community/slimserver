@@ -94,9 +94,20 @@ sub _initialState {
 ### Eventing
 
 sub clientEvent {
-	my $class   = __PACKAGE__;
-	my $request = shift;
-	my $client  = $request->client;
+	my $class          = __PACKAGE__;
+	my $request        = shift;
+	my $notifiedClient = $request->client || return;
+
+	# Re-target to whichever of our clients is actually in the notified
+	# client's sync group. One of them is the one the UPnP control point is 
+	# talking to and we must ensure that that one catches the event.
+	for my $client ( $notifiedClient->syncGroupActiveMembers() ) {
+		$class->_clientEvent( $request, $client );
+	}
+}
+
+sub _clientEvent {
+	my ( $class, $request, $client ) = @_;
 
 	my $cmd = $request->getRequest(1);
 
