@@ -32,7 +32,8 @@ sub page {
 
 sub prefs {
 	return ($prefs, qw(musicip scan_interval player_settings host port mix_filter reject_size reject_type
-			   mix_genre mix_genre_filter mix_variety mix_style mix_type mix_size playlist_prefix playlist_suffix));
+			   mix_genre mix_genre_filter mix_variety mix_style mix_type mix_size playlist_prefix playlist_suffix
+			   path_conversion_enabled path_conversion_source path_conversion_dest));
 }
 
 sub handler {

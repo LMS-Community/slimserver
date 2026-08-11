@@ -932,6 +932,10 @@ sub getMix {
 
 		}
 
+		# Path Conversion - a no-op unless configured and the path
+		# actually matches the configured source prefix.
+		$songs[$j] = Slim::Plugin::MusicMagic::Common::translatePath($songs[$j]);
+
 		if ( -e $songs[$j] || -e Slim::Utils::Unicode::utf8encode_locale($songs[$j]) ) {
 
 			my $url = Slim::Utils::Misc::fileURLFromPath($songs[$j]);

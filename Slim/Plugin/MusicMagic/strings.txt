@@ -645,6 +645,21 @@ SETUP_MMSHOST_DESC
 	SV	Värdnamnet eller IP-adressen för MusicIP-servern. Ändra detta om MusicIP körs på en annan värd än Lyrion Music Server (t.ex. i en separat Docker-container eller VM). Standard är localhost. Obs: filsökvägarna till din musik måste vara identiska på båda värdarna. Docker-användare bör säkerställa detta genom att använda matchande volymmonterade sökvägar i båda containrarna.
 	ZH_CN	MusicIP服务器的主机名或IP地址。如果MusicIP运行在与Lyrion Music Server不同的主机上（例如在单独的Docker容器或虚拟机中），请更改此设置。默认为localhost。注意：音乐文件路径在两台主机上必须完全相同。Docker用户应通过在两个容器中使用相同的卷挂载路径来确保这一点。
 
+MUSICIP_PATH_CONVERSION
+	EN	Path Conversion
+
+MUSICIP_PATH_CONVERSION_DESC
+	EN	If MusicIP reports song paths that don't match what Lyrion Music Server expects (for example when MusicIP itself runs under Wine and reports Windows-style paths, or when running MusicIP on a different host with a different mount layout), enable this and configure a source and destination path to have them translated automatically.
+
+MUSICIP_PATH_CONVERSION_ENABLE
+	EN	Enable Path Conversion
+
+MUSICIP_PATH_CONVERSION_SOURCE
+	EN	MusicIP path (source)
+
+MUSICIP_PATH_CONVERSION_DEST
+	EN	Lyrion path (destination)
+
 SETUP_MMSPORT
 	CS	HTTP port MusicIP
 	DA	MusicIP HTTP-port
