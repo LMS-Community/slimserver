@@ -4118,8 +4118,27 @@ sub statusQuery {
 				$request->addResult('bitrate', $bitrate);
 			}
 		}
-			
-		# Add other technical song attributes here, e.g. 'type', 'samplerate' and 'samplesize'
+
+		if ($tags =~ /o/) {   # get the song's format (type)
+			my $type = $song->streamformat();
+			if (defined $type && $type) {
+				$request->addResult('type', $type);
+			}
+		}
+
+		if ($tags =~ /T/) {   # get the song's sample rate
+			my $samplerate = $song->samplerate();
+			if (defined $samplerate) {
+				$request->addResult('samplerate', $samplerate);
+			}
+		}
+
+		if ($tags =~ /I/) {   # get the song's sample size
+			my $samplesize = $song->samplesize();
+			if (defined $samplesize) {
+				$request->addResult('samplesize', $samplesize);
+			}
+		}
 	}
 
 	if ($client->currentSleepTime()) {
