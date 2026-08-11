@@ -4009,6 +4009,7 @@ sub statusQuery {
 	# get the initial parameters
 	my $client = $request->client();
 	my $menu = $request->getParam('menu');
+	my $tags = $request->getParam('tags') || '';
 
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
@@ -4108,6 +4109,35 @@ sub statusQuery {
 		my $trackGain = $song->replayGain();
 		if (defined $trackGain) {
 			$request->addResult('replay_gain', $trackGain);
+		}
+
+		if ($tags =~ /b/) {   # get the song's current bitrate
+			my $bitrate = $song->streambitrate();
+			if (defined $bitrate && $bitrate) {
+				$bitrate = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
+				$request->addResult('bitrate', $bitrate);
+			}
+		}
+
+		if ($tags =~ /o/) {   # get the song's format (type)
+			my $type = $song->streamformat();
+			if (defined $type && $type) {
+				$request->addResult('type', $type);
+			}
+		}
+
+		if ($tags =~ /T/) {   # get the song's sample rate
+			my $samplerate = $song->samplerate();
+			if (defined $samplerate) {
+				$request->addResult('samplerate', $samplerate);
+			}
+		}
+
+		if ($tags =~ /I/) {   # get the song's sample size
+			my $samplesize = $song->samplesize();
+			if (defined $samplesize) {
+				$request->addResult('samplesize', $samplesize);
+			}
 		}
 	}
 
@@ -4312,7 +4342,6 @@ sub statusQuery {
 
 		main::DEBUGLOG && $isDebug && $log->debug("statusQuery(): setup non-zero player response");
 		# get the other parameters
-		my $tags     = $request->getParam('tags') || '';
 		my $index    = $request->getParam('_index');
 		my $quantity = $request->getParam('_quantity');
 
