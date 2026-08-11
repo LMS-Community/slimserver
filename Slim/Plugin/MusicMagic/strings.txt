@@ -646,19 +646,34 @@ SETUP_MMSHOST_DESC
 	ZH_CN	MusicIP服务器的主机名或IP地址。如果MusicIP运行在与Lyrion Music Server不同的主机上（例如在单独的Docker容器或虚拟机中），请更改此设置。默认为localhost。注意：音乐文件路径在两台主机上必须完全相同。Docker用户应通过在两个容器中使用相同的卷挂载路径来确保这一点。
 
 MUSICIP_PATH_CONVERSION
+	DE	Pfadkonvertierung
 	EN	Path Conversion
+	FR	Conversion de chemin
+	NL	Padconversie
 
 MUSICIP_PATH_CONVERSION_DESC
+	DE	Wenn MusicIP Pfade meldet, die nicht mit dem übereinstimmen, was Lyrion Music Server erwartet (z. B. wenn MusicIP selbst unter Wine läuft und Windows-Pfade meldet, oder wenn MusicIP auf einem anderen Host mit einem anderen Einhängepunkt-Layout läuft), aktivieren Sie diese Option und konfigurieren Sie einen Quell- und Zielpfad, damit diese automatisch übersetzt werden.
 	EN	If MusicIP reports song paths that don't match what Lyrion Music Server expects (for example when MusicIP itself runs under Wine and reports Windows-style paths, or when running MusicIP on a different host with a different mount layout), enable this and configure a source and destination path to have them translated automatically.
+	FR	Si MusicIP signale des chemins de morceaux qui ne correspondent pas à ce qu'attend Lyrion Music Server (par exemple lorsque MusicIP lui-même s'exécute sous Wine et signale des chemins Windows, ou lorsqu'il s'exécute sur un hôte différent avec une structure de montage différente), activez cette option et configurez un chemin source et un chemin de destination pour qu'ils soient traduits automatiquement.
+	NL	Als MusicIP liedpaden meldt die niet overeenkomen met wat Lyrion Music Server verwacht (bijvoorbeeld wanneer MusicIP zelf onder Wine draait en Windows-stijl paden meldt, of wanneer MusicIP op een andere host met een andere mount-indeling draait), schakel dit in en configureer een bron- en doelpad om deze automatisch te laten omzetten.
 
 MUSICIP_PATH_CONVERSION_ENABLE
+	DE	Pfadkonvertierung aktivieren
 	EN	Enable Path Conversion
+	FR	Activer la conversion de chemin
+	NL	Padconversie inschakelen
 
 MUSICIP_PATH_CONVERSION_SOURCE
+	DE	MusicIP-Pfad (Quelle)
 	EN	MusicIP path (source)
+	FR	Chemin MusicIP (source)
+	NL	MusicIP-pad (bron)
 
 MUSICIP_PATH_CONVERSION_DEST
+	DE	Lyrion-Pfad (Ziel)
 	EN	Lyrion path (destination)
+	FR	Chemin Lyrion (destination)
+	NL	Lyrion-pad (bestemming)
 
 SETUP_MMSPORT
 	CS	HTTP port MusicIP
