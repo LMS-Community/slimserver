@@ -99,13 +99,30 @@
 			[% END %]
 		[% END %]
 
-		[% WRAPPER settingGroup title="SETUP_MMSHOST" desc="SETUP_MMSHOST_DESC" %]
-			<input type="text" class="stdedit" name="pref_host" id="host" value="[% prefs.pref_host || 'localhost' | html %]" size="40">
+		[% IF prefs.exists('pref_host') %]
+			[% WRAPPER settingGroup title="SETUP_MMSHOST" desc="SETUP_MMSHOST_DESC" %]
+				<input type="text" class="stdedit" name="pref_host" id="host" value="[% prefs.pref_host || 'localhost' | html %]" size="40">
+			[% END %]
 		[% END %]
 
 		[% IF prefs.exists('pref_port') %]
 			[% WRAPPER settingGroup title="SETUP_MMSPORT" desc="SETUP_MMSPORT_DESC" %]
 				<input type="text" class="stdedit" name="pref_port" id="port" value="[% prefs.pref_port | html %]" size="5">
+			[% END %]
+		[% END %]
+
+		[% IF prefs.exists('pref_path_conversion_enabled') %]
+			[% WRAPPER settingGroup title="MUSICIP_PATH_CONVERSION" desc="MUSICIP_PATH_CONVERSION_DESC" %]
+				<input type="checkbox" name="pref_path_conversion_enabled" id="path_conversion_enabled" value="1" [% IF prefs.pref_path_conversion_enabled %]checked[% END %]>
+				<label for="path_conversion_enabled">[% "MUSICIP_PATH_CONVERSION_ENABLE" | string %]</label>
+			[% END %]
+
+			[% WRAPPER settingGroup title="MUSICIP_PATH_CONVERSION_SOURCE" %]
+				<input type="text" class="stdedit" name="pref_path_conversion_source" id="path_conversion_source" value="[% prefs.pref_path_conversion_source | html %]" size="40" placeholder="Z:\music">
+			[% END %]
+
+			[% WRAPPER settingGroup title="MUSICIP_PATH_CONVERSION_DEST" %]
+				<input type="text" class="stdedit" name="pref_path_conversion_dest" id="path_conversion_dest" value="[% prefs.pref_path_conversion_dest | html %]" size="40" placeholder="/music">
 			[% END %]
 		[% END %]
 

@@ -8,6 +8,7 @@ package Slim::Plugin::MusicMagic::Common;
 # version 2.
 
 use strict;
+use File::Spec::Functions qw(catfile);
 use URI::Escape;
 
 use Slim::Utils::Log;
@@ -72,7 +73,45 @@ sub checkDefaults {
 		playlist_suffix => '',
 		scan_interval   => 3600,
 		port            => 10002,
+		path_conversion_enabled => 0,
+		path_conversion_source  => '',
+		path_conversion_dest    => '',
 	}, 'Slim::Plugin::MusicMagic::Prefs');
+}
+
+# Path Conversion - similar to the SugarCube LMS plugin's own feature of
+# the same kind. Lets the user configure a source (MusicIP-side) path
+# prefix and a destination (Lyrion-side) path prefix, for cases where
+# MusicIP reports paths that don't match what Lyrion expects - e.g. when
+# MusicIP itself runs under Wine (in which case it reports paths in
+# Windows drive-letter form, since Wine maps the Linux filesystem root
+# to a drive, typically Z:\), or when running MusicIP on a different
+# host/container than Lyrion Music Server with a different mount layout.
+#
+# Disabled by default, and a no-op unless both the source and
+# destination are configured, so this never affects a standard
+# native-platform MusicIP install.
+sub translatePath {
+	my $path = shift;
+
+	return $path unless $prefs->get('path_conversion_enabled');
+
+	my $source = $prefs->get('path_conversion_source');
+	my $dest   = $prefs->get('path_conversion_dest');
+
+	return $path unless defined $source && length($source) && defined $dest;
+
+	if ($path =~ s|^\Q$source\E||i) {
+		# re-join whatever's left of the path using the destination's
+		# own (OS-native) separator, so this works symmetrically in
+		# either direction - e.g. a Windows-style source converted to
+		# a Unix-style dest (MusicIP under Wine), or the other way
+		# around - rather than just blindly flipping backslashes.
+		my @parts = grep { length } split m|[\\/]|, $path;
+		$path = @parts ? catfile($dest, @parts) : $dest;
+	}
+
+	return $path;
 }
 
 sub getGenreList {
