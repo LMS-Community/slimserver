@@ -869,9 +869,8 @@ sub getMix {
 		($prefs->client($client)->get('mix_genre_filter') || $prefs->get('mix_genre_filter')) :
 		$prefs->get('mix_genre_filter');
 
-	# Defensive: guard against a non-arrayref value the same way as in
-	# Settings.pm - local hardening only, unrelated to this PR.
-	my $genreFilterHash = { map { lc($_) => 1 } @{ ref $genreFilter eq 'ARRAY' ? $genreFilter : [] } };
+	$genreFilter = Slim::Plugin::MusicMagic::Common::genreFilterList($genreFilter);
+	my $genreFilterHash = { map { lc($_) => 1 } @$genreFilter };
 
 	# genre exclusion happens after MusicIP has already picked the mix, so it can leave us
 	# short of the requested size - ask for extra up front so we've got a top-up pool to draw from
@@ -942,13 +941,7 @@ sub getMix {
 
 			my $url = Slim::Utils::Misc::fileURLFromPath($songs[$j]);
 
-			# Bug fix: this was "next unless", which - since $canTopUp
-			# is false whenever no genre exclusion filter is configured
-			# (the common case) - meant every single song got skipped
-			# and no mix was ever built at all unless a filter was set.
-			# Should only skip a song when top-up is active AND that
-			# song actually has an excluded genre; otherwise keep it.
-			# Local hardening only, unrelated to this PR.
+			# $canTopUp is false whenever no genre exclusion filter is configured
 			next if $canTopUp && _trackHasExcludedGenre($url, $genreFilterHash);
 
 			push @mix, $url;

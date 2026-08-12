@@ -56,13 +56,8 @@ sub handler {
 
 	my ($classPrefs) = $class->prefs($client);
 
-	# Defensive: guard against a non-arrayref value (e.g. a stray string
-	# left over from an older/corrupted prefs file) rather than just
-	# falling back on truthiness, which doesn't catch that case and
-	# crashes the dereference below. Local hardening only, unrelated to
-	# this PR - not something to carry into the upstream diff.
-	my $genreFilter = $classPrefs->get('mix_genre_filter');
-	$params->{'mix_genre_filter'} = { map { $_ => 1 } @{ ref $genreFilter eq 'ARRAY' ? $genreFilter : [] } };
+	my $genreFilter = Slim::Plugin::MusicMagic::Common::genreFilterList($classPrefs->get('mix_genre_filter'));
+	$params->{'mix_genre_filter'} = { map { $_ => 1 } @$genreFilter };
 
 	return $class->SUPER::handler($client, $params);
 }
