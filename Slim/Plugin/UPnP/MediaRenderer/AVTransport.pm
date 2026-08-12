@@ -149,6 +149,9 @@ sub _clientEvent {
 						$currentURI = $pd->{AVT}->{NextAVTransportURI};
 						$currentURIMetadata = $pd->{AVT}->{NextAVTransportURIMetaData};
 
+						my $currentMeta = $_trackMeta{$nextId};
+						my $currentDuration = $currentMeta ? $currentMeta->{res}->{duration} : '00:00:00';
+
 						# Remove track that just finished playing. The plugin protocol
 						# handler can only return metadata for currentURI and NextURI
 						$client->execute(["playlist", "delete", 0]);
@@ -160,6 +163,8 @@ sub _clientEvent {
 							AVTransportURIMetaData		=> $currentURIMetadata,
 							NextAVTransportURI			=> '',
 							NextAVTransportURIMetaData	=> '',
+							CurrentTrackDuration		=> $currentDuration,
+							CurrentMediaDuration		=> $currentDuration,
 						} );
 					}
 					elsif (main::DEBUGLOG && $log->is_debug) {

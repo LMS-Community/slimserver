@@ -161,7 +161,7 @@ sub new {
 		url     => $streamUrl,
 		song    => $args->{song},
 		client  => $client,
-		bitrate => 128_000, # XXX
+		bitrate => $song->bitrate() || 128_000,
 	} ) || return;
 
 	${*$sock}{contentType} = 'audio/mpeg'; # XXX
