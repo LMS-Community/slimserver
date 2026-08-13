@@ -80,6 +80,17 @@ sub checkDefaults {
 	}, 'Slim::Plugin::MusicMagic::Prefs');
 }
 
+# setValidate('array', 'mix_genre_filter') above only stops *new* bad
+# values from being stored - it doesn't repair a non-arrayref value
+# already sitting in an existing prefs file (confirmed in practice: a
+# live install crashed here with a stored non-array value). Coerce to
+# an arrayref at read time too, shared by Settings.pm and Plugin.pm.
+sub genreFilterList {
+	my $value = shift;
+
+	return ref $value eq 'ARRAY' ? $value : [];
+}
+
 # Path Conversion - similar to the SugarCube LMS plugin's own feature of
 # the same kind. Lets the user configure a source (MusicIP-side) path
 # prefix and a destination (Lyrion-side) path prefix, for cases where

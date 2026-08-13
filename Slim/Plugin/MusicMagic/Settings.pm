@@ -55,7 +55,9 @@ sub handler {
 	$params->{'genre_list'} = Slim::Plugin::MusicMagic::Common::getGenreList();
 
 	my ($classPrefs) = $class->prefs($client);
-	$params->{'mix_genre_filter'} = { map { $_ => 1 } @{ $classPrefs->get('mix_genre_filter') || [] } };
+
+	my $genreFilter = Slim::Plugin::MusicMagic::Common::genreFilterList($classPrefs->get('mix_genre_filter'));
+	$params->{'mix_genre_filter'} = { map { $_ => 1 } @$genreFilter };
 
 	return $class->SUPER::handler($client, $params);
 }
