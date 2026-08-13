@@ -27,6 +27,7 @@ my %filterHash = ();
 my $prefs = preferences('plugin.musicip');
 
 $prefs->setValidate('num', qw(scan_interval port mix_variety mix_style reject_size));
+$prefs->setValidate('array', 'mix_genre_filter');
 
 $prefs->setChange(
 	sub {
@@ -77,14 +78,6 @@ sub checkDefaults {
 		path_conversion_source  => '',
 		path_conversion_dest    => '',
 	}, 'Slim::Plugin::MusicMagic::Prefs');
-}
-
-# Coerce a mix_genre_filter pref value into an arrayref, guarding against
-# a stray non-arrayref value (e.g. left over from an older prefs file).
-sub genreFilterList {
-	my $value = shift;
-
-	return ref $value eq 'ARRAY' ? $value : [];
 }
 
 # Path Conversion - similar to the SugarCube LMS plugin's own feature of
