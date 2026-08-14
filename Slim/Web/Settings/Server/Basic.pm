@@ -96,7 +96,7 @@ sub handler {
 				push @paths, $path;
 
 				if ($paramRef->{"pref_rescan_mediadir$i"}) {
-					$singleDirScan = Slim::Utils::Misc::fileURLFromPath($path);
+					$singleDirScan = Slim::Utils::Misc::fileURLFromPath(Slim::Utils::Unicode::encode_locale($path));
 				}
 
 				push @{ $ignoreFolders }, $path if !$paramRef->{"pref_ignoreInAudioScan$i"};
