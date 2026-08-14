@@ -13,6 +13,7 @@ use strict;
 use base qw(Slim::Utils::Accessor);
 
 use Fcntl qw(SEEK_CUR SEEK_SET);
+use List::Util qw(first max min);
 
 use Slim::Utils::Log;
 use Slim::Schema;
@@ -620,7 +621,23 @@ sub open {
 
 				$self->_transcoded(1);
 
-				$self->_streambitrate(guessBitrateFromFormat($transcoder->{'streamformat'}, $transcoder->{'rateLimit'}) || 0);
+				my $streamformat = $transcoder->{'streamformat'};
+				$self->_streamFormat($streamformat);
+				my $rate;
+				my $sampleSize;
+
+				if ($streamformat eq 'mp3') {
+					$rate = $transcoder->{'rateLimit'};  # bitrate limit
+					$self->samplesize("");  # clear samplesize for mp3
+					$self->samplerate( min($transcoder->{'sampleRate'}, $transcoder->{'samplerateLimit'}) );
+				} else {
+					$rate = $transcoder->{'samplerateLimit'};  # samplerate limit
+					$sampleSize = $transcoder->{'sampleSize'};
+					$self->samplesize($sampleSize);
+					$self->samplerate($rate);
+				}
+
+				$self->_streambitrate(guessBitrateFromFormat($streamformat, $rate, $sampleSize) || 0);
 			}
 		} # ENDIF main::TRANSCODING
 
@@ -681,18 +698,22 @@ sub open {
 
 # Static method
 sub guessBitrateFromFormat {
-	my ($format, $maxRate) = @_;
+	my ($format, $rate, $sampleSize) = @_;
 
 	# Hack to set up stream bitrate for songTime for SliMP3/SB1
 	# Also used when rebuffering, etc.
+
+	if (!defined $sampleSize) {
+		$sampleSize = 16;
+	}
 	if ($format eq 'mp3') {
-		return ($maxRate || 320) * 1000;
+		return ($rate || 320) * 1000;
 	} elsif ($format =~ /wav|aif|pcm/) {
 		# Just assume standard rate
-		return 44_100 * 16 * 2;
+		return $rate * $sampleSize * 2;
 	} elsif ($format eq 'flc') {
-		# Assume 50% compression at standard rate
-		return 44_100 * 16;
+		# Assume 50% compression at max rate
+		return $rate * $sampleSize;
 	}
 }
 
@@ -734,6 +755,7 @@ sub isRemote            {return $_[0]->currentTrackHandler()->isRemote();}
 sub streamformat        {return $_[0]->_streamFormat() || Slim::Music::Info::contentType($_[0]->currentTrack()->url);}
 sub isPlaylist          {return $_[0]->_playlist();}
 sub status              {return $_[0]->_status();}
+sub transcoded          {return $_[0]->_transcoded();}
 
 sub getSeekDataByPosition {
 	my ($self, $bytesReceived) = @_;

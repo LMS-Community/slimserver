@@ -4111,6 +4111,11 @@ sub statusQuery {
 			$request->addResult('replay_gain', $trackGain);
 		}
 
+		my $transcoded = $song->transcoded();
+		if (defined $transcoded) {
+			$request->addResult('is_transcoded', $transcoded);
+		}
+
 		if ($tags =~ /b/) {   # get the song's current bitrate
 			my $bitrate = $song->streambitrate();
 			if (defined $bitrate && $bitrate) {
