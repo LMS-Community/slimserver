@@ -324,7 +324,7 @@ sub updateStandaloneArtwork {
 
 				Slim::Utils::Scheduler::unpause() if !main::SCANNER;
 			}
-			elsif ( $cover =~ /^https?:/ && (!$album_artwork || $album_artwork ne $cover) ) {
+			elsif ( $cover =~ /^https?:/ && (!$album_artwork || $album_artwork ne $coverid) ) {
 				$sth_update_albums->execute( $newCoverId, $albumid );
 
 				if ( ++$i % 50 == 0 ) {
