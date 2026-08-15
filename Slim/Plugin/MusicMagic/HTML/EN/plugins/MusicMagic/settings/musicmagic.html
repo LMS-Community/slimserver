@@ -83,7 +83,7 @@
 
 			[% FOREACH genre = genre_list %]
 
-				<option [% IF mix_genre_filter.item(genre) %]selected [% END %]value="[% genre | html %]">[% genre | html %]</option>
+				<option [% IF mix_genre_filter_lookup.item(genre) %]selected [% END %]value="[% genre | html %]">[% genre | html %]</option>
 
 			[%- END -%]
 
