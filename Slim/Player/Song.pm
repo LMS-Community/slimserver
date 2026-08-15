@@ -13,7 +13,7 @@ use strict;
 use base qw(Slim::Utils::Accessor);
 
 use Fcntl qw(SEEK_CUR SEEK_SET);
-use List::Util qw(first max min);
+use List::Util qw(min);
 
 use Slim::Utils::Log;
 use Slim::Schema;
@@ -623,21 +623,23 @@ sub open {
 
 				my $streamformat = $transcoder->{'streamformat'};
 				$self->_streamFormat($streamformat);
-				my $rate;
+				
+				my $bitrate;
 				my $sampleSize;
+				my $sampleRate;
 
-				if ($streamformat eq 'mp3') {
-					$rate = $transcoder->{'rateLimit'};  # bitrate limit
-					$self->samplesize("");  # clear samplesize for mp3
+				if ($streamformat =~ /mp3|aac/) {
+					$bitrate = $transcoder->{'rateLimit'};  # bitrate limit
+					$self->samplesize("");  # clear samplesize for lossy formats
 					$self->samplerate( min($transcoder->{'sampleRate'}, $transcoder->{'samplerateLimit'}) );
 				} else {
-					$rate = $transcoder->{'samplerateLimit'};  # samplerate limit
+					$sampleRate = $transcoder->{'samplerateLimit'};  # samplerate limit
 					$sampleSize = $transcoder->{'sampleSize'};
 					$self->samplesize($sampleSize);
-					$self->samplerate($rate);
+					$self->samplerate($sampleRate);
 				}
 
-				$self->_streambitrate(guessBitrateFromFormat($streamformat, $rate, $sampleSize) || 0);
+				$self->_streambitrate(guessBitrateFromFormat($streamformat, $bitrate, $sampleSize, $sampleRate) || 0);
 			}
 		} # ENDIF main::TRANSCODING
 
@@ -698,7 +700,7 @@ sub open {
 
 # Static method
 sub guessBitrateFromFormat {
-	my ($format, $rate, $sampleSize) = @_;
+	my ($format, $bitrate, $sampleSize, $sampleRate) = @_;
 
 	# Hack to set up stream bitrate for songTime for SliMP3/SB1
 	# Also used when rebuffering, etc.
@@ -706,14 +708,17 @@ sub guessBitrateFromFormat {
 	if (!defined $sampleSize) {
 		$sampleSize = 16;
 	}
-	if ($format eq 'mp3') {
-		return ($rate || 320) * 1000;
+	if (!defined $sampleRate) {
+		$sampleRate = 44_100;
+	}
+	if ($format =~ /mp3|aac/) {
+		return ($bitrate || 320) * 1000;
 	} elsif ($format =~ /wav|aif|pcm/) {
 		# Just assume standard rate
-		return $rate * $sampleSize * 2;
+		return $sampleRate * $sampleSize * 2;
 	} elsif ($format eq 'flc') {
 		# Assume 50% compression at max rate
-		return $rate * $sampleSize;
+		return $sampleRate * $sampleSize;
 	}
 }
 
