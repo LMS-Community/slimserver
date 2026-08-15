@@ -87,7 +87,10 @@ sub findStandaloneArtwork {
 				my $formatStr = $1;
 				my $suffix = $2;
 
+				# Maybe a track instance was passed in, but no longer from updateStandaloneArtwork() which gives us
+				# the trackid instead, as we only need to instantiate a track if 'titleformatter' artwork naming is in use.
 				my $track = $trackAttributes && delete $trackAttributes->{_track};
+				$track ||= Slim::Schema->find('Track', $trackAttributes->{_trackid}) if $trackAttributes->{_trackid};
 
 				# Merge attributes to use with TitleFormatter
 				# XXX This may break for some people as it's not using a Track object anymore
@@ -200,23 +203,21 @@ sub _findStandaloneArtwork {
 	my @images;
 
 	if (main::SCANNER) {
-		my $sql = 'SELECT url FROM scanned_pics WHERE url ';
+		my $sql = "SELECT path FROM scanned_pics WHERE (status IS NULL OR status <> 'D') AND ";
 		if (scalar @candidates) {
-			$sql .= sprintf('IN (%s)', join(',', map { '?' } @candidates));
+			$sql .= sprintf('path IN (%s)', join(',', map { '?' } @candidates));
 		}
 		else {
-			# doing a range search helps us avoid a LIKE query, which would result in a scan
-			$sql .= '>= ? AND url < ?';
-			my $pathUrl = Slim::Utils::Misc::fileURLFromPath($parentDir);
-			push @candidates, $pathUrl,  $pathUrl . chr(0xff);
+			$sql .= 'dir = ?';
+			push @candidates, $parentDir;
 		}
 
 		my $sth = Slim::Schema->dbh->prepare_cached($sql);
 
 		@images = Slim::Utils::Misc::uniq(map {
-			Slim::Utils::Misc::pathFromFileURL($_->[0]);
+			$_->[0]
 		} @{
-			$dbh->selectall_arrayref($sth, undef, map { Slim::Utils::Misc::fileURLFromPath($_) } @candidates)
+			$dbh->selectall_arrayref($sth, undef, @candidates)
 		});
 	}
 	else {
@@ -256,71 +257,48 @@ sub updateStandaloneArtwork {
 	my $class = shift;
 	my $cb    = shift; # optional callback when done (main process async mode)
 
+### I might have missed it, but I can't see where this might be called in main process async mode.
+### If it is, we'll need more work to populate scanned_pics in the main process or just keep a version of the old subroutine for that use.
+
 	my $dbh = Slim::Schema->dbh;
 
-	my $where = qq{
-		tracks.cover LIKE '%jpg'
-		OR tracks.cover LIKE '%jpeg'
-		OR tracks.cover LIKE '%png'
-		OR tracks.cover LIKE '%gif'
-		OR tracks.cover LIKE 'http%'
-		OR tracks.coverid IS NULL
-	};
-
-	# get singledir parameter from the scanner if available
-	my $singledir = main::SCANNER ? $ARGV[-1] : undef;
-	if ($singledir && $singledir eq 'onlinelibrary') {
-		# shortcut for online library scan only - ignore local files
-		$where = qq{
-			tracks.url NOT LIKE 'file://%'
-			AND tracks.cover LIKE 'http%'
-			AND tracks.coverid IS NULL
-		};
-	}
-	elsif ($singledir) {
-		$singledir = Slim::Utils::Misc::fileURLFromPath(Slim::Utils::Unicode::encode_locale($singledir));
-		$where = qq{
-			tracks.url LIKE '$singledir%'
-			AND ($where)
-		};
-	}
-
-	# Find all tracks with un-cached artwork:
-	# * All distinct cover values where cover isn't 0 and cover_cached is null
-	# * Tracks share the same cover art when the cover field is the same
-	#   (same path or same embedded art length).
-	my $sql = qq{
-		SELECT
-			tracks.id,
-			tracks.url,
-			tracks.cover,
-			tracks.coverid,
-			albums.id AS albumid,
-			albums.title AS album_title,
-			albums.artwork AS album_artwork
-		FROM  tracks
-		JOIN  albums ON (tracks.album = albums.id)
-		WHERE $where
-		GROUP BY tracks.cover, tracks.album
-	};
-
-	my $sth_update_tracks = $dbh->prepare( qq{
-	    UPDATE tracks
-	    SET    cover = ?, coverid = ?, cover_cached = NULL
-	    WHERE  album = ?
+	# unflag existing unchanged artwork
+	$dbh->do( qq{
+		UPDATE scanned_pics SET status = NULL
+		WHERE status = 'E'
+		AND EXISTS (SELECT * FROM tracks WHERE tracks.coverid = scanned_pics.coverid)
 	} );
 
-	my $sth_update_albums = $dbh->prepare( qq{
+	# for online artwork, update album artwork to first track coverid
+	### SQLITE ONLY, there's a different syntax for MySql.
+	### I considered adding rows to scanned_pics for remote images so that they'd be processed in the loop below, but I think this is more efficient.
+	$dbh->do( qq{
 		UPDATE albums
-		SET    artwork = ?
-		WHERE  id = ?
+		SET artwork = tracks.coverid
+		FROM tracks, (
+			SELECT coverid
+			FROM tracks
+			LIMIT 1
+		)
+		WHERE tracks.album = albums.id
+		AND tracks.cover LIKE 'https%'
+		AND tracks.coverid <> albums.artwork
 	} );
+
+	Slim::Schema->forceCommit;
+
+	my $sql_scanned_pics = qq{
+		SELECT path, coverid, GROUP_CONCAT(status)
+		FROM scanned_pics
+		WHERE status IS NOT NULL
+		GROUP BY path, coverid
+	};
 
 	my ($count) = $dbh->selectrow_array( qq{
-		SELECT COUNT(*) FROM ( $sql ) AS t1
+		SELECT COUNT(*) FROM ( $sql_scanned_pics ) AS t1
 	} );
 
-	$log->error("Starting updateStandaloneArtwork for $count albums");
+	$log->error("Starting updateStandaloneArtwork for $count images");
 
 	if ( !$count ) {
 		$cb && $cb->();
@@ -335,72 +313,79 @@ sub updateStandaloneArtwork {
 		bar   => 1,
 	} );
 
-	my $sth = $dbh->prepare($sql);
-	$sth->execute;
+	my $pic_sth = $dbh->prepare($sql_scanned_pics);
+	my ($picPath, $picCoverid, $status);
+	$pic_sth->bind_columns(\$picPath, \$picCoverid, \$status);
 
-	my ($trackid, $url, $cover, $coverid, $albumid, $album_title, $album_artwork);
-	$sth->bind_columns(\$trackid, \$url, \$cover, \$coverid, \$albumid, \$album_title, \$album_artwork);
+	my $sql_tracks = qq{
+		SELECT 	tracks.id, tracks.url,
+			tracks.cover,
+			albums.id AS albumid,
+			albums.title AS album_title,
+			albums.artwork AS album_artwork
+		FROM	tracks JOIN albums ON albums.id = tracks.album
+		WHERE	url BETWEEN ? AND ?
+		AND	instr(substr(url, length(?)+2), "/") < 1
+		ORDER BY albums.id
+	};
+	my $tracks_sth = $dbh->prepare($sql_tracks);
+
+	my $sth_scanned_pics = $dbh->prepare( qq{
+		SELECT coverid FROM scanned_pics WHERE path = ?
+	} );
+
+	my $sth_update_tracks = $dbh->prepare( qq{
+	    UPDATE tracks
+	    SET    cover = ?, coverid = ?, cover_cached = NULL
+	    WHERE  id = ?
+	} );
+
+	my $sth_update_albums = $dbh->prepare( qq{
+		UPDATE albums
+		SET    artwork = ?
+		WHERE  id = ?
+	} );
+
+	my $previousAlbum = undef;
 
 	my $i = 0;
 	my $t = 0;
 
-	my $work = sub {
-		if ( $sth->fetch ) {
-			my $newCoverId;
+	$pic_sth->execute;
 
-			$progress->update( $album_title );
+	my $work = sub {
+		if ( $pic_sth->fetch ) {
 
 			if ( $t < time ) {
 				Slim::Schema->forceCommit;
 				$t = time + 5;
 			}
 
-			# check for updated artwork
-			if ( $cover ) {
-				$newCoverId = Slim::Schema::Track->generateCoverId({
-					cover => $cover,
-					url   => $url,
-				});
-			}
+			my $imageDirUrl = Slim::Utils::Misc::fileURLFromPath(dirname($picPath));
+			my @params = ($imageDirUrl, $imageDirUrl . chr(0xff), $imageDirUrl);
 
-			# check for new artwork to unchanged file
-			# - !$cover: there wasn't any previously
-			# - !$newCoverId: existing file has disappeared
-			if ( (!$cover || !$newCoverId) && Slim::Music::Info::isFileURL($url) ) {
-				# store properties in a hash
-				my $track = Slim::Schema->find('Track', $trackid);
+			my @tracks =  @{
+				$dbh->selectall_arrayref($tracks_sth, { Slice => {} }, @params)
+			};
 
-				if ($track) {
-					my $newCover = Slim::Music::Artwork->findStandaloneArtwork(
-						{ _track => $track },	# pass track object to avoid deflation unless necessary
-						{},
-						Slim::Utils::Misc::fileURLFromPath(
-							dirname(Slim::Utils::Misc::pathFromFileURL($url))
-						),
-					);
+			foreach my $track (@tracks) {
 
-					if ($newCover) {
-						$cover = $newCover;
+				my $newCover = Slim::Music::Artwork->findStandaloneArtwork(
+					{ _trackid => $track->{id} },
+					{},
+					$imageDirUrl
+				);
 
-						$newCoverId = Slim::Schema::Track->generateCoverId({
-							cover => $newCover,
-							url   => $url,
-						});
+				if ( $track->{cover} ne $newCover ) {
+					my ($newCoverid) = $dbh->selectrow_array($sth_scanned_pics, undef, $newCover);
+					$sth_update_tracks->execute( $newCover, $newCoverid, $track->{id} );
+
+					if ( $previousAlbum ne $track->{albumid} && $newCoverid ne $track->{album_artwork} ) {
+						$progress->update( $track->{album_title} );
+						$sth_update_albums->execute( $newCoverid, $track->{albumid} );
+						$log->warn('Artwork has been removed for ' . $track->{album_title}) if !$newCoverid;
 					}
 				}
-			}
-
-			if ( $newCoverId && ($coverid || '') ne $newCoverId ) {
-				# Make sure album.artwork points to this track, as it may not
-				# be pointing there now because we did not join tracks via the
-				# artwork column.
-				if ( ($album_artwork || '') ne $newCoverId ) {
-					$sth_update_albums->execute( $newCoverId, $albumid );
-				}
-
-				# Update the rest of the tracks on this album
-				# to use the same coverid and cover_cached status
-				$sth_update_tracks->execute( $cover, $newCoverId, $albumid );
 
 				if ( ++$i % 50 == 0 ) {
 					Slim::Schema->forceCommit;
@@ -408,26 +393,12 @@ sub updateStandaloneArtwork {
 				}
 
 				Slim::Utils::Scheduler::unpause() if !main::SCANNER;
-			}
-			elsif ( $cover =~ /^https?:/ && (!$album_artwork || $album_artwork ne $cover) ) {
-				$sth_update_albums->execute( $newCoverId, $albumid );
 
-				if ( ++$i % 50 == 0 ) {
-					Slim::Schema->forceCommit;
-					$t = time + 5;
-				}
-
-				Slim::Utils::Scheduler::unpause() if !main::SCANNER;
-			}
-			# cover art has disappeared
-			elsif ( !$newCoverId ) {
-				$sth_update_albums->execute( undef, $albumid );
-				$sth_update_tracks->execute( 0, undef, $albumid );
-
-				$log->warn('Artwork has been removed for ' . $album_title);
+				$previousAlbum = $track->{albumid};
 			}
 
 			return 1;
+
 		}
 
 		$progress->final;
@@ -435,6 +406,7 @@ sub updateStandaloneArtwork {
 		$cb && $cb->();
 
 		return 0;
+
 	};
 
 	if ( main::SCANNER ) {
@@ -447,6 +419,7 @@ sub updateStandaloneArtwork {
 		# Run async in main process
 		Slim::Utils::Scheduler::add_ordered_task($work);
 	}
+
 }
 
 sub getImageContentAndType {
@@ -499,6 +472,7 @@ sub generateImageId {
 
 	if ( $image =~ /^https?/ ) {
 		$mtime = $size = 1;
+		$args->{url} = $image; # use the image url, not the music file url 
 	}
 	elsif ( $image =~ /^\d+$/ ) {
 		# Cache is based on mtime/size of the file containing embedded art
@@ -506,8 +480,10 @@ sub generateImageId {
 		$size  = $args->{size};
 	}
 	elsif ( -e $image ) {
+		# We will no longer get here from the scanner process, as we already got the coverid from the scanned_pics table.
 		# Cache is based on mtime/size of artwork file
 		($size, $mtime) = (stat _)[7, 9];
+		$args->{url} = $image; # use the image path, not the music file url
 	}
 
 	if ( $mtime && $size ) {

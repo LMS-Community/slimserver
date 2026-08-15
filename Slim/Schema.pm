@@ -442,7 +442,7 @@ sub migrateDB {
 	# initialize scanner helper tables
 	Slim::Utils::SQLHelper->executeSQLFile(
 		$driver, $class->storage->dbh, "schema_scanner.sql"
-	);
+	) if main::SCANNER; ### temporary, so we keep the contents from the last scan for debugging
 
 	# Migrate to the latest schema version - see SQL/$driver/schema_\d+_up.sql
 	my $dbix = DBIx::Migration->new({
@@ -1682,6 +1682,12 @@ sub _newTrack {
 		return undef;
 	}
 
+	my $dbh = $self->dbh;
+	my $sql_scanned_pics = qq{
+		SELECT coverid FROM scanned_pics WHERE path = ?
+	};
+	my $sth_scanned_pics = $dbh->prepare($sql_scanned_pics);
+
 	my $dirname            = dirname($url);
 	my $deferredAttributes = {};
 
@@ -1820,9 +1826,12 @@ sub _newTrack {
 		$columnValueHash{cover} = $cover;
 	}
 
+#	if ( $columnValueHash{cover} =~ /^https?/ || $columnValueHash{cover} =~ /^\d+$/ ) { ###combine the regex if this works!!!
 	if ( $columnValueHash{cover} ) {
 		# Generate coverid value based on artwork, mtime, filesize
-		$columnValueHash{coverid} = Slim::Schema::Track->generateCoverId( {
+		# Get coverid from scanned_pics if possible (ie when running in the scanner)
+		($columnValueHash{coverid}) = $dbh->selectrow_array($sth_scanned_pics, undef, $columnValueHash{cover});
+		$columnValueHash{coverid} ||= Slim::Schema::Track->generateCoverId( {
 			cover => $columnValueHash{cover},
 			url   => $url,
 			mtime => $columnValueHash{timestamp},

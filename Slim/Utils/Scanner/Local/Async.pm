@@ -13,7 +13,7 @@ package Slim::Utils::Scanner::Local::Async;
 
 use strict;
 
-use File::Basename qw(fileparse);
+use File::Basename qw(basename dirname);
 use File::Next;
 use File::Spec ();
 use Path::Class ();
@@ -46,11 +46,14 @@ sub find {
 		(?, ?, ?)
 	} );
 
+	# Populate enhanced scanned_pics table
 	my $imageSth = $dbh->prepare_cached( qq{
 		INSERT INTO scanned_pics
-		(url, timestamp, filesize)
+		(dir, path, timestamp, filesize, coverid, status)
 		VALUES
-		(?, ?, ?)
+		(?, ?, ?, ?, ?,
+		CASE WHEN (SELECT COUNT(*) FROM tracks WHERE tracks.cover = ?) = 0 THEN 'N' ELSE 'E' END
+		)
 	} );
 
 	my $types = Slim::Music::Info::validTypeExtensions( ($args->{types} || 'audio') . '|image' );
@@ -169,13 +172,24 @@ sub find {
 		my $size  = -d $file ? 0 : ($stat[7] || 0);
 
 		my ($ext) = $file =~ /\.([^.]+)$/;
-		my $sth = ($ext && Slim::Music::Info::isImage($file, lc($ext))) ? $imageSth : $audioSth;
 
-		$sth->execute(
-			Slim::Utils::Misc::fileURLFromPath($file),
-			$mtime,
-			$size,
-		);
+		if ( $ext && Slim::Music::Info::isImage($file, lc($ext)) ) {
+			$imageSth->execute(
+				dirname($file),
+				$file,
+				$mtime,
+				$size,
+				substr( safe_md5_hex( $file . $mtime . $size ), 0, 8 ),
+				$file
+			);
+		}
+		else {
+			$audioSth->execute(
+				Slim::Utils::Misc::fileURLFromPath($file),
+				$mtime,
+				$size
+			);
+		}
 
 		return 1;
 	};

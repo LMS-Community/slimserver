@@ -8,8 +8,15 @@ CREATE INDEX scannedUrlIndex ON scanned_files (url);
 
 DROP TABLE IF EXISTS scanned_pics;
 CREATE TABLE scanned_pics (
-  url text NOT NULL,
+  dir text,
+  path text NOT NULL,
   timestamp int(10),
-  filesize int(10)
+  filesize int(10),
+  coverid char(8),
+  status char(1)
 );
-CREATE INDEX scannedPicUrlIndex ON scanned_pics (url);
+CREATE INDEX scannedPicUrlIndex ON scanned_pics (path);
+CREATE INDEX scannedPicDirIndex ON scanned_pics (dir);
+create index scannedPicStatusidx on scanned_pics(status);
+
+CREATE INDEX IF NOT EXISTS trackscoveridx ON tracks(cover);

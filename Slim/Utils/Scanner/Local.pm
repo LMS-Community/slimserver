@@ -64,6 +64,7 @@ sub find {
 		# XXX how best to delete files in non-recursive mode?
 		# Delete the directory itself and all children
 		$dbh->do("DELETE FROM scanned_files WHERE url = '${file}' OR url LIKE '${file}/%'");
+		$dbh->do("DELETE FROM scanned_pics WHERE dir LIKE '${path}/%'");
 	}
 
 	stat $path;
@@ -238,6 +239,20 @@ sub rescan {
 				AND             url LIKE '$basedir%'
 				AND             `virtual` IS NULL
 				AND             content_type $ctFilter
+		} );
+
+		# add removed artwork to scanned_pics with a status of Deleted
+		$dbh->do( qq{
+			INSERT INTO scanned_pics (path, status)
+				SELECT DISTINCT(cover), 'D'
+				FROM tracks
+				WHERE NOT EXISTS (
+					SELECT path FROM scanned_pics
+					WHERE scanned_pics.path = tracks.cover
+				)
+				AND cover NOT LIKE 'https%'
+				AND CAST(CAST(cover AS INTEGER) AS TEXT) <> cover
+				AND             url LIKE '$basedir%'
 		} );
 
 		my $inDBOnlySQL = qq{
