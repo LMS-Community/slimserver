@@ -429,6 +429,10 @@ sub open {
 		} elsif (main::INFOLOG && $log->is_info) {
 			 $log->info("Transcoder: streamMode=", $transcoder->{'streamMode'}, ", streamformat=", $transcoder->{'streamformat'});
 		}
+		
+		# Init song's sample rate and sample size before any transcoding
+		$self->samplerate($transcoder->{'sampleRate'});
+		$self->samplesize($transcoder->{'sampleSize'});
 
 		if ($wantTranscoderSeek && (grep(/T/, @{$transcoder->{'usedCapabilities'}}))) {
 			$transcoder->{'start'} = $self->startOffset($self->seekdata()->{'timeOffset'});
