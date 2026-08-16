@@ -252,7 +252,7 @@ sub rescan {
 				)
 				AND cover NOT LIKE 'https%'
 				AND CAST(CAST(cover AS INTEGER) AS TEXT) <> cover
-				AND             url LIKE '$basedir%'
+				AND url LIKE '$basedir%'
 		} );
 
 		my $inDBOnlySQL = qq{

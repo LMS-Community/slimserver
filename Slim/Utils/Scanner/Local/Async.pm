@@ -46,13 +46,13 @@ sub find {
 		(?, ?, ?)
 	} );
 
-	# Populate enhanced scanned_pics table
+	# Populate enhanced scanned_pics table (status E = already exists in the tracks table, status N = new)
 	my $imageSth = $dbh->prepare_cached( qq{
 		INSERT INTO scanned_pics
 		(dir, path, timestamp, filesize, coverid, status)
 		VALUES
 		(?, ?, ?, ?, ?,
-		CASE WHEN (SELECT COUNT(*) FROM tracks WHERE tracks.cover = ?) = 0 THEN 'N' ELSE 'E' END
+		CASE WHEN EXISTS (SELECT 1 FROM tracks WHERE tracks.coverid = ?) THEN 'E' ELSE 'N' END
 		)
 	} );
 
@@ -174,13 +174,14 @@ sub find {
 		my ($ext) = $file =~ /\.([^.]+)$/;
 
 		if ( $ext && Slim::Music::Info::isImage($file, lc($ext)) ) {
+			my $coverid = Slim::Music::Artwork->calculateCoverId($file, $mtime, $size);
 			$imageSth->execute(
 				dirname($file),
 				$file,
 				$mtime,
 				$size,
-				substr( safe_md5_hex( $file . $mtime . $size ), 0, 8 ),
-				$file
+				$coverid,
+				$coverid
 			);
 		}
 		else {

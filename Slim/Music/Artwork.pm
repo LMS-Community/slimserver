@@ -487,12 +487,17 @@ sub generateImageId {
 	}
 
 	if ( $mtime && $size ) {
-		$imageId = substr( safe_md5_hex( $args->{url} . $mtime . $size ), 0, 8 );
+		$imageId = $class->calculateCoverId($args->{url}, $mtime, $size);
 	}
 
 	return $imageId;
 }
 
+sub calculateCoverId {
+	my ( $class, $file, $mtime, $size ) = @_;
+
+	return substr( safe_md5_hex( $file . $mtime . $size ), 0, 8 );
+}
 
 # Private class methods
 sub _imageContentType {
