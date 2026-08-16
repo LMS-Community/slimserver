@@ -621,6 +621,8 @@ sub open {
 
 				$self->_transcoded(1);
 
+				main::INFOLOG && $log->info("Transcoder: ", Data::Dump::dump($transcoder));
+
 				my $streamformat = $transcoder->{'streamformat'};
 				$self->_streamFormat($streamformat);
 				
@@ -705,12 +707,9 @@ sub guessBitrateFromFormat {
 	# Hack to set up stream bitrate for songTime for SliMP3/SB1
 	# Also used when rebuffering, etc.
 
-	if (!defined $sampleSize) {
-		$sampleSize = 16;
-	}
-	if (!defined $sampleRate) {
-		$sampleRate = 44_100;
-	}
+	$sampleSize //= 16;
+	$sampleRate //= 44_100;
+
 	if ($format =~ /mp3|aac/) {
 		return ($bitrate || 320) * 1000;
 	} elsif ($format =~ /wav|aif|pcm/) {
