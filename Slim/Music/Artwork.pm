@@ -203,12 +203,12 @@ sub _findStandaloneArtwork {
 	my @images;
 
 	if (main::SCANNER) {
-		my $sql = "SELECT path FROM scanned_pics WHERE (status IS NULL OR status <> 'D') AND ";
+		my $sql = "SELECT full_path FROM scanned_pics WHERE (status IS NULL OR status <> 'D') AND ";
 		if (scalar @candidates) {
-			$sql .= sprintf('path IN (%s)', join(',', map { '?' } @candidates));
+			$sql .= sprintf('full_path IN (%s)', join(',', map { '?' } @candidates));
 		}
 		else {
-			$sql .= 'dir = ?';
+			$sql .= 'folder = ?';
 			push @candidates, $parentDir;
 		}
 
@@ -288,10 +288,10 @@ sub updateStandaloneArtwork {
 	Slim::Schema->forceCommit;
 
 	my $sql_scanned_pics = qq{
-		SELECT path, coverid, GROUP_CONCAT(status)
+		SELECT full_path, coverid, GROUP_CONCAT(status)
 		FROM scanned_pics
 		WHERE status IS NOT NULL
-		GROUP BY path, coverid
+		GROUP BY full_path, coverid
 	};
 
 	my ($count) = $dbh->selectrow_array( qq{
@@ -331,7 +331,7 @@ sub updateStandaloneArtwork {
 	my $tracks_sth = $dbh->prepare($sql_tracks);
 
 	my $sth_scanned_pics = $dbh->prepare( qq{
-		SELECT coverid FROM scanned_pics WHERE path = ?
+		SELECT coverid FROM scanned_pics WHERE full_path = ?
 	} );
 
 	my $sth_update_tracks = $dbh->prepare( qq{

@@ -1684,7 +1684,7 @@ sub _newTrack {
 
 	my $dbh = $self->dbh;
 	my $sql_scanned_pics = qq{
-		SELECT coverid FROM scanned_pics WHERE path = ?
+		SELECT coverid FROM scanned_pics WHERE full_path = ?
 	};
 	my $sth_scanned_pics = $dbh->prepare($sql_scanned_pics);
 

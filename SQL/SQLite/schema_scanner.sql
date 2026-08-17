@@ -8,8 +8,8 @@ CREATE INDEX scannedUrlIndex ON scanned_files (url);
 
 DROP TABLE IF EXISTS scanned_pics;
 CREATE TABLE scanned_pics (
-  dir text,
-  path text NOT NULL,
+  folder text,
+  full_path text NOT NULL,
   timestamp int(10),
   filesize int(10),
   coverid char(8),
@@ -20,8 +20,8 @@ CREATE TABLE scanned_pics (
   	-- NULL = we'll set status 'E' to NULL if after n&c music files have been processed the image is still being used.
  	--	This improves performance as we'll only process the tracks if there's also a N(ew) image 
 );
-CREATE INDEX scannedPicUrlIndex ON scanned_pics (path);
-CREATE INDEX scannedPicDirIndex ON scanned_pics (dir);
+CREATE INDEX scannedPicUrlIndex ON scanned_pics (full_path);
+CREATE INDEX scannedPicDirIndex ON scanned_pics (folder);
 create index scannedPicStatusidx on scanned_pics(status);
 
 CREATE INDEX IF NOT EXISTS trackscoveridx ON tracks(cover);
