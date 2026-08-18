@@ -277,11 +277,7 @@ sub updateStandaloneArtwork {
 		? qq{
 			UPDATE albums
 			SET artwork = tracks.coverid
-			FROM tracks, (
-				SELECT coverid
-				FROM tracks
-				LIMIT 1
-			)
+			FROM tracks
 			WHERE tracks.album = albums.id
 			AND tracks.cover LIKE 'https%'
 			AND (tracks.coverid <> albums.artwork OR albums.artwork IS NULL)
