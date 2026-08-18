@@ -38,6 +38,7 @@ use Slim::Utils::Unicode;
 use Slim::Utils::OSDetect;
 
 use constant MAX_RETRIES => 5;
+use constant IS_SQLITE => (Slim::Utils::OSDetect->getOS()->sqlHelperClass() =~ /SQLite/ ? 1 : 0);
 
 # Global caches:
 my $artworkDir = '';
@@ -270,20 +271,28 @@ sub updateStandaloneArtwork {
 	} );
 
 	# for online artwork, update album artwork to first track coverid
-	### SQLITE ONLY, there's a different syntax for MySql.
 	### I considered adding rows to scanned_pics for remote images so that they'd be processed in the loop below, but I think this is more efficient.
-	$dbh->do( qq{
-		UPDATE albums
-		SET artwork = tracks.coverid
-		FROM tracks, (
-			SELECT coverid
-			FROM tracks
-			LIMIT 1
-		)
-		WHERE tracks.album = albums.id
-		AND tracks.cover LIKE 'https%'
-		AND tracks.coverid <> albums.artwork
-	} );
+	#there's a different syntax for MySql.
+	my $sql = IS_SQLITE
+		? qq{
+			UPDATE albums
+			SET artwork = tracks.coverid
+			FROM tracks, (
+				SELECT coverid
+				FROM tracks
+				LIMIT 1
+			)
+			WHERE tracks.album = albums.id
+			AND tracks.cover LIKE 'https%'
+			AND (tracks.coverid <> albums.artwork OR albums.artwork IS NULL)
+		}
+		: qq{
+			UPDATE albums JOIN tracks ON albums.id = tracks.album
+			SET albums.artwork = tracks.coverid
+			WHERE tracks.cover LIKE 'https%'
+			AND (albums.artwork IS NULL OR tracks.coverid <> albums.artwork);
+		};
+	$dbh->do( $sql );
 
 	Slim::Schema->forceCommit;
 
