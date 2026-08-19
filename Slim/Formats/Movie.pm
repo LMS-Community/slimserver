@@ -46,6 +46,7 @@ my %tagMapping = (
 	'MusicBrainz Album Artist' => 'ALBUMARTIST',
 	'MusicBrainz Album Artist Id' => 'MUSICBRAINZ_ALBUMARTIST_ID',
 	'MusicBrainz Track Id'     => 'MUSICBRAINZ_ID',
+	'MusicBrainz Release Track Id' => 'MUSICBRAINZ_RELEASETRACKID',
 	'MusicBrainz Sortname'     => 'ARTISTSORT',
 	'MusicBrainz Album Status' => 'MUSICBRAINZ_ALBUM_STATUS',
 );
@@ -149,6 +150,9 @@ sub _doTagMapping {
 			}
 		}
 	}
+
+	# Prefer MUSICBRAINZ_RELEASETRACKID to MusicBrainz Track Id (MUSICBRAINZ_ID)
+	$tags->{MUSICBRAINZ_ID} = delete $tags->{MUSICBRAINZ_RELEASETRACKID} if $tags->{MUSICBRAINZ_RELEASETRACKID};
 
 	# Special handling for DATE tags
 	# Parse the date down to just the year, for compatibility with other formats

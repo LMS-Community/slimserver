@@ -77,6 +77,9 @@ sub doTagMapping {
 		}
 	}
 
+	# Prefer MUSICBRAINZ_RELEASETRACKID to MUSICBRAINZ_TRACKID (MUSICBRAINZ_ID)
+	$tags->{MUSICBRAINZ_ID} = delete $tags->{MUSICBRAINZ_RELEASETRACKID} if $tags->{MUSICBRAINZ_RELEASETRACKID};
+
 	# Sometimes the BPM is not an integer so we try to convert.
 	$tags->{BPM} = int($tags->{BPM}) if defined $tags->{BPM};
 
