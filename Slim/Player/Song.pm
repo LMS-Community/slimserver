@@ -423,16 +423,18 @@ sub open {
 			last if $transcoder;
 		}
 
-		if (! $transcoder) {
+		if (!$transcoder) {
 			logError("Couldn't create command line for $format playback for [$url]");
 			return (undef, ($error || 'PROBLEM_CONVERT_FILE'), $url);
 		} elsif (main::INFOLOG && $log->is_info) {
-			 $log->info("Transcoder: streamMode=", $transcoder->{'streamMode'}, ", streamformat=", $transcoder->{'streamformat'});
+			 $log->info("Transcoder: ", Data::Dump::dump($transcoder));
 		}
-		
+
 		# Init song's sample rate and sample size before any transcoding
 		$self->samplerate($transcoder->{'sampleRate'});
-		$self->samplesize($transcoder->{'sampleSize'});
+		if ($transcoder->{'streamformat'} !~ /mp3|aac/) {  # Only set sample size for lossless
+			$self->samplesize($transcoder->{'sampleSize'});
+		}
 
 		if ($wantTranscoderSeek && (grep(/T/, @{$transcoder->{'usedCapabilities'}}))) {
 			$transcoder->{'start'} = $self->startOffset($self->seekdata()->{'timeOffset'});
@@ -625,11 +627,9 @@ sub open {
 
 				$self->_transcoded(1);
 
-				main::INFOLOG && $log->info("Transcoder: ", Data::Dump::dump($transcoder));
-
 				my $streamformat = $transcoder->{'streamformat'};
 				$self->_streamFormat($streamformat);
-				
+
 				my $bitrate;
 				my $sampleSize;
 				my $sampleRate;
