@@ -78,12 +78,7 @@ sub getArtwork {
 	my ($body, $contentType, $file);
 
 	eval {
-		($body, $contentType, $file) = Slim::Music::Artwork->_readCoverArtTags($track, $path);
-
-		# Nothing there? Look on the file system.
-		if (!defined $body) {
-			($body, $contentType, $file) = Slim::Music::Artwork->_readCoverArtFiles($track, $path);
-		}
+		($body, $contentType, $file) = Slim::Music::Artwork->readCoverArt($track, $path);
 	};
 
 	if ($body && defined $file) {

@@ -439,6 +439,11 @@ sub migrateDB {
 	my $dbh = $class->storage->dbh;
 	my ($driver, $source, $username, $password) = $class->sourceInformation;
 
+	# initialize scanner helper tables
+	Slim::Utils::SQLHelper->executeSQLFile(
+		$driver, $class->storage->dbh, "schema_scanner.sql"
+	);
+
 	# Migrate to the latest schema version - see SQL/$driver/schema_\d+_up.sql
 	my $dbix = DBIx::Migration->new({
 		dbh   => $dbh,
