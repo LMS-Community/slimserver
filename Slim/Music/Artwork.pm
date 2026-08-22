@@ -263,18 +263,34 @@ sub updateStandaloneArtwork {
 
 	my $dbh = Slim::Schema->dbh;
 
-	# unflag existing unchanged artwork
+	# update album artwork to first track coverid for remote and embedded images.
+	### I considered adding rows to scanned_pics for these images so that they'd be processed in the loop below, but I think this is more efficient.
+	#there's a different syntax for MySql.
 	$dbh->do( qq{
-		UPDATE scanned_pics SET status = NULL
-		WHERE status = 'E'
-		AND EXISTS (SELECT * FROM tracks WHERE tracks.coverid = scanned_pics.coverid)
-	} );
+			UPDATE albums
+			SET artwork = tracks.coverid
+			FROM tracks
+			WHERE tracks.album = albums.id
+			AND ( tracks.cover IS NULL OR CAST(CAST(tracks.cover AS INTEGER) AS TEXT) = tracks.cover OR tracks.cover LIKE 'https%' )
+			AND ( tracks.coverid <> albums.artwork OR albums.artwork IS NULL )
+		} );
+
+	# unflag existing unchanged artwork unless we have a changed coverart pref (then we need to process all artwork)
+	my $prefs = preferences('server');
+	my $processAllArtwork = $prefs->get('coverArt') && Slim::Music::Import->lastScanTime('lastUpdateStandaloneArtwork') < $prefs->get('_ts_coverArt');
+	$dbh->do( qq{
+			UPDATE scanned_pics SET status = NULL
+			WHERE status = 'E'
+			AND EXISTS (SELECT * FROM tracks WHERE tracks.coverid = scanned_pics.coverid)
+	} ) unless $processAllArtwork;
+
+	Slim::Schema->forceCommit;
 
 	my $sql_scanned_pics = qq{
-		SELECT full_path, coverid, GROUP_CONCAT(status)
+		SELECT folder
 		FROM scanned_pics
 		WHERE status IS NOT NULL
-		GROUP BY full_path, coverid
+		GROUP BY folder
 	};
 
 	my ($count) = $dbh->selectrow_array( qq{
@@ -297,8 +313,8 @@ sub updateStandaloneArtwork {
 	} );
 
 	my $pic_sth = $dbh->prepare($sql_scanned_pics);
-	my ($picPath, $picCoverid, $status);
-	$pic_sth->bind_columns(\$picPath, \$picCoverid, \$status);
+	my $folder;
+	$pic_sth->bind_columns(\$folder);
 
 	my $sql_tracks = qq{
 		SELECT 	tracks.id, tracks.url,
@@ -319,10 +335,18 @@ sub updateStandaloneArtwork {
 	} );
 
 	my $sth_update_tracks = $dbh->prepare( qq{
-	    UPDATE tracks
-	    SET    cover = ?, coverid = ?, cover_cached = NULL
-	    WHERE  id = ?
+		UPDATE tracks
+		SET    cover = ?, coverid = ?, cover_cached = NULL
+		WHERE  id = ?
 	} );
+
+	my $sth_update_albums = $dbh->prepare( qq{
+		UPDATE albums
+		SET    artwork = ?
+		WHERE  id = ?
+	} );
+
+	my $previousAlbum = undef;
 
 	my $i = 0;
 	my $t = 0;
@@ -337,7 +361,7 @@ sub updateStandaloneArtwork {
 				$t = time + 5;
 			}
 
-			my $imageDirUrl = Slim::Utils::Misc::fileURLFromPath(dirname($picPath));
+			my $imageDirUrl = Slim::Utils::Misc::fileURLFromPath($folder);
 			my @params = ($imageDirUrl, $imageDirUrl . chr(0xff), $imageDirUrl);
 
 			my @tracks =  @{
@@ -355,6 +379,12 @@ sub updateStandaloneArtwork {
 				if ( $track->{cover} ne $newCover ) {
 					my ($newCoverid) = $dbh->selectrow_array($sth_scanned_pics, undef, $newCover);
 					$sth_update_tracks->execute( $newCover, $newCoverid, $track->{id} );
+
+					if ( $previousAlbum ne $track->{albumid} && $newCoverid ne $track->{album_artwork} ) {
+						$progress->update( $track->{album_title} );
+						$sth_update_albums->execute( $newCoverid, $track->{albumid} );
+						$log->warn('Artwork has been removed for ' . $track->{album_title}) if !$newCoverid;
+					}
 				}
 
 				if ( ++$i % 50 == 0 ) {
@@ -364,38 +394,12 @@ sub updateStandaloneArtwork {
 
 				Slim::Utils::Scheduler::unpause() if !main::SCANNER;
 
+				$previousAlbum = $track->{albumid};
 			}
 
 			return 1;
 
 		}
-
-		# update album artwork to first track coverid
-		### I considered adding rows to scanned_pics for remote images so that they'd be processed in the loop above, but I think this is more efficient.
-		#there's a different syntax for MySql.
-		my $sql = IS_SQLITE
-			? qq{
-				UPDATE albums
-				SET artwork = tracks.coverid
-				FROM tracks
-				WHERE tracks.album = albums.id
-				AND (
-					tracks.coverid IS NULL AND albums.artwork IS NOT NULL
-					OR tracks.coverid IS NOT NULL AND albums.artwork IS NULL
-					OR tracks.coverid <> albums.artwork
-				)
-			}
-			: qq{
-				UPDATE albums JOIN tracks ON albums.id = tracks.album
-				SET albums.artwork = tracks.coverid
-				WHERE (
-					tracks.coverid IS NULL AND albums.artwork IS NOT NULL
-					OR tracks.coverid IS NOT NULL AND albums.artwork IS NULL
-					OR tracks.coverid <> albums.artwork
-				)
-			};
-
-		$dbh->do( $sql );
 
 		Slim::Schema->forceCommit;
 
@@ -411,6 +415,7 @@ sub updateStandaloneArtwork {
 		# Non-async mode in scanner
 		while ( $work->() ) { }
 
+		Slim::Music::Import->setLastScanTime('lastUpdateStandaloneArtwork');
 		Slim::Music::Import->endImporter('updateStandaloneArtwork');
 	}
 	else {

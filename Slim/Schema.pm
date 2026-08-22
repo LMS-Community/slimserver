@@ -2022,10 +2022,10 @@ sub updateOrCreateBase {
 		$attributeHash->{updated_time} = time();
 
 		my $defaultCols = {
-			performance => '',
-			grouping => '',
-			discsubtitle => '',
-			musicbrainz_id => '',
+			performance => undef,
+			grouping => undef,
+			discsubtitle => undef,
+			musicbrainz_id => undef,
 			cover => 0,
 		};
 		# Some taggers will not supply blank tags so create the attributes for columns which need to be defaulted.
