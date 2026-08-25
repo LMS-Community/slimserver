@@ -43,7 +43,7 @@ sub init {
 		mkdir $downloadTo unless -d $downloadTo;
 		mkdir $extractTo  unless -d $extractTo;
 
-		if (-w $downloadTo && -w $extractTo) {
+		if (Slim::Utils::Misc::isDirWritable($downloadTo) && Slim::Utils::Misc::isDirWritable($extractTo)) {
 
 			main::DEBUGLOG && $log->debug("downloading to $downloadTo");
 			main::DEBUGLOG && $log->debug("extracting to $extractTo");

@@ -205,7 +205,7 @@ sub _menuUrl {
 
 	my $dir = Slim::Utils::Misc::getPlaylistDir();
 
-	if (!$dir || !-w $dir) {
+	if (!$dir || !Slim::Utils::Misc::isDirWritable($dir)) {
 		$dir = $prefsServer->get('cachedir');
 	}
 
