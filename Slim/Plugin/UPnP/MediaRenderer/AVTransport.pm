@@ -926,6 +926,18 @@ sub _setTrackInfo {
 	$attrs{CHANNELS}   = $res->{channels}   if $res->{channels};
 	$attrs{SAMPLESIZE} = $res->{samplesize} if $res->{samplesize};
 
+	if ( $res->{mime} && $res->{mime} eq 'audio/L16' ) {
+		$attrs{ENDIAN} = 1; # big-endian
+		$attrs{SAMPLESIZE} = 16;
+	}
+	elsif ( $res->{mime} && $res->{mime} eq 'audio/L24' ) {
+		$attrs{ENDIAN} = 1; # big-endian
+		$attrs{SAMPLESIZE} = 24;
+	}
+	elsif ( $res->{mime} && $res->{mime} eq 'audio/x-pcm' ) {
+		$attrs{ENDIAN} = 1; # big-endian
+	}
+
 	Slim::Schema->updateOrCreate( { url => $trackId, attributes => \%attrs } ) if %attrs;
 }
 
