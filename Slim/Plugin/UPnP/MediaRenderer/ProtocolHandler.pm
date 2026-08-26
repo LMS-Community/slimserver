@@ -247,11 +247,14 @@ sub getMetadataFor {
 	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor($url) || {};
 	my $res  = $meta->{res} || {};
 
-	main::DEBUGLOG && $log->is_debug && $log->debug( 'Metadata returned for  ' . $meta->{title} );
+	# support Icy Metadata updates
+	my $title = Slim::Music::Info::getCurrentTitle( $client, $url ) || $meta->{title};
+
+	main::DEBUGLOG && $log->is_debug && $log->debug( 'Metadata returned for  ' . $title );
 	return {
 		artist   => $meta->{artist},
 		album    => $meta->{album},
-		title    => $meta->{title},
+		title    => $title,
 		cover    => $meta->{cover} || '', # XXX default
 		icon     => '', # XXX default icon
 		duration => $res->{secs} || 0,
