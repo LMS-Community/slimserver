@@ -9,6 +9,9 @@ package Slim::Plugin::UPnP::MediaRenderer::ProtocolHandler;
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);
 
+use File::Temp ();
+
+use Slim::Formats;
 use Slim::Utils::Cache;
 use Slim::Utils::Errno;
 use Slim::Utils::Log;
@@ -18,9 +21,20 @@ use Slim::Plugin::UPnP::MediaRenderer::AVTransport ();
 
 use constant MAX_RAW_READ => 32768;
 
+# How much of the (already dechunked/decoded) audio stream to initially buffer in
+# _scanBitrateFeed() below before giving up on determining its bitrate, matching
+# Slim::Utils::Scanner::Remote::parseAudioStream()'s default buffer size.
+use constant SCAN_READ_BYTES => 128 * 1024;
+# How many bytes of audio frames past the end of an ID3v2 tag to also buffer
+# to have something to determine the bitrate from.
+use constant SCAN_READ_PAST_ID3 => 16 * 1024;
+
 my $log = logger('plugin.upnp');
 
 sub isRemote { 1 }
+
+# We are caching the cover image on our own
+sub shouldCacheImage { 0 }
 
 # Always proxy through the server so the outgoing connection to the source uses
 # the same IP address that was published for this player via UPnP, and so we can
@@ -70,6 +84,23 @@ sub response {
 }
 
 sub _sysread {
+	my $self = $_[0];
+
+	my $ret = $self->_sysread_impl( $_[1], $_[2], $_[3] );
+
+	# note: we'll do an on-the-fly bitrate scan as data is read if required
+	if ( $ret ) {
+		$self->_scanBitrateFeed( substr( $_[1], $_[3] || 0, $ret ) );
+	}
+	elsif ( defined $ret ) {
+		# graceful stream end - finalize a still-pending scan with whatever we have
+		$self->_scanBitrateFeed( undef, 1 );
+	}
+
+	return $ret;
+}
+
+sub _sysread_impl {
 	my $self    = $_[0];
 	my $dechunk = ${*$self}{'_dechunk'} || return $self->SUPER::_sysread($_[1], $_[2], $_[3]);
 
@@ -135,20 +166,18 @@ sub getFormatForURL {
 	my $class = shift;
 	my $url = shift;
 
-	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor($url);
-	if ( $meta && $meta->{res}->{mime} ) {
-		if ( my $type = Slim::Music::Info::mimeToType( $meta->{res}->{mime} ) ) {
-			return $type;
-		}
-	}
-
-	# if typeFromSuffix can't find a result it returns the mp3 default.
-	return Slim::Music::Info::typeFromSuffix($url, 'mp3');
+    my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor($url);
+    return ( $meta && exists $meta->{ct} ) ? $meta->{ct} : undef;
 }
 
-# XXX use DLNA.ORG_OP value, and/or MIME type
-sub canSeek { 1 } # We'll assume Range requests are supported by all servers,
-                  # and this is also needed for pause to work properly
+sub canSeek {
+	my ( $class, $client, $song ) = @_;
+
+	return 1 unless $song;
+
+	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor( $song->currentTrack->url );
+	return ( $meta && exists $meta->{seekable} ) ? $meta->{seekable} : 1;
+}
 
 sub canSeekError { return ( 'SEEK_ERROR_TYPE_NOT_SUPPORTED', 'UPnP/DLNA' ); }
 
@@ -176,7 +205,8 @@ sub new {
 	return $sock;
 }
 
-# Avoid scanning
+# Avoid scanning here. Only scan on-the-fly when the track is actually played
+# and the bitrate is still unknown, see _scanBitrateInit and _scanBitrateFeed.
 sub scanUrl {
 	my ($class, $url, $args) = @_;
 
@@ -187,11 +217,105 @@ sub scanUrl {
 	# session's state was stored on.
 	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor($url);
 
-	if ( ref($meta) eq 'HASH' && ( my $uri = $meta->{res}->{uri} ) ) {
+	if ( ref($meta) eq 'HASH' && ( my $uri = $meta->{res}->{content} ) ) {
 		$args->{song}->streamUrl($uri);
 	}
 
 	$args->{cb}->($args->{song}->currentTrack());
+}
+
+sub _scanBitrateInit {
+	my $self = shift;
+
+	# check preconditions
+
+	if ( my $range = ${*$self}{'contentRange'} ) {
+		my ($first) = $range =~ /^(\d+)-/;
+		return 0 if $first;
+	}
+	return 0 if ${*$self}{'metaInterval'};
+
+	my $song = ${*$self}{'song'} || return 0;
+	return 0 if Slim::Music::Info::getBitrate( $song->currentTrack->url );
+
+	my $type = Slim::Music::Info::contentType( $song->currentTrack->url ) || return 0;
+	my $formatClass = Slim::Formats->classForFormat($type) || return 0;
+	return 0 unless Slim::Formats->loadTagFormatForType($type) && $formatClass->can('scanBitrate');
+
+	# all preconditions met, so start scanning on the fly
+
+	main::DEBUGLOG && $log->is_debug && $log->debug( 'Scanning ' . $song->currentTrack->url . ' on the fly for bitrate' );
+
+	return {
+		fh          => File::Temp->new,
+		len         => 0,
+		scanLen     => SCAN_READ_BYTES,
+		url         => $song->currentTrack->url,
+		type        => $type,
+		formatClass => $formatClass,
+	};
+}
+
+# Tees received data into a temp file until enough has been buffered
+# (or the stream ends) to run it through the format's scanBitrate().
+# This is similar to Slim::Utils::Scanner::Remote::parseAudioStream(), but
+# we won't open a separate connection for this.
+sub _scanBitrateFeed {
+	my ( $self, $data, $eof ) = @_;
+
+	my $scan = ${*$self}{'_bitrateScan'};
+
+	# undef means "not yet decided", 0 means "decided: nothing to do"
+	if ( !defined $scan ) {
+		$scan = ${*$self}{'_bitrateScan'} = $self->_scanBitrateInit;
+	}
+
+	return unless $scan;
+
+	if ( defined $data && length $data ) {
+		if ( !$scan->{len} && $scan->{type} eq 'mp3' && $data =~ /^ID3/ ) {
+			# ID3v2 tag on the very first chunk - grow the buffer to cover
+			# the full tag (which may hold a sizeable embedded cover image)
+			# plus some trailing audio frames to determine the bitrate from,
+			# same as Slim::Utils::Scanner::Remote::parseAudioStream() does.
+
+			# get ID3v2 tag length from bytes 7-10
+			my $id3size = 0;
+			for my $b ( unpack 'C4', substr( $data, 6, 4 ) ) {
+				$id3size = ($id3size << 7) + $b;
+			}
+			$id3size += 10;
+
+			$scan->{scanLen} = $id3size + SCAN_READ_PAST_ID3;
+
+			main::DEBUGLOG && $log->is_debug && $log->debug( "ID3v2 tag detected, will buffer $scan->{scanLen} bytes for $scan->{url}" );
+		}
+
+		$scan->{fh}->write( $data, length $data );
+		$scan->{len} += length $data;
+	}
+
+	return if !$eof && $scan->{len} < $scan->{scanLen};
+
+	# enough data buffered (or stream ended) - scan once and stop
+	${*$self}{'_bitrateScan'} = 0;
+
+	my ( $bitrate, $vbr ) = eval { $scan->{formatClass}->scanBitrate( $scan->{fh}, $scan->{url} ) };
+
+	if ( $@ ) {
+		$log->error("Unable to scan bitrate for $scan->{url}: $@");
+	}
+	elsif ( $bitrate && $bitrate > 0 ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("Scanned bitrate for $scan->{url}: $bitrate");
+
+		Slim::Music::Info::setBitrate( $scan->{url}, $bitrate, $vbr );
+		if ( my $song = ${*$self}{'song'} ) {
+			$song->bitrate($bitrate);
+		}
+		if ( !Slim::Music::Info::getDuration( $scan->{url} ) && ( my $cl = $self->contentLength ) ) {
+			Slim::Music::Info::setDuration( $scan->{url}, ( $cl * 8 ) / $bitrate );
+		}
+	}
 }
 
 sub audioScrobblerSource { 'P' }
@@ -245,18 +369,26 @@ sub getMetadataFor {
 	# master client, which may not be the client this UPnP session's state was
 	# stored on.
 	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor($url) || {};
-	my $res  = $meta->{res} || {};
 
-	main::DEBUGLOG && $log->is_debug && $log->debug( 'Metadata returned for  ' . $meta->{title} );
+	# support Icy Metadata updates
+	my $title = Slim::Music::Info::getCurrentTitle( $client, $url );
+
+	# may reflect a bitrate/duration determined on the fly (see _scanBitrateFeed)
+	my $bitrate = Slim::Music::Info::getCurrentBitrate($url) || 0;
+	my $duration = Slim::Music::Info::getDuration($url) || 0;
+
+	my $type = uc( Slim::Music::Info::contentType($url) || '' ) . ' (UPnP/DLNA)'; 
+
+	main::DEBUGLOG && $log->is_debug && $log->debug( 'Metadata returned for  ' . $title );
 	return {
 		artist   => $meta->{artist},
 		album    => $meta->{album},
-		title    => $meta->{title},
-		cover    => $meta->{cover} || '', # XXX default
+		title    => $title,
+		type     => $type,
+		bitrate  => $bitrate,
+		duration => $duration,
 		icon     => '', # XXX default icon
-		duration => $res->{secs} || 0,
-		bitrate  => $res->{bitrate} ? ($res->{bitrate} / 1000) . 'kbps' : 0,
-		type     => $res->{mime} . ' (UPnP/DLNA)',
+		cover    => $meta->{cover} || '', # XXX default
 	};
 }
 
