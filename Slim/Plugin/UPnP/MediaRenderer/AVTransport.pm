@@ -355,8 +355,7 @@ sub SetAVTransportURI {
 		$meta->{_id} = $trackId;
 		$_trackMeta{$trackId} = $meta;
 
-		Slim::Music::Info::setBitrate( $trackId, $meta->{res}->{bitrate} );
-		Slim::Music::Info::setDuration( $trackId, $meta->{res}->{secs} );
+		$class->_setTrackInfo( $trackId, $meta->{res} );
 
 		$mediaDuration = $meta->{res}->{duration}; # XXX more if URI is a playlist?
 		$trackDuration = $mediaDuration;
@@ -469,8 +468,7 @@ sub SetNextAVTransportURI {
 			$meta->{_id} = $trackId;
 			$_trackMeta{$trackId} = $meta;
 
-			Slim::Music::Info::setBitrate( $trackId, $meta->{res}->{bitrate} );
-			Slim::Music::Info::setDuration( $trackId, $meta->{res}->{secs} );
+			$class->_setTrackInfo( $trackId, $meta->{res} );
 
 			delete $_trackMeta{ $pd->{avt_NextTrackId} } if $pd->{avt_NextTrackId};
 			$pd->{avt_NextTrackId} = $trackId;
@@ -876,16 +874,26 @@ sub _DIDLLiteToHash {
 
 	# Find the best res item to play
 	for my $r ( @{ $x->{res} } ) {
-		my ($mime) = $r->{protocolInfo} =~ /[^:]+:[^:]+:([^:+]+):/;
+		my ($mimeFull) = $r->{protocolInfo} =~ /[^:]+:[^:]+:([^:]+):/;
+		next unless $mimeFull;
+
+		# strip MIME parameters (e.g. audio/L16;rate=48000;channels=2)
+		my ($mime, $mimeParams) = split /;/, $mimeFull, 2;
+
 		next if !$mime || !Slim::Music::Info::mimeToType($mime);
 
 		# Some servers must have missed the (really stupid) part in
 		# the spec where bitrate is defined as bytes/sec, not bits/sec
-		# We try to handle this for common MP3 bitrates
+		# We try to handle this for common L16 and MP3 bitrates
 		my $bitrate = $r->{bitrate};
-		if ( $bitrate =~ /^(?:64|96|128|160|192|256|320)000$/ ) {
+		if ( $bitrate && ( ( $mime eq 'audio/L16' && $bitrate > 192000 )
+			|| $bitrate =~ /^(?:64|96|128|160|192|256|320)000$/ ) ) {
 			$bitrate /= 8;
 		}
+ 
+		# use MIME params, if 'res' doesn't provide sampleFrequency/nrAudioChannels
+		my ($rateParam)     = $mimeParams =~ /\brate=(\d+)/i        if $mimeParams;
+		my ($channelsParam) = $mimeParams =~ /\bchannels=(\d+)/i    if $mimeParams;
 
 		$meta->{res} = {
 			uri          => $r->{content},
@@ -894,12 +902,31 @@ sub _DIDLLiteToHash {
 			bitrate      => $bitrate * 8,
 			secs         => hmsToSecs( $r->{duration} ),
 			duration     => $r->{duration} || '',
+			samplerate   => $r->{sampleFrequency} || $rateParam     || undef,
+			channels     => $r->{nrAudioChannels} || $channelsParam || undef,
+			samplesize   => $r->{bitsPerSample} || undef,
 		};
 
 		last;
 	}
 
 	return $meta;
+}
+
+# sets track info from DIDL-Lite res element decoded by _DIDLLiteToHash
+sub _setTrackInfo {
+	my ( $class, $trackId, $res ) = @_;
+
+	Slim::Music::Info::setContentType( $trackId, $res->{mime} ) if $res->{mime};
+	Slim::Music::Info::setBitrate( $trackId, $res->{bitrate} ) if $res->{bitrate};
+	Slim::Music::Info::setDuration( $trackId, $res->{secs} ) if $res->{secs};
+
+	my %attrs;
+	$attrs{SAMPLERATE} = $res->{samplerate} if $res->{samplerate};
+	$attrs{CHANNELS}   = $res->{channels}   if $res->{channels};
+	$attrs{SAMPLESIZE} = $res->{samplesize} if $res->{samplesize};
+
+	Slim::Schema->updateOrCreate( { url => $trackId, attributes => \%attrs } ) if %attrs;
 }
 
 sub _event_xml {
