@@ -357,7 +357,7 @@ sub prettyBitRate {
 }
 
 sub buildPrettyBitRate {
-	my ( $self, $bitrate, $vbrScale, $format ) = @_;
+	my ( $class, $bitrate, $vbrScale, $format ) = @_;
 
 	if ($bitrate) {
 		my $mode = '';
