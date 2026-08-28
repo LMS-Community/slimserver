@@ -49,10 +49,11 @@ sub find {
 	# Populate enhanced scanned_pics table (status E = already exists in the tracks table, status N = new)
 	my $imageSth = $dbh->prepare_cached( qq{
 		INSERT INTO scanned_pics
-		(folder, full_path, timestamp, filesize, coverid, status)
+		(folder, full_path, timestamp, filesize, coverid, status, folder_url)
 		VALUES
 		(?, ?, ?, ?, ?,
-		CASE WHEN EXISTS (SELECT 1 FROM tracks WHERE tracks.coverid = ?) THEN 'E' ELSE 'N' END
+		CASE WHEN EXISTS (SELECT 1 FROM tracks WHERE tracks.coverid = ?) THEN 'E' ELSE 'N' END,
+		?
 		)
 	} );
 
@@ -181,7 +182,8 @@ sub find {
 				$mtime,
 				$size,
 				$coverid,
-				$coverid
+				$coverid,
+				Slim::Utils::Misc::fileURLFromPath(dirname($file))
 			);
 		}
 		else {

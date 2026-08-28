@@ -13,7 +13,8 @@ CREATE TABLE scanned_pics (
   timestamp int(10),
   filesize int(10),
   coverid char(8),
-  status char(1) CHECK (status IN ('D', 'E', 'N'))
+  status char(1) CHECK (status IN ('D', 'E', 'N')),
+  folder_url text
   	-- D = image deleted (ie used in the database (tracks.cover) but no longer existing on disk)
   	-- E = an existing image present in tracks.cover
   	-- N = a new image (eg on disk but not used in tracks.cover - might actually have been on disk before, but passed over in a previous scan)
@@ -22,6 +23,7 @@ CREATE TABLE scanned_pics (
 );
 CREATE INDEX scannedPicUrlIndex ON scanned_pics (full_path);
 CREATE INDEX scannedPicDirIndex ON scanned_pics (folder);
-create index scannedPicStatusidx on scanned_pics(status);
+CREATE INDEX scannedPicStatusIndex ON scanned_pics (status);
+CREATE INDEX scannedPicFolderUrlIndex ON scanned_pics (folder_url);
 
-CREATE INDEX IF NOT EXISTS trackscoveridx ON tracks(cover);
+CREATE INDEX IF NOT EXISTS trackscoverIndex ON tracks (cover);
