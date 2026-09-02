@@ -43,6 +43,7 @@
 		<li>Removed unused Mac/Windows code from the auto-rescan process (@mavit)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/106">#106</a> - Removal of SYSV Init support and better systemd support in the RPM package for Red Hat/SUSE (@JohanSaaw, @mavit)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver-platforms/pull/1606">#1606</a> - Improve compatibility with newer DBIx::Class::Schema versions (@paulgevers)</li>
+		<li><a href="https://github.com/LMS-Community/slimserver/issues/1640">#1640</a> - Don't include any file in CPAN or lib for the "noCPAN" tarball.</li>
 	</ul>
 	<br />
 
@@ -52,6 +53,7 @@
 		<li>On Debian based systems avoid downloading packages for unsupported Perl versions.</li>
 		<li>Do not try to decode http responses if Content-Encoding is "identity" (@505)</li>
 		<li>Fix TitleFormatter UTF8 encoding (@darrel-k)</li>
+		<li>Make sure we utf8 encode/decode strings when storing them in our disk cache.</li>
 		<li><a href="https://github.com/LMS-Community/Audio-Scan/pull/10">#10</a> - id3: Never add undef to tag hash for empty or invalid TXXX key (@cheesestraws)</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/issues/1121">#1121</a> - Try to catch "426 - Upgrade Required" HTTP responses in the remote scanner</li>
 		<li><a href="https://github.com/LMS-Community/slimserver/pull/1140">#1140</a> - Fix stat returning an empty size for most files (@jecaro)</li>
