@@ -3762,7 +3762,7 @@ sub serverstatusQuery {
 
 	$request->addResult('newversion', $::newVersion) if $::newVersion;
 	$request->addResult('needsrestart', 1) if Slim::Utils::PluginManager->needsRestart;
-	$request->addResult('pluginsdownloading', 1) if Slim::Utils::PluginDownloader->downloading;
+	$request->addResult('pluginsdownloading', 1) if main::WEBUI && Slim::Utils::PluginDownloader->downloading;
 	if (my $newPlugins = Slim::Utils::PluginManager->message) {
 		$request->addResult('newplugins', $newPlugins);
 	}
