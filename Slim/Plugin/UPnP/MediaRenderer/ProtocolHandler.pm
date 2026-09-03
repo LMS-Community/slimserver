@@ -135,9 +135,15 @@ sub getFormatForURL {
 	my $class = shift;
 	my $url = shift;
 
+	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor($url);
+	if ( $meta && $meta->{res}->{mime} ) {
+		if ( my $type = Slim::Music::Info::mimeToType( $meta->{res}->{mime} ) ) {
+			return $type;
+		}
+	}
+
 	# if typeFromSuffix can't find a result it returns the mp3 default.
-	my $type = Slim::Music::Info::typeFromSuffix($url, 'mp3');
-	return $type;
+	return Slim::Music::Info::typeFromSuffix($url, 'mp3');
 }
 
 # XXX use DLNA.ORG_OP value, and/or MIME type
@@ -164,7 +170,8 @@ sub new {
 		bitrate => $song->bitrate() || 128_000,
 	} ) || return;
 
-	${*$sock}{contentType} = 'audio/mpeg'; # XXX
+	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor( $song->currentTrack->url );
+	${*$sock}{contentType} = ( $meta && $meta->{res}->{mime} ) || 'audio/mpeg';
 
 	return $sock;
 }
