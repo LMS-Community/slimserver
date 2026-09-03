@@ -33,7 +33,7 @@ use Exporter::Lite;
 
 our @EXPORT = qw(assert msg msgf errorMsg specified dumpFiltered safe_md5_hex);
 
-use File::Basename qw(basename);
+use File::Basename qw(basename dirname);
 use File::Spec::Functions qw(:ALL);
 use File::Path qw(mkpath rmtree);
 use File::Temp qw(tempdir);
@@ -334,6 +334,17 @@ sub fileURLFromPath {
 
 	return $file;
 }
+
+sub folderURLFromPath {
+	my ($path) = @_;
+	return fileURLFromPath(dirname($path));
+}
+
+sub folderFromURL {
+	my ($url) = @_;
+	return dirname(pathFromfileURL($url));
+}
+
 
 ########
 

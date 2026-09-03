@@ -3,7 +3,7 @@
 -- This is done here as it is faster to do in sql than in the server.
 --
 
-DELETE FROM scanned_pics;
+--DELETE FROM scanned_pics; ### Removed temporarily for debugging
 
 -- XXX This appears to not be needed anymore as contributors are properly
 -- removed by the new scanner

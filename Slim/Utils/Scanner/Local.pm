@@ -197,7 +197,7 @@ sub rescan {
 
 		my $basedir = Slim::Utils::Misc::fileURLFromPath($next);
 
-		$log->error("Connect do DB") unless main::SCANNER && $main::progress;
+		$log->error("Connect to DB") unless main::SCANNER && $main::progress;
 		my $dbh = Slim::Schema->dbh;
 
 		$log->error("Get latest ID") unless main::SCANNER && $main::progress;

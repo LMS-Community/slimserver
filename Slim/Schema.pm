@@ -426,6 +426,17 @@ sub optimizeDB {
 	main::INFOLOG && $log->is_info && $log->info("End schema_optimize");
 }
 
+sub initialiseScannerDB {
+	my $class = shift;
+
+	# initialize scanner helper tables
+	$class->init;
+	my ($driver, $source, $username, $password) = $class->sourceInformation;
+	Slim::Utils::SQLHelper->executeSQLFile(
+		$driver, $class->storage->dbh, "schema_scanner.sql"
+	);
+}
+
 =head2 migrateDB()
 
 Migrates the current schema to the latest schema version as defined by the
@@ -438,11 +449,6 @@ sub migrateDB {
 
 	my $dbh = $class->storage->dbh;
 	my ($driver, $source, $username, $password) = $class->sourceInformation;
-
-	# initialize scanner helper tables
-	Slim::Utils::SQLHelper->executeSQLFile(
-		$driver, $class->storage->dbh, "schema_scanner.sql"
-	);
 
 	# Migrate to the latest schema version - see SQL/$driver/schema_\d+_up.sql
 	my $dbix = DBIx::Migration->new({
@@ -1682,6 +1688,12 @@ sub _newTrack {
 		return undef;
 	}
 
+	my $dbh = $self->dbh;
+	my $sql_scanned_pics = qq{
+		SELECT coverid FROM scanned_pics WHERE full_path = ?
+	};
+	my $sth_scanned_pics = $dbh->prepare($sql_scanned_pics);
+
 	my $dirname            = dirname($url);
 	my $deferredAttributes = {};
 
@@ -1822,7 +1834,9 @@ sub _newTrack {
 
 	if ( $columnValueHash{cover} ) {
 		# Generate coverid value based on artwork, mtime, filesize
-		$columnValueHash{coverid} = Slim::Schema::Track->generateCoverId( {
+		# Get coverid from scanned_pics if possible (ie when running in the scanner)
+		($columnValueHash{coverid}) = $dbh->selectrow_array($sth_scanned_pics, undef, $columnValueHash{cover});
+		$columnValueHash{coverid} ||= Slim::Schema::Track->generateCoverId( {
 			cover => $columnValueHash{cover},
 			url   => $url,
 			mtime => $columnValueHash{timestamp},
@@ -2012,23 +2026,24 @@ sub updateOrCreateBase {
 		# Update timestamp
 		$attributeHash->{updated_time} = time();
 
-		my $nullableColumns = {
-			performance => 1,
-			grouping => 1,
-			discsubtitle => 1,
-			musicbrainz_id => 1,
+		my $defaultCols = {
+			performance => undef,
+			grouping => undef,
+			discsubtitle => undef,
+			musicbrainz_id => undef,
+			cover => 0,
 		};
-		# Some taggers will not supply blank tags so create the attributes for columns which need to be nulled.
-		foreach my $col (keys %$nullableColumns) {
-			$attributeHash->{uc($col)} = undef if !exists $attributeHash->{uc($col)};
+		# Some taggers will not supply blank tags so create the attributes for columns which need to be defaulted.
+		foreach my $col (keys %$defaultCols) {
+			$attributeHash->{uc($col)} = $defaultCols->{$col} if !exists $attributeHash->{uc($col)};
 		}
 
 		while (my ($key, $val) = each %$attributeHash) {
 
 			$key = lc($key);
 
-			# Some columns should be set to null if no value passed in (may have had a value before this scan)
-			if ( (defined $val && $val ne '' || $nullableColumns->{$key}) && exists $trackAttrs->{$key} ) {
+			# Some columns should be set to a default, defined in $defaultCols above, if no value passed in (may have had a value before this scan)
+			if ( (defined $val && $val ne '' || exists $defaultCols->{$key}) && exists $trackAttrs->{$key} ) {
 
 				# Bug 7731, filter out duplicate keys that end up as array refs
 				# https://github.com/LMS-Community/slimserver/issues/1378
@@ -2040,7 +2055,7 @@ sub updateOrCreateBase {
 			}
 
 			# Metadata is only included if it contains a non zero value
-			if ( main::STATISTICS && ($val || $nullableColumns->{$key}) && blessed($trackPersistent) && exists $trackPersistentAttrs->{$key} ) {
+			if ( main::STATISTICS && ($val || exists $defaultCols->{$key}) && blessed($trackPersistent) && exists $trackPersistentAttrs->{$key} ) {
 
 				main::INFOLOG && $log->is_info && $log->info("Updating persistent $url : $key to $val");
 

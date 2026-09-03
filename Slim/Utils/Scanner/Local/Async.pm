@@ -13,7 +13,7 @@ package Slim::Utils::Scanner::Local::Async;
 
 use strict;
 
-use File::Basename qw(fileparse);
+use File::Basename qw(basename dirname);
 use File::Next;
 use File::Spec ();
 use Path::Class ();
@@ -46,11 +46,15 @@ sub find {
 		(?, ?, ?)
 	} );
 
+	# Populate enhanced scanned_pics table (status E = already exists in the tracks table, status N = new)
 	my $imageSth = $dbh->prepare_cached( qq{
 		INSERT INTO scanned_pics
-		(url, timestamp, filesize)
+		(folder, full_path, timestamp, filesize, coverid, status, folder_url)
 		VALUES
-		(?, ?, ?)
+		(?, ?, ?, ?, ?,
+		CASE WHEN EXISTS (SELECT 1 FROM tracks WHERE tracks.coverid = ?) THEN 'E' ELSE 'N' END,
+		?
+		)
 	} );
 
 	my $types = Slim::Music::Info::validTypeExtensions( ($args->{types} || 'audio') . '|image' );
@@ -169,13 +173,26 @@ sub find {
 		my $size  = -d $file ? 0 : ($stat[7] || 0);
 
 		my ($ext) = $file =~ /\.([^.]+)$/;
-		my $sth = ($ext && Slim::Music::Info::isImage($file, lc($ext))) ? $imageSth : $audioSth;
 
-		$sth->execute(
-			Slim::Utils::Misc::fileURLFromPath($file),
-			$mtime,
-			$size,
-		);
+		if ( $ext && Slim::Music::Info::isImage($file, lc($ext)) ) {
+			my $coverid = Slim::Music::Artwork->calculateCoverId($file, $mtime, $size);
+			$imageSth->execute(
+				dirname($file),
+				$file,
+				$mtime,
+				$size,
+				$coverid,
+				$coverid,
+				Slim::Utils::Misc::fileURLFromPath(dirname($file))
+			);
+		}
+		else {
+			$audioSth->execute(
+				Slim::Utils::Misc::fileURLFromPath($file),
+				$mtime,
+				$size
+			);
+		}
 
 		return 1;
 	};
