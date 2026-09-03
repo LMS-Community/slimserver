@@ -426,6 +426,17 @@ sub optimizeDB {
 	main::INFOLOG && $log->is_info && $log->info("End schema_optimize");
 }
 
+sub initialiseScannerDB {
+	my $class = shift;
+
+	# initialize scanner helper tables
+	$class->init;
+	my ($driver, $source, $username, $password) = $class->sourceInformation;
+	Slim::Utils::SQLHelper->executeSQLFile(
+		$driver, $class->storage->dbh, "schema_scanner.sql"
+	);
+}
+
 =head2 migrateDB()
 
 Migrates the current schema to the latest schema version as defined by the
@@ -438,11 +449,6 @@ sub migrateDB {
 
 	my $dbh = $class->storage->dbh;
 	my ($driver, $source, $username, $password) = $class->sourceInformation;
-
-	# initialize scanner helper tables
-	Slim::Utils::SQLHelper->executeSQLFile(
-		$driver, $class->storage->dbh, "schema_scanner.sql"
-	) if main::SCANNER; ### temporary, so we keep the contents from the last scan for debugging
 
 	# Migrate to the latest schema version - see SQL/$driver/schema_\d+_up.sql
 	my $dbix = DBIx::Migration->new({
