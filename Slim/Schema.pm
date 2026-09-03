@@ -136,8 +136,6 @@ sub init {
 		exit;
 	};
 
-	Slim::Utils::OSDetect->getOS()->sqlHelperClass()->addPostConnectHandler($class);
-
 	if (Slim::Utils::OSDetect->getOS()->sqlHelperClass()->canCacheDBHandle()) {
 		$_dbh = $dbh;
 	}
@@ -3394,32 +3392,6 @@ sub _workRequired {
 	return $prefs->get('worksScan') == SCAN_WORKS_FOR_MY_CLASSICAL_GENRES
 		? Slim::Schema::Genre->isMyClassicalGenre($genres)
 		: $prefs->get('worksScan');
-}
-
-sub _folderUrlFromPath {
-	my ($path) = @_;
-
-	return Slim::Utils::Misc::fileURLFromPath(dirname($path));
-}
-
-sub _folderFromPath {
-	my ($path) = @_;
-
-	return dirname($path);
-}
-
-sub _folderFromURL {
-	my ($url) = @_;
-
-	return dirname(Slim::Utils::Misc::pathFromfileURL($url));
-}
-
-sub postDBConnect {
-	my ($class, $dbh) = @_;
-
-	$dbh->sqlite_create_function( 'FOLDER_URL_FROM_PATH', 1, \&_folderUrlFromPath );
-	$dbh->sqlite_create_function( 'FOLDER_FROM_PATH', 1, \&_folderFromPath );
-	$dbh->sqlite_create_function( 'FOLDER_FROM_URL', 1, \&_folderFromURL );
 }
 
 =head1 SEE ALSO

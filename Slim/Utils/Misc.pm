@@ -335,6 +335,17 @@ sub fileURLFromPath {
 	return $file;
 }
 
+sub folderURLFromPath {
+	my ($path) = @_;
+	return fileURLFromPath(dirname($path));
+}
+
+sub folderFromURL {
+	my ($url) = @_;
+	return dirname(pathFromfileURL($url));
+}
+
+
 ########
 
 # other people call us externally.
