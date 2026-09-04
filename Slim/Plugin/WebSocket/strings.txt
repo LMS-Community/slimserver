@@ -1,0 +1,11 @@
+PLUGIN_WEBSOCKET
+	DE	WebSocket-Schnittstelle
+	EN	WebSocket Interface
+	FR	Interface WebSocket
+	NL	WebSocket-interface
+
+PLUGIN_WEBSOCKET_DESC
+	DE	Stellt einen WebSocket-Endpunkt (/ws) bereit, über den Clients Befehle senden und Serverbenachrichtigungen abonnieren können, ähnlich wie beim klassischen CLI, jedoch über eine browserfreundliche WebSocket-Verbindung.
+	EN	Provides a WebSocket endpoint (/ws) allowing clients to send commands and subscribe to server notifications, similar to the classic CLI but over a browser-friendly WebSocket connection.
+	FR	Fournit un point de terminaison WebSocket (/ws) permettant aux clients d'envoyer des commandes et de s'abonner aux notifications du serveur, à l'instar de la CLI classique, mais via une connexion WebSocket compatible avec les navigateurs.
+	NL	Biedt een WebSocket-eindpunt (/ws) waarmee clients opdrachten kunnen verzenden en zich kunnen abonneren op servermeldingen, vergelijkbaar met de klassieke CLI maar via een browservriendelijke WebSocket-verbinding.

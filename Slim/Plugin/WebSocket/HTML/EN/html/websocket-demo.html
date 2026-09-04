@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>WebSocket Demo</title>
+	<style>
+		:root {
+			color-scheme: light dark;
+			--bg: #f3f5f2;
+			--panel: #ffffff;
+			--text: #172019;
+			--muted: #607065;
+			--border: #ccd7cf;
+			--accent: #0a7f64;
+			--accent-strong: #075d4a;
+			--danger: #b3261e;
+			--code: #eef4f0;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root {
+				--bg: #121815;
+				--panel: #1c241f;
+				--text: #edf4ef;
+				--muted: #a8b8ae;
+				--border: #334139;
+				--accent: #4ed0aa;
+				--accent-strong: #80e3c5;
+				--danger: #ffb4ab;
+				--code: #25312b;
+			}
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			background: var(--bg);
+			color: var(--text);
+			font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		}
+
+		main {
+			max-width: 980px;
+			margin: 0 auto;
+			padding: 24px;
+		}
+
+		h1 {
+			margin: 0 0 18px;
+			font-size: 24px;
+			font-weight: 650;
+		}
+
+		section {
+			background: var(--panel);
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			padding: 16px;
+			margin-bottom: 16px;
+		}
+
+		label {
+			display: block;
+			font-weight: 600;
+			margin-bottom: 6px;
+		}
+
+		input, textarea, button {
+			font: inherit;
+		}
+
+		input, textarea {
+			width: 100%;
+			border: 1px solid var(--border);
+			border-radius: 4px;
+			background: var(--panel);
+			color: var(--text);
+			padding: 8px 10px;
+		}
+
+		textarea {
+			min-height: 82px;
+			resize: vertical;
+			font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		}
+
+		button {
+			border: 1px solid var(--accent);
+			border-radius: 4px;
+			background: var(--accent);
+			color: #fff;
+			cursor: pointer;
+			padding: 8px 12px;
+		}
+
+		button.secondary {
+			background: transparent;
+			color: var(--accent-strong);
+		}
+
+		button:disabled {
+			cursor: not-allowed;
+			opacity: .55;
+		}
+
+		.row {
+			display: grid;
+			grid-template-columns: 1fr auto auto;
+			gap: 10px;
+			align-items: end;
+		}
+
+		.field-row {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			gap: 12px;
+			margin-bottom: 12px;
+		}
+
+		.status {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			color: var(--muted);
+			font-weight: 600;
+		}
+
+		.status::before {
+			content: "";
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			background: var(--border);
+		}
+
+		.status.open::before {
+			background: var(--accent);
+		}
+
+		.status.error::before, .status.closed::before {
+			background: var(--danger);
+		}
+
+		.hint {
+			color: var(--muted);
+			font-size: 12px;
+			margin-top: 6px;
+		}
+
+		.log {
+			background: var(--code);
+			border: 1px solid var(--border);
+			border-radius: 4px;
+			height: min(52vh, 540px);
+			overflow: auto;
+			padding: 10px;
+			font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+			white-space: pre-wrap;
+			word-break: break-word;
+		}
+
+		.entry {
+			border-bottom: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+			padding: 7px 0;
+		}
+
+		.entry:last-child {
+			border-bottom: 0;
+		}
+
+		.entry .meta {
+			color: var(--muted);
+			margin-bottom: 3px;
+		}
+
+		.entry.error .meta {
+			color: var(--danger);
+		}
+
+		.entry.out .meta {
+			color: var(--accent-strong);
+		}
+
+		@media (max-width: 700px) {
+			main {
+				padding: 14px;
+			}
+
+			.row, .field-row {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<h1>WebSocket Demo</h1>
+
+		<section>
+			<div class="row">
+				<div>
+					<label for="socketUrl">Socket URL</label>
+					<input id="socketUrl" readonly>
+				</div>
+				<button id="connect" type="button">Connect</button>
+				<button id="disconnect" type="button" class="secondary" disabled>Disconnect</button>
+			</div>
+			<p id="state" class="status closed">closed</p>
+		</section>
+
+		<section>
+			<div class="field-row">
+				<div>
+					<label for="playerId">Player ID</label>
+					<input id="playerId" autocomplete="off">
+					<div class="hint">Defaults to the Squeezebox-player cookie.</div>
+				</div>
+				<div>
+					<label for="command">Command</label>
+					<input id="command" autocomplete="off" value="status - 1 tags:cgAABbehldiqtyrSSuoKLNJ">
+					<div class="hint">Enter a CLI-style command, a JSON array, or a full JSON envelope.</div>
+				</div>
+			</div>
+			<button id="send" type="button" disabled>Send Command</button>
+		</section>
+
+		<section>
+			<label for="log">Messages</label>
+			<div id="log" class="log" role="log" aria-live="polite"></div>
+		</section>
+	</main>
+
+	<script>
+	(function () {
+		'use strict';
+
+		var socket;
+		var nextId = 1;
+
+		var socketUrl = document.getElementById('socketUrl');
+		var connectButton = document.getElementById('connect');
+		var disconnectButton = document.getElementById('disconnect');
+		var sendButton = document.getElementById('send');
+		var state = document.getElementById('state');
+		var playerId = document.getElementById('playerId');
+		var command = document.getElementById('command');
+		var log = document.getElementById('log');
+
+		socketUrl.value = 'ws://' + location.host + '/ws';
+		playerId.value = getCookie('Squeezebox-player') || '';
+
+		connectButton.addEventListener('click', connect);
+		disconnectButton.addEventListener('click', disconnect);
+		sendButton.addEventListener('click', sendCommand);
+		command.addEventListener('keydown', function (event) {
+			if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+				sendCommand();
+			}
+		});
+
+		connect();
+
+		function connect() {
+			if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+				return;
+			}
+
+			setState('connecting');
+			socket = new WebSocket(socketUrl.value);
+
+			socket.addEventListener('open', function () {
+				setState('open');
+				sendRaw({
+					id: nextId++,
+					request: [playerId.value, [
+						'status', '-', '1',
+						'tags:cgAABbehldiqtyrSSuoKLNJ',
+						'subscribe:10'
+					]]
+				});
+			});
+
+			socket.addEventListener('message', function (event) {
+				logMessage('in', parseMaybeJson(event.data));
+			});
+
+			socket.addEventListener('error', function () {
+				setState('error');
+				logMessage('error', 'WebSocket error');
+			});
+
+			socket.addEventListener('close', function (event) {
+				setState('closed');
+				logMessage('close', { code: event.code, reason: event.reason || '' });
+			});
+		}
+
+		function disconnect() {
+			if (socket) {
+				socket.close();
+			}
+		}
+
+		function sendCommand() {
+			if (!socket || socket.readyState !== WebSocket.OPEN) {
+				logMessage('error', 'WebSocket is not open');
+				return;
+			}
+
+			try {
+				sendRaw(commandEnvelope(command.value));
+			}
+			catch (error) {
+				logMessage('error', error.message);
+			}
+		}
+
+		function commandEnvelope(value) {
+			var text = value.trim();
+
+			if (!text) {
+				throw new Error('Command is empty');
+			}
+
+			if (text[0] === '{') {
+				return JSON.parse(text);
+			}
+
+			if (text[0] === '[') {
+				return { id: nextId++, request: [playerId.value, JSON.parse(text)] };
+			}
+
+			return { id: nextId++, request: [playerId.value, splitCommand(text)] };
+		}
+
+		function sendRaw(message) {
+			socket.send(JSON.stringify(message));
+			logMessage('out', message);
+		}
+
+		// Split a CLI-style command into an array of arguments, respecting quotes and escapes.
+		// This is here to have a simple input field in the demo web page, but applications
+		// should use JSON arrays for commands instead of CLI-style strings.
+		function splitCommand(text) {
+			var tokens = [];
+			var token = '';
+			var quote = '';
+			var escape = false;
+
+			for (var i = 0; i < text.length; i++) {
+				var chr = text[i];
+
+				if (escape) {
+					token += chr;
+					escape = false;
+					continue;
+				}
+
+				if (chr === '\\') {
+					escape = true;
+					continue;
+				}
+
+				if (quote) {
+					if (chr === quote) {
+						quote = '';
+					}
+					else {
+						token += chr;
+					}
+					continue;
+				}
+
+				if (chr === '"' || chr === "'") {
+					quote = chr;
+					continue;
+				}
+
+				if (/\s/.test(chr)) {
+					if (token.length) {
+						tokens.push(token);
+						token = '';
+					}
+					continue;
+				}
+
+				token += chr;
+			}
+
+			if (escape) {
+				token += '\\';
+			}
+
+			if (quote) {
+				throw new Error('Unclosed quote in command');
+			}
+
+			if (token.length) {
+				tokens.push(token);
+			}
+
+			return tokens;
+		}
+
+		function parseMaybeJson(value) {
+			try {
+				return JSON.parse(value);
+			}
+			catch (error) {
+				return value;
+			}
+		}
+
+		function logMessage(type, payload) {
+			var entry = document.createElement('div');
+			entry.className = 'entry ' + type;
+
+			var meta = document.createElement('div');
+			meta.className = 'meta';
+			meta.textContent = '[' + new Date().toLocaleTimeString() + '] ' + type;
+
+			var body = document.createElement('div');
+			body.textContent = typeof payload === 'string' ? payload : JSON.stringify(payload, null, 2);
+
+			entry.appendChild(meta);
+			entry.appendChild(body);
+			log.appendChild(entry);
+			log.scrollTop = log.scrollHeight;
+		}
+
+		function setState(value) {
+			state.className = 'status ' + value;
+			state.textContent = value;
+			connectButton.disabled = value === 'open' || value === 'connecting';
+			disconnectButton.disabled = value !== 'open' && value !== 'connecting';
+			sendButton.disabled = value !== 'open';
+		}
+
+		function getCookie(name) {
+			var prefix = name + '=';
+			var parts = document.cookie.split(';');
+
+			for (var i = 0; i < parts.length; i++) {
+				var part = parts[i].trim();
+
+				if (part.indexOf(prefix) === 0) {
+					return decodeURIComponent(part.slice(prefix.length));
+				}
+			}
+
+			return '';
+		}
+	}());
+	</script>
+</body>
+</html>
