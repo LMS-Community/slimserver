@@ -243,6 +243,11 @@ function _init() {
 				canSeek: false
 			}
 			this.playerStatus['playlist repeat'] = 0;
+
+			if (this.socket) {
+				this.socket.close();
+				console.log('player changed', this.socket?.readyState);
+			}
 		},
 
 		addObserver : function(config){
@@ -357,6 +362,7 @@ function _init() {
 
 		getStatus : function(){
 			if (this.player) {
+				this._initWebSocket();
 				this.playerRequest({
 					params: [ "status", "-", 1, "tags:cgAABbehldiqtyrSSuoKLNJ" ],
 					failure: this._updateStatus,
@@ -364,6 +370,55 @@ function _init() {
 					scope: this
 				});
 			}
+		},
+
+		_initWebSocket : function() {
+			if (this.socket?.readyState === WebSocket.OPEN || this.canWebSocket === false) return;
+
+			console.log('Initializing WebSocket connection...');
+
+			const self = this;
+			this.socketId = 0;
+			this.socket = new WebSocket('ws://' + window.location.host + '/ws');
+
+			this.socket.addEventListener('open', function () {
+				self.canWebSocket = true;
+				try {
+					self.socket.send(JSON.stringify({
+						id: self.socketId++,
+						request: [self.player, [
+							'status', '-', '1',
+							'tags:cgAABbehldiqtyrSSuoKLNJ',
+							'subscribe:0'
+						]]
+					}));
+				} catch (e) {
+					console.error('WebSocket send error', e);
+				}
+			});
+
+			this.socket.addEventListener('message', function (event) {
+				// console.log('WebSocket message received:', self.socket.readyState, event.data);
+				try {
+					self._updateStatus({ responseText: event.data });
+				} catch (e) {
+					console.log('WebSocket message handling error', e);
+				}
+			});
+
+			this.socket.addEventListener('error', function (event) {
+				if (self.canWebSocket === undefined) {
+					// we never connected successfully, assuming we can't do WebSocket
+					console.warn('WebSocket connection failed. Falling back to HTTP polling.');
+					self.canWebSocket = false;
+				}
+				console.warn('WebSocket connection errored out.', event);
+			});
+
+			this.socket.addEventListener('close', function (event) {
+				delete self.socket;
+				console.log('WebSocket connection closed.', { code: event.code, reason: event.reason || '' });
+			});
 		},
 
 		_updateStatus : function(response) {
