@@ -50,7 +50,12 @@
 			[% IF item.includeAlbum && item.album.defined && item.album != noAlbum %]
 				<div class="playlistSongDetail">
 					[% IF item.album_id %]
-					<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringALBUM %]%20([% item.album | uri %])&amp;album_id=[% item.album_id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser" class="browseItemLink"><span>[% item.album | html %]</span></a>
+					[% IF item.version;
+						album_and_version = item.album _ ' [' _ item.version _ ']' ;
+					ELSE;
+						album_and_version = item.album;
+					END %]
+					<a href="[% webroot %]clixmlbrowser/clicmd=browselibrary+items&amp;mode=albums&amp;linktitle=[% stringALBUM %]%20([% item.album | uri %])&amp;album_id=[% item.album_id %]&amp;player=[% playerURI %]/index.html?index=0" target="browser" class="browseItemLink"><span>[% album_and_version | html %]</span></a>
 					[% ELSE %][% item.album | html %][% END %]
 				</div>
 			[% END %]

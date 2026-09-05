@@ -3662,6 +3662,7 @@ sub _playlistXtracksCommand_parseDbItem {
 					my $lcClass = lc($class);
 					$classes{Album} = Slim::Schema->search('Album', {
 						titlesearch => $albumObj->titlesearch,
+						version => $albumObj->version,
 						"$lcClass.$key" => $value,
 					},{
 						prefetch => $lcClass
