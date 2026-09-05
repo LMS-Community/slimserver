@@ -355,7 +355,7 @@ sub SetAVTransportURI {
 		$meta->{_id} = $trackId;
 		$_trackMeta{$trackId} = $meta;
 
-		$class->_setTrackInfo( $trackId, $meta->{res} );
+		$class->_setTrackInfo( $trackId, $meta );
 
 		$mediaDuration = $meta->{res}->{duration}; # XXX more if URI is a playlist?
 		$trackDuration = $mediaDuration;
@@ -468,7 +468,7 @@ sub SetNextAVTransportURI {
 			$meta->{_id} = $trackId;
 			$_trackMeta{$trackId} = $meta;
 
-			$class->_setTrackInfo( $trackId, $meta->{res} );
+			$class->_setTrackInfo( $trackId, $meta );
 
 			delete $_trackMeta{ $pd->{avt_NextTrackId} } if $pd->{avt_NextTrackId};
 			$pd->{avt_NextTrackId} = $trackId;
@@ -913,9 +913,15 @@ sub _DIDLLiteToHash {
 	return $meta;
 }
 
-# sets track info from DIDL-Lite res element decoded by _DIDLLiteToHash
+# sets track info from DIDL-Lite data decoded by _DIDLLiteToHash
 sub _setTrackInfo {
-	my ( $class, $trackId, $res ) = @_;
+	my ( $class, $trackId, $meta ) = @_;
+
+	# Prime the title cache so ProtocolHandler::getMetadataFor()'s getCurrentTitle()
+	# call returns this straight away
+	Slim::Music::Info::setCurrentTitle( $trackId, $meta->{title} ) if $meta->{title};
+
+	my $res = $meta->{res} || {};
 
 	Slim::Music::Info::setContentType( $trackId, $res->{mime} ) if $res->{mime};
 	Slim::Music::Info::setBitrate( $trackId, $res->{bitrate} ) if $res->{bitrate};
