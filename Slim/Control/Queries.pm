@@ -4116,18 +4116,19 @@ sub statusQuery {
 			$request->addResult('is_transcoded', $transcoded);
 		}
 
-		if ($tags =~ /b/) {   # get the song's current bitrate
-			my $bitrate = $song->streambitrate();
-			if (defined $bitrate && $bitrate) {
-				$bitrate = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
-				$request->addResult('bitrate', $bitrate);
+		my $type = $song->streamformat();
+		if ($tags =~ /o/) {   # get the song's format (type)
+			if (defined $type && $type) {
+				$request->addResult('type', $type);
 			}
 		}
 
-		if ($tags =~ /o/) {   # get the song's format (type)
-			my $type = $song->streamformat();
-			if (defined $type && $type) {
-				$request->addResult('type', $type);
+		if ($tags =~ /b/) {   # get the song's current bitrate
+			my $vbr = $transcoded ? 0 : $song->currentTrack()->vbr_scale;
+			my $bitrate = $song->streambitrate();
+			if (defined $bitrate && $bitrate) {
+				$bitrate = Slim::Schema::Track->buildPrettyBitRate($bitrate, $vbr, $type);
+				$request->addResult('bitrate', $bitrate);
 			}
 		}
 
