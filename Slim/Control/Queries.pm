@@ -4134,8 +4134,6 @@ sub statusQuery {
 			}
 		}
 
-		warn $streamFormat;
-
 		if ($tags =~ /T/) {   # get the song's sample rate
 			my $samplerate = $song->samplerate();
 			if (defined $samplerate) {
