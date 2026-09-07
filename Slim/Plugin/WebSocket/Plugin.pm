@@ -188,14 +188,23 @@ sub sendMessage {
 	my ($httpClient, $obj) = @_;
 	my $conn = $connections{$httpClient} || return;
 
-	my $json = eval { encode_json($obj) };
+	my $bytes = eval {
+		my $json = encode_json($obj);
+
+		$conn->{hs}->build_frame(
+			buffer           => $json,
+			type             => 'text',
+			masked           => 0,
+			max_payload_size => 0,
+		)->to_bytes;
+	};
 
 	if ( $@ ) {
-		logError("Failed to encode WebSocket message: $@");
+		$log->error("Failed to create WebSocket message: $@");
 		return;
 	}
 
-	sendBytes($httpClient, $conn->{hs}->build_frame(buffer => $json, type => 'text', masked => 0)->to_bytes);
+	sendBytes($httpClient, $bytes);
 }
 
 sub connectionFlush {
