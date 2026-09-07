@@ -33,7 +33,7 @@ use Exporter::Lite;
 
 our @EXPORT = qw(assert msg msgf errorMsg specified dumpFiltered safe_md5_hex);
 
-use File::Basename qw(basename dirname);
+use File::Basename qw(basename dirname fileparse);
 use File::Spec::Functions qw(:ALL);
 use File::Path qw(mkpath rmtree);
 use File::Temp qw(tempdir);
@@ -343,6 +343,12 @@ sub folderURLFromPath {
 sub folderFromURL {
 	my ($url) = @_;
 	return dirname(pathFromfileURL($url));
+}
+
+sub fileSearchNameFromURL {
+	my ($pathOrUrl, @extensions) = @_;
+	$pathOrUrl = pathFromFileURL($pathOrUrl) if $pathOrUrl =~ /^file:\/\//i;
+	return Slim::Utils::Text::ignoreCaseArticles((fileparse($pathOrUrl, @extensions))[0]);
 }
 
 

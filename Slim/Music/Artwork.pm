@@ -39,6 +39,7 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 
 use constant MAX_RETRIES => 5;
+use constant IMAGE_FORMATS => qw(jpg jpeg png gif);
 
 # Global caches:
 my $artworkDir = '';
@@ -195,7 +196,7 @@ sub _findStandaloneArtwork {
 			@variations = map {(
 				catfile($parentDir, "$name.$_"),
 				catfile($parentDir, $name . '.' . uc($_)),
-			)} ('jpg', 'jpeg', 'png', 'gif');
+			)} IMAGE_FORMATS();
 		}
 
 		@variations;
@@ -267,8 +268,8 @@ sub updateStandaloneArtwork {
 
 	# add removed artwork to scanned_pics with a status of Deleted
 	$dbh->do( qq{
-		INSERT INTO scanned_pics (folder, full_path, status, folder_url)
-		SELECT DISTINCT FOLDER_FROM_PATH(cover), cover, 'D', FOLDER_URL_FROM_PATH(cover)
+		INSERT INTO scanned_pics (filename_search, folder, full_path, status, folder_url)
+		SELECT DISTINCT FILE_SEARCH_NAME_FROM_URL(cover), FOLDER_FROM_PATH(cover), cover, 'D', FOLDER_URL_FROM_PATH(cover)
 		FROM tracks
 		WHERE NOT EXISTS (
 			SELECT * FROM scanned_pics
@@ -447,13 +448,9 @@ sub updateStandaloneArtwork_OLD {
 	my $dbh = Slim::Schema->dbh;
 
 	my $where = qq{
-		tracks.cover LIKE '%jpg'
-		OR tracks.cover LIKE '%jpeg'
-		OR tracks.cover LIKE '%png'
-		OR tracks.cover LIKE '%gif'
-		OR tracks.cover LIKE 'http%'
+		tracks.cover LIKE 'http%'
 		OR tracks.coverid IS NULL
-	};
+	} . join( ' OR ', map { "tracks.cover LIKE '%$_'" } IMAGE_FORMATS() );
 
 	# get singledir parameter from the scanner if available
 	my $singledir = main::SCANNER ? $ARGV[-1] : undef;
@@ -687,7 +684,7 @@ sub generateImageId {
 
 	if ( $image =~ /^https?/ ) {
 		$mtime = $size = 1;
-		$args->{url} = $image; # use the image url, not the music file url 
+		$args->{url} = $image; # use the image url, not the music file url
 	}
 	elsif ( $image =~ /^\d+$/ ) {
 		# Cache is based on mtime/size of the file containing embedded art
@@ -1086,6 +1083,10 @@ sub getResizeSpecs {
 	main::DEBUGLOG && $log->is_debug && $log->debug("Full list of artwork pre-cache specs:\n" . Data::Dump::dump(@specs));
 
 	return @specs;
+}
+
+sub imageFileNameSearch {
+	Slim::Utils::Misc::fileSearchNameFromURL($_[0], IMAGE_FORMATS()),
 }
 
 1;

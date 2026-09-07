@@ -342,6 +342,7 @@ sub postConnect {
 	$dbh->sqlite_create_function( 'FOLDER_URL_FROM_PATH', 1, \&Slim::Utils::Misc::folderURLFromPath );
 	$dbh->sqlite_create_function( 'FOLDER_FROM_PATH', 1, \&dirname );
 	$dbh->sqlite_create_function( 'FOLDER_FROM_URL', 1, \&Slim::Utils::Misc::folderFromURL );
+	$dbh->sqlite_create_function( 'FILE_SEARCH_NAME_FROM_URL', 1, \&Slim::Music::Artwork::imageFileNameSearch );
 
 	# We create this even if main::STATISTICS is not false so that the SQL always works
 	# Track Persistent data is in another file, in the prefs folder rather than cache

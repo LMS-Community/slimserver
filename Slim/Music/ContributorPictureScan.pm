@@ -32,7 +32,7 @@ use Slim::Utils::Scanner::Local;
 my $log = logger('scan.import');
 my $prefs = preferences('server');
 
-my ($dbh, $sth_album_folders, $sth_contributor_picture, $sth_update_contributor_picture, @artworkFolders, $specs, @userDefinedRolesToInclude, $i);
+my ($dbh, $sth_album_folders, $sth_contributor_picture, $sth_update_contributor_picture, $sth_find_scanned_pics, @artworkFolders, $specs, @userDefinedRolesToInclude, $i);
 
 # when walking up the folder hierarchy, don't go above these folders
 my $audioDirs = { map { $_ => 1 } @{Slim::Utils::Misc::getAudioDirs()} };
@@ -47,6 +47,9 @@ sub init {
 
 	Slim::Music::Import->useImporter($class, !$prefs->get('noContributorPictures'));
 }
+
+my $tt = 0;
+
 
 sub startArtworkScan {
 	my $class = shift;
@@ -83,6 +86,12 @@ sub startArtworkScan {
 		UPDATE contributors
 		SET portrait = ?, portraitid = ?
 		WHERE id = ?
+	});
+
+	$sth_find_scanned_pics = $dbh->prepare_cached(qq{
+		SELECT full_path
+		FROM scanned_pics
+		WHERE folder = ? AND filename_search = ?
 	});
 
 	my $roles = join( ',', Slim::Utils::Misc::uniq(
@@ -124,11 +133,13 @@ sub startArtworkScan {
 		});
 	}
 
+$tt = 0;
 	while ( _getArtistPhotoURL({
 		sth      => $sth,
 		count    => $count,
 		progress => $progress,
 	}) ) {}
+warn $tt;
 
 	main::INFOLOG && $log->info("Finished scan for contributor pictures.");
 
@@ -164,6 +175,7 @@ sub _getArtistPhotoURL {
 			}
 		}
 
+		my $t = Time::HiRes::time;
 		# check if we have a portrait in the artwork folder(s)
 		if (!$img) {
 			$candidates = sanitizedNameVariants($artist->{name});
@@ -202,6 +214,7 @@ sub _getArtistPhotoURL {
 
 			$sth_album_folders->finish;
 		}
+$tt += Time::HiRes::time - $t;
 
 		if ($img) {
 			$img = Slim::Utils::Unicode::utf8encode($img);
@@ -275,14 +288,21 @@ sub imageInFolder {
 	my $file;
 
 	LOOKUP: foreach my $name (@names) {
-		foreach my $ext ('jpg', 'png', 'jpeg', 'JPG', 'PNG', 'JPEG') {
-			my $candidate = catdir($folder, $name . ".$ext");
+		my $images = $dbh->selectall_arrayref($sth_find_scanned_pics, { Slice => {} }, $folder, Slim::Utils::Text::ignoreCaseArticles($name));
 
-			if (-f $candidate) {
-				$file = $candidate;
-				last LOOKUP;
-			}
+		if ($images && @$images) {
+			$file = $images->[0]->{full_path};
+			last LOOKUP;
 		}
+
+	# 	foreach my $ext ('jpg', 'png', 'jpeg', 'JPG', 'PNG', 'JPEG') {
+	# 		my $candidate = catdir($folder, $name . ".$ext");
+
+	# 		if (-f $candidate) {
+	# 			$file = $candidate;
+	# 			last LOOKUP;
+	# 		}
+	# 	}
 	}
 
 	return $file;
