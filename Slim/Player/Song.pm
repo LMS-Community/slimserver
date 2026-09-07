@@ -13,6 +13,7 @@ use strict;
 use base qw(Slim::Utils::Accessor);
 
 use Fcntl qw(SEEK_CUR SEEK_SET);
+use List::Util qw(min);
 
 use Slim::Utils::Log;
 use Slim::Schema;
@@ -422,11 +423,17 @@ sub open {
 			last if $transcoder;
 		}
 
-		if (! $transcoder) {
+		if (!$transcoder) {
 			logError("Couldn't create command line for $format playback for [$url]");
 			return (undef, ($error || 'PROBLEM_CONVERT_FILE'), $url);
 		} elsif (main::INFOLOG && $log->is_info) {
-			 $log->info("Transcoder: streamMode=", $transcoder->{'streamMode'}, ", streamformat=", $transcoder->{'streamformat'});
+			 $log->info("Transcoder: ", Data::Dump::dump($transcoder));
+		}
+
+		# Init song's sample rate and sample size before any transcoding
+		$self->samplerate($transcoder->{'sampleRate'});
+		if (!Slim::Music::Info::isLossy($transcoder->{'streamformat'})) {  # Only set sample size for lossless
+			$self->samplesize($transcoder->{'sampleSize'});
 		}
 
 		if ($wantTranscoderSeek && (grep(/T/, @{$transcoder->{'usedCapabilities'}}))) {
@@ -620,7 +627,25 @@ sub open {
 
 				$self->_transcoded(1);
 
-				$self->_streambitrate(guessBitrateFromFormat($transcoder->{'streamformat'}, $transcoder->{'rateLimit'}) || 0);
+				my $streamformat = $transcoder->{'streamformat'};
+				$self->_streamFormat($streamformat);
+
+				my $bitrate;
+				my $sampleSize;
+				my $sampleRate;
+
+				if (Slim::Music::Info::isLossy($streamformat)) {
+					$bitrate = $transcoder->{'rateLimit'};  # bitrate limit
+					$self->samplesize("");  # clear samplesize for lossy formats
+					$self->samplerate( min($transcoder->{'sampleRate'}, $transcoder->{'samplerateLimit'}) );
+				} else {
+					$sampleRate = $transcoder->{'samplerateLimit'};  # samplerate limit
+					$sampleSize = $transcoder->{'sampleSize'};
+					$self->samplesize($sampleSize);
+					$self->samplerate($sampleRate);
+				}
+
+				$self->_streambitrate(guessBitrateFromFormat($streamformat, $bitrate, $sampleSize, $sampleRate) || 0);
 			}
 		} # ENDIF main::TRANSCODING
 
@@ -681,18 +706,22 @@ sub open {
 
 # Static method
 sub guessBitrateFromFormat {
-	my ($format, $maxRate) = @_;
+	my ($format, $bitrate, $sampleSize, $sampleRate) = @_;
 
 	# Hack to set up stream bitrate for songTime for SliMP3/SB1
 	# Also used when rebuffering, etc.
-	if ($format eq 'mp3') {
-		return ($maxRate || 320) * 1000;
+
+	$sampleSize //= 16;
+	$sampleRate //= 44_100;
+
+	if (Slim::Music::Info::isLossy($format)) {
+		return ($bitrate || 320) * 1000;
 	} elsif ($format =~ /wav|aif|pcm/) {
 		# Just assume standard rate
-		return 44_100 * 16 * 2;
+		return $sampleRate * $sampleSize * 2;
 	} elsif ($format eq 'flc') {
-		# Assume 50% compression at standard rate
-		return 44_100 * 16;
+		# Assume 50% compression at max rate
+		return $sampleRate * $sampleSize;
 	}
 }
 
@@ -734,6 +763,7 @@ sub isRemote            {return $_[0]->currentTrackHandler()->isRemote();}
 sub streamformat        {return $_[0]->_streamFormat() || Slim::Music::Info::contentType($_[0]->currentTrack()->url);}
 sub isPlaylist          {return $_[0]->_playlist();}
 sub status              {return $_[0]->_status();}
+sub transcoded          {return $_[0]->_transcoded();}
 
 sub getSeekDataByPosition {
 	my ($self, $bytesReceived) = @_;

@@ -69,6 +69,9 @@ sub set {
 	if (ref $data) {
 		$data = freeze( $data );
 	}
+	elsif (utf8::is_utf8($data)) {
+		utf8::encode($data);
+	}
 
 	# Insert or replace the value
 	my $set = $self->{set_sth};
@@ -97,6 +100,7 @@ sub get {
 
 	eval {
 		$data = thaw($data);
+		utf8::decode($data) unless ref $data;
 	} if $data;
 
 	return $data;

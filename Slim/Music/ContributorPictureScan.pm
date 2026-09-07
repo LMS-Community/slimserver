@@ -33,6 +33,7 @@ my $log = logger('scan.import');
 my $prefs = preferences('server');
 
 my ($dbh, $sth_album_folders, $sth_contributor_picture, $sth_update_contributor_picture, @artworkFolders, $specs, @userDefinedRolesToInclude, $i);
+my ($ALBUMARTIST_ROLE, $ARTIST_ROLE, $BAND_ROLE);
 
 # when walking up the folder hierarchy, don't go above these folders
 my $audioDirs = { map { $_ => 1 } @{Slim::Utils::Misc::getAudioDirs()} };
@@ -58,6 +59,10 @@ sub startArtworkScan {
 
 	$dbh = Slim::Schema->dbh;
 
+	$ALBUMARTIST_ROLE = Slim::Schema::Contributor->typeToRole('ALBUMARTIST');
+	$ARTIST_ROLE = Slim::Schema::Contributor->typeToRole('ARTIST');
+	$BAND_ROLE = Slim::Schema::Contributor->typeToRole('BAND');
+
 	main::INFOLOG && $log->info("Starting contributor portrait scan");
 
 	my $imageFolder = $prefs->get('artfolder');
@@ -66,11 +71,11 @@ sub startArtworkScan {
 	}
 
 	$sth_album_folders = $dbh->prepare_cached(qq{
-		SELECT url
+		SELECT url, contributor_track.role
 		FROM tracks
 		JOIN contributor_track ON contributor_track.track = tracks.id
 		WHERE contributor_track.contributor = ? AND tracks.url LIKE 'file://%'
-		GROUP BY album
+		GROUP BY album, contributor_track.role
 	});
 
 	$sth_contributor_picture = $dbh->prepare_cached(qq{
@@ -142,7 +147,8 @@ sub _getArtistPhotoURL {
 
 	# get next artist from db
 	if ( my $artist = ($params->{sth}->fetchrow_hashref) ) {
-		my ($img, $candidates);
+		my $img;
+		my $candidates = sanitizedNameVariants($artist->{name});
 
 		$artist->{name} = Slim::Utils::Unicode::utf8decode($artist->{name});
 		$progress->update( $artist->{name} ) if $progress;
@@ -165,9 +171,7 @@ sub _getArtistPhotoURL {
 		}
 
 		# check if we have a portrait in the artwork folder(s)
-		if (!$img) {
-			$candidates = sanitizedNameVariants($artist->{name});
-
+		if (!$img && scalar @artworkFolders) {
 			main::INFOLOG && $log->is_info && $log->info("Looking for pictures of  " . $artist->{name});
 
 			foreach my $folder (@artworkFolders) {
@@ -180,11 +184,38 @@ sub _getArtistPhotoURL {
 		if (!$img) {
 			$sth_album_folders->execute($artist->{id});
 
-			my %seen;
-			ALBUMFOLDER: while (my $track = $sth_album_folders->fetchrow_hashref) {
-				my $path = Slim::Utils::Misc::pathFromFileURL($track->{url});
-				$path = dirname($path) if !-d $path;
+			my $artistsMatcher = join('|', map { quotemeta } @$candidates);
+			my $pathMatchRE = qr/$artistsMatcher/i;
 
+			my @albumFolders = Slim::Utils::Misc::uniq( map {
+				$_->{path}
+			} sort {
+				my $aPathMatch = $a->{path} =~ $pathMatchRE;
+				my $bPathMatch = $b->{path} =~ $pathMatchRE;
+
+				# prefer those with a path matching the artist name, then by role, then by path
+				return -1 if $aPathMatch && !$bPathMatch;
+				return 1 if $bPathMatch && !$aPathMatch;
+
+				if ($a->{role} == $b->{role}) {
+					return lc($a->{path}) cmp lc($b->{path});
+				}
+
+				return -1 if $a->{role} == $ALBUMARTIST_ROLE;
+				return  1 if $b->{role} == $ALBUMARTIST_ROLE;
+				return -1 if $a->{role} == $ARTIST_ROLE;
+				return  1 if $b->{role} == $ARTIST_ROLE;
+				return -1 if $a->{role} == $BAND_ROLE;
+				return  1 if $b->{role} == $BAND_ROLE;
+				return  0;
+			} map {
+				{
+					path => dirname(Slim::Utils::Misc::pathFromFileURL($_->{url})),
+					role => $_->{role},
+				}
+			} @{$sth_album_folders->fetchall_arrayref({})} );
+
+			ALBUMFOLDER: while (my $path = shift @albumFolders) {
 				if (-d $path) {
 					my $dir = Path::Class::dir($path);
 
@@ -193,7 +224,7 @@ sub _getArtistPhotoURL {
 					my $grandparent = $dir->parent->parent->stringify if $parent && !$audioDirs->{$parent};
 
 					foreach ($parent, $path, $grandparent) {
-						next if !$_ || $seen{$_}++ || $audioDirs->{$_};
+						next if !$_ || $audioDirs->{$_};
 						$img = imageInFolder($_, @$candidates, 'artist', 'contributor');
 						last ALBUMFOLDER if $img;
 					}

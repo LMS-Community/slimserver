@@ -36,7 +36,7 @@ our @EXPORT = qw(assert msg msgf errorMsg specified dumpFiltered safe_md5_hex);
 use File::Basename qw(basename);
 use File::Spec::Functions qw(:ALL);
 use File::Path qw(mkpath rmtree);
-use File::Temp qw(tempdir);
+use File::Temp qw(tempdir tempfile);
 use File::Slurp;
 use FindBin qw($Bin);
 use List::Util qw();
@@ -673,6 +673,27 @@ sub makeTempDir {
 		$tempdir = tempdir( CLEANUP => 1 );
 		$ospathslog->warn("still can't make private temp dir, using $tempdir");
 	}
+}
+
+sub isDirWritable {
+	my ($dir) = @_;
+
+	my $filename;
+	eval {
+		(undef, $filename) = tempfile(
+			TEMPLATE => 'LMS_WRITABLE_XXXX',
+			DIR => $dir,
+			UNLINK => 1,
+		);
+	};
+
+	if ($filename && -f $filename) {
+		unlink $filename;
+		return 1;
+	}
+
+	$osfileslog->warn("Directory seems to be write protected: $dir ($@)");
+	return;
 }
 
 =head2 getAudioDir()

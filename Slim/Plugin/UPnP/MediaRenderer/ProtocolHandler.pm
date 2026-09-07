@@ -14,6 +14,8 @@ use Slim::Utils::Errno;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
+use Slim::Plugin::UPnP::MediaRenderer::AVTransport ();
+
 use constant MAX_RAW_READ => 32768;
 
 my $log = logger('plugin.upnp');
@@ -133,9 +135,15 @@ sub getFormatForURL {
 	my $class = shift;
 	my $url = shift;
 
+	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor($url);
+	if ( $meta && $meta->{res}->{mime} ) {
+		if ( my $type = Slim::Music::Info::mimeToType( $meta->{res}->{mime} ) ) {
+			return $type;
+		}
+	}
+
 	# if typeFromSuffix can't find a result it returns the mp3 default.
-	my $type = Slim::Music::Info::typeFromSuffix($url, 'mp3');
-	return $type;
+	return Slim::Music::Info::typeFromSuffix($url, 'mp3');
 }
 
 # XXX use DLNA.ORG_OP value, and/or MIME type
@@ -159,10 +167,11 @@ sub new {
 		url     => $streamUrl,
 		song    => $args->{song},
 		client  => $client,
-		bitrate => 128_000, # XXX
+		bitrate => $song->bitrate() || 128_000,
 	} ) || return;
 
-	${*$sock}{contentType} = 'audio/mpeg'; # XXX
+	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor( $song->currentTrack->url );
+	${*$sock}{contentType} = ( $meta && $meta->{res}->{mime} ) || 'audio/mpeg';
 
 	return $sock;
 }
@@ -170,6 +179,18 @@ sub new {
 # Avoid scanning
 sub scanUrl {
 	my ($class, $url, $args) = @_;
+
+	# $url is a synthetic per-playlist-entry id (see AVTransport::_newTrackId),
+	# looked up via AVTransport's client-independent registry rather than
+	# $args->{client}'s pluginData: in a sync group, this is called with the
+	# sync-group's master client, which may not be the client this UPnP
+	# session's state was stored on.
+	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor($url);
+
+	if ( ref($meta) eq 'HASH' && ( my $uri = $meta->{res}->{uri} ) ) {
+		$args->{song}->streamUrl($uri);
+	}
+
 	$args->{cb}->($args->{song}->currentTrack());
 }
 
@@ -218,31 +239,13 @@ sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 
 	# This returns metadata for any tracks added to the playlist via the plugin.
-
-	# convert protocal handler
-	$url =~ s/^upnp/http/;
-
-	my $pd = ($client && $client->pluginData()) || {};
-	my $meta = $pd->{avt_AVTransportURIMetaData_hash};
-	my $res = $meta->{res};
-	my $currentUri = $res->{uri};
-
-	# if $url doesn't match CurrentURI check against NextUri
-	if ( $url && $currentUri && $url ne $currentUri ) {
-		my $nextMeta = $pd->{avt_NextAVTransportURIMetaData_hash};
-
-		# check for cleared NextUri
-		if ( ref($nextMeta) eq 'HASH' ) {
-
-			my $nextRes = $nextMeta->{res};
-			$currentUri = $nextRes->{uri};
-
-			if ( $currentUri && $url eq $currentUri ) {
-				$meta = $nextMeta;
-				$res = $nextRes;
-			}
-		}
-	}
+	# $url is a synthetic per-playlist-entry id (see AVTransport::_newTrackId),
+	# looked up via AVTransport's client-independent registry rather than
+	# $client's pluginData: in a sync group, this is called with the sync-group's
+	# master client, which may not be the client this UPnP session's state was
+	# stored on.
+	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor($url) || {};
+	my $res  = $meta->{res} || {};
 
 	main::DEBUGLOG && $log->is_debug && $log->debug( 'Metadata returned for  ' . $meta->{title} );
 	return {

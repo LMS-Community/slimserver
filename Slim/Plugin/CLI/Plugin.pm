@@ -122,10 +122,6 @@ sub getDisplayName {
 	return 'PLUGIN_CLI';
 }
 
-sub getDisplayDescription {
-	return "PLUGIN_CLI_DESC";
-}
-
 # plugin: shutdown the CLI
 sub shutdownPlugin {
 	my $exiting = shift;
