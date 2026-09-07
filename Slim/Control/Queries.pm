@@ -2564,7 +2564,7 @@ sub playerXQuery {
 			} elsif ($entity eq "ip") {
 				$request->addResult("_$entity", $client->ipport());
 			} elsif ($entity eq "model") {
-				$request->addResult("_$entity", $client->model());
+				$request->addResult("_$entity", $client->model(1));
 			} elsif ($entity eq "isplayer") {
 				$request->addResult("_$entity", $client->isPlayer());
 			} elsif ($entity eq "displaytype") {
@@ -2572,8 +2572,8 @@ sub playerXQuery {
 			} elsif ($entity eq "canpoweroff") {
 				$request->addResult("_$entity", $client->canPowerOff());
 			} elsif ($entity eq "uuid") {
-                                $request->addResult("_$entity", $client->uuid());
-                        }
+				$request->addResult("_$entity", $client->uuid());
+			}
 		}
 	}
 
