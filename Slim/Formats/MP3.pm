@@ -43,6 +43,7 @@ my $scannerlog = logger('scan.scanner');
 my $sourcelog  = logger('player.source');
 
 my %tagMapping = (
+	'MUSICBRAINZ RELEASE TRACK ID'      => 'MUSICBRAINZ_RELEASETRACKID',
 	'MUSICBRAINZ ALBUM ARTIST'          => 'ALBUMARTIST',
 	'MUSICBRAINZ ALBUM ARTIST ID'       => 'MUSICBRAINZ_ALBUMARTIST_ID',
 	'MUSICBRAINZ ALBUM ID'              => 'MUSICBRAINZ_ALBUM_ID',
@@ -339,6 +340,9 @@ sub doTagMapping {
 			$tags->{$new} = delete $tags->{$old};
 		}
 	}
+
+	# Prefer MusicBrainz Release Track Id (MUSICBRAINZ_RELEASETRACKID) to UFID (MUSICBRAINZ_ID)
+	$tags->{MUSICBRAINZ_ID} = delete $tags->{MUSICBRAINZ_RELEASETRACKID} if $tags->{MUSICBRAINZ_RELEASETRACKID};
 
 	# Special handling for UFID, pull out ID from array
 	if ( exists $tags->{MUSICBRAINZ_ID} && ref $tags->{MUSICBRAINZ_ID} eq 'ARRAY' ) {

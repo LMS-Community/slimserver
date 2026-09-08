@@ -52,6 +52,7 @@ my %tagMapping = (
 	'MusicBrainz/Album Type'      => 'RELEASETYPE',
 	'MusicBrainz/Artist Id'       => 'MUSICBRAINZ_ARTIST_ID',
 	'MusicBrainz/Track Id'        => 'MUSICBRAINZ_ID',
+	'MusicBrainz/Release Track Id'=> 'MUSICBRAINZ_RELEASETRACKID',
 	'MusicBrainz/TRM Id'          => 'MUSICBRAINZ_TRM_ID',
 );
 
@@ -72,6 +73,9 @@ sub getTag {
 			$tags->{$new} = delete $tags->{$old};
 		}
 	}
+
+	# Prefer MUSICBRAINZ_RELEASETRACKID to MusicBrainz/Track Id (MUSICBRAINZ_ID)
+	$tags->{MUSICBRAINZ_ID} = delete $tags->{MUSICBRAINZ_RELEASETRACKID} if $tags->{MUSICBRAINZ_RELEASETRACKID};
 
 	# Sometimes the BPM is not an integer so we try to convert.
 	$tags->{BPM} = int($tags->{BPM}) if defined $tags->{BPM};

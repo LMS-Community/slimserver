@@ -95,6 +95,9 @@ sub getTag {
 		}
 	}
 
+	# Prefer MUSICBRAINZ_RELEASETRACKID to MUSICBRAINZ_TRACKID (MUSICBRAINZ_ID)
+	$tags->{MUSICBRAINZ_ID} = delete $tags->{MUSICBRAINZ_RELEASETRACKID} if $tags->{MUSICBRAINZ_RELEASETRACKID};
+
 	# Special handling for DATE tags
 	# Parse the date down to just the year, for compatibility with other formats
 	$tags->{YEAR} ||= first { $_ } map {
