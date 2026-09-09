@@ -255,8 +255,6 @@ sub main {
 
 	Slim::Music::VirtualLibraries->init();
 
-	Slim::Schema->initialiseScannerDB();
-
 	if ($playlists) {
 
 		Slim::Music::PlaylistFolderScan->init;

@@ -48,7 +48,7 @@ sub find {
 
 	# Populate enhanced scanned_pics table (status E = already exists in the tracks table, status N = new)
 	my $imageSth = $dbh->prepare_cached( qq{
-		INSERT INTO scanned_pics
+		INSERT OR IGNORE INTO scanned_pics
 		(folder, full_path, timestamp, filesize, coverid, status, folder_url)
 		VALUES
 		(?, ?, ?, ?, ?,

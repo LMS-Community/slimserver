@@ -1,15 +1,9 @@
-DROP TABLE IF EXISTS scanned_files;
-CREATE TABLE scanned_files (
-  url text NOT NULL COLLATE NOCASE, -- URL must be case insensitive, or we might duplicate tracks if the filename changes case only (https://github.com/LMS-Community/slimserver/issues/705#issuecomment-1026229542)
-  timestamp int(10),
-  filesize int(10)
-);
-CREATE INDEX scannedUrlIndex ON scanned_files (url);
+CREATE INDEX IF NOT EXISTS tracksCoverIndex ON tracks (cover);
 
 DROP TABLE IF EXISTS scanned_pics;
 CREATE TABLE scanned_pics (
   folder text,
-  full_path text NOT NULL,
+  full_path text UNIQUE NOT NULL,
   timestamp int(10),
   filesize int(10),
   coverid char(8),
@@ -21,9 +15,7 @@ CREATE TABLE scanned_pics (
   	-- NULL = we'll set status 'E' to NULL if after n&c music files have been processed the image is still being used.
  	--	This improves performance as we'll only process the tracks if there's also a N(ew) image 
 );
-CREATE INDEX scannedPicUrlIndex ON scanned_pics (full_path);
-CREATE INDEX scannedPicDirIndex ON scanned_pics (folder);
-CREATE INDEX scannedPicStatusIndex ON scanned_pics (status);
-CREATE INDEX scannedPicFolderUrlIndex ON scanned_pics (folder_url);
-
-CREATE INDEX IF NOT EXISTS trackscoverIndex ON tracks (cover);
+CREATE INDEX scannedPicsFullPathIndex ON scanned_pics (full_path);
+CREATE INDEX scannedPicsFolderIndex ON scanned_pics (folder);
+CREATE INDEX scannedPicsStatusIndex ON scanned_pics (status);
+CREATE INDEX scannedPicsFolderUrlIndex ON scanned_pics (folder_url);
