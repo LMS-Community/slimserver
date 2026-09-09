@@ -36,6 +36,19 @@ STATUS=$(curl -m1 -sX POST -d '{"id":0,"params":["",["serverstatus"]],"method":"
 
 echo $STATUS | jq .
 
-RESULT=$(echo $STATUS | fgrep -q version)
+echo $STATUS | jq -e '.result.version | strings' > /dev/null || exit 1
 
-exit $RESULT
+DATE=$(curl -m1 -sX POST -d '{"id":1,"params":["",["date"]],"method":"slim.request"}' http://localhost:9000/jsonrpc.js)
+
+echo $DATE | jq .
+
+echo $DATE | jq -e '
+	.result.date_epoch as $epoch |
+	.result.utc_offset_minutes as $offset |
+	.result.is_dst as $dst |
+	.result.timezone as $timezone |
+	($epoch | type == "number" and floor == .) and
+	($offset | type == "number" and floor == . and . >= -720 and . <= 840) and
+	($dst == 0 or $dst == 1) and
+	($timezone | type == "string")
+' > /dev/null
