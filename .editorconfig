@@ -1,6 +1,33 @@
 root = true
 
-[*.{html,p[lm]}]
-indent_style = tab
-indent_size = 8
+[*]
+charset = utf-8
+end_of_line = lf
 insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{md,yml,yaml}]
+indent_style = space
+indent_size = 2
+
+[*.{sh,js,json,css,html,p[lm]}]
+indent_style = tab
+indent_size = 4
+
+# For "special" HTML files (e.g., linux-update.html.de, remotestreaming.html.de)
+[*.html.*]
+indent_style = tab
+indent_size = 4
+
+[**/Dockerfile]
+indent_style = space
+indent_size = 4
+
+[{extensions.json,devcontainer.json,launch.json}]
+indent_style = space
+indent_size = 4
+insert_final_newline = false
+
+# Can contain trailing whitespace for some languages
+[strings.txt]
+trim_trailing_whitespace = false
