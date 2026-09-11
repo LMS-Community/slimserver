@@ -2546,6 +2546,11 @@ sub _checkValidity {
 
 		# Do a cascading delete for has_many relationships - this will
 		# clear out Contributors, Genres, etc.
+
+		# The cascading delete removes library_track rows for the deleted track and they're not created
+		# by _newTrack() so store current values to be added back below.
+		my @libraries = map { $_->library } Slim::Schema->search('LibraryTrack', { 'track' => $oldid })->all;
+
 		$track->delete;
 		Slim::Schema::Album->rescan($oldAlbum);
 
@@ -2557,7 +2562,15 @@ sub _checkValidity {
 			'commit'   => 1,
 		});
 
-		$track = Slim::Schema->rs('Track')->find($trackId) if (defined $trackId);
+		if (defined $trackId) {
+			$track = Slim::Schema->rs('Track')->find($trackId);
+
+			foreach (@libraries) {
+				my $rs = Slim::Schema->resultset('LibraryTrack')->new( { track => $trackId, library => $_ } );
+				$rs->update_or_insert;
+			}
+		}
+
 	}
 
 	# Track may have been deleted by _hasChanged
