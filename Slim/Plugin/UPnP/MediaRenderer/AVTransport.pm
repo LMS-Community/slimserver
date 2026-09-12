@@ -8,7 +8,9 @@ package Slim::Plugin::UPnP::MediaRenderer::AVTransport;
 
 use strict;
 
+use URI ();
 use URI::Escape qw(uri_unescape);
+use UUID::Tiny ();
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -20,6 +22,12 @@ use constant EVENT_RATE => 0.2;
 
 my $log   = logger('plugin.upnp');
 my $prefs = preferences('server');
+
+# Track metadata keyed by the synthetic id (see _newTrackId), kept independent
+# of any particular client's pluginData: in a sync group, Song::getNextSong()/
+# ProtocolHandler::scanUrl()/getMetadataFor() operate on the sync-group's master
+# client, which may not be the client this UPnP session's state is stored on.
+my %_trackMeta;
 
 sub init {
 	my $class = shift;
@@ -86,15 +94,27 @@ sub _initialState {
 ### Eventing
 
 sub clientEvent {
-	my $class   = __PACKAGE__;
-	my $request = shift;
-	my $client  = $request->client;
+	my $class          = __PACKAGE__;
+	my $request        = shift;
+	my $notifiedClient = $request->client || return;
+
+	# Re-target to whichever of our clients is actually in the notified
+	# client's sync group. One of them is the one the UPnP control point is 
+	# talking to and we must ensure that that one catches the event.
+	for my $client ( $notifiedClient->syncGroupActiveMembers() ) {
+		$class->_clientEvent( $request, $client );
+	}
+}
+
+sub _clientEvent {
+	my ( $class, $request, $client ) = @_;
 
 	my $cmd = $request->getRequest(1);
 
 	if ( $cmd eq 'clear' ) {
 		main::DEBUGLOG && $log->is_debug && $log->debug('playlist clear event, resetting state');
 
+		# NOTE: deliberately not cleaning up %_trackMeta here
 		$class->changeState( $client, _initialState() );
 		return;
 	}
@@ -113,23 +133,24 @@ sub clientEvent {
 			if ( scalar @{$playlist} > 1 ) {
 				if ( my $song = ($client->playingSong() || $client->streamingSong()) ) {
 
-					my $nextURI = $pd->{AVT}->{NextAVTransportURI};
+					my $nextId = $pd->{avt_NextTrackId};
 					my $currentURIMetadata = $pd->{AVT}->{CurrentTrackMetaData};
 					my $track = $song->currentTrack;
 
-					# Convert URI to protocol handler
-					$currentURI =~ s/^http/upnp/;
-					$nextURI =~ s/^http/upnp/;
-
-					# Only continue if the track has transitioned to nextURI
-					# this also provides a check if the track not a upnp track
-					if ( $track->url eq $nextURI ) {
+					# Only continue if the track has transitioned to the queued NextURI track,
+					# matched by our internal synthetic id rather than the original URI (see _newTrackId)
+					if ( $nextId && $track->url eq $nextId ) {
 						main::DEBUGLOG && $log->is_debug && $log->debug("playlist $cmd event, queueing next track");
 
-						# player has moved on to next track, copy NextURI to CurrentURI
-						$pd->{avt_AVTransportURIMetaData_hash} = $pd->{avt_NextAVTransportURIMetaData_hash};
+						# player has moved on to next track, drop the metadata of the one that just finished
+						delete $_trackMeta{ $pd->{avt_CurrentTrackId} } if $pd->{avt_CurrentTrackId};
+						$pd->{avt_CurrentTrackId} = $nextId;
+						$pd->{avt_NextTrackId} = undef;
 						$currentURI = $pd->{AVT}->{NextAVTransportURI};
 						$currentURIMetadata = $pd->{AVT}->{NextAVTransportURIMetaData};
+
+						my $currentMeta = $_trackMeta{$nextId};
+						my $currentDuration = $currentMeta ? $currentMeta->{res}->{duration} : '00:00:00';
 
 						# Remove track that just finished playing. The plugin protocol
 						# handler can only return metadata for currentURI and NextURI
@@ -140,6 +161,10 @@ sub clientEvent {
 							CurrentTrackMetaData		=> $currentURIMetadata,
 							AVTransportURI				=> $currentURI,
 							AVTransportURIMetaData		=> $currentURIMetadata,
+							NextAVTransportURI			=> '',
+							NextAVTransportURIMetaData	=> '',
+							CurrentTrackDuration		=> $currentDuration,
+							CurrentMediaDuration		=> $currentDuration,
 						} );
 					}
 					elsif (main::DEBUGLOG && $log->is_debug) {
@@ -298,6 +323,14 @@ sub SetAVTransportURI {
 
 	# If we get an empty CurrentURI value, clear the playlist
 	if ( exists $args->{CurrentURI} && $args->{CurrentURI} eq '' ) {
+		# clientEvent's 'clear' handler never cleans up %_trackMeta (see comment
+		# there), so do it here instead - this is a genuine reset, no new track follows.
+		my $pd = $client->pluginData();
+		delete $_trackMeta{ $pd->{avt_CurrentTrackId} } if $pd->{avt_CurrentTrackId};
+		delete $_trackMeta{ $pd->{avt_NextTrackId} } if $pd->{avt_NextTrackId};
+		$pd->{avt_CurrentTrackId} = undef;
+		$pd->{avt_NextTrackId} = undef;
+
 		$client->execute( [ 'playlist', 'clear' ] );
 
 		$newstate = 'NO_MEDIA_PRESENT';
@@ -317,12 +350,12 @@ sub SetAVTransportURI {
 
 		my $pd = $client->pluginData();
 
-		# Convert URI to protocol handler
-		my $upnp_uri = $meta->{res}->{uri};
-		$upnp_uri =~ s/^http/upnp/;
+		# Synthetic, globally unique track identity, see _newTrackId
+		my $trackId = $class->_newTrackId( $meta->{res}->{uri} );
+		$meta->{_id} = $trackId;
+		$_trackMeta{$trackId} = $meta;
 
-		Slim::Music::Info::setBitrate( $upnp_uri, $meta->{res}->{bitrate} );
-		Slim::Music::Info::setDuration( $upnp_uri, $meta->{res}->{secs} );
+		$class->_setTrackInfo( $trackId, $meta->{res} );
 
 		$mediaDuration = $meta->{res}->{duration}; # XXX more if URI is a playlist?
 		$trackDuration = $mediaDuration;
@@ -330,7 +363,10 @@ sub SetAVTransportURI {
 		$numTracks = 1; # XXX more if playlist
 		$curTrack  = 1;
 
-		$pd->{avt_AVTransportURIMetaData_hash} = $meta;
+		delete $_trackMeta{ $pd->{avt_CurrentTrackId} } if $pd->{avt_CurrentTrackId};
+		delete $_trackMeta{ $pd->{avt_NextTrackId} } if $pd->{avt_NextTrackId};
+		$pd->{avt_CurrentTrackId} = $trackId;
+		$pd->{avt_NextTrackId} = undef;
 
 		my $tstate = $pd->{AVT}->{TransportState};
 
@@ -339,22 +375,30 @@ sub SetAVTransportURI {
 		if ( $tstate eq 'NO_MEDIA_PRESENT' || $tstate eq 'STOPPED' ) {
 			# Both of these go to STOPPED, so load the track without playing it
 			$client->execute( [ 'playlist', 'clear' ] );
-			$client->execute( [ 'playlist', 'add', $upnp_uri, $meta->{title} ] );
+			$client->execute( [ 'playlist', 'add', $trackId, $meta->{title} ] );
 			$newstate = 'STOPPED';
 		}
 		elsif ( $tstate eq 'PLAYING' || $tstate eq 'TRANSITIONING' ) {
 			# Both of these go to PLAYING with the new URI
-			$client->execute( [ 'playlist', 'play', $upnp_uri, $meta->{title} ] );
+			$client->execute( [ 'playlist', 'play', $trackId, $meta->{title} ] );
 			$newstate = $tstate;
 		}
 		elsif ( $tstate eq 'PAUSED_PLAYBACK' ) {
 			# A bit strange, this is apparently supposed to load the new track but remains paused
 			# We'll set it to STOPPED to keep it simple
 			$client->execute( [ 'playlist', 'clear' ] );
-			$client->execute( [ 'playlist', 'add', $upnp_uri, $meta->{title} ] );
+			$client->execute( [ 'playlist', 'add', $trackId, $meta->{title} ] );
 			$newstate = 'STOPPED';
 		}
 	}
+
+	# With repeat enabled, we may accidentally wrap back to index 0 whenever
+	# the next track hasn't been inserted yet, but the DLNA server already ended 
+	# the connection of the current track, making LMS re-connect and repeat the 
+	# still current track instead of waiting for SetNextAVTransportURI.
+	# Repeat is meaningless here anyway since the Control Point, not LMS,
+	# dictates which track to play.
+	Slim::Player::Playlist::repeat( $client, 0 );
 
 	# Event notification, on a timer so playlist clear comes first and deletes everything
 	# then this resets the new data.
@@ -398,7 +442,8 @@ sub SetNextAVTransportURI {
 	if ( exists $args->{NextURI} && $args->{NextURI} eq '' ) {
 
 		# NextURI is blank, clear NextURI track from playlist
-		$pd->{avt_NextAVTransportURIMetaData_hash} = '';
+		delete $_trackMeta{ $pd->{avt_NextTrackId} } if $pd->{avt_NextTrackId};
+		$pd->{avt_NextTrackId} = undef;
 		main::DEBUGLOG && $log->is_debug && $log->debug("NextURI cleared");
 
 	} else {
@@ -412,23 +457,30 @@ sub SetNextAVTransportURI {
 		}
 
 		my $upnp_uri = $meta->{res}->{uri};
-		my $upnp_uricached = $pd->{avt_NextAVTransportURIMetaData_hash}->{res}->{uri};
+		my $cachedMeta = $pd->{avt_NextTrackId} ? $_trackMeta{ $pd->{avt_NextTrackId} } : undef;
+		my $upnp_uricached = $cachedMeta ? $cachedMeta->{res}->{uri} : undef;
 
 		# only update if NextURI has changed or it's not queued yet
-		if ( $upnp_uri ne $upnp_uricached || scalar @{$playlist} < 2 ){
+		if ( !defined($upnp_uricached) || $upnp_uri ne $upnp_uricached || scalar @{$playlist} < 2 ){
 
-			# Convert URI to protocol handler
-			$upnp_uri =~ s/^http/upnp/;
-			Slim::Music::Info::setBitrate( $upnp_uri, $meta->{res}->{bitrate} );
-			Slim::Music::Info::setDuration( $upnp_uri, $meta->{res}->{secs} );
+			# Synthetic, globally unique track identity, see _newTrackId
+			my $trackId = $class->_newTrackId( $meta->{res}->{uri} );
+			$meta->{_id} = $trackId;
+			$_trackMeta{$trackId} = $meta;
 
-			$pd->{avt_NextAVTransportURIMetaData_hash} = $meta;
+			$class->_setTrackInfo( $trackId, $meta->{res} );
+
+			delete $_trackMeta{ $pd->{avt_NextTrackId} } if $pd->{avt_NextTrackId};
+			$pd->{avt_NextTrackId} = $trackId;
 
 			# use insert to make sure it is queued next.
-			$client->execute( [ 'playlist', 'insert', $upnp_uri, $meta->{title} ] );
-			main::DEBUGLOG && $log->is_debug && $log->debug("NextURI set " . $upnp_uri . ":" . $meta->{title});
+			$client->execute( [ 'playlist', 'insert', $trackId, $meta->{title} ] );
+			main::DEBUGLOG && $log->is_debug && $log->debug("NextURI set " . $trackId . ":" . $meta->{title});
 		}
 	}
+
+	# see SetAVTransportURI
+	Slim::Player::Playlist::repeat( $client, 0 );
 
 	# Change state variables
 	$class->changeState( $client, {
@@ -569,22 +621,22 @@ sub Play {
 
 	my $transportState = $state->{TransportState};
 
-	my $upnp_uri = $state->{AVTransportURI};
-	$upnp_uri =~ s/^http/upnp/;
+	# Compare by our internal synthetic id, not by original URI (see _newTrackId)
+	my $trackId = $client->pluginData()->{avt_CurrentTrackId};
 
 	if ( $transportState eq 'PLAYING' || $transportState eq 'TRANSITIONING' ) {
 		# Check if same track is already playing
 		my $playingURI = $client->playingSong->currentTrack->url;
-		if ( $upnp_uri eq $playingURI ) {
-			main::DEBUGLOG && $log->is_debug && $log->debug("Play for $upnp_uri ignored, already playing");
+		if ( $trackId && $trackId eq $playingURI ) {
+			main::DEBUGLOG && $log->is_debug && $log->debug("Play for $trackId ignored, already playing");
 			return;
 		}
 	}
 	elsif ( $transportState eq 'PAUSED_PLAYBACK' ) {
 		# Check if we should just unpause
 		my $playingURI = $client->playingSong->currentTrack->url;
-		if ( $upnp_uri eq $playingURI ) {
-			main::DEBUGLOG && $log->is_debug && $log->debug("Play for $upnp_uri triggering unpause");
+		if ( $trackId && $trackId eq $playingURI ) {
+			main::DEBUGLOG && $log->is_debug && $log->debug("Play for $trackId triggering unpause");
 
 			$client->execute(['play']); # will resume
 
@@ -733,6 +785,29 @@ sub GetCurrentTransportActions {
 
 ### Helper methods
 
+# Creates a synthetic, globally unique track identity.
+# DLNA allows different playlist entries to share the same URI, but LMS keys
+# Schema/Playlist/metadata by a unique url, so this will be used there instead
+# of the (possibly duplicate) original URI.
+# The original URI's file suffix (if any) is kept, so suffix-based type detection
+# (e.g. ProtocolHandler::getFormatForURL) keeps working unchanged.
+sub _newTrackId {
+	my ( $class, $uri ) = @_;
+
+	my $path = $uri ? URI->new($uri)->path : '';
+	my ($suffix) = $path =~ /(\.[A-Za-z0-9]+)$/;
+	$suffix ||= '';
+
+	return 'upnp://' . uc( UUID::Tiny::create_UUID_as_string( UUID::Tiny::UUID_V4() ) ) . '/track' . $suffix;
+}
+
+# Metadata for a track by its synthetic id, regardless of which client's
+# pluginData it was originally stored under (see %_trackMeta above).
+sub trackMetaFor {
+	my ( $class, $id ) = @_;
+	return $id ? $_trackMeta{$id} : undef;
+}
+
 # Elapsed time in H:MM:SS[.F+] format
 sub _relativeTimePosition {
 	my ( $class, $client ) = @_;
@@ -799,16 +874,26 @@ sub _DIDLLiteToHash {
 
 	# Find the best res item to play
 	for my $r ( @{ $x->{res} } ) {
-		my ($mime) = $r->{protocolInfo} =~ /[^:]+:[^:]+:([^:+]+):/;
+		my ($mimeFull) = $r->{protocolInfo} =~ /[^:]+:[^:]+:([^:]+):/;
+		next unless $mimeFull;
+
+		# strip MIME parameters (e.g. audio/L16;rate=48000;channels=2)
+		my ($mime, $mimeParams) = split /;/, $mimeFull, 2;
+
 		next if !$mime || !Slim::Music::Info::mimeToType($mime);
 
 		# Some servers must have missed the (really stupid) part in
 		# the spec where bitrate is defined as bytes/sec, not bits/sec
-		# We try to handle this for common MP3 bitrates
+		# We try to handle this for common L16 and MP3 bitrates
 		my $bitrate = $r->{bitrate};
-		if ( $bitrate =~ /^(?:64|96|128|160|192|256|320)000$/ ) {
+		if ( $bitrate && ( ( $mime eq 'audio/L16' && $bitrate > 192000 )
+			|| $bitrate =~ /^(?:64|96|128|160|192|256|320)000$/ ) ) {
 			$bitrate /= 8;
 		}
+ 
+		# use MIME params, if 'res' doesn't provide sampleFrequency/nrAudioChannels
+		my ($rateParam)     = $mimeParams =~ /\brate=(\d+)/i        if $mimeParams;
+		my ($channelsParam) = $mimeParams =~ /\bchannels=(\d+)/i    if $mimeParams;
 
 		$meta->{res} = {
 			uri          => $r->{content},
@@ -817,12 +902,43 @@ sub _DIDLLiteToHash {
 			bitrate      => $bitrate * 8,
 			secs         => hmsToSecs( $r->{duration} ),
 			duration     => $r->{duration} || '',
+			samplerate   => $r->{sampleFrequency} || $rateParam     || undef,
+			channels     => $r->{nrAudioChannels} || $channelsParam || undef,
+			samplesize   => $r->{bitsPerSample} || undef,
 		};
 
 		last;
 	}
 
 	return $meta;
+}
+
+# sets track info from DIDL-Lite res element decoded by _DIDLLiteToHash
+sub _setTrackInfo {
+	my ( $class, $trackId, $res ) = @_;
+
+	Slim::Music::Info::setContentType( $trackId, $res->{mime} ) if $res->{mime};
+	Slim::Music::Info::setBitrate( $trackId, $res->{bitrate} ) if $res->{bitrate};
+	Slim::Music::Info::setDuration( $trackId, $res->{secs} ) if $res->{secs};
+
+	my %attrs;
+	$attrs{SAMPLERATE} = $res->{samplerate} if $res->{samplerate};
+	$attrs{CHANNELS}   = $res->{channels}   if $res->{channels};
+	$attrs{SAMPLESIZE} = $res->{samplesize} if $res->{samplesize};
+
+	if ( $res->{mime} && $res->{mime} eq 'audio/L16' ) {
+		$attrs{ENDIAN} = 1; # big-endian
+		$attrs{SAMPLESIZE} = 16;
+	}
+	elsif ( $res->{mime} && $res->{mime} eq 'audio/L24' ) {
+		$attrs{ENDIAN} = 1; # big-endian
+		$attrs{SAMPLESIZE} = 24;
+	}
+	elsif ( $res->{mime} && $res->{mime} eq 'audio/x-pcm' ) {
+		$attrs{ENDIAN} = 1; # big-endian
+	}
+
+	Slim::Schema->updateOrCreate( { url => $trackId, attributes => \%attrs } ) if %attrs;
 }
 
 sub _event_xml {

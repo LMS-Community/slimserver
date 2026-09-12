@@ -1333,6 +1333,14 @@ sub isContainer {
 	return 0;
 }
 
+sub isLossy {
+	my $type = shift;
+	
+	if (defined $type && $type =~ /mp3|aac|ogg|ops/) {
+		return 1;
+	}
+}
+
 # Return a list of valid extensions for a particular type as listed in types.conf
 sub validTypeExtensions {
 	my $findTypes  = shift || 'list|audio';

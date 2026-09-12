@@ -2,7 +2,7 @@ package Slim::Utils::Prefs::Namespace;
 
 
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -155,7 +155,7 @@ sub setChange {
 		if ( main::DEBUGLOG && $log->isInitialized && $log->is_debug ) {
 			$log->debug(sprintf "registering %s for $class->{'namespace'}:$pref", Slim::Utils::PerlRunTime::realNameForCodeRef($change));
 		}
-		
+
 		$class->{'onchange'}->{ $pref } ||= [];
 
 		if ($first) {
@@ -164,7 +164,7 @@ sub setChange {
 		} else {
 			push @{ $class->{'onchange'}->{ $pref } }, $change;
 		}
-		
+
 		$first = 0;
 	}
 }
@@ -220,14 +220,14 @@ sub client {
 	if ( my $client = $_[0]->{'clients'}->{ $_[1]->id } ) {
 		return $client;
 	}
-	
+
 	my $cprefs = Slim::Utils::Prefs::Client->new($_[0], $_[1]);
-	
+
 	# This avoids an infinite loop if migration callbacks happen to call $prefs->client($client)
 	$_[0]->{'clients'}->{ $_[1]->id } = $cprefs;
-	
+
 	$cprefs->migrate($_[1]);
-	
+
 	return $cprefs;
 }
 
@@ -299,7 +299,7 @@ sub save {
 	my $class = shift;
 
 	return if ($class->{'writepending'});
-	
+
 	return if $class->{readonly} || main::SCANNER;
 
 	Slim::Utils::Timers::setTimer($class, time() + 10, \&savenow);
@@ -327,9 +327,8 @@ sub savenow {
 		print OUT YAML::XS::Dump($class->{'prefs'});
 		close OUT;
 
-		if (-w $path) {
-			rename($path, $class->{'file'});
-		} else {
+		require File::Copy;
+		if (!File::Copy::move($path, $class->{'file'})) {
 			unlink($path);
 		}
 	};
@@ -358,9 +357,9 @@ sub migrate {
 	my $callback = shift;
 
 	if ($version > $class->{'prefs'}->{'_version'} && ref $callback eq 'CODE') {
-		
+
 		require Slim::Utils::Prefs::OldPrefs;
-		
+
 		if ($callback->($class)) {
 
 			main::INFOLOG && $log->info("migrated prefs for $class->{'namespace'} to version $version");

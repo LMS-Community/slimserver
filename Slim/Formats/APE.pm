@@ -36,10 +36,11 @@ use base qw(Slim::Formats);
 use Audio::Scan;
 
 my %tagMapping = (
-	'TRACK'	       => 'TRACKNUM',
-	'DATE'         => 'YEAR',
-	'DISCNUMBER'   => 'DISC',
-	'ALBUM ARTIST' => 'ALBUMARTIST', # bug 10724 - support APEv2 Album Artist
+	'TRACK'	              => 'TRACKNUM',
+	'DATE'                => 'YEAR',
+	'DISCNUMBER'          => 'DISC',
+	'ALBUM ARTIST'        => 'ALBUMARTIST', # bug 10724 - support APEv2 Album Artist
+	'MUSICBRAINZ_TRACKID' => 'MUSICBRAINZ_ID',
 );
 
 # Given a file, return a hash of name value pairs,
@@ -76,6 +77,9 @@ sub doTagMapping {
 			$tags->{$new} = delete $tags->{$old};
 		}
 	}
+
+	# Prefer MUSICBRAINZ_RELEASETRACKID to MUSICBRAINZ_TRACKID (MUSICBRAINZ_ID)
+	$tags->{MUSICBRAINZ_ID} = delete $tags->{MUSICBRAINZ_RELEASETRACKID} if $tags->{MUSICBRAINZ_RELEASETRACKID};
 
 	# Sometimes the BPM is not an integer so we try to convert.
 	$tags->{BPM} = int($tags->{BPM}) if defined $tags->{BPM};

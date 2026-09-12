@@ -216,6 +216,7 @@ sub lookupArtwork {
 	my $artworkLookupUrl = $args->{artworkLookupUrl};
 
 	main::INFOLOG && $log->is_info && $log->info("Getting artwork for $title by $artist");
+	main::DEBUGLOG && $log->is_debug && $log->debug($artworkLookupUrl);
 
 	my $headers = $class->getHeaders($args, $client, $url, $titleInfo);
 
@@ -298,12 +299,18 @@ sub getHeaders {
 	};
 
 	if ($url && (my $parsed = URI->new($url))) {
-		# only submit host name / path to avoid posting potentially sensitive info like stream keys etc.
-		$headers->{'X-LMS-Radio-URL'} = sprintf('%s://%s:%s%s', $parsed->scheme, $parsed->host, $parsed->port, $parsed->path);
+		if ($parsed->can('host') && $parsed->can('port') && $parsed->can('path')) {
+			# only submit host name / path to avoid posting potentially sensitive info like stream keys etc.
+			$headers->{'X-LMS-Radio-URL'} = sprintf('%s://%s:%s%s', $parsed->scheme, $parsed->host, $parsed->port, $parsed->path);
 
-		if ($parsed->host =~ /\b(?:tunein|radiotime)\.com$/i) {
-			my $queryParams = $parsed->query_form_hash;
-			$headers->{'X-LMS-Radio-URL'} .= '?sid=' . ($queryParams->{id} || 'unknown');
+			if ($parsed->host =~ /\b(?:tunein|radiotime)\.com$/i) {
+				my $queryParams = $parsed->query_form_hash;
+				$headers->{'X-LMS-Radio-URL'} .= '?sid=' . ($queryParams->{id} || 'unknown');
+			}
+		}
+		else {
+			main::INFOLOG && $log->is_info && $log->info("Not a regular audio stream? $url");
+			$headers->{'X-LMS-Radio-URL'} = $url;
 		}
 	}
 

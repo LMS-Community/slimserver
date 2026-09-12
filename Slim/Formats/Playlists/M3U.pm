@@ -241,10 +241,9 @@ sub writeCurTrackForM3U {
 	close(IN);
 	close(OUT);
 
-	if (-w $path) {
-
-		rename("$path.tmp", $path);
-	} else {
+	require File::Copy;
+	if (!File::Copy::move("$path.tmp", $path)) {
+		$log->warn("Failed to rename $path.tmp to $path");
 		unlink("$path.tmp");
 	}
 }

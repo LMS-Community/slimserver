@@ -100,7 +100,7 @@ sub save {
 
     my $dir = $filename ? dirname($filename) : undef;
 
-	if (-w $dir) {
+	if (Slim::Utils::Misc::isDirWritable($dir)) {
 
 		my ($tmp, $tmpfilename) = tempfile(TEMPLATE => 'FavoritesTempXXXXX', DIR => $dir, SUFFIX => '.opml', UNLNK => 0, OPEN => 0);
 
@@ -111,12 +111,13 @@ sub save {
 
 			main::INFOLOG && $log->info( "OPML saved to file tempfile: $tmpfilename" );
 
-			if ( -e $filename && !rename($filename, $filename . ".backup") ) {
+			require File::Copy;
+			if ( -e $filename && !File::Copy::move($filename, $filename . ".backup") ) {
 
 				$log->warn("Failed to rename old $filename to backup");
 			}
 
-			if ( rename($tmpfilename, $filename)) {
+			if ( File::Copy::move($tmpfilename, $filename)) {
 
 				main::INFOLOG && $log->info("Renamed $tmpfilename to $filename");
 

@@ -2562,7 +2562,7 @@ sub playerXQuery {
 			} elsif ($entity eq "ip") {
 				$request->addResult("_$entity", $client->ipport());
 			} elsif ($entity eq "model") {
-				$request->addResult("_$entity", $client->model());
+				$request->addResult("_$entity", $client->model(1));
 			} elsif ($entity eq "isplayer") {
 				$request->addResult("_$entity", $client->isPlayer());
 			} elsif ($entity eq "displaytype") {
@@ -2570,8 +2570,8 @@ sub playerXQuery {
 			} elsif ($entity eq "canpoweroff") {
 				$request->addResult("_$entity", $client->canPowerOff());
 			} elsif ($entity eq "uuid") {
-                                $request->addResult("_$entity", $client->uuid());
-                        }
+				$request->addResult("_$entity", $client->uuid());
+			}
 		}
 	}
 
@@ -3762,7 +3762,7 @@ sub serverstatusQuery {
 
 	$request->addResult('newversion', $::newVersion) if $::newVersion;
 	$request->addResult('needsrestart', 1) if Slim::Utils::PluginManager->needsRestart;
-	$request->addResult('pluginsdownloading', 1) if Slim::Utils::PluginDownloader->downloading;
+	$request->addResult('pluginsdownloading', 1) if main::WEBUI && Slim::Utils::PluginDownloader->downloading;
 	if (my $newPlugins = Slim::Utils::PluginManager->message) {
 		$request->addResult('newplugins', $newPlugins);
 	}
@@ -4111,18 +4111,26 @@ sub statusQuery {
 			$request->addResult('replay_gain', $trackGain);
 		}
 
-		if ($tags =~ /b/) {   # get the song's current bitrate
-			my $bitrate = $song->streambitrate();
-			if (defined $bitrate && $bitrate) {
-				$bitrate = sprintf("%.0f" . Slim::Utils::Strings::string('KBPS'), $bitrate/1000);
-				$request->addResult('bitrate', $bitrate);
+		my $transcoded = $song->transcoded();
+		if (defined $transcoded) {
+			$request->addResult('is_transcoded', $transcoded);
+		}
+
+		my $streamFormat;
+		if ($tags =~ /o/) {   # get the song's format (type)
+			$streamFormat ||= $song->streamformat();
+			if ($streamFormat) {
+				$request->addResult('type', $streamFormat);
 			}
 		}
 
-		if ($tags =~ /o/) {   # get the song's format (type)
-			my $type = $song->streamformat();
-			if (defined $type && $type) {
-				$request->addResult('type', $type);
+		if ($tags =~ /b/) {   # get the song's current bitrate
+			my $vbr = $transcoded ? 0 : $song->currentTrack()->vbr_scale;
+			my $bitrate = $song->streambitrate();
+			if ($bitrate) {
+				$streamFormat ||= $song->streamformat();
+				$bitrate = Slim::Schema::Track->buildPrettyBitRate($bitrate, $vbr, $streamFormat);
+				$request->addResult('bitrate', $bitrate);
 			}
 		}
 
@@ -5763,7 +5771,7 @@ my %colMap = (
 	k => 'comment',
 	o => 'tracks.content_type',
 	v => 'tracks.tagversion',
-	r => sub { Slim::Schema::Track->buildPrettyBitRate( $_[0]->{'tracks.bitrate'}, $_[0]->{'tracks.vbr_scale'} ) },
+	r => sub { Slim::Schema::Track->buildPrettyBitRate( $_[0]->{'tracks.bitrate'}, $_[0]->{'tracks.vbr_scale'}, $_[0]->{'tracks.content_type'} ) },
 	f => 'tracks.filesize',
 	j => sub { $_[0]->{'tracks.cover'} ? 1 : 0 },
 	J => 'albums.artwork',

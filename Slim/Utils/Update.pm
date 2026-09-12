@@ -14,7 +14,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Utils::Unicode;
 
-use constant REPOSITORY_URL => 'https://lms-community.github.io/lms-server-repository/servers.json';
+use constant REPOSITORY_URL => 'https://lyrion.org/lms-server-repository/servers.json';
 
 my $prefs = preferences('server');
 

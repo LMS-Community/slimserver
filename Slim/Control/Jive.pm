@@ -10,9 +10,11 @@ use strict;
 
 use POSIX qw(strftime);
 use Scalar::Util qw(blessed);
+use Time::Local qw(timegm);
 use URI;
 
 use Slim::Menu::BrowseLibrary;
+use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Player::Playlist;
@@ -2157,8 +2159,18 @@ sub dateQuery {
 		$request->privateData(0);
 	}
 
+	my $epoch = $newTime || time();
+	my @localTime = localtime($epoch);
+
 	# 7.5+ SP devices use epoch time now, much simpler
-	$request->addResult( 'date_epoch', $newTime || time() );
+	$request->addResult( 'date_epoch', $epoch );
+
+	# Expose the server's civil-time information for controllers which cannot
+	# maintain their own timezone database. Interpret the local calendar fields
+	# as UTC to obtain the offset in effect at the same instant as date_epoch.
+	$request->addResult( 'utc_offset_minutes', int((timegm(@localTime[0..5]) - $epoch) / 60) );
+	$request->addResult( 'is_dst', $localTime[8] ? 1 : 0 );
+	$request->addResult( 'timezone', Slim::Utils::DateTime::getServerTZName() || '' );
 
 	# This is the field 7.3 and earlier players expect.
 	#  7.4 is smart enough to take no action when missing

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<extension>
+	<id>036fe119-c18e-4e1c-9719-0d70e204ecff</id>
+	<name>PLUGIN_WEBSOCKET</name>
+	<module>Slim::Plugin::WebSocket::Plugin</module>
+	<version>0.1</version>
+	<description>PLUGIN_WEBSOCKET_DESC</description>
+	<creator>Lyrion Community</creator>
+	<category>tools</category>
+	<type>2</type>
+	<targetApplication>
+		<id>Lyrion Music Server</id>
+		<minVersion>9.2</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+	<defaultState>disabled</defaultState>
+</extension>

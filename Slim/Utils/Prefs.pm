@@ -292,7 +292,7 @@ sub init {
 	}
 
 	unless (-d $path) { mkdir $path; }
-	unless (-d $path && -w $path) {
+	unless (-d $path && Slim::Utils::Misc::isDirWritable($path)) {
 		logError("unable to write to preferences directory $path");
 	}
 
@@ -739,7 +739,7 @@ sub defaultCacheDir {
 
 	my $CacheParent = catdir(@CacheDirs);
 
-	if ((!-e $CacheDir && !-w $CacheParent) || (-e $CacheDir && !-w $CacheDir)) {
+	if ((!-e $CacheDir && !Slim::Utils::Misc::isDirWritable($CacheParent)) || (-e $CacheDir && !Slim::Utils::Misc::isDirWritable($CacheDir))) {
 		$CacheDir = undef;
 	}
 

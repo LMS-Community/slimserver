@@ -1400,7 +1400,11 @@ sub playlistXitemCommand {
 
 	# correct the path
 	# this only seems to be useful for playlists?
-	if (!Slim::Music::Info::isRemoteURL($path) && !-e $path && !(Slim::Music::Info::isPlaylistURL($path))) {
+	if ( !Slim::Music::Info::isRemoteURL($path)
+		&& !-e $path
+		&& !-e Slim::Utils::Misc::pathFromFileURL($path)
+		&& !(Slim::Music::Info::isPlaylistURL($path))
+	) {
 
 		my $easypath = catfile(Slim::Utils::Misc::getPlaylistDir(), basename($url) . ".m3u");
 
