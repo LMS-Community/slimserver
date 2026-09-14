@@ -1336,7 +1336,7 @@ sub isContainer {
 sub isLossy {
 	my $type = shift;
 	
-	if (defined $type && $type =~ /mp3|aac|ogg|ops/) {
+	if (defined $type && $type !~ /flc|ogf|wav|alc|aif/) {
 		return 1;
 	}
 }
