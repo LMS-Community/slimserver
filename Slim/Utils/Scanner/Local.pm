@@ -268,17 +268,18 @@ sub rescan {
 		# 3. Files that have changed mtime or size.
 		$log->error("Build temporary table for changed tracks") unless main::SCANNER && $main::progress;
 		$dbh->do('DROP TABLE IF EXISTS changed');
+
+		my $trackFilter = $args->{trackList}
+			? "tracks.id IN (" . join(',', @{$args->{trackList}}) . ")"
+			: "scanned_files.timestamp != tracks.timestamp OR scanned_files.filesize  != tracks.filesize";
+
 		$dbh->do( qq{
 			CREATE $createTemporary TABLE changed AS
 				SELECT DISTINCT(scanned_files.url) AS url
 				FROM   scanned_files
 				JOIN   tracks ON (
 					scanned_files.url = tracks.url
-					AND (
-						scanned_files.timestamp != tracks.timestamp
-						OR
-						scanned_files.filesize  != tracks.filesize
-					)
+					AND ( $trackFilter )
 					AND tracks.content_type $ctFilter
 				)
 				WHERE  scanned_files.url LIKE '$basedir%'
