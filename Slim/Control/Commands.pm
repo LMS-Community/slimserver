@@ -2784,7 +2784,6 @@ sub rescanCommand {
 				recursive => 0,
 				trackList => \@trackList,
 			} );
-			Slim::Music::VirtualLibraries->autoRebuild();
 		}
 
 	}
