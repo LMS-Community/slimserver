@@ -19,7 +19,7 @@ L<Slim::Music::Artwork>
 
 use strict;
 
-use File::Basename qw(basename dirname);
+use File::Basename qw(dirname fileparse);
 use File::Slurp;
 use File::Path qw(mkpath rmtree);
 use File::Spec::Functions qw(catfile catdir);
@@ -246,8 +246,8 @@ sub _findStandaloneArtwork {
 		@rank{ map { $_ } @$filenameTemplates } = (0 .. $#$filenameTemplates);
 
 		@images = sort {
-			my $a_rank = $rank{ basename($a) } // 999_999;
-			my $b_rank = $rank{ basename($b) } // 999_999;
+			my $a_rank = $rank{ (fileparse($a, qr/\.[^.]*/))[0] } // 999_999;
+			my $b_rank = $rank{ (fileparse($b, qr/\.[^.]*/))[0] } // 999_999;
 			$a_rank <=> $b_rank;
 		} @images;
 	}
