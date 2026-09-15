@@ -546,7 +546,7 @@ sub mixerCommand {
 	my $request = shift;
 
 	# check this is the correct command.
-	if ($request->isNotCommand([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch', 'stereoxl']])) {
+	if ($request->isNotCommand([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch', 'stereoxl', 'speed']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -642,6 +642,19 @@ sub mixerCommand {
 		} else {
 			# change current setting - this will also set the pref
 			$newval = $client->$entity($newval);
+		}
+
+		# speed is implemented via the transcoding pipeline (see convert.conf), so a
+		# currently playing track needs to be reopened at the current position for the
+		# change to take effect immediately, rather than only on the next track. This
+		# relies on the transcode profiles used for speed change also supporting seek
+		# (capability T) so playback resumes rather than restarting - don't gate this on
+		# Song::canSeek(), as that value is cached from when the song was opened and won't
+		# yet reflect the speed change we just made; the seek/reopen machinery already
+		# degrades gracefully for genuinely non-seekable content (same path used by the
+		# normal user-initiated seek bar).
+		if ($entity eq 'speed' && $newval != $oldval && $client->isPlaying()) {
+			Slim::Player::Source::gototime($client, Slim::Player::Source::songTime($client));
 		}
 
 		# Bug 18165: do not sync volume if client's volume itself is not synced

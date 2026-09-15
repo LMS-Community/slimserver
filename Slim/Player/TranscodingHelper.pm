@@ -348,6 +348,10 @@ sub getConvertCommand2 {
 	my $samplerateLimit = $song ? Slim::Player::CapabilitiesHelper::samplerateLimit($song) : 0;
 	push @$need, 'D' if $samplerateLimit && !grep /D/, @$need;
 
+	# Check if we need to change playback speed (100 == normal speed)
+	my $speed = $clientprefs ? ($clientprefs->get('speed') || 100) : 100;
+	push @$need, 'V' if $speed != 100 && !grep /V/, @$need;
+
 	# make sure we only test formats that are supported.
 	if ( $formatOverride ) {
 		@supportedformats = ($formatOverride);
@@ -443,6 +447,7 @@ sub getConvertCommand2 {
 			streamformat     => $streamformat,
 			rateLimit        => $rateLimit || 320,
 			samplerateLimit  => $samplerateLimit || $defaultRateLimit,
+			speed            => $speed,
 			clientid         => $clientid || 'undefined',
 			groupid          => $clientprefs ? ($clientprefs->get('syncgroupid') || 0) : 0,
 			name             => $client ? $client->name : 'undefined',
@@ -610,6 +615,8 @@ sub tokenizeConvertCommand2 {
 
 		elsif ($v eq 'd') {$value = $transcoder->{'samplerateLimit'};}
 		elsif ($v eq 'D') {$value = $transcoder->{'samplerateLimit'} / 1000;}
+
+		elsif ($v eq 'y') {$value = sprintf('%.3f', ($transcoder->{'speed'} || 100) / 100);}
 
 		elsif ($v eq 'f') {$value = $subs{'FILE'};}
 		elsif ($v eq 'F') {$value = '"' . $fullpath . '"';}

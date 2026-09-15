@@ -2119,7 +2119,7 @@ sub mixerQuery {
 	my $request = shift;
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch']])) {
+	if ($request->isNotQuery([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch', 'speed']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -4185,6 +4185,10 @@ sub statusQuery {
 
 	if ($client->maxPitch() - $client->minPitch()) {
 		$request->addResult("mixer pitch", $client->pitch());
+	}
+
+	if ($client->maxSpeed() - $client->minSpeed()) {
+		$request->addResult("mixer speed", $client->speed());
 	}
 
 	$repeat += 0;

@@ -11688,6 +11688,9 @@ BALANCE
 	SV	Balans
 	ZH_CN	平衡
 
+SPEED
+	EN	Speed
+
 PITCH
 	CS	Tón
 	DA	Tonehøjde

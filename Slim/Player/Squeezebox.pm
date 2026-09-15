@@ -28,6 +28,12 @@ use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Prefs;
 
+# Playback speed (0.5x-2.0x) is implemented server-side via the transcoding pipeline
+# (see convert.conf), so - unlike pitch/bass/treble - it does not depend on player
+# hardware and can be enabled for every slimproto-speaking player model.
+sub maxSpeed { 200 }
+sub minSpeed { 50 }
+
 my $prefs = preferences('server');
 
 my $log       = logger('network.protocol.slimproto');
