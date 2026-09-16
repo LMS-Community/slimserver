@@ -182,6 +182,24 @@ DSP-effect mixer feature:
   fundamentally different, non-ExtJS template and wasn't touched). The `<select
   id="ctrlSpeed">` is hidden by default and only shown when a `status` poll's response
   includes `mixer speed` (i.e. `maxSpeed - minSpeed > 0` for that player).
+- **Hardware/app UI**: `Slim::Menu::TrackInfo::infoSpeed` registers a `menuMode => 1`
+  (jive-only) info provider named `speed`, right after `playitem`, so it appears in the
+  Now Playing context menu on real players and apps (the same OPML-based menu family that
+  also surfaces "Remove from playlist", "Play", track metadata, and anything plugins add
+  there via `registerInfoProvider`, e.g. a streaming service's "On: <Service>" item) —
+  *not* the web-only skin templates above, which use a completely different rendering
+  path. It's gated the same way as the web control (`maxSpeed - minSpeed > 0`), plus one
+  more check: since `mixer speed` is a player-level setting rather than a per-track one,
+  it only offers itself when the `TrackInfo` menu is being built for the track that's
+  actually currently playing (`Slim::Player::Playlist::track($client)->url eq
+  $track->url`) — otherwise it would misleadingly appear while just browsing/viewing info
+  for some unrelated library track. Returns a hash with nested `items`, one per choice in
+  `@speedChoices` (kept in sync by hand with `status_header.html`'s `<option>` list),
+  each issuing `['mixer', 'speed', $value]` via `jive.actions.go.cmd` and marking the
+  currently active choice with a `\x{2022}` prefix on its label — OPML/XMLBrowser doesn't
+  handle a `radio => 1/0` boolean flag the way some other, lower-level Jive query
+  handlers do (e.g. `Slim::Control::Jive::transitionHash`/`replayGainHash`), so a plain
+  text marker is what's actually reliable here.
 - To extend to more source formats: add another `<src> flc * *` (or `<src> <src>
   transcode *`) duplicate instance with `V:{SPEED=tempo %y}` and a `sox ... tempo $SPEED$`
   stage — do not edit a live/no-`sox` passthrough entry in place, or every normal
