@@ -42,6 +42,58 @@ my $log = logger('control.command');
 
 my $prefs = preferences('server');
 
+# Automatically reset 'mixer speed' back to 1x according to the player's 'speedReset'
+# setting (Settings > Audio > Playback Speed Control) - see
+# Slim::Web::Settings::Player::Audio. Subscribed as a 'playlist newsong' handler from
+# Slim::Control::Request::init() (not here - Request.pm is still mid-compile when it
+# `use`s this module, so Request::subscribe() doesn't exist yet at this point). This
+# reuses the same live-reopen machinery already used for manual speed changes (see
+# mixerCommand below); since it fires right at the start of the new track, the reopen
+# lands at (or extremely close to) position 0, so in practice it's indistinguishable
+# from the track having opened at the reset speed in the first place.
+sub _speedResetOnNewSong {
+	my $request = shift;
+	my $client  = $request->client() || return;
+
+	# 'playlist newsong' also fires whenever the stream is merely reopened at a new
+	# position within the *same* track - a manual seek, or our own gototime() reopen
+	# right above whenever the speed itself changes - not just on an actual playlist
+	# advance. Only react to a genuine track change, or every speed change (and every
+	# seek) would immediately reset itself back to 1x via this very handler.
+	#
+	# Client::pluginData($key) as a single-arg *getter* only returns a per-key value for
+	# plugin callers (namespaced by the caller's package); for a non-plugin caller like
+	# this one it falls through and returns the *entire* data hash instead - always
+	# truthy, and never numerically equal to a small integer index. Fetch the whole hash
+	# once with the no-arg form and index into it directly; the two-arg *setter* form is
+	# fine as-is, it's key-specific regardless of caller.
+	my $data      = $client->pluginData() || {};
+	my $index     = Slim::Player::Source::playingSongIndex($client);
+	my $lastIndex = $data->{'speedResetLastIndex'};
+	$client->pluginData('speedResetLastIndex', $index);
+
+	return if defined $lastIndex && $lastIndex == $index;
+
+	my $resetPolicy = $prefs->client($client)->get('speedReset') || 0;
+	return unless $resetPolicy;
+
+	if ($resetPolicy == 2) {
+		# reset only when the album changes - remember the last seen album so that
+		# tracks within the same album (e.g. audiobook chapters) keep the chosen speed
+		my $track       = Slim::Player::Playlist::track($client);
+		my $albumid     = $track ? $track->albumid : undef;
+		my $lastAlbumId = $data->{'speedResetAlbumId'};
+
+		$client->pluginData('speedResetAlbumId', $albumid);
+
+		return if defined $albumid && defined $lastAlbumId && $albumid == $lastAlbumId;
+	}
+
+	return if $client->speed() == 100;
+
+	$client->speed(100);
+	Slim::Player::Source::gototime($client, Slim::Player::Source::songTime($client)) if $client->isPlaying();
+}
 
 sub abortScanCommand {
 	my $request = shift;
@@ -643,7 +695,19 @@ sub mixerCommand {
 		# playingSongElapsed()), so it must be captured now, under the OLD speed, before that
 		# pref is changed below - otherwise time played under the old speed would get scaled
 		# by the new speed, landing the reopen at the wrong position.
-		my $reopenAtTime = ($entity eq 'speed' && $client->isPlaying()) ? Slim::Player::Source::songTime($client) : undef;
+		my $reopenAtTime;
+		if ($entity eq 'speed' && $client->isPlaying()) {
+			$reopenAtTime = Slim::Player::Source::songTime($client);
+
+			# skip the reopen when we're within a couple seconds of the end of the track -
+			# there's negligible playback left to benefit from it, and asking the decoder
+			# to --skip to virtually the end of the file makes e.g. flac log a harmless but
+			# alarming-looking "ERROR while decoding data: END_OF_STREAM" (which in turn
+			# closes sox's output pipe early, logging a "Broken pipe" right after it). The
+			# track is about to end/advance on its own regardless.
+			my $duration = Slim::Player::Source::playingSongDuration($client);
+			undef $reopenAtTime if $duration && $duration - $reopenAtTime <= 2;
+		}
 
 		if ($entity eq 'volume' && defined $client->tempVolume && $client->tempVolume == 0 && $oldval > 0) {
 			# only set pref as volume is temporarily set to 0
@@ -660,6 +724,18 @@ sub mixerCommand {
 		# degrades gracefully for genuinely non-seekable content (same path used by the
 		# normal user-initiated seek bar).
 		if (defined $reopenAtTime && $newval != $oldval) {
+			# Song::open() decides whether to request transcoder-level seek (capability T)
+			# based on Song::canSeek() == 2, and canSeek() caches its result the first time
+			# it's queried for this song - often earlier in playback (e.g. by the web UI's
+			# seek bar), while speed was still 100 and no transcoding was needed at all, so
+			# it cached canSeek() as 1 (handler-level) rather than 2 (transcoder-level).
+			# Clear that cache so the reopen below re-evaluates it under the new speed, or
+			# 'T' never gets requested and the reopen restarts the track from 0 rather than
+			# resuming from $reopenAtTime.
+			if (my $song = $client->playingSong()) {
+				$song->_canSeek(undef);
+			}
+			main::INFOLOG && $log->is_info && $log->info("speed change reopen: entity=$entity oldval=$oldval newval=$newval reopenAtTime=$reopenAtTime");
 			Slim::Player::Source::gototime($client, $reopenAtTime);
 		}
 

@@ -676,6 +676,12 @@ sub init {
 	addDispatch(['playlisttracks', '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::playlistsTracksQuery]);
 	# use query "playlists tracks"
 
+	# reset 'mixer speed' on track/album change, per the player's 'speedReset' setting -
+	# see Slim::Control::Commands::_speedResetOnNewSong
+	if ( !main::SCANNER ) {
+		subscribe( \&Slim::Control::Commands::_speedResetOnNewSong, [['playlist'], ['newsong']] );
+	}
+
 ######################################################################################################################################################################
 
 	return if !main::WEBUI;

@@ -30,9 +30,15 @@ use Slim::Utils::Prefs;
 
 # Playback speed (0.5x-2.0x) is implemented server-side via the transcoding pipeline
 # (see convert.conf), so - unlike pitch/bass/treble - it does not depend on player
-# hardware and can be enabled for every slimproto-speaking player model.
-sub maxSpeed { 200 }
-sub minSpeed { 50 }
+# hardware and can be enabled for every slimproto-speaking player model. It's hidden by
+# default and only exposed once the player's 'speedReset' setting (Settings > Audio) is
+# turned on - see _speedEnabled() below.
+sub maxSpeed { return $_[0]->_speedEnabled ? 200 : 100; }
+sub minSpeed { return $_[0]->_speedEnabled ? 50  : 100; }
+
+sub _speedEnabled {
+	return Slim::Utils::Prefs::preferences('server')->client($_[0])->get('speedReset') ? 1 : 0;
+}
 
 my $prefs = preferences('server');
 

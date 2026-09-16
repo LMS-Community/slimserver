@@ -53,6 +53,7 @@ our $defaultPrefs = {
 	'mp3SilencePrelude'    => 0,
 	'pitch'                => 100,
 	'speed'                => 100,
+	'speedReset'           => 0,
 	'power'                => 1,
 	'screensaver'          => 'screensaver',
 	'idlesaver'            => 'nosaver',

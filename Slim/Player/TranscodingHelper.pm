@@ -348,8 +348,13 @@ sub getConvertCommand2 {
 	my $samplerateLimit = $song ? Slim::Player::CapabilitiesHelper::samplerateLimit($song) : 0;
 	push @$need, 'D' if $samplerateLimit && !grep /D/, @$need;
 
-	# Check if we need to change playback speed (100 == normal speed)
-	my $speed = $clientprefs ? ($clientprefs->get('speed') || 100) : 100;
+	# Check if we need to change playback speed (100 == normal speed). Speed itself is
+	# clamped to maxSpeed()/minSpeed() when *set* (see Client::_mixerPrefs), but not when
+	# read back - so also check the player still has speed enabled at all (see
+	# Slim::Web::Settings::Player::Audio's 'speedReset' setting), in case it was disabled
+	# after a non-100 value was already stored, which would otherwise silently keep the
+	# tempo pipeline engaged even though the control is hidden and reported as off.
+	my $speed = ($clientprefs && $client->maxSpeed() - $client->minSpeed()) ? ($clientprefs->get('speed') || 100) : 100;
 	push @$need, 'V' if $speed != 100 && !grep /V/, @$need;
 
 	# make sure we only test formats that are supported.

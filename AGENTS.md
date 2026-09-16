@@ -100,6 +100,73 @@ DSP-effect mixer feature:
   CLI command/query in `Commands.pm`/`Queries.pm`). Unlike `pitch`, `maxSpeed`/`minSpeed`
   are enabled at the `Slim::Player::Squeezebox` level (not per-model), since it works via
   transcoding rather than player hardware.
+- **Per-player enable/reset setting**: hidden by default. A new `speedReset` player pref
+  (`Player.pm` default `0`) is exposed on the *Settings > Audio* page
+  (`Slim::Web::Settings::Player::Audio`, `HTML/EN/settings/player/audio.html`) as a 3-way
+  dropdown: `0` = off (default — `Squeezebox::maxSpeed`/`minSpeed` collapse to `100/100`,
+  exactly like a player that never had the feature, so the Now Playing control stays
+  hidden and `TranscodingHelper` never engages `V`), `1` = on, reset to 1x at the start of
+  every track, `2` = on, reset to 1x only when the album changes (audiobooks split into
+  chapter tracks keep the chosen speed across chapters). `Slim::Player::Squeezebox::
+  _speedEnabled` is the single source of truth for "is speed actually usable right now" —
+  both `TranscodingHelper::getConvertCommand2` and `StreamingController::
+  playingSongElapsed`'s speed-scaling (see below) must gate on it too, not just on the raw
+  `speed` pref value, because turning the setting off does **not** reset the stored
+  `speed` pref back to 100 — a stale non-100 value must have zero effect anywhere once
+  disabled.
+- **Reset implementation**: `Slim::Control::Commands::_speedResetOnNewSong` is subscribed
+  to `['playlist'], ['newsong']` and, per the `speedReset` policy, calls
+  `$client->speed(100)` followed by the same `gototime(songTime($client))` live-reopen
+  used for manual speed changes. Firing this at track-start means the reopen lands at (or
+  extremely close to) position 0, so it reads as the track having simply opened at the
+  reset speed — no separate "pre-open" hook was needed. Album-change detection compares
+  `Slim::Player::Playlist::track($client)->albumid` against the previous value, stashed
+  via `$client->pluginData('speedResetAlbumId', ...)` (a generic non-plugin-namespaced
+  key/value store on the client, not persisted to prefs).
+  - **Gotcha #1 — where the subscribe call lives**: the actual `subscribe()` call is in
+    `Slim::Control::Request::init()` (next to the `mixer speed` `addDispatch` entries),
+    *not* at `Slim::Control::Commands`'s top level. `Request.pm` does `use
+    Slim::Control::Commands;` partway through its own compilation (before `Request.pm`
+    has finished defining `subscribe`), so a top-level `Slim::Control::Request::subscribe`
+    call sitting in `Commands.pm` dies at server startup with `Undefined subroutine
+    &Slim::Control::Request::subscribe`. `init()` only runs later, at real server startup
+    (`slimserver.pl` calls it explicitly), by which point everything is fully loaded.
+  - **Gotcha #2 — `newsong` fires on same-track reopens, not just real track changes**:
+    a stream reopen — a manual seek, *or the very `gototime()` reopen this feature issues
+    for a manual speed change* — re-triggers the `playlist newsong` notification for the
+    still-current track. Without a guard, that means: user picks 2x → `mixerCommand`
+    reopens the stream → that reopen re-fires `newsong` → this handler immediately resets
+    speed back to 100 (self-inflicted revert, invisible until the next status poll
+    refreshes the dropdown) — and identically, any ordinary user seek on the progress bar
+    would reset speed too. Fixed by comparing
+    `Slim::Player::Source::playingSongIndex($client)` against the value stashed from the
+    previous call (`$client->pluginData('speedResetLastIndex', ...)`) and bailing out
+    whenever the index hasn't actually changed — only a genuine playlist advance gets
+    past that check.
+  - **Gotcha #4 — `Client::pluginData($key)` doesn't do what it looks like for non-plugin
+    callers**: the single-arg *getter* form only returns a per-key value when the caller's
+    package matches `Slim::Plugin::*`/`Plugins::*` (it uses `caller(0)` to namespace
+    plugins automatically); for any other caller - like `Slim::Control::Commands` here -
+    that branch is skipped and it falls through to `return $client->_pluginData;`, handing
+    back the *entire* data hash instead of the one key. That value is always a (truthy)
+    hashref, and `hashref == $integer_index` is essentially never numerically true, so the
+    Gotcha #2 index-comparison guard above was **silently always false** - every reopen
+    (including the feature's own speed-change reopen) looked like a genuine track change,
+    and with a reset policy enabled this immediately reverted the speed right back to 100
+    on every single speed change. The two-arg *setter* form (`pluginData($key, $value)`)
+    is unaffected - it's key-specific for any caller. Fixed by fetching the whole hash
+    once via the no-arg form (`my $data = $client->pluginData();`) and indexing into it
+    directly (`$data->{'speedResetLastIndex'}`) instead of trying to read a single key
+    through the getter form.
+  - **Gotcha #5 — reopening right at the end of a track**: `mixerCommand` skips the reopen
+    (leaves `$reopenAtTime` `undef`, so the pref still changes but nothing reopens) when
+    `songTime()` is within 2s of `playingSongDuration()`. Asking a decoder to `--skip` to
+    virtually the end of the file makes e.g. `flac` log `ERROR while decoding data: state =
+    FLAC__STREAM_DECODER_END_OF_STREAM` (harmless - it just means ~nothing was left to
+    decode), which in turn closes `sox`'s output pipe early and logs a "Broken pipe" right
+    after it. Playback is unaffected either way (the track is about to end/advance on its
+    own), so it's not worth the log noise - the new speed simply takes effect starting with
+    whatever plays next.
 - `TranscodingHelper.pm` forces the `V` capability into `@need` whenever
   `prefs->client($client)->get('speed') != 100`, exactly mirroring how `D`/samplerate-limit
   forcing works; substitution `%y` gives a `sox`-ready tempo factor (e.g. `1.500`).
@@ -137,6 +204,22 @@ DSP-effect mixer feature:
   reopen call doesn't gate on `Song::canSeek()` (that value is cached from when the song
   was first opened and won't reflect a speed change made afterwards, so it can't be trusted
   as a pre-check here); it relies on every profile actually supporting the seek it asks for.
+  - **Gotcha #3 — `Song::open()` itself *does* gate on the stale `canSeek()` cache**: even
+    though `mixerCommand` avoids checking `Song::canSeek()` directly, `Song::open()`'s own
+    decision whether to request capability `T` at all is `$wantTranscoderSeek = ... &&
+    $self->canSeek() == 2` — and `canSeek()`/`canDoSeek()` memoizes its result in `_canSeek`
+    the *first* time anything calls it for that `Song` object (`return $self->_canSeek() if
+    defined ...`), which commonly happens earlier in playback (e.g. the web UI's seek bar
+    querying seek support) while speed was still 100 and no transcoding was needed at all —
+    caching `canSeek() == 1` (handler-level seek) rather than `2` (transcoder-level). Once
+    cached, the speed-change reopen forever sees the stale `1`, `T` never gets requested,
+    and every reopen restarts from 0 instead of resuming (V/tempo still applies, but from
+    the wrong position) — the exact "resume, don't restart" behavior this whole mechanism
+    exists for silently regresses. Fixed by clearing the cache (`$song->_canSeek(undef)` —
+    the same pattern `Song::setStatus()` already uses for its own cache-invalidation case)
+    right before the reopen in `mixerCommand`, forcing `canSeek()` to re-evaluate under the
+    *new* speed pref (already written to prefs by this point) the next time `Song::open()`
+    asks.
 - **Elapsed-time scaling gotcha**: `Slim::Player::StreamingController::playingSongElapsed()`
   computes song position as `startOffset + client->songElapsedSeconds()`. `songElapsedSeconds()`
   is the player's own decode-clock — seconds of the *transcoded output stream* it has played —
