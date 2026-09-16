@@ -437,7 +437,7 @@ sub autoRebuild {
 # wrapper around rebuild, to be used when called by timers
 sub _rebuild {
 	Slim::Utils::Scheduler::remove_task(\&rebuild);
-	Slim::Utils::Scheduler::add_task(\&rebuild);
+	Slim::Utils::Scheduler::add_ordered_task(\&rebuild);
 }
 
 sub getLibraries {
