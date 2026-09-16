@@ -48,13 +48,14 @@ sub find {
 
 	# Populate enhanced scanned_pics table (status E = already exists in the tracks table, status N = new)
 	my $imageSth = $dbh->prepare_cached( qq{
-		INSERT OR IGNORE INTO scanned_pics
+		INSERT INTO scanned_pics
 		(folder, full_path, timestamp, filesize, coverid, status, folder_url)
 		VALUES
 		(?, ?, ?, ?, ?,
 		CASE WHEN EXISTS (SELECT 1 FROM tracks WHERE tracks.coverid = ?) THEN 'E' ELSE 'N' END,
 		?
 		)
+		ON CONFLICT(full_path) DO NOTHING
 	} );
 
 	my $types = Slim::Music::Info::validTypeExtensions( ($args->{types} || 'audio') . '|image' );

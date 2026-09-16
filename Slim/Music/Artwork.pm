@@ -19,7 +19,7 @@ L<Slim::Music::Artwork>
 
 use strict;
 
-use File::Basename qw(dirname fileparse);
+use File::Basename qw(basename dirname fileparse);
 use File::Slurp;
 use File::Path qw(mkpath rmtree);
 use File::Spec::Functions qw(catfile catdir);
@@ -188,13 +188,14 @@ sub _findStandaloneArtwork {
 		my $name = $_;
 		my @variations;
 
+		# just basenames for the zero-supression check, we don't want to be zero-suppressing the full path!
 		if ($name =~ $imageTypesRegex) {
-			push @variations, catfile($parentDir, $name);
+			push @variations, $name;
 		}
 		else {
 			@variations = map {(
-				catfile($parentDir, "$name.$_"),
-				catfile($parentDir, $name . '.' . uc($_)),
+				"$name.$_",
+				$name . '.' . uc($_),
 			)} ('jpg', 'jpeg', 'png', 'gif');
 		}
 
@@ -204,45 +205,58 @@ sub _findStandaloneArtwork {
 	my @images;
 
 	if (main::SCANNER) {
-		my $sql = "SELECT full_path FROM scanned_pics WHERE (status IS NULL OR status <> 'D') AND ";
-		if (scalar @candidates) {
-			$sql .= sprintf('full_path IN (%s)', join(',', map { '?' } @candidates));
-		}
-		else {
-			# if we have zero candidates but there are multiple other artworks in the folder, ORDER BY ensures we always pick the first one.
-			$sql .= 'folder = ? ORDER BY full_path';
-			push @candidates, $parentDir;
-		}
+		# if we have zero candidates but there are multiple other artworks in the folder, ORDER BY ensures we always pick the first one.
+		# Use the same SQL always: we get a full list of image files in the folder and filter using the zero-suppression check later.
+		my $sql = "SELECT full_path FROM scanned_pics WHERE (status IS NULL OR status <> 'D') AND folder = ? ORDER BY full_path";
 
 		my $sth = Slim::Schema->dbh->prepare_cached($sql);
 
 		@images = Slim::Utils::Misc::uniq(map {
-			$_->[0]
+			#again, basename only
+			basename($_->[0])
 		} @{
-			$dbh->selectall_arrayref($sth, undef, @candidates)
+			$dbh->selectall_arrayref($sth, undef, $parentDir)
 		});
 	}
 	else {
-		@images = Slim::Utils::Misc::uniq(grep { -f $_ } @candidates);
+#		Can't do this anymore because we need to get the filenames first before feeding into the zero-supression check.
+#		@images = Slim::Utils::Misc::uniq(grep { -f catfile($parentDir, $_) } @candidates);
 
 		# read the folder anyway, as we don't have the full list of images in the database table
-		if (!scalar @images && !$filenameTemplates) {
+#		if (!scalar @images && !$filenameTemplates) {
 			my $files = File::Next::files( {
 				file_filter    => sub { Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $imageTypesRegex, undef, 1) },
 				descend_filter => sub { 0 },
 			}, $parentDir );
 
 			while ( my $image = $files->() ) {
-				# just take the first image found...
-				push @images, $image;
-				last;
+				# if we've no templates, just take the first image found...
+				push @images, basename($image);
+				last if !$filenameTemplates;
 			}
 		}
+#	}
+
+	my %imageMap;
+	my $leadingZeros = qr/0+(?=[0-9])/;
+
+	if (scalar @candidates) {
+		@candidates = map { $_ =~ s/$leadingZeros//g; $_ } @candidates;
+
+	# I might be abusing grep here! And could it be combined with the above map?
+		@images = grep {
+			my $zs = $_;
+			$zs =~ s/$leadingZeros//g;
+			$imageMap{$zs} = $_;
+			$_ = $zs;
+			grep(/$zs/, @candidates);
+		} @images;
 	}
 
 	# keep sort order from the templates list
-	if (scalar @images > 1) {
+	if ($filenameTemplates && scalar @images > 1) {
 		my %rank;
+		@$filenameTemplates = map { $_ =~ s/$leadingZeros//g; $_ } @$filenameTemplates;
 		@rank{ map { $_ } @$filenameTemplates } = (0 .. $#$filenameTemplates);
 
 		@images = sort {
@@ -251,6 +265,8 @@ sub _findStandaloneArtwork {
 			$a_rank <=> $b_rank;
 		} @images;
 	}
+	# add the full path into the results.
+	@images = map { catfile($parentDir, $imageMap{$_} || $_) } @images;
 
 	return wantarray ? @images : ($images[0] || 0);
 }
@@ -268,7 +284,7 @@ sub updateStandaloneArtwork {
 
 	# add removed artwork to scanned_pics with a status of Deleted
 	$dbh->do( qq{
-		INSERT OR IGNORE INTO scanned_pics (folder, full_path, status, folder_url)
+		INSERT INTO scanned_pics (folder, full_path, status, folder_url)
 		SELECT DISTINCT FOLDER_FROM_PATH(cover), cover, 'D', FOLDER_URL_FROM_PATH(cover)
 		FROM tracks
 		WHERE NOT EXISTS (
@@ -277,6 +293,7 @@ sub updateStandaloneArtwork {
 		)
 		AND cover NOT LIKE 'https%'
 		AND CAST(CAST(cover AS INTEGER) AS TEXT) <> cover
+		ON CONFLICT(full_path) DO NOTHING
 	} );
 
 	# update album artwork to first track coverid for remote and embedded images.
