@@ -1730,7 +1730,13 @@ sub playingSongElapsed {
 	my $duration	= $song->duration();
 
 	if (defined($songtime)) {
-		$songtime = $startStream + $songtime;
+		# songElapsedSeconds() is measured in the transcoded output stream's own
+		# timeline. sox's tempo effect (see 'mixer speed') compresses/expands that
+		# timeline relative to the original track without changing its sample rate,
+		# so it must be scaled back to original-track seconds before it can be
+		# added to startOffset, which is already in original-track seconds.
+		my $speed = $client->speed() || 100;
+		$songtime = $startStream + $songtime * $speed / 100;
 
 		# limit check
 		if ($songtime < 0) {

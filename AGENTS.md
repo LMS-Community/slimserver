@@ -137,6 +137,21 @@ DSP-effect mixer feature:
   reopen call doesn't gate on `Song::canSeek()` (that value is cached from when the song
   was first opened and won't reflect a speed change made afterwards, so it can't be trusted
   as a pre-check here); it relies on every profile actually supporting the seek it asks for.
+- **Elapsed-time scaling gotcha**: `Slim::Player::StreamingController::playingSongElapsed()`
+  computes song position as `startOffset + client->songElapsedSeconds()`. `songElapsedSeconds()`
+  is the player's own decode-clock — seconds of the *transcoded output stream* it has played —
+  which `sox tempo` has compressed/stretched relative to the original track (tempo changes
+  duration, not sample rate). It must be scaled by `speed/100` before being added to
+  `startOffset` (already in original-track seconds), or `songTime()` drifts from the real
+  position whenever `speed != 100` — this was the cause of a live bug report: going from a
+  faster speed to a slower one made the position **jump backward** on `mixer speed` reopen,
+  because the under-scaled elapsed time was fed straight into `gototime()`. Relatedly, in
+  `Commands.pm`'s `mixerCommand`, the pre-reopen `songTime($client)` call **must be evaluated
+  before** `$client->speed($newval)` sets the new pref — `playingSongElapsed()` always scales
+  by the client's *current* speed, so if the pref is updated first, time accumulated under the
+  old speed gets scaled by the new speed instead, landing the reopen at the wrong position
+  again. `mixerCommand` therefore captures `songTime()` into `$reopenAtTime` *before* the
+  `$client->$entity($newval)` pref-setting line, then reopens with that saved value afterward.
 
 **Non-obvious gotcha for any new `mixer` (or other) subcommand**: a subcommand string
 accepted inside `mixerCommand`/`mixerQuery`'s own `isNotCommand`/`isNotQuery` check is

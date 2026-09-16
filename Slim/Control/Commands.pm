@@ -636,6 +636,15 @@ sub mixerCommand {
 			$newval = $newvalue;
 		}
 
+		# speed is implemented via the transcoding pipeline (see convert.conf), so a
+		# currently playing track needs to be reopened at the current position for the
+		# change to take effect immediately, rather than only on the next track. songTime()
+		# scales the player-reported elapsed time by the client's *current* speed pref (see
+		# playingSongElapsed()), so it must be captured now, under the OLD speed, before that
+		# pref is changed below - otherwise time played under the old speed would get scaled
+		# by the new speed, landing the reopen at the wrong position.
+		my $reopenAtTime = ($entity eq 'speed' && $client->isPlaying()) ? Slim::Player::Source::songTime($client) : undef;
+
 		if ($entity eq 'volume' && defined $client->tempVolume && $client->tempVolume == 0 && $oldval > 0) {
 			# only set pref as volume is temporarily set to 0
 			$prefs->client($client)->set('volume', $newval) if ($newval <= $client->maxVolume);
@@ -644,17 +653,14 @@ sub mixerCommand {
 			$newval = $client->$entity($newval);
 		}
 
-		# speed is implemented via the transcoding pipeline (see convert.conf), so a
-		# currently playing track needs to be reopened at the current position for the
-		# change to take effect immediately, rather than only on the next track. This
-		# relies on the transcode profiles used for speed change also supporting seek
+		# this relies on the transcode profiles used for speed change also supporting seek
 		# (capability T) so playback resumes rather than restarting - don't gate this on
 		# Song::canSeek(), as that value is cached from when the song was opened and won't
 		# yet reflect the speed change we just made; the seek/reopen machinery already
 		# degrades gracefully for genuinely non-seekable content (same path used by the
 		# normal user-initiated seek bar).
-		if ($entity eq 'speed' && $newval != $oldval && $client->isPlaying()) {
-			Slim::Player::Source::gototime($client, Slim::Player::Source::songTime($client));
+		if (defined $reopenAtTime && $newval != $oldval) {
+			Slim::Player::Source::gototime($client, $reopenAtTime);
 		}
 
 		# Bug 18165: do not sync volume if client's volume itself is not synced
