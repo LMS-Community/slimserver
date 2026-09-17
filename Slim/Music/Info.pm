@@ -1040,7 +1040,7 @@ sub splitTag {
 
 				push @temp, $item if $item !~ /^\s*$/;
 
-				if (!scalar @temp <= 1) {
+				if (scalar @temp > 1) {
 
 					if ( main::INFOLOG && $log->is_info ) {
 						$log->info("Splitting $tag by $splitOn = @temp");
@@ -1438,7 +1438,7 @@ sub typeFromSuffix {
 	my $defaultType = shift || 'unk';
 
 	if (defined $path && $path =~ m%\.([^./]+)$%) {
-		return $suffixes{lc($1)} || $defaultType;		
+		return $suffixes{lc($1)} || $defaultType;
 	}
 
 	return $defaultType;
