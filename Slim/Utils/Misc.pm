@@ -1254,6 +1254,12 @@ sub userAgentString {
 sub apiHeaders {
 	my ($module) = @_;
 
+	# use the calling module as the plugin ID if none is specified, but only if it's a plugin
+	if (!$module) {
+		$module = caller(0);
+		$module = '' if $module !~ /\bPlugins?\b/
+	}
+
 	eval {
 		if (!$apiHeaders) {
 			$apiHeaders = {};
@@ -1262,12 +1268,13 @@ sub apiHeaders {
 			}
 		}
 
-		$apiHeaders->{'X-LMS-Plugin-ID'} = $module;
+		$apiHeaders->{'X-LMS-Plugin-ID'} = $module if $module;
 	};
 
 	# we might be called before the analytics module was available - don't cache the header data to force re-initialization
 	if ($@) {
 		$apiHeaders = undef;
+		return () if !$module;
 		return (
 			'X-LMS-Plugin-ID' => $module,
 		);

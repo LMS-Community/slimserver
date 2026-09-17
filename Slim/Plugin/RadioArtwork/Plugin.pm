@@ -294,27 +294,25 @@ sub updateKillWords {
 sub getHeaders {
 	my ($class, $args, $client, $url, $titleInfo) = @_;
 
-	my $headers =  {
-		Slim::Utils::Misc::apiHeaders($class),
-	};
+	my %headers = Slim::Utils::Misc::apiHeaders();
 
 	if ($url && (my $parsed = URI->new($url))) {
 		if ($parsed->can('host') && $parsed->can('port') && $parsed->can('path')) {
 			# only submit host name / path to avoid posting potentially sensitive info like stream keys etc.
-			$headers->{'X-LMS-Radio-URL'} = sprintf('%s://%s:%s%s', $parsed->scheme, $parsed->host, $parsed->port, $parsed->path);
+			$headers{'X-LMS-Radio-URL'} = sprintf('%s://%s:%s%s', $parsed->scheme, $parsed->host, $parsed->port, $parsed->path);
 
 			if ($parsed->host =~ /\b(?:tunein|radiotime)\.com$/i) {
 				my $queryParams = $parsed->query_form_hash;
-				$headers->{'X-LMS-Radio-URL'} .= '?sid=' . ($queryParams->{id} || 'unknown');
+				$headers{'X-LMS-Radio-URL'} .= '?sid=' . ($queryParams->{id} || 'unknown');
 			}
 		}
 		else {
 			main::INFOLOG && $log->is_info && $log->info("Not a regular audio stream? $url");
-			$headers->{'X-LMS-Radio-URL'} = $url;
+			$headers{'X-LMS-Radio-URL'} = $url;
 		}
 	}
 
-	return $headers;
+	return \%headers;
 }
 
 # called when we have artwork to set - will update all clients waiting for the same artwork
