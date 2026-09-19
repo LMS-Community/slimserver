@@ -1252,6 +1252,15 @@ sub artistsQuery {
 			$sql .= ($wantExternal ? 'LEFT ' : '') . 'JOIN library_contributor ON library_contributor.contributor = contributors.id ';
 			push @{$w}, 'library_contributor.library = ?';
 			push @{$p}, $libraryID;
+			if ( $sql =~ /JOIN albums/ ) {
+				$sql .= ($wantExternal ? 'LEFT ' : '') . 'JOIN library_album ON library_album.album = albums.id ';
+				push @{$w}, 'library_album.library = ?';
+				push @{$p}, $libraryID;
+			}
+			# Adjust VA check to only check for VA artists in the library
+			$sql_va .= 'JOIN library_album ON library_album.album = albums.id ';
+			push @{$w_va}, 'library_album.library = ?';
+			push @{$p_va}, $libraryID;
 		}
 	}
 
