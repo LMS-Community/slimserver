@@ -6,6 +6,7 @@ labels: ''
 assignees: ''
 
 ---
+**IMPORTANT NOTE** ⚠️: Please do _not_ simply copy/paste your 🤖 AI agent's description here. Use your own words 🤔💭➡️🧑‍💻. Use the assistant to collect the information _you_ need to understand the issue 💡. Thanks!
 
 **Describe the bug**
 A clear and concise description of what the bug is. If you're unsure about the nature of your request, please use [forums.lyrion.org](https://forums.lyrion.org) instead. You'll get better and faster responses there. Thanks!
