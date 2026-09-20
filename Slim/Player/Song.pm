@@ -640,7 +640,11 @@ sub open {
 					$self->samplerate( min($transcoder->{'sampleRate'}, $transcoder->{'samplerateLimit'}) );
 				} else {
 					$sampleRate = $transcoder->{'samplerateLimit'};  # samplerate limit
-					$sampleSize = $transcoder->{'sampleSize'};
+					if ($transcoder->{'command'} =~ /[dsdplay]/) {   # transcoding from DSD in command pipeline
+						$sampleSize = 24;
+					} else {
+						$sampleSize = $transcoder->{'sampleSize'};
+					}
 					$self->samplesize($sampleSize);
 					$self->samplerate($sampleRate);
 				}
