@@ -639,9 +639,9 @@ sub open {
 					$self->samplesize("");  # clear samplesize for lossy formats
 					$self->samplerate( min($transcoder->{'sampleRate'}, $transcoder->{'samplerateLimit'}) );
 				} else {
-					$sampleRate = $transcoder->{'samplerateLimit'};  # samplerate limit
-					if ($transcoder->{'command'} =~ /[dsdplay]/) {   # transcoding from DSD in command pipeline
-						$sampleSize = 24;
+					$sampleRate = $transcoder->{'samplerateLimit'};   # samplerate limit
+					if ($transcoder->{'command'} =~ /\[dsdplay\]/) {  # if transcoding from DSD in command pipeline
+						$sampleSize = 24;							  # ...set sample size to 24 bits
 					} else {
 						$sampleSize = $transcoder->{'sampleSize'};
 					}
