@@ -299,9 +299,6 @@ sub init {
 	# initialise any new prefs
 	$prefs->init(\%defaults, 'Slim::Utils::Prefs::Migration');
 
-	$prefs->set('cleanupReleaseTypes', $prefs->get('cleanupReleaseTypes')->[0]) if ( ref $prefs->get('cleanupReleaseTypes') eq 'ARRAY' );
-
-
 	# remove some SN/MySB legacy
 	$prefs->remove(qw(snInitErrors snLastSyncDown sn_disable_stats sn_disabled_plugins sn_email sn_protocolhandlers sn_session sn_sync));
 
