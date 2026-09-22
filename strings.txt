@@ -1425,7 +1425,7 @@ SLEEPING_AT_END_OF_SONG
 	RU	Спящий режим в конце песни
 	SV	Viloläge när låten har tagit slut
 	ZH_CN	播放结束后休眠
-	
+
 
 NOTHING_CURRENTLY_PLAYING
 	CA	No s'està reproduint res ara mateix
@@ -6234,7 +6234,7 @@ OUTPUT_CHANNELS_NORMAL
 	ZH_CN	左右声道（立体声）
 
 OUTPUT_CHANNELS_LEFT
-	CA	Canal esquerre 
+	CA	Canal esquerre
 	CS	Levý kanál
 	DA	Venstre kanal
 	DE	Linker Kanal
@@ -6457,7 +6457,7 @@ TRANSITION_FADE_OUT
 	ZH_CN	音频淡出
 
 TRANSITION_FADE_IN_OUT
-	CA Esvaïment d'entrada i de sortida
+	CA	Esvaïment d'entrada i de sortida
 	CS	Zesilování a zeslabování
 	DA	Fade ind og ud
 	DE	Ein- und Ausblenden
@@ -10949,7 +10949,7 @@ SETUP_IGNORE_RELEASE_TYPES_1
 	NL	Releasetypes voor albums uitschakelen
 	PT	Ignore o tipo de lançamento dos albuns
 	PT	Ignore o tipo de lançamento dos albuns
-	SV	Ignorera Utgåvetyper för album 
+	SV	Ignorera Utgåvetyper för album
 	ZH_CN	忽略专辑发行类型
 
 SETUP_CLEANUP_RELEASE_TYPES
@@ -16987,7 +16987,7 @@ NO_PLAYER_FOUND
 	ZH_CN	未能找到您的播放器。
 
 NO_PLAYER_DETAILS
-	<b>Si teniu un Squeezebox o Transporter:</b><ul><li>Assegureu-vos que el reproductor estigui connectat i que la configuració de xarxa sigui correcta. Feu clic al botó Actualitza un cop el reproductor estigui connectat.</ul><p><b>Si no teniu un Squeezebox o Transporter:</b><ul><li>Podeu escoltar la vostra biblioteca musical amb <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, una versió de programari de Squeezebox.<li>Podeu utilitzar programari de reproducció MP3 (com ara Winamp o iTunes) per escoltar la vostra biblioteca musical amb Lyrion Music Server connectant-vos a aquesta URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
+	CA	<b>Si teniu un Squeezebox o Transporter:</b><ul><li>Assegureu-vos que el reproductor estigui connectat i que la configuració de xarxa sigui correcta. Feu clic al botó Actualitza un cop el reproductor estigui connectat.</ul><p><b>Si no teniu un Squeezebox o Transporter:</b><ul><li>Podeu escoltar la vostra biblioteca musical amb <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, una versió de programari de Squeezebox.<li>Podeu utilitzar programari de reproducció MP3 (com ara Winamp o iTunes) per escoltar la vostra biblioteca musical amb Lyrion Music Server connectant-vos a aquesta URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	CS	<b>Pokud vlastníte Squeezebox nebo Transporter:</b><ul><li>Ujistěte se, že přehrávač je zapojen a že nastavení sítě jsou správná. Po připojení přehrávače klikněte na tlačítko Obnovit.</ul><p><b>Pokud nemáte Squeezebox ani Transporter:</b><ul><li>Můžete poslouchat hudbu ze své knihovny s pomocí <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, což je softwarová verze Squeezeboxu.<li>K poslechu své hudební knihovny s Lyrion Music Serverem můžete použít softwarový přehrávač MP3 (například Winamp nebo iTunes), který připojíte k této adrese URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	DA	<b>Hvis du har en Squeezebox eller Transporter:</b><ul><li>Kontroller at din afspiller er sluttet til, og at netværksindstillingerne er korrekte. Klik på opdateringsknappen når afspilleren er tilsluttet.</ul><p><b>Hvis du ikke har en Squeezebox eller Transporter:</b><ul><li>Du kan lytte til dit musikbibliotek vha. <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en softwareversion af Squeezebox.<li>Du kan også bruge et program til at afspille mp3-filer (fx Winamp eller iTunes) til at høre filerne sammen med Lyrion Music Server ved at etablere forbindelse til denne adresse: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	DE	<b>Sie besitzen Squeezebox oder Transporter:</b><ul><li>Überprüfen Sie, ob der Player korrekt angeschlossen ist und die Netzwerkeinstellungen stimmen und klicken Sie im Browser auf 'Aktualisieren', wenn der Player angeschlossen ist.</ul><p><b>Sie besitzen weder Squeezebox noch Transporter:</b><ul><li>Sie können mit <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, einer Software-Version der Squeezebox, ihre Musiksammlung anhören.<li>Mit einer Software zur Wiedergabe von MP3 (z.B. WinAmp oder iTunes) können Sie über folgende URL auf Lyrion Music Server zugreifen: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
