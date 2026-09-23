@@ -634,16 +634,24 @@ sub open {
 				my $sampleSize;
 				my $sampleRate;
 
-				if (Slim::Music::Info::isLossy($streamformat)) {
+				# Allow a plugin to override the bitrate/sample rate handling. Handler must return a hash ref
+				# with the data if the data has been dealt with, or falsy if not handled.
+				if ( $self->can('handleSampleAndBitrate') && (my $results = $self->handleSampleAndBitrate($transcoder)) ) {
+					$bitrate    = $results->{bitrate};
+					$sampleSize = $results->{sampleSize};
+					$sampleRate = $results->{sampleRate};
+				}
+				elsif (Slim::Music::Info::isLossy($streamformat)) {
 					$bitrate = $transcoder->{'rateLimit'};  # bitrate limit
-					$self->samplesize("");  # clear samplesize for lossy formats
-					$self->samplerate( min($transcoder->{'sampleRate'}, $transcoder->{'samplerateLimit'}) );
+					$sampleSize = "";  # clear samplesize for lossy formats
+					$sampleRate = min($transcoder->{'sampleRate'}, $transcoder->{'samplerateLimit'});
 				} else {
 					$sampleRate = $transcoder->{'samplerateLimit'};  # samplerate limit
 					$sampleSize = $transcoder->{'sampleSize'};
-					$self->samplesize($sampleSize);
-					$self->samplerate($sampleRate);
 				}
+
+				$self->samplesize($sampleSize);
+				$self->samplerate($sampleRate);
 
 				$self->_streambitrate(guessBitrateFromFormat($streamformat, $bitrate, $sampleSize, $sampleRate) || 0);
 			}
