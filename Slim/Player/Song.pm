@@ -627,25 +627,7 @@ sub open {
 
 				$self->_transcoded(1);
 
-				my $streamformat = $transcoder->{'streamformat'};
-				$self->_streamFormat($streamformat);
-
-				my $bitrate;
-				my $sampleSize;
-				my $sampleRate;
-
-				if (Slim::Music::Info::isLossy($streamformat)) {
-					$bitrate = $transcoder->{'rateLimit'};  # bitrate limit
-					$self->samplesize("");  # clear samplesize for lossy formats
-					$self->samplerate( min($transcoder->{'sampleRate'}, $transcoder->{'samplerateLimit'}) );
-				} else {
-					$sampleRate = $transcoder->{'samplerateLimit'};  # samplerate limit
-					$sampleSize = $transcoder->{'sampleSize'};
-					$self->samplesize($sampleSize);
-					$self->samplerate($sampleRate);
-				}
-
-				$self->_streambitrate(guessBitrateFromFormat($streamformat, $bitrate, $sampleSize, $sampleRate) || 0);
+				$self->_handleFormatAndBitrate($transcoder);
 			}
 		} # ENDIF main::TRANSCODING
 
@@ -702,6 +684,30 @@ sub open {
 	$client->metaTitle(undef);
 
 	return $streamController;
+}
+
+sub _handleFormatAndBitrate {
+	my ($self, $transcoder) = @_;
+
+	my $streamformat = $transcoder->{'streamformat'};
+	$self->_streamFormat($streamformat);
+
+	my $bitrate;
+	my $sampleSize;
+	my $sampleRate;
+
+	if (Slim::Music::Info::isLossy($streamformat)) {
+		$bitrate = $transcoder->{'rateLimit'};  # bitrate limit
+		$self->samplesize("");  # clear samplesize for lossy formats
+		$self->samplerate( min($transcoder->{'sampleRate'}, $transcoder->{'samplerateLimit'}) );
+	} else {
+		$sampleRate = $transcoder->{'samplerateLimit'};  # samplerate limit
+		$sampleSize = $transcoder->{'sampleSize'};
+		$self->samplesize($sampleSize);
+		$self->samplerate($sampleRate);
+	}
+
+	$self->_streambitrate(guessBitrateFromFormat($streamformat, $bitrate, $sampleSize, $sampleRate) || 0);
 }
 
 # Static method
