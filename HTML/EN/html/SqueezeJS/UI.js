@@ -1559,14 +1559,16 @@ SqueezeJS.UI.CompoundTitle = Ext.extend(SqueezeJS.UI.Component, {
 SqueezeJS.UI.Album = Ext.extend(SqueezeJS.UI.Component, {
 	onPlayerStateChange : function(result){
 		var year = SqueezeJS.SonginfoParser.year(result, this.noLink);
+		var version = SqueezeJS.SonginfoParser.version(result, this.noLink);
 		this.el.update(SqueezeJS.SonginfoParser.album(result, this.noLink)
-			+ (year ? '&nbsp;(' + year + ')' : ''));
+			+ (year ? '&nbsp;(' + year + ')' : '') + (version ? '&nbsp;[' + version + ']' : '') );
 	}
 });
 
 SqueezeJS.UI.AlbumTitle = Ext.extend(SqueezeJS.UI.Component, {
 	onPlayerStateChange : function(result){
-		this.el.update(SqueezeJS.SonginfoParser.album(result, this.noLink));
+		var version = SqueezeJS.SonginfoParser.version(result, this.noLink);
+		this.el.update(SqueezeJS.SonginfoParser.album(result, this.noLink) + (version ? '&nbsp;[' + version + ']' : ''));
 	}
 });
 
