@@ -351,11 +351,9 @@ sub SetAVTransportURI {
 		my $pd = $client->pluginData();
 
 		# Synthetic, globally unique track identity, see _newTrackId
-		my $trackId = $class->_newTrackId( $meta->{res}->{uri} );
-		$meta->{_id} = $trackId;
+		my $trackId = $class->_newTrackId( $meta->{res}->{content} );
+		$class->_setTrackAttributes( $trackId, $meta );
 		$_trackMeta{$trackId} = $meta;
-
-		$class->_setTrackInfo( $trackId, $meta->{res} );
 
 		$mediaDuration = $meta->{res}->{duration}; # XXX more if URI is a playlist?
 		$trackDuration = $mediaDuration;
@@ -456,19 +454,17 @@ sub SetNextAVTransportURI {
 			return [ 714 => 'Illegal MIME-type' ];
 		}
 
-		my $upnp_uri = $meta->{res}->{uri};
+		my $upnp_uri = $meta->{res}->{content};
 		my $cachedMeta = $pd->{avt_NextTrackId} ? $_trackMeta{ $pd->{avt_NextTrackId} } : undef;
-		my $upnp_uricached = $cachedMeta ? $cachedMeta->{res}->{uri} : undef;
+		my $upnp_uricached = $cachedMeta ? $cachedMeta->{res}->{content} : undef;
 
 		# only update if NextURI has changed or it's not queued yet
 		if ( !defined($upnp_uricached) || $upnp_uri ne $upnp_uricached || scalar @{$playlist} < 2 ){
 
 			# Synthetic, globally unique track identity, see _newTrackId
-			my $trackId = $class->_newTrackId( $meta->{res}->{uri} );
-			$meta->{_id} = $trackId;
+			my $trackId = $class->_newTrackId( $meta->{res}->{content} );
+			$class->_setTrackAttributes( $trackId, $meta );
 			$_trackMeta{$trackId} = $meta;
-
-			$class->_setTrackInfo( $trackId, $meta->{res} );
 
 			delete $_trackMeta{ $pd->{avt_NextTrackId} } if $pd->{avt_NextTrackId};
 			$pd->{avt_NextTrackId} = $trackId;
@@ -789,8 +785,7 @@ sub GetCurrentTransportActions {
 # DLNA allows different playlist entries to share the same URI, but LMS keys
 # Schema/Playlist/metadata by a unique url, so this will be used there instead
 # of the (possibly duplicate) original URI.
-# The original URI's file suffix (if any) is kept, so suffix-based type detection
-# (e.g. ProtocolHandler::getFormatForURL) keeps working unchanged.
+# The original URI's file suffix (if any) is kept for compatibility.
 sub _newTrackId {
 	my ( $class, $uri ) = @_;
 
@@ -880,32 +875,30 @@ sub _DIDLLiteToHash {
 		# strip MIME parameters (e.g. audio/L16;rate=48000;channels=2)
 		my ($mime, $mimeParams) = split /;/, $mimeFull, 2;
 
-		next if !$mime || !Slim::Music::Info::mimeToType($mime);
+		my $type = Slim::Music::Info::mimeToType( $mime );
+		# fall back to guessing the type from the file suffix
+		$type ||= Slim::Music::Info::typeFromSuffix($r->{content}, undef);
+		
+		next if !$type;
+		$meta->{ct} = $type;
 
-		# Some servers must have missed the (really stupid) part in
-		# the spec where bitrate is defined as bytes/sec, not bits/sec
-		# We try to handle this for common L16 and MP3 bitrates
-		my $bitrate = $r->{bitrate};
-		if ( $bitrate && ( ( $mime eq 'audio/L16' && $bitrate > 192000 )
-			|| $bitrate =~ /^(?:64|96|128|160|192|256|320)000$/ ) ) {
-			$bitrate /= 8;
-		}
- 
 		# use MIME params, if 'res' doesn't provide sampleFrequency/nrAudioChannels
 		my ($rateParam)     = $mimeParams =~ /\brate=(\d+)/i        if $mimeParams;
 		my ($channelsParam) = $mimeParams =~ /\bchannels=(\d+)/i    if $mimeParams;
 
 		$meta->{res} = {
-			uri          => $r->{content},
-			mime         => $mime,
-			protocolInfo => $r->{protocolInfo},
-			bitrate      => $bitrate * 8,
-			secs         => hmsToSecs( $r->{duration} ),
-			duration     => $r->{duration} || '',
-			samplerate   => $r->{sampleFrequency} || $rateParam     || undef,
-			channels     => $r->{nrAudioChannels} || $channelsParam || undef,
-			samplesize   => $r->{bitsPerSample} || undef,
+			content         => $r->{content},
+			mime            => $mime, # stripped MIME parameters
+			protocolInfo    => $r->{protocolInfo},
+			bitrate         => $r->{bitrate} || undef,
+			duration        => $r->{duration} || '',
+			sampleFrequency => $r->{sampleFrequency} || $rateParam     || undef,
+			nrAudioChannels => $r->{nrAudioChannels} || $channelsParam || undef,
+			bitsPerSample   => $r->{bitsPerSample} || undef,
 		};
+
+		my ($dlnaOp) = $r->{protocolInfo} =~ /DLNA\.ORG_OP=(\d{2})/;
+		$meta->{seekable} = ( defined $dlnaOp && $dlnaOp eq '00' ) ? 0 : 1;
 
 		last;
 	}
@@ -913,28 +906,63 @@ sub _DIDLLiteToHash {
 	return $meta;
 }
 
-# sets track info from DIDL-Lite res element decoded by _DIDLLiteToHash
-sub _setTrackInfo {
-	my ( $class, $trackId, $res ) = @_;
+# sets track attributes from metadata decoded by _DIDLLiteToHash
+sub _setTrackAttributes {
+	my ( $class, $trackId, $meta ) = @_;
 
-	Slim::Music::Info::setContentType( $trackId, $res->{mime} ) if $res->{mime};
-	Slim::Music::Info::setBitrate( $trackId, $res->{bitrate} ) if $res->{bitrate};
-	Slim::Music::Info::setDuration( $trackId, $res->{secs} ) if $res->{secs};
+	$meta->{_id} = $trackId;
+
+	my $res = $meta->{res} || {};
+
+	my $samplesize = $res->{bitsPerSample};
+	if ( $res->{mime} eq 'audio/L16' ) {
+		$samplesize = 16;
+	}
+	elsif ( $res->{mime} eq 'audio/L24' ) {
+		$samplesize = 24;
+	}
+
+	my $bitrate = 0;
+
+	# Some servers don't provide bitrate for LPCM, so calculate it
+	if ( !$res->{bitrate} && $meta->{ct} eq 'lpcm' && $res->{sampleFrequency} && $res->{nrAudioChannels} && $samplesize ) {
+		$bitrate = $res->{sampleFrequency} * $res->{nrAudioChannels} * $samplesize;
+	}
+	# Some servers providing the "bitrate" res elements must have missed
+	# the (really stupid) part in the spec where bitrate is defined as
+	# bytes/sec, not bits/sec. So try to handle this for common L16, WAV
+	# and MP3 bitrates.
+	elsif ( $res->{bitrate} ) {
+		if ( ( $meta->{ct} eq 'mp3' && $res->{bitrate} =~ /^(?:64|96|128|160|192|256|320)000$/ )
+			|| ( ($meta->{ct} eq 'lpcm' || $meta->{ct} eq 'wav') && $samplesize && $res->{bitrate} > 48000 * 2 * $samplesize / 8 )
+			) {
+			# seems to actually be bits/s, not bytes/s, so use it as-is
+			$bitrate = $res->{bitrate};
+		}
+		else {
+			# seems to really be bytes/s, so convert to bits/s
+			$bitrate = $res->{bitrate} * 8;
+		}
+	}
+
+	# note: setRemoteMetadata() expects bitrate in kbits/s, not bits/s
+	$meta->{bitrate} = $bitrate / 1000 if $bitrate;
+	$meta->{secs} = hmsToSecs( $res->{duration} ) if $res->{duration};
+
+	# LPCM/WAV are always CBR, so don't let setRemoteMetadata() guess from
+	# its MP3-only list of common bitrates
+	$meta->{vbr_scale} = undef if $meta->{ct} eq 'lpcm' || $meta->{ct} eq 'wav';
+
+	# this processes ct, title, secs, bitrate, vbr_scale, year, cover
+	Slim::Music::Info::setRemoteMetadata( $trackId, $meta );
 
 	my %attrs;
-	$attrs{SAMPLERATE} = $res->{samplerate} if $res->{samplerate};
-	$attrs{CHANNELS}   = $res->{channels}   if $res->{channels};
-	$attrs{SAMPLESIZE} = $res->{samplesize} if $res->{samplesize};
+	$attrs{SAMPLERATE} = $res->{sampleFrequency} if $res->{sampleFrequency};
+	$attrs{CHANNELS}   = $res->{nrAudioChannels} if $res->{nrAudioChannels};
+	$attrs{SAMPLESIZE} = $samplesize if $samplesize;
 
-	if ( $res->{mime} && $res->{mime} eq 'audio/L16' ) {
-		$attrs{ENDIAN} = 1; # big-endian
-		$attrs{SAMPLESIZE} = 16;
-	}
-	elsif ( $res->{mime} && $res->{mime} eq 'audio/L24' ) {
-		$attrs{ENDIAN} = 1; # big-endian
-		$attrs{SAMPLESIZE} = 24;
-	}
-	elsif ( $res->{mime} && $res->{mime} eq 'audio/x-pcm' ) {
+	# required for 'lpcm' to 'pcm' pass-through
+	if ( $meta->{ct} eq 'lpcm' ) {
 		$attrs{ENDIAN} = 1; # big-endian
 	}
 
