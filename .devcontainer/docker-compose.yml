@@ -1,16 +1,18 @@
-version: '3.11'
-
 services:
   lyrion-devcontainer:
-    # add this line so we can connect to the host machine
+    hostname: lyrion-devcontainer
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-     - lyrion-dev-volume:/workspace
-
+      # In Compose mode, Dev Containers does not auto-mount the workspace —
+      # this explicit mount is required.
+      - ../..:/workspaces:cached
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
+    networks:
+      - lyrion_bridge
 
-volumes:
-  lyrion-dev-volume:
+networks:
+  lyrion_bridge:
+    external: true

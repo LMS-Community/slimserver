@@ -1,0 +1,22 @@
+# SoftSqueeze + VNC standalone container.
+
+services:
+  softsqueeze:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lyrion-softsqueeze
+    environment:
+      - LMS_HOST=${LMS_HOST:-lyrion-devcontainer}
+      - LMS_HTTP_PORT=9000
+      - LMS_SLIMPROTO_PORT=3483
+    ports:
+      - "6080:6080"
+      - "5900:5900"
+    restart: unless-stopped
+    networks:
+      - lyrion_bridge
+
+networks:
+  lyrion_bridge:
+    external: true
