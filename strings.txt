@@ -12345,6 +12345,24 @@ BALANCE
 	SV	Balans
 	ZH_CN	平衡
 
+SPEED
+	EN	Speed
+
+SETUP_SPEEDRESET
+	EN	Playback Speed Control
+
+SETUP_SPEEDRESET_DESC
+	EN	Enable a pitch-preserving playback speed control on the Now Playing screen. Optionally, the speed can be automatically reset to 1x either at the start of every track, or only when moving to a different album (useful for audiobooks split into chapter tracks).
+
+SPEEDRESET_OFF
+	EN	No
+
+SPEEDRESET_TRACK
+	EN	Yes (reset after each track)
+
+SPEEDRESET_ALBUM
+	EN	Yes (reset after switching album)
+
 PITCH
 	CA	To
 	CS	Tón
