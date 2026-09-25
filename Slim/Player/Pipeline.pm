@@ -288,6 +288,7 @@ sub sysread {
 					# EOF
 					main::INFOLOG && $log->info("EOF on source stream");
 					$source->close();
+					Slim::Networking::Select::removeWrite($writer);
 					$writer->close();
 					delete ${*$self}{'pipeline_source'};
 					delete ${*$self}{'pipeline_writer'};
@@ -357,6 +358,7 @@ sub close {
 	my $writer = ${*$self}{'pipeline_writer'};
 
 	if (defined($writer)) {
+		Slim::Networking::Select::removeWrite($writer);
 		$writer->close();
 	}
 
