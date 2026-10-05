@@ -66,19 +66,23 @@ sub findAndAdd {
 		}
 
 		# Replace the current playlist with the first item / track or add it to end
-		my $request;
+		my $cmd;
 		if ( $type eq 'work' ) {
-			$request = $client->execute([
+			$cmd = [
 				'playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('album.id=%d&work.id=%d&track.performance=%s%s', @$id[0], @$id[1], @$id[2], $libraryParam)
-			]);
+			];
 		} else {
-			$request = $client->execute([
+			$cmd = [
 				'playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('%s.id=%d%s', $type, $id, $libraryParam)
-			]);
+			];
 		}
 
-		# indicate request source
+		# indicate request source *before* executing it: our commandCallback can be notified while the
+		# request is still executing, and must recognise it as ours - otherwise our own loadtracks ends
+		# the continuous mix right after the first batch of tracks.
+		my $request = Slim::Control::Request->new($client->id(), $cmd);
 		$request->source('PLUGIN_RANDOMPLAY');
+		$request->execute() if $request->isStatusDispatchable();
 
 		$addOnly++;
 	}
