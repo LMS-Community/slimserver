@@ -239,6 +239,7 @@ sub alarmsQuery {
 			$request->addResultLoop($loopname, $cnt, 'shufflemode', $alarm->shufflemode());
 			$request->addResultLoop($loopname, $cnt, 'time', $alarm->time());
 			$request->addResultLoop($loopname, $cnt, 'volume', $alarm->volume());
+			$request->addResultLoop($loopname, $cnt, 'usesdefaultvolume', $alarm->usesDefaultVolume() ? 1 : 0);
 			$request->addResultLoop($loopname, $cnt, 'url', $alarm->playlist() || 'CURRENT_PLAYLIST');
 			$cnt++;
 		}

@@ -75,7 +75,7 @@ sub alarmCommand {
 	my $client      = $request->client();
 	my $cmd         = $request->getParam('_cmd');
 
-	my @tags = qw( id dow dowAdd dowDel enabled repeat time volume shufflemode playlisturl url cmd );
+	my @tags = qw( id dow dowAdd dowDel enabled repeat time volume usedefaultvolume shufflemode playlisturl url cmd );
 
 	# legacy support for "bare" alarm cli command (i.e., sending all tagged params)
 	my $params;
@@ -184,7 +184,14 @@ sub alarmCommand {
 			  }
 			}
 
-			$alarm->volume($params->{volume}) if defined $params->{volume};
+			# usedefaultvolume:1 makes the alarm follow the player's default alarm volume again (it wins over volume).
+			# volume(undef) rather than usesDefaultVolume(1): it also refreshes the player's RTC alarm.
+			if ($params->{usedefaultvolume}) {
+				$alarm->volume(undef);
+			}
+			elsif (defined $params->{volume}) {
+				$alarm->volume($params->{volume});
+			}
 			$alarm->shufflemode($params->{shufflemode}) if defined $params->{shufflemode};
 			$alarm->enabled($params->{enabled}) if defined $params->{enabled};
 			$alarm->repeat($params->{repeat}) if defined $params->{repeat};
