@@ -311,7 +311,11 @@ sub cliQuery {
 		$feed = Slim::Menu::ArtistInfo->menu( $client, $url, undef, $tags );
 	}
 	elsif ( $artistId ) {
-		my $artist = Slim::Schema->find( Contributor => $artistId );
+		my $artist = Slim::Schema->find( Contributor => $artistId ) or do {
+			# an id from before a rescan, or a typo: no such object
+			$request->setStatusBadParams();
+			return;
+		};
 		$feed     = Slim::Menu::ArtistInfo->menu( $client, $artist->url, $artist, $tags );
 	}
 	elsif ( $cachedFeed{ $connectionId } ) {
