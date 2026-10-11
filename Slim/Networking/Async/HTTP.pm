@@ -329,6 +329,14 @@ sub read_body {
 
 	Slim::Networking::Select::addError( $self->socket, \&_http_socket_error );
 	Slim::Networking::Select::addRead( $self->socket, \&_http_read_body );
+
+	# Some or all of the body may have arrived together with the headers. It then sits in Net::HTTP's read buffer,
+	# or in IO::Socket::SSL's buffer of decrypted data, and the socket won't become readable for it again. With a
+	# server keeping the connection open we would wait until it closes it or the timeout fires, so read it now.
+	my $socket = $self->socket;
+	if ( $socket->_rbuf_length || ( $socket->can('pending') && $socket->pending() ) ) {
+		_http_read_body( $socket, $self, $args );
+	}
 }
 
 sub suspend_stream {
