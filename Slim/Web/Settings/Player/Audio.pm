@@ -116,6 +116,10 @@ sub prefs {
 		push @prefs, 'balance';
 	}
 
+	if ($client->isa('Slim::Player::Squeezebox')) {
+		push @prefs, 'speedReset';
+	}
+
 	return ($prefs->client($client), @prefs);
 }
 
