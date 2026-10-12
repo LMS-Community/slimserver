@@ -3901,7 +3901,7 @@ SETUP_ACTIVEFONT_DESC
 	PL	Przycisk SIZE na pilocie lub przyciski opcji poniżej umożliwiają przełączanie czcionek na wyświetlaczu odtwarzacza. Możliwe jest wybranie kolejności wyświetlania za pomocą menu poniżej.
 	PT	Pode usar o botão SIZE no comando ou os botões seguintes para alterar o tipo de letra no ecran do reprodutor. Pode alterar a ordem em que aparecem no menu abaixo
 	RU	С помощью кнопки SIZE пульта ДУ или нижеприведенных переключателей можно переключаться между шрифтами экрана плеера. Порядок их вывода можно задать с помощью следующих меню.
-	SV	Du kan använda SIZEi-knappen på fjärrkontrollen eller knapparna här nedanför för att byta teckensnitt på spelarens skärm. Du kan välja i vilken ordning de ska visas med hjälp av menyerna här nedanför.
+	SV	Du kan använda SIZE-knappen på fjärrkontrollen eller knapparna här nedanför för att byta teckensnitt på spelarens skärm. Du kan välja i vilken ordning de ska visas med hjälp av menyerna här nedanför.
 	ZH_CN	您可使用遥控器的大小按钮或如下的无线电按钮设定播放器显示屏的字体大小。您可在如下的菜单设定它们出现的排序。
 
 SETUP_IDLEFONT
@@ -10365,8 +10365,8 @@ SETUP_CORS_ALLOWED_HOSTS_DESC
 	EN	Cross-Origin Resource Sharing (CORS) is a mechanism that uses additional HTTP headers to tell a browser to let a web application running at one origin (domain) have permission to access selected resources from a server at a different origin.<br><br>Enter a comma separated list of hostnames you want to give access to your Lyrion Music Server. The entries need to have the protocol (eg. "http"), full host name ("www.example.com"), plus the port number, should the latter be non-standard. In most cases something like "https://www.example.com" should be good enough.
 	FR	Le Cross-Origin Resource Sharing ou CORS (littéralement "partage de ressources entre origines multiples") est un mécanisme qui utilise des en-têtes HTTP supplémentaires pour indiquer à un navigateur d'autoriser une application Web exécutée sur une origine (domaine) à accéder à des ressources provenant d'un serveur d'une autre origine.<br>< br>Entrez une liste de noms de domaines, séparés par des virgules, auxquels vous souhaitez donner accès à votre Lyrion Music Server. Les éléments saisis doivent inclure le protocole (par exemple "http"), le nom de domaine complet ("www.exemple.com"), et le numéro de port, si ce dernier n'est pas standard. Dans la plupart des cas, quelque chose comme "https://www.exemple.com" devrait suffire.
 	HU	A Cross-Origin Resource Sharing (CORS) egy olyan mechanizmus, amely további HTTP-fejlécek segítségével utasítja a böngészőt, hogy engedélyezze az egy helyen (domain) futó webalkalmazások számára a kiválasztott erőforrásokhoz való hozzáférést egy másik eredetű szerverről.<br>< br>Írja be a vesszővel elválasztott gazdagépnevek listáját, amelyeknek hozzáférést kíván adni Lyrion zeneszerveréhez. A bejegyzéseknek tartalmazniuk kell a protokollt (pl. "http"), a teljes gazdagép nevét ("www.example.com"), valamint a portszámot, ha ez utóbbi nem szabványos. A legtöbb esetben a „https://www.example.com”-hoz hasonló jónak kell lennie.
-	SV	Cross-Origin Resource Sharing (CORS) är en metod som gör det möjligt för en web-browser att tillåta en web-server i en domän att använda web-resurser på en server i en annan domän.<br><br>Definiera en lista med web-servrar som du vill tillåta att använda din Lyrion Music Server. Servrarna i listan måste anges med protokoll (t.ex. "http"), hela servernamnet ("www.exempel.com") och postnumret om det avviker från standardnumret. I de flesta fall räcker t.ex. "https://www.exempel.com".
 	NL	Cross-Origin Resource Sharing (CORS) is een mechanisme dat aanvullende HTTP headers gebruikt om een ​​browser te vertellen dat een webtoepassing die op één domein wordt uitgevoerd, toestemming heeft om toegang te krijgen tot geselecteerde bronnen van een server op een ander domein.<br>< br>Voer een door komma's gescheiden lijst in met hostnamen die je toegang wilt geven tot Lyrion Music Server. De vermeldingen moeten het protocol (bijv. "http"), de volledige hostnaam ("www.example.com") en het poortnummer bevatten (indien het poortnummer niet standaard is). In de meeste gevallen volstaat zoiets als "https://www.example.com".
+	SV	Cross-Origin Resource Sharing (CORS) är en metod som gör det möjligt för en web-browser att tillåta en web-server i en domän att använda web-resurser på en server i en annan domän.<br><br>Definiera en lista med web-servrar som du vill tillåta att använda din Lyrion Music Server. Servrarna i listan måste anges med protokoll (t.ex. "http"), hela servernamnet ("www.exempel.com") och portnumret om det avviker från standardnumret. I de flesta fall räcker t.ex. "https://www.exempel.com".
 	ZH_CN	跨源资源共享（CORS）是一种机制，它使用额外的HTTP标头告诉浏览器让在一个源（域）上运行的web应用程序有权访问来自不同源的服务器的选定资源。<br><br>输入要授予访问Lyrion音乐服务器权限的主机名的逗号分隔列表。条目需要包含协议（例如“http”）、完整主机名（“www.example.com”）以及端口号（如果后者是非标准的）。在大多数情况下，类似“https://www.example.com“应该足够好了。
 
 SETUP_CSRFPROTECTIONLEVEL
@@ -10566,7 +10566,7 @@ SETUP_FILTERRULE_DESC
 	PL	Jeżeli włączono blokowanie, możesz wprowadzić adresy, które będą mogły się łączyć z programem Lyrion Music Server.<br><br>W tym polu można wpisać określone adresy IP, znaki wieloznaczne typu * i zakresy adresów IP na liście rozdzielonej przecinkami. Na przykład: wpisanie <BR><BR><B>10.1.2.2</B> umożliwi połączenie tylko z adresu 10.1.2.2<BR><BR>Wpisanie <B>10.1.2.*</B> umożliwi połączenie z dowolnego adresu IP w postaci 10.1.2.x.<BR><BR>Wpisanie <B>10.1.2.2-50</B> umożliwi połączenie z adresów IP w zakresie 10.1.2.2&ndash;10.1.2.50.<BR><BR>Można także dodać kilka wpisów rozdzielonych przecinkami, na przykład: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Specjalny adres IP 127.0.0.1 umożliwia przeglądarce internetowej połączenie z programem Lyrion Music Server uruchomionym na tym samym komputerze.
 	PT	Se activar o bloqueio por IP de origem, introduza aqui os endereços com permissões para ligar ao Lyrion Music Server.<br><br>Este campo aceita uma lista de endereços IP, redes (usando o caractér "*"), e segmentos de rede (usando "endereço-endereço"), separados por vírgulas. Por exemplo
 	RU	При включенном блокировании можно ввести адреса, с которых разрешено подключение к Lyrion Music Server.<br><br>В данное поле можно ввести список разделенных запятыми IP-адресов, подстановочных знаков (*) и диапазонов IP-адресов. Например:<BR><BR><B>10.1.2.2</B> — подключение будет разрешено только для IP-адреса 10.1.2.2<BR><BR><B>10.1.2.*</B> — разрешено для IP-адресов вида 10.1.2.x.<BR><BR><B>10.1.2.2-50</B> — разрешено для IP-адресов в диапазоне 10.1.2.2 — 10.1.2.50.<BR><BR>Наконец, можно ввести через запятую несколько элементов: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Специальный IP-адрес 127.0.0.1 позволяет веб-браузеру подключаться к Lyrion Music Server, запущенному на этом же компьютере.
-	SV	Om du har aktiverat blockering kan du ange de adresser du vill ansluta till Lyrion Music Server.<br><br>Du kan ange särskilda IP-adresser, adresser med jokertecken* samt IP-adressintervall i en kommaseparerad lista. Exempel: <BR><BR><B>10.1.2.2</b> tillåter endast 10.1.2.2 att ansluta.<br><br><b>10.1.2.*</b> tillåter alla IP-adresser som börjar med 10.1.2.<br><br><b>10.1.2.2-50</b> tillåter alla IP-adresser i intervallet 10.1.2.2–10.1.2.50.<br><br>Olika typer av poster kan kombineras, t.ex. <b>10.1.2.2,172.16.1.*,192.168.1-254.</b><br><br>Special-IP-adressen 127.0.0.1 tillåter en webbläsare på samma dator som Lyrion Music Server att ansluta.
+	SV	Om du har aktiverat blockering kan du ange de adresser du vill ansluta till Lyrion Music Server.<br><br>Du kan ange särskilda IP-adresser, adresser med jokertecken * samt IP-adressintervall i en kommaseparerad lista. Exempel: <BR><BR><B>10.1.2.2</b> tillåter endast 10.1.2.2 att ansluta.<br><br><b>10.1.2.*</b> tillåter alla IP-adresser som börjar med 10.1.2.<br><br><b>10.1.2.2-50</b> tillåter alla IP-adresser i intervallet 10.1.2.2–10.1.2.50.<br><br>Olika typer av poster kan kombineras, t.ex. <b>10.1.2.2,172.16.1.*,192.168.1-254.</b><br><br>Special-IP-adressen 127.0.0.1 tillåter en webbläsare på samma dator som Lyrion Music Server att ansluta.
 	ZH_CN	如果您已经启动了阻拦向内连接装置，您可以在此输入允许向内连接到Lyrion Music Server的IP来源地址。<br><br>这个资料栏接受具体IP地址名单，*式的通配符，及以逗号分开的IP地址范围名单。例如:<BR><BR><B>10.1.2.2</B>将只允许10.1.2.2连接<BR><BR><B>10.1.2.*</B>将允许任何10.1.2.x的IP地址<BR><BR><B>10.1.2.2-50</B>将允许10.1.2.2-10.1.2.50范围内的IP地址连接<BR><BR>您也可以利用逗号结合多个IP地址，例如：<B>10.1.2.2,172.16.1.*，192.168.1-254</B><BR><BR>特别IP地址127.0.0.1则表示允许浏览器连接到同一台电脑上的Lyrion Music Server。
 
 #miscellaneous setup strings
@@ -10586,7 +10586,7 @@ SETTINGS_INVALIDVALUE
 	NO	Ugyldig verdi «%s» oppgitt for %s
 	PL	Nieprawidłowa wartość „%s” dla %s
 	RU	Недопустимое значение "%s" для %s
-	SV	Ogiltigt värde %s för %s
+	SV	Ogiltigt värde "%s" för %s
 	ZH_CN	无效的值“%s”为%s
 
 SETUP_CHANGES_SAVED
@@ -10802,7 +10802,7 @@ SETUP_REMOTESTREAMTIMEOUT_DESC
 	NO	Du kan angi hvor lenge Lyrion Music Server skal forsøke å få kontakt med Internett-radiostasjonen eller andre kilder, før den gir opp. Angi tiden i sekunder nedenfor.
 	PL	Można określić czas, przez jaki program Lyrion Music Server będzie próbował nawiązać połączenie z internetową stacją radiową lub innym źródłem. Wprowadź czas w sekundach.
 	RU	Можно настроить продолжительность попыток подключения Lyrion Music Server к радиостанции Интернета или другому источнику. Введите ниже время в секундах.
-	SV	Du kan ange hur länge Lyrion Music Server ska försöka ansluta till en webbradiostation eller annan källa innan försöket ges upp. Ange tiden i sekunder nedan.
+	SV	Du kan ange hur länge Lyrion Music Server ska försöka ansluta till en webbradiostation eller annan källa innan försöket ges upp. Ange tiden i sekunder här nedanför.
 	ZH_CN	您可以设置Lyrion Music Server尝试连接到互联网电台或其它服务的时限。请在如下输入以秒为单位的时限。
 
 LANGUAGE
@@ -10875,7 +10875,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS
 	NL	Opties voor componistalbums
 	ES	Opciones de álbum compositor
 	PT	Opções para Compositor do album
-	SV	Inställningar för Kompositöralbum
+	SV	Inställningar för Kompositörsalbum
 	ZH_CN	作曲家专辑选项
 
 SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
@@ -10888,7 +10888,7 @@ SETUP_RELEASE_TYPES_COMPOSER_ALBUM_GROUP_OPTIONS_DESC
 	HU	Hozzon létre egy zeneszerzői album csoportot – mindig, soha vagy bizonyos műfajokhoz. Ha e beállítás miatt bizonyos zeneszerzői szerepkörök nem szerepelnek a Zeneszerzői albumok csoportban, akkor azok egy külön „Kompozíciók” csoportban jelennek meg, amely az egyes számokat, nem pedig az albumokat listázza. A műfaji listát vesszővel kell elválasztani.
 	NL	Maak altijd, nooit of voor bepaalde genres een groep voor componistalbums. Als vanwege deze instelling bepaalde componistrollen niet zijn opgenomen in de groep componistalbums, verschijnen ze in plaats daarvan in een aparte groep "Composities", waarin individuele nummers worden vermeld en geen albums. De genrelijst moet door komma's worden gescheiden.
 	ES	Crea un grupo de Álbumes de compositor: siempre, nunca o para determinados géneros. Si debido a esta configuración, ciertos roles de compositor no están incluidos en el grupo Álbumes del compositor, aparecerán en un grupo "Composiciones" separado, que enumerará pistas individuales, no álbumes. La lista de géneros debe estar separada por comas.
-	SV	Inrätta en Kompositörsalbum-grupp - alltid, aldrig eller för vissa genrer. Om vissa kompositörer inte, p.g.a. den här inställningen, inkluderas i Kompositöralbum-gruppen, kommer de istället att bli inkluderade i en separat Kompositions-grupp, som listar spår istället för album. Genrelistan måste vara komma-separerad.
+	SV	Inrätta en Kompositörsalbum-grupp - alltid, aldrig eller för vissa genrer. Om vissa kompositörer inte, p.g.a. den här inställningen, inkluderas i Kompositörsalbum-gruppen, kommer de istället att bli inkluderade i en separat Kompositions-grupp, som listar spår istället för album. Genrelistan måste vara komma-separerad.
 	ZH_CN	创建作曲家专辑组 - 总是、从不或针对特定流派。如果由于此设置，某些作曲家角色未包含在作曲家专辑组中，则它们将出现在一个单独的“Composition”组中，该组将列出单个曲目，而不是专辑。流派列表应以逗号分隔。
 
 SETUP_RELEASE_TYPES_COMPOSER_ROLE_GROUPING_0
@@ -10966,7 +10966,7 @@ SETUP_CLEANUP_RELEASE_TYPES
 	HU	Próbálja meg automatikusan felismerni az EP-ket és kislemezeket, ha a kiadás típusa „album” vagy hiányzik.
 	NL	Probeer om EPs en Singles automatisch te herkennen als releasetype-informatie afwezig is.
 	PT	Tentar de reconhecer EPs e singles automaticamente quando ainformação sobre o tipo de lançamento for "album" ou não existir
-	SV	Försök att identifiera EP-skivor och singlar automatiskt om Utgåvetyp  är Album eller saknas
+	SV	Försök att identifiera EP-skivor och singlar automatiskt om Utgåvetyp är Album eller saknas
 	ZH_CN	当发布类型信息为“专辑”或缺失时，尝试自动识别EP和单曲。
 
 SETUP_GROUP_BY_RELEASE_TYPES_0
@@ -13090,7 +13090,7 @@ COMPOSERALBUMS
 	PL	Kompozytor Albumy
 	PT	Compositor Albums
 	RU	Композитор Альбомы
-	SV	Kompositöralbum
+	SV	Kompositörsalbum
 	ZH_CN	作曲 专辑
 
 CONDUCTOR
@@ -13179,6 +13179,7 @@ RELEASE_TYPE_EP
 RELEASE_TYPE_EPS
 	CS	EP
 	EN	EPs
+	SV	EP-skivor
 
 RELEASE_TYPE_BESTOF
 	CA	El millor de
@@ -14778,6 +14779,7 @@ BROWSE_BY_GENRE_DBL
 	DA	Genre
 	PL	Gatunki
 	NO	Sjangrer
+	SV	Genrer
 	ZH_CN	曲风
 
 BROWSE_BY_ARTIST
@@ -15025,6 +15027,7 @@ BROWSE_BY_ARTIST_DBL
 	ES	Examinar por Artista
 	FR	Artistes
 	PL	Wykonawcy
+	SV	Bläddra i artister
 	ZH_CN	浏览艺人
 
 BROWSE_BY_ALBUM
@@ -15050,6 +15053,7 @@ BROWSE_BY_ALBUM_DBL
 	DA	Gennemse albums
 	ES	Examinar por Álbum
 	PL	Albumy
+	SV	Bläddra i album
 	ZH_CN	浏览专辑
 
 BROWSE_BY_ARTWORK
@@ -15077,6 +15081,7 @@ BROWSE_BY_ARTWORK_DBL
 	ES	Examinar por Arte de Tapa
 	FR	Pochettes
 	PL	Okładka
+	SV	Bläddra efter albumomslag
 	ZH_CN	浏览艺人作品
 
 BROWSE_NEW_MUSIC
@@ -15123,6 +15128,7 @@ BROWSE_BY_SONG_DBL
 	ES	Examinar por canción
 	FR	Morceaux
 	PL	Utwory
+	SV	Låtar
 	ZH_CN	浏览歌曲
 
 BROWSE_BY_WORK
@@ -15468,7 +15474,7 @@ YEAR_INFO
 	NO	Årstall
 	PL	Informacje o roku
 	RU	Сведения о годе
-	SV	År
+	SV	Årtal
 	ZH_CN	年份信息
 
 SONG_INFO
@@ -15507,7 +15513,7 @@ PLAYLIST_INFO
 	NO	Informasjon om spilleliste
 	PL	Informacje o liście odtwarzania
 	RU	Сведения о плей-листе
-	SV	Spellista
+	SV	Spellisteinformation
 	ZH_CN	播放列表信息
 
 FOLDER_INFO
@@ -16299,7 +16305,7 @@ SETUP_GROUP_DEBUG_DESC
 	NO	Lyrion Music Server har flere innstillinger for loggføring som kan brukes til å ta opp detaljert informasjon om serveren og søk. Hver loggføringskategori har en alvorlighetsgrad for loggføring. «Feilsøking» er mest detaljert, og «Av» er minst.
 	PL	Program Lyrion Music Server udostępnia różne opcje rejestrowania szczegółowych informacji o działaniu programu i mechanizmu przeszukiwania. Każda kategoria rejestrowania ma kategorię ważności. Opcja „Debuguj” zapewnia najbardziej, a „Wył.” najmniej dokładne informacje.
 	RU	В Lyrion Music Server предусмотрены различные настройки ведения журнала, с помощью которых можно записывать подробные сведения о работе сервера и сканера. У каждой категории ведения журнала есть уровень серьезности. Самый подробный уровень — "Отладка", наименее подробный — "Отключено".
-	SV	Det finns ett antal loggningsinställningar i Lyrion Music Server som du kan använda om du vill registrera information om serveraktivitet och sökningar. Du kan ange hur mycket eller lite som ska loggas i varje kategori. Inställningen Felsökning innebär den utförligaste loggningen och Av den minst utförliga.
+	SV	Det finns ett antal loggningsinställningar i Lyrion Music Server som du kan använda om du vill logga information om serveraktivitet och sökningar. Du kan ange hur mycket eller lite som ska loggas i varje kategori. Inställningen Felsökning innebär den utförligaste loggningen och Av den minst utförliga.
 	ZH_CN	Lyrion Music Server具有多个日志设置，可用于记录有关服务器和扫描器操作的详细信息。每个日志类别都有一个日志严重性。调试是最详细的，关闭最少。
 
 DEBUGGING_SETTINGS
@@ -16489,7 +16495,7 @@ BRIGHTNESS_BRIGHTEST
 	PL	Najjaśniejsze
 	PT	Muito Brilhante
 	RU	Самый яркий
-	SV	Starkast
+	SV	Ljusast
 	ZH_CN	最亮
 
 VISUALIZER_SPECTRUM_ANALYZER_SMALL
@@ -17008,7 +17014,7 @@ NO_PLAYER_DETAILS
 	PL	<b>Jeżeli korzystasz z urządzenia Squeezebox lub Transporter:</b><ul><li>Sprawdź, czy odtwarzacz jest podłączony do źródła zasilania, a ustawienia sieciowe są prawidłowe. Po podłączeniu odtwarzacza kliknij przycisk Odśwież.</ul><p><b>Jeżeli nie korzystasz z urządzenia Squeezebox lub Transporter:</b><ul><li>Możesz słuchać muzyki z biblioteki, używając programu <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, programowej wersji urządzenia Squeezebox.<li>W celu słuchania muzyki z biblioteki w programie Lyrion Music Server możesz użyć oprogramowania odtwarzacza plików MP3 (na przykład Winamp lub iTunes), przechodząc pod następujący adres URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	PT	Verifique se o reprodutor está ligado e se as configurações da rede estão correctas. Actualize esta página para verificar de novo a presença do leitor.
 	RU	<b>Если вы приобрели Squeezebox или Transporter.</b><ul><li> Убедитесь, что плеер подключен и настройки сети правильные. После подключения плеера к сети нажмите кнопку "Обновить".</ul><p><b>Если вы не приобрели Squeezebox и Transporter.</b><ul><li> Можете слушать песни из своей медиатеки с помощью <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a> — программной версии Squeezebox.<li>А благодаря программе для MP3-плееров (Winamp или iTunes) вы сможете слушать музыку в Lyrion Music Server, подключившись к следующему URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
-	SV	<b>Om du har en Squeezebox- eller Transporter-spelare</b><ul><li>kontrollerar du att spelaren är ansluten och att nätverksinställningarna är korrekta. Klicka på uppdateringsknappen när spelaren är ansluten.</ul><p><b>Om du inte har någon Squeezebox- eller Transporter-spelare</b><ul><li>kan du lyssna på ditt musikbibliotek med <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en programvaruversion av Squeezebox.<li>Du kan använda program för mp3-spelare som Winamp och iTunes för att lyssna på ditt musikbibliotek via Lyrion Music Server genom att ansluta till den här webbadressen: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>.
+	SV	<b>Om du har en Squeezebox- eller Transporter-spelare</b><ul><li>Säkerställ att spelaren är ansluten och att nätverksinställningarna är korrekta. Klicka på uppdateringsknappen när spelaren är ansluten.</ul><p><b>Om du inte har någon Squeezebox- eller Transporter-spelare</b><ul><li>kan du lyssna på ditt musikbibliotek med <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en programvaruversion av Squeezebox.<li>Du kan använda program för mp3-spelare som Winamp och iTunes för att lyssna på ditt musikbibliotek via Lyrion Music Server genom att ansluta till den här webbadressen: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>.
 	ZH_CN	<b>如果您拥有Squeezebox播放器：</b><ul><li>请确保播放器已插电及其网络设置无误。当您的播放器连接好后请单击《刷新》。</ul><p><b>如果您未能拥有Squeezebox播放器：</b><ul><li>您可以利用软体式播放器<a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>从您的音乐库播放音乐。<li>您可以利用MP3播放软件如Winamp或iTunes来欣赏Lyrion Music Server所流出的音乐。请连接到此URL：<a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>。
 
 PLAYER_NEEDS_UPGRADE
@@ -17225,7 +17231,7 @@ CSRF_ERROR_MEDIUM
 	NO	<p>Beskyttelsesnivået for CSRF er satt til middels. Du kan bruke samme «cauth»-verdi for alle url-er. Du bør da være mer forsiktig med hvem du deler url-er med.</p>
 	PL	<p>Ponieważ poziom ochrony CSRF jest ustawiony na „ŚREDNI”, można użyć tej samej wartości &quot;;cauth=&quot; dla dowolnego adresu URL; oznacza to, że należy zachować ostrożność przy udostępnianiu adresów URL.</p>
 	RU	<p>Поскольку уровень защиты CSRF имеет значение MEDIUM, можно применять то же самое значение &quot;;cauth=&quot; для любого URL; а это означает, что нужно сообщать свои URL с осторожностью.</p>
-	SV	<p>Eftersom CSRF-säkerhetsnivån är inställd på Medel kan du använda samma cauth-värde till alla webbadresser. Därför bör du vara försiktig med vem du delar med dig av dina webbadresser till.</p>
+	SV	<p>Eftersom CSRF-säkerhetsnivån är inställd på Medel kan du använda samma &quot;;cauth&quot;-värde till alla webbadresser. Därför bör du vara försiktig med vem du delar med dig av dina webbadresser till.</p>
 	ZH_CN	<p>由于您的CSRF保护水平被设置在'中等'，您可以在任何URL使用同样的&quot;;cauth=&quot;值；这意味着您应该在与别人分享您的URLs时更加小心。
 
 CLICK_HERE
@@ -17847,7 +17853,7 @@ UNSYNCING_FROM
 	NO	Fjerner synkronisering fra: %s
 	PL	Wyłączanie synchronizacji dla: %s
 	RU	Отмена синхронизации с: %s
-	SV	Synkronisering från %s avbryts
+	SV	Synkronisering med %s avbryts
 	ZH_CN	不同步: %s
 
 RADIO_TUNEIN
@@ -17902,7 +17908,7 @@ RADIO_TUNEIN_DESC
 	NO	Hvis du allerede vet url-en til stasjonen du vil høre på, kan du angi den her og klikke på «Finn». Du kan enten angi url-en til selve radiostrømmen (for eksempel http://62.49.59.50:8000), eller til spillelistefilen som peker til strømmen (for eksempel http://www.hitzradio.com/hitzradio.pls).
 	PL	Jeżeli znasz adres URL stacji, której chcesz posłuchać, wprowadź go tutaj, a następnie kliknij przycisk „Dostrój”. Możliwe jest wprowadzenie adresu URL strumienia audycji radiowej (np. http://62.49.59.50:8000) lub listy odtwarzania wskazującej strumień (np. http://www.hitzradio.com/hitzradio.pls).
 	RU	Если вам известен URL станции, которую вы хотите слушать, введите его здесь и нажмите кнопку "Настроить". Можно ввести URL самого радиопотока (например, http://62.49.59.50:8000) либо файла из плей-листа, указывающего на поток (например, http://www.hitzradio.com/hitzradio.pls).
-	SV	Om du känner till webbadressen för stationen du vill lyssna på anger du den här och klickar sedan på Välj radiostation. Du kan ange adressen till själva radioströmmen (t.ex.http://62.49.59.50:8000) eller till en spellistefil som hänvisar till den (t.ex. http://www.hitzradio.com/hitzradio.pls)..
+	SV	Om du känner till webbadressen för stationen du vill lyssna på anger du den här och klickar sedan på Välj radiostation. Du kan ange adressen till själva radioströmmen (t.ex.http://62.49.59.50:8000) eller till en spellistefil som hänvisar till den (t.ex. http://www.hitzradio.com/hitzradio.pls).
 	ZH_CN	如果您已经知道要收听的电台的URL，请在此处输入并点击“调谐”按钮。您可以输入电台流本身的URL（例如http://62.49.59.50:8000）或指向流的播放列表文件（例如http://www.hitzradio.com/hitzradio.pls）。
 
 RADIO_TUNEIN_RADIOURL
@@ -18782,7 +18788,7 @@ INFORMATION_ALBUMS
 	PL	Razem albumów
 	PT	Total de albuns
 	RU	Всего альбомов
-	SV	Totalt antal album
+	SV	Antal album
 	ZH_CN	专辑总数
 
 INFORMATION_ARTISTS
@@ -18803,7 +18809,7 @@ INFORMATION_ARTISTS
 	PL	Razem wykonawców
 	PT	Total de artistas
 	RU	Всего исполнителей
-	SV	Totalt antal artister
+	SV	Antal artister
 	ZH_CN	艺人总数
 
 INFORMATION_GENRES
@@ -18824,7 +18830,7 @@ INFORMATION_GENRES
 	PL	Razem gatunków
 	PT	Total de géneros
 	RU	Всего жанров
-	SV	Totalt antal genrer
+	SV	Antal genrer
 	ZH_CN	歌曲曲风总数
 
 INFORMATION_TRACKS
@@ -18845,7 +18851,7 @@ INFORMATION_TRACKS
 	PL	Całkowita liczba utworów
 	PT	Total de pistas
 	RU	Всего дорожек
-	SV	Totalt antal spår
+	SV	Antal spår
 	ZH_CN	音轨总数
 
 INFORMATION_PLAYLISTS
@@ -18879,7 +18885,7 @@ INFORMATION_TIME
 	PL	Całkowity czas odtwarzania
 	PT	Total de tempo de reprodução
 	RU	Общее время воспроизведения
-	SV	Total speltid
+	SV	Sammanlagd speltid
 	ZH_CN	播放时间总长
 
 INFORMATION_VERSION
@@ -19338,7 +19344,7 @@ MUSICSOURCE_SWITCH
 	NO	Velg hvilken musikkilde du vil kople spilleren til.
 	PL	Wybierz źródło muzyki, z którym chcesz połączyć odtwarzacz.
 	RU	Выберите источник музыки, к которому нужно подключить плеер.
-	SV	Välj musikkälla att ansluta spelaren till.
+	SV	Välj musikkälla som spelaren skall anslutas till.
 	ZH_CN	请选择您要连接播放器的音乐源。
 
 SQUEEZEBOX_SERVER_WANT_SWITCH
@@ -20559,7 +20565,7 @@ SETUP_PRECACHEARTWORK_DESC
 	NO	Som standard tilpasses størrelsen på albumomslag som finnes i søk, og det hurtigbufres for å forbedre ytelsen ved bruk av Squeezebox Controller eller webgrensesnittet. Dette gjør søket tregere, så derfor kan det deaktiveres her.
 	PL	Domyślnie wszystkie okładki znalezione podczas przeszukiwania są automatycznie dopasowywane pod względem rozmiaru i buforowane w celu poprawy wydajności podczas korzystania z urządzenia Squeezebox Controller lub interfejsu internetowego. Powoduje to spowolnienie procesu przeszukiwania, więc tę opcję można wyłączyć tutaj.
 	RU	По умолчанию все обложки, обнаруженные в ходе сканирования, автоматически изменяют размер и кэшируются, чтобы улучшить производительность при работе в Squeezebox Controller или веб-интерфейсе. Поскольку данная функция может замедлить сканирование, ее можно отключить.
-	SV	Som standard storleksanpassas och cachelagras alla albumomslag som hittas i genomsökningsfasen för högre prestanda när Squeezebox Controller eller webbgränssnittet används. Detta gör dock att sökningen tar längre tid, och därför kan du avaktivera funktionen här.
+	SV	Som standard skalas alla omslagsbilder som hittas under skanningsfasen om och lagras automatiskt i cacheminnet för att förbättra prestandan vid användning av Squeezebox Controller eller webbgränssnittet. Eftersom detta saktar ner skanningsprocessen kan funktionen avaktiveras här.
 	ZH_CN	默认情况下，在扫描阶段找到的所有封面艺术都会自动调整大小并缓存，以提高使用Squeezebox Controller或Web界面时的性能。这会减慢扫描过程，因此可以在此处禁用它。
 
 SETUP_PRECACHEARTWORK_ENABLED
@@ -21127,7 +21133,7 @@ ROLLOFFSLOW_DISABLED
 	NO	Skarpt dempingsfilter
 	PL	Filtr ostrego tłumienia
 	RU	Сильно сглаживающий фильтр
-	SV	Sharp Roll-Off-filter
+	SV	Snabbt Roll-Off-filter
 	ZH_CN	锐利降滤波器
 
 ROLLOFFSLOW_ENABLED
@@ -21804,6 +21810,7 @@ DEBUG_NETWORK_WS
 	CS	Informace o klientovi Web Sockets
 	EN	Web Sockets Client Information
 	NL	Web Sockets Client Informatie
+	SV	Information om WebSocket-klient
 	ZH_CN	Web Sockets客户端信息
 
 DEBUG_NETWORK_ASYNCDNS
@@ -21857,7 +21864,7 @@ DEBUG_NETWORK_PROTOCOL_SLIMPROTO
 	NO	SlimProto-protokoll (Squeezebox/Transporter)
 	PL	Protokół SlimProto (Squeezebox / Transporter)
 	RU	Протокол SlimProto (Squeezebox / Transporter)
-	SV	SlimProto (Squeezebox / Transporter)-protokoll
+	SV	SlimProto-protokoll (Squeezebox/Transporter)
 	ZH_CN	SlimProto (Squeezebox / Transporter)协议
 
 DEBUG_NETWORK_PROTOCOL_SLIMP3
@@ -23063,7 +23070,7 @@ PLAYLIST_PROGRESS
 	NO	Søk etter spilleliste
 	PL	Przeszukiwanie listy odtwarzania
 	RU	Сканирование плей-листа
-	SV	Sökning i spellista
+	SV	Söker efter spellistor
 	ZH_CN	扫描播放列表
 
 ONLINE_LIBRARY_DELETED_PROGRESS
@@ -23432,7 +23439,7 @@ TOTAL_TIME
 	PL	Całkowity czas:
 	PT	Tempo total:
 	RU	Общее время:
-	SV	Total tid:
+	SV	Sammanlagd tid:
 	ZH_CN	总时间：
 
 ENABLE
@@ -23836,7 +23843,7 @@ JIVE_SEARCHFOR_HELP
 	NO	Du kan endre bokstav med rullehjulet, og velge bokstav med midtknappen. Trykk på midtknappen på nytt for å starte søket.
 	PL	Użyj pokrętła, aby zmienić litery, a następnie naciśnij środkowy przycisk w celu wybrania litery. Naciśnij ponownie środkowy przycisk, aby rozpocząć wyszukiwanie.
 	RU	Прокручивая колесико, дойдите до нужной буквы и нажмите центральную кнопку, чтобы выбрать букву. Затем нажмите центральную кнопку еще раз, чтобы запустить поиск.
-	SV	Markera en bokstav med rullningshjulet och tryck sedan på mittenknappen för att välja bokstaven. Tryck på mittenknappen igen när du vill börja söka.
+	SV	Markera en bokstav med rullningshjulet och tryck sedan på mittknappen för att välja bokstaven. Tryck på mittknappen igen när du vill börja sökningen.
 	ZH_CN	使用滚轮更改字母，然后按中心按钮选择该字母。再次按中心按钮以开始搜索。
 
 JIVE_CHANGEPLAYERNAME_HELP
@@ -23855,7 +23862,7 @@ JIVE_CHANGEPLAYERNAME_HELP
 	NO	Du kan endre bokstav med rullehjulet, og velge bokstav med midtknappen. Trykk på midtknappen igjen for å endre navnet på spilleren.
 	PL	Użyj pokrętła, aby zmienić litery, a następnie naciśnij środkowy przycisk w celu wybrania litery. Naciśnij ponownie środkowy przycisk, aby zmienić nazwę odtwarzacza.
 	RU	Прокручивайте колесико до нужной буквы и нажимайте для выбора центральную кнопку. Затем нажмите центральную кнопку еще раз, чтобы изменить имя плеера.
-	SV	Markera en bokstav med rullningshjulet och tryck sedan på mittenknappen för att välja bokstaven. Tryck på mittenknappen igen när du vill ändra spelarens namn.
+	SV	Markera en bokstav med rullningshjulet och tryck sedan på mittknappen för att välja bokstaven. Tryck på mittknappen igen när du vill ändra spelarens namn.
 	ZH_CN	使用滚轮更改字母，然后按中心按钮选择该字母。再次按中心按钮以更改您的播放器名称。
 
 JIVE_SAVEPLAYLIST_HELP
@@ -23874,7 +23881,7 @@ JIVE_SAVEPLAYLIST_HELP
 	NO	Du kan endre bokstav med rullehjulet, og velge bokstav med midtknappen. Trykk på midtknappen på nytt for å lagre spillelisten.
 	PL	Użyj pokrętła, aby zmienić litery, a następnie naciśnij środkowy przycisk w celu wybrania litery. Naciśnij ponownie środkowy przycisk, aby zapisać listę odtwarzania.
 	RU	Прокручивайте колесико до нужной буквы и нажимайте для выбора центральную кнопку. Затем нажмите центральную кнопку еще раз, чтобы сохранить плей-лист.
-	SV	Markera en bokstav med rullningshjulet och tryck sedan på mittenknappen för att välja bokstaven. Tryck på mittenknappen igen när du vill spara spellistan.
+	SV	Markera en bokstav med rullningshjulet och tryck sedan på mittknappen för att välja bokstaven. Tryck på mittknappen igen när du vill spara spellistan.
 	ZH_CN	使用滚轮更改字母，然后按中心按钮选择该字母。再次按中心按钮以保存播放列表。
 
 JIVE_ALLOWEDCHARS_WITHCAPS
@@ -23899,7 +23906,7 @@ JIVE_ALARMSET_HELP
 	NO	Du kan endre klokkesifrene med rullehjulet, og velge tall med midtknappen. Når du har angitt alarmtid, trykker du på midtknappen for å bekrefte den.
 	PL	Użyj pokrętła, aby zmienić cyfry zegara, a następnie naciśnij środkowy przycisk w celu wybrania cyfry. Po wprowadzeniu godziny naciśnij środkowy przycisk, w celu ustawienia godziny alarmu.
 	RU	Измените цифры часов с помощью колесика прокрутки, а затем нажмите центральную кнопку для выбора этой цифры. После ввода времени нажмите центральную кнопку, чтобы установить время будильника.
-	SV	Markera en siffra för klockslaget med rullningshjulet och tryck sedan på mittenknappen för att välja siffran. När du har angett tiden trycker du på mittenknappen för att ställa in tiden för alarmet.
+	SV	Markera en siffra för klockslaget med rullningshjulet och tryck sedan på mittknappen för att välja siffran. När du har angett tiden trycker du på mittknappen för att ställa in tiden för alarmet.
 	ZH_CN	使用滚轮更改时钟数字，然后按中心按钮选择该数字。输入时间后按中心按钮设置闹钟时间。
 
 JIVE_POPUP_ADDING_TO_PLAYLIST
@@ -23935,7 +23942,7 @@ JIVE_POPUP_ADDING_TO_PLAY_NEXT
 	NO	Legger\n%s\ntil som neste spor ...
 	PL	Dodawanie\n%s\ndo odtworzenia jako następny...
 	RU	Добавление\n%s\nдля воспроизведения...
-	SV	Lägger till\n%s\n som nästa låt...
+	SV	Lägger till\n%s\nsom nästa låt...
 	ZH_CN	添加\n%s\n作为下一首播放...
 
 JIVE_POPUP_ADDING
@@ -25105,7 +25112,7 @@ NO_LIBRARY
 	PL	Nie skonfigurowano biblioteki multimedialnej
 	PT	Não está configurada nenhuma biblioteca de musica
 	RU	Не настроено ни одной библиотеки мультимедиа
-	SV	Inget mediebibliotek konfigurerat
+	SV	Inget mediebibliotek är konfigurerat
 	ZH_CN	没有配置媒体库
 
 LIBRARY_NOT_READY
@@ -25288,7 +25295,7 @@ SYNC_ABOUT
 	PL	Dodaj jeden lub więcej urządzeń Squeezebox, aby użyć funkcji synchronizacji i wykorzystać w pełni możliwości odtwarzania dźwięku w wielu pomieszczeniach. Więcej informacji można znaleźć w witrynie Lyrion.org.
 	PT	Adicione u ou mais Squeezeboxes para poder usar a função Sincronizar e aproveitar as possibilidade de ter audio em multiplas dependencias simultaneamente. Visite Lyrion.org para mais infromações.
 	RU	Добавьте еще один или несколько плееров Squeezebox, чтобы использовать функцию синхронизации и реализовать полный потенциал многокомнатной аудиосистемы. Дополнительные сведения см. на сайте Lyrion.org.
-	SV	Om du lägger till en eller flera ytterligare Squeezebox-enheter kan du använda synkroniseringsfunktionen och njuta fullt ut av systemets hela potential i flera rum. Du hittar mer information på Lyrion.org.
+	SV	Lägg till en eller flera ytterligare Squeezebox-enheter för att använda synkroniseringsfunktionen och utnyttja den fulla potentialen av synkroniserat ljud i flera rum. Besök Lyrion.org för mer information.
 	ZH_CN	添加一个或多个额外的Squeezebox以使用同步功能，并实现多房间音频的完全潜力。有关更多信息，请访问Lyrion.org。
 
 SETUP_DEFEAT_DESTRUCTIVE_TTP
@@ -25596,7 +25603,7 @@ SETUP_ALBUMLINKROLES_DESC
 	HU	Kiválaszthatja, hogy mely szerepek jelenjenek meg hivatkozásként az albumlistában. A zeneszkenner által azonosított album fő közreműködője mindig megjelenik. Az albumok/kiadások szerepkör szerinti böngészése során a böngészett szerepkörhöz tartozó közreműködők is megjelennek.
 	NL	Je kan kiezen welke rollen je als links in albumlijsten wilt weergeven. De belangrijkste uitvoerende zoals geïdentificeerd door de muziekscanner wordt altijd weergegeven. Bij het bladeren van albums/releases op rol worden ook de uitvoerenden voor de rol die wordt doorzocht weergegeven.
 	PT	Pode escolher quais as funções que serão apresentadas como links nas listas de álbuns. O principal contribuidor do álbum identificado pelo scanner de música será sempre mostrado. Além disso, ao navegar por álbuns/lançamentos por função, os Colaboradores para a função que está sendo navegada serão mostrados.
-	SV	Du kan väla vilka rollersom skall visas som länkar i albumlistor. Huvudartisten visas alltid. När du bläddrar i album- eller utgåvalistor baserat på roller, visas även de medverkande för den rollen.
+	SV	Du kan välja vilka roller som skall visas som länkar i albumlistor. Huvudartisten visas alltid. När du bläddrar i album- eller utgåvelistor baserat på roller, visas även de medverkande för den rollen.
 	ZH_CN	您可以选择在专辑列表中显示哪些角色作为链接。由音乐扫描器识别的主要专辑贡献者将始终显示。另外，当按角色浏览专辑/发行版时，将显示正在浏览的角色贡献者。
 
 SETUP_USERDEFINEDROLES
