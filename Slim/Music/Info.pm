@@ -452,7 +452,9 @@ sub setRemoteMetadata {
 
 	if ( $meta->{bitrate} ) {
 		$attr->{BITRATE}   = $meta->{bitrate} * 1000;
-		$attr->{VBR_SCALE} = ( exists $cbr{ $meta->{bitrate} } ) ? undef : 1;
+		$attr->{VBR_SCALE} = exists $meta->{vbr_scale}
+			? $meta->{vbr_scale}
+			: ( exists $cbr{ $meta->{bitrate} } ) ? undef : 1;
 	}
 
 	if ( $meta->{year} ) {

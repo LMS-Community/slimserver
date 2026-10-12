@@ -674,7 +674,11 @@ sub cliQuery {
 		$feed = Slim::Menu::AlbumInfo->menu( $client, $url, undef, $tags, \%filter );
 	}
 	elsif ( $albumId ) {
-		my $album = Slim::Schema->find( Album => $albumId );
+		my $album = Slim::Schema->find( Album => $albumId ) or do {
+			# an id from before a rescan, or a typo: no such object
+			$request->setStatusBadParams();
+			return;
+		};
 		$feed     = Slim::Menu::AlbumInfo->menu( $client, $album->url, $album, $tags, \%filter );
 	}
 	elsif ( $cachedFeed{ $connectionId } ) {
