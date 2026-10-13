@@ -29,6 +29,7 @@ use File::Slurp;
 use File::Spec::Functions qw(catfile);
 use JSON::XS qw(encode_json);
 use Time::HiRes qw(sleep);
+use Scalar::Util qw(looks_like_number);
 
 use Slim::Utils::ArtworkCache;
 use Slim::Utils::Log;
@@ -342,6 +343,7 @@ sub postConnect {
 	$dbh->sqlite_create_function( 'FOLDER_URL_FROM_PATH', 1, \&Slim::Utils::Misc::folderURLFromPath );
 	$dbh->sqlite_create_function( 'FOLDER_FROM_PATH', 1, \&dirname );
 	$dbh->sqlite_create_function( 'FOLDER_FROM_URL', 1, \&Slim::Utils::Misc::folderFromURL );
+	$dbh->sqlite_create_function( 'IS_NUMERIC', 1, \&looks_like_number );
 
 	# We create this even if main::STATISTICS is not false so that the SQL always works
 	# Track Persistent data is in another file, in the prefs folder rather than cache

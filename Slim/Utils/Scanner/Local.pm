@@ -1064,35 +1064,10 @@ sub changed {
 
 			my $album = $track->album;
 
-			# Add/replace coverid
+			# remove cover, we'll update in Slim::Music::Artwork->updateStandaloneArtwork()
 			$track->coverid(undef);
 			$track->cover_cached(undef);
-
-			# Check for cover.jpg here
-			if ( !$track->cover ) {
-				# Track does not have embedded artwork, look for standalone cover
-				# findStandaloneArtwork returns either a full path to cover art or 0
-				# to indicate no artwork was found.
-				my $cover = Slim::Music::Artwork->findStandaloneArtwork(
-					{ _track => $track },	# pass track object to avoid deflation unless necessary
-					{},
-					Slim::Utils::Misc::fileURLFromPath(
-						dirname(Slim::Utils::Misc::pathFromFileURL($url))
-					),
-				);
-
-				$track->cover($cover) if $cover;
-			}
-
 			$track->update;
-
-			# Make sure album.artwork points to this track, so the album
-			# uses the newest available artwork
-			if ( my $coverid = $track->coverid ) {
-				if ( $album->artwork ne $coverid ) {
-					$album->artwork($coverid);
-				}
-			}
 
 			# Reset compilation status as it may have changed
 			if ( $album ) {

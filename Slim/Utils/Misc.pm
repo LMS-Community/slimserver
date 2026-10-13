@@ -342,7 +342,7 @@ sub folderURLFromPath {
 
 sub folderFromURL {
 	my ($url) = @_;
-	return dirname(pathFromfileURL($url));
+	return dirname(pathFromFileURL($url));
 }
 
 

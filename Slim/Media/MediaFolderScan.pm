@@ -61,6 +61,16 @@ sub startScan {
 	if ( ($dirs = Slim::Utils::Misc::getAudioDirs($singledir)) && scalar @{$dirs} ) {
 		main::INFOLOG && $log->is_info && $log->info("Starting audio-only scan in: " . Data::Dump::dump($dirs));
 
+		# scan the artfolder, but only if it isn't inside another path being scanned
+		my $artFolder = $prefs->get('artfolder');
+		if ( $artFolder && !grep { $artFolder =~ $_ } @{$dirs} ) {
+			Slim::Utils::Scanner::Local::Async->find( $artFolder, {
+				types => 'image',
+				no_async => 1,
+				delete_path => $artFolder,
+			}, sub {} );
+		}
+
 		my $c = Slim::Utils::Scanner::Local->rescan( $dirs, {
 			types    => 'audio',
 			scanName => 'directory',

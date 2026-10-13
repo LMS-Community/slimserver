@@ -55,7 +55,6 @@ tie my %lastFile, 'Tie::Cache::LRU', 128;
 # scans of files in the same directory
 # Don't use Tie::Cache::LRU as it is a bit too expensive in the scanner
 my %findArtCache;
-my $artFolderRead;
 my $imageTypesRegex;
 
 # Public class methods
@@ -91,11 +90,14 @@ sub findStandaloneArtwork {
 				# Maybe a track instance was passed in, but no longer from updateStandaloneArtwork() which gives us
 				# the trackid instead, as we only need to instantiate a track if 'titleformatter' artwork naming is in use.
 				my $track = $trackAttributes && delete $trackAttributes->{_track};
-				$track ||= Slim::Schema->find('Track', $trackAttributes->{_trackid}) if $trackAttributes->{_trackid};
+				if ( !$track && $trackAttributes->{_trackid} ) {
+					$track = Slim::Schema->find('Track', $trackAttributes->{_trackid});
+					delete $trackAttributes->{_trackid};
+				}
 
 				# Merge attributes to use with TitleFormatter
 				# XXX This may break for some people as it's not using a Track object anymore
-				my $meta = { %{$trackAttributes}, %{$deferredAttributes} } unless $track;
+				my $meta = $track ? undef : { %{$trackAttributes}, %{$deferredAttributes} };
 
 				if ( my $coverName = Slim::Music::TitleFormatter::infoFormat( $track, $formatStr, undef, $meta ) ) {
 					$coverName .= $suffix;
@@ -113,16 +115,6 @@ sub findStandaloneArtwork {
 
 					if ( $artDir && -d $artDir ) {
 						$candidateForArtfolder = $coverName;
-
-						# add the content of the artwork folder to our scanned picture table
-						if (main::SCANNER && !$artFolderRead) {
-							Slim::Utils::Scanner::Local::Async->find( $artDir, {
-								types => 'image',
-								no_async => 1,
-							}, sub {} );
-
-							$artFolderRead = 1;
-						}
 					}
 				}
 				else {
@@ -157,7 +149,7 @@ sub findStandaloneArtwork {
 		$art ||= _findStandaloneArtwork($parentDir, \@files);
 
 		# check for "artist name" (or whatever) in the artwork folder (if defined)
-		if ( !$art && $candidateForArtfolder && $artFolderRead ) {
+		if ( !$art && $candidateForArtfolder ) {
 			$art = _findStandaloneArtwork($artDir, [$candidateForArtfolder]);
 		}
 
@@ -188,14 +180,13 @@ sub _findStandaloneArtwork {
 		my $name = $_;
 		my @variations;
 
-		# just basenames for the zero-supression check, we don't want to be zero-suppressing the full path!
 		if ($name =~ $imageTypesRegex) {
-			push @variations, $name;
+			push @variations, catfile($parentDir, $name);
 		}
 		else {
 			@variations = map {(
-				"$name.$_",
-				$name . '.' . uc($_),
+				catfile($parentDir, "$name.$_"),
+				catfile($parentDir, $name . '.' . uc($_)),
 			)} ('jpg', 'jpeg', 'png', 'gif');
 		}
 
@@ -205,58 +196,45 @@ sub _findStandaloneArtwork {
 	my @images;
 
 	if (main::SCANNER) {
-		# if we have zero candidates but there are multiple other artworks in the folder, ORDER BY ensures we always pick the first one.
-		# Use the same SQL always: we get a full list of image files in the folder and filter using the zero-suppression check later.
-		my $sql = "SELECT full_path FROM scanned_pics WHERE (status IS NULL OR status <> 'D') AND folder = ? ORDER BY full_path";
+		my $sql = "SELECT full_path FROM scanned_pics WHERE (status IS NULL OR status <> 'D') AND ";
+		if (scalar @candidates) {
+			$sql .= sprintf('full_path IN (%s)', join(',', map { '?' } @candidates));
+		}
+		else {
+			# if we have zero candidates but there are multiple other artworks in the folder, ORDER BY ensures we always pick the first one.
+			$sql .= 'folder = ? ORDER BY full_path';
+			push @candidates, $parentDir;
+		}
 
 		my $sth = Slim::Schema->dbh->prepare_cached($sql);
 
 		@images = Slim::Utils::Misc::uniq(map {
-			#again, basename only
-			basename($_->[0])
+			$_->[0]
 		} @{
-			$dbh->selectall_arrayref($sth, undef, $parentDir)
+			$dbh->selectall_arrayref($sth, undef, @candidates)
 		});
 	}
 	else {
-#		Can't do this anymore because we need to get the filenames first before feeding into the zero-supression check.
-#		@images = Slim::Utils::Misc::uniq(grep { -f catfile($parentDir, $_) } @candidates);
+		@images = Slim::Utils::Misc::uniq(grep { -f $_ } @candidates);
 
 		# read the folder anyway, as we don't have the full list of images in the database table
-#		if (!scalar @images && !$filenameTemplates) {
+		if (!scalar @images && !$filenameTemplates) {
 			my $files = File::Next::files( {
 				file_filter    => sub { Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $imageTypesRegex, undef, 1) },
 				descend_filter => sub { 0 },
 			}, $parentDir );
 
 			while ( my $image = $files->() ) {
-				# if we've no templates, just take the first image found...
-				push @images, basename($image);
-				last if !$filenameTemplates;
+				# just take the first image found...
+				push @images, $image;
+				last;
 			}
 		}
-#	}
-
-	my %imageMap;
-	my $leadingZeros = qr/0+(?=[0-9])/;
-
-	if (scalar @candidates) {
-		@candidates = map { $_ =~ s/$leadingZeros//g; $_ } @candidates;
-
-	# I might be abusing grep here! And could it be combined with the above map?
-		@images = grep {
-			my $zs = $_;
-			$zs =~ s/$leadingZeros//g;
-			$imageMap{$zs} = $_;
-			$_ = $zs;
-			grep(/$zs/, @candidates);
-		} @images;
 	}
 
 	# keep sort order from the templates list
-	if ($filenameTemplates && scalar @images > 1) {
+	if (scalar @images > 1) {
 		my %rank;
-		@$filenameTemplates = map { $_ =~ s/$leadingZeros//g; $_ } @$filenameTemplates;
 		@rank{ map { $_ } @$filenameTemplates } = (0 .. $#$filenameTemplates);
 
 		@images = sort {
@@ -265,8 +243,6 @@ sub _findStandaloneArtwork {
 			$a_rank <=> $b_rank;
 		} @images;
 	}
-	# add the full path into the results.
-	@images = map { catfile($parentDir, $imageMap{$_} || $_) } @images;
 
 	return wantarray ? @images : ($images[0] || 0);
 }
@@ -306,8 +282,11 @@ sub updateStandaloneArtwork {
 		AND ( tracks.coverid <> albums.artwork OR albums.artwork IS NULL )
 		} );
 
-	# unflag existing unchanged artwork unless we have a changed coverart pref (then we need to process all artwork)
-	my $processAllArtwork = Slim::Music::Import->lastScanTime('lastUpdateStandaloneArtwork') < $prefs->get('_ts_coverArt');
+	# unflag existing unchanged artwork unless we have a changed coverart prefs (then we need to process all artwork)
+	my $processAllArtwork =
+		Slim::Music::Import->lastScanTime('lastUpdateStandaloneArtwork') < $prefs->get('_ts_coverArt')
+		||
+		Slim::Music::Import->lastScanTime('lastUpdateStandaloneArtwork') < $prefs->get('_ts_artfolder');
 	$dbh->do( qq{
 		UPDATE scanned_pics SET status = NULL
 		WHERE status = 'E'
@@ -316,22 +295,40 @@ sub updateStandaloneArtwork {
 
 	Slim::Schema->forceCommit;
 
-	my $sql_scanned_pics = qq{
+	my $variableArtwork = $prefs->get('coverArt') =~ /^%/;
+	my $artFolder = $prefs->get('artfolder');
+	my $useArtFolder = $variableArtwork && $artFolder;
+
+	# SQL can be simpler (quicker!) if we're not using an artwork folder
+	my $sql_scanned_pics = $useArtFolder
+	? qq{
+		SELECT DISTINCT albums.id, albums.title, albums.artwork
+		FROM tracks
+		JOIN albums on albums.id = tracks.album
+		LEFT JOIN scanned_pics ON tracks.url BETWEEN scanned_pics.folder_url AND scanned_pics.folder_url||HEX(0xff)
+			AND INSTR(SUBSTR(tracks.url, LENGTH(scanned_pics.folder_url)+2), "/") < 1
+		WHERE albums.title <> ?
+		AND (tracks.cover IS NULL OR tracks.cover = '0' OR ( IS_NUMERIC(tracks.cover) <> 1 OR tracks.cover NOT LIKE 'https%') )
+		AND (scanned_pics.status IS NOT NULL OR tracks.coverid IS NULL OR FOLDER_FROM_PATH(tracks.cover) = ?)
+		ORDER BY albums.id, tracks.id
+	}
+	: qq{
 		SELECT DISTINCT albums.id, albums.title, albums.artwork
 		FROM scanned_pics
 		JOIN tracks ON tracks.url BETWEEN scanned_pics.folder_url AND scanned_pics.folder_url||HEX(0xff)
-			AND INSTR(SUBSTR(tracks.url, LENGTH(scanned_pics.folder_url)+2), "/") < 1
+		       AND INSTR(SUBSTR(tracks.url, LENGTH(scanned_pics.folder_url)+2), "/") < 1
 		JOIN albums on albums.id = tracks.album
 		WHERE scanned_pics.status IS NOT NULL
 		AND albums.title <> ?
 		ORDER BY albums.id, tracks.id
 	};
 
-	my $noAlbum = string('NO_ALBUM');
+	my @picSthParams = ( string('NO_ALBUM') );
+	push @picSthParams, $artFolder if $useArtFolder;
 
 	my ($count) = $dbh->selectrow_array( qq{
 		SELECT COUNT(*) FROM ( $sql_scanned_pics ) AS t1
-	}, undef, $noAlbum );
+	}, undef, @picSthParams );
 
 	$log->error("Starting updateStandaloneArtwork for $count albums");
 
@@ -348,8 +345,6 @@ sub updateStandaloneArtwork {
 		bar   => 1,
 	} );
 
-	my $variableArtwork = $prefs->get('coverArt') =~ /^%/;
-
 	my $pic_sth = $dbh->prepare($sql_scanned_pics);
 	my ($albumId, $albumTitle, $albumArtwork);
 	$pic_sth->bind_columns(\$albumId, \$albumTitle, \$albumArtwork);
@@ -358,9 +353,12 @@ sub updateStandaloneArtwork {
 		SELECT tracks.id, tracks.url, tracks.coverid
 		FROM tracks
 		WHERE album = ?
-		-- the following test excludes rows where cover is numeric (non-zero), which indicates an embedded cover.
-		AND (tracks.cover IS NULL OR tracks.cover = '0' OR CAST(CAST(tracks.cover AS INTEGER) AS TEXT) <> tracks.cover)
-		AND tracks.cover NOT LIKE 'https%'
+		AND (
+			tracks.cover IS NULL
+			OR tracks.cover = '0'
+			-- the following test excludes rows where cover is numeric (non-zero), which indicates an embedded cover.
+			OR CAST(CAST(tracks.cover AS INTEGER) AS TEXT) <> tracks.cover AND tracks.cover NOT LIKE 'https%'
+		)
 		ORDER BY tracks.id
 	};
 	$sql_tracks .= " LIMIT 1" if !$variableArtwork;
@@ -389,7 +387,7 @@ sub updateStandaloneArtwork {
 	my $i = 0;
 	my $t = 0;
 
-	$pic_sth->execute($noAlbum);
+	$pic_sth->execute(@picSthParams);
 
 	my $work = sub {
 		if ( $pic_sth->fetch ) {
