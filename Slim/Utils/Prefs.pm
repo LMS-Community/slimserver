@@ -486,6 +486,19 @@ sub init {
 			my $old = $_[3];
 			Slim::Music::Import->nextScanTask if $old && !$new;
 		}, 'dontTriggerScanOnPrefChange' );
+
+		$prefs->setChange( sub {
+			my $new = $_[1];
+			my $old = $_[3];
+			if ($new ne $old) {
+				require Slim::Utils::Scanner::Local::Async;
+				Slim::Utils::Scanner::Local::Async->find( $new, {
+					types => 'image',
+					no_async => 1,
+					delete_path => $old,
+				}, sub {} );
+			}
+		}, 'artfolder' );
 	}
 
 	if ( !main::SCANNER ) {
