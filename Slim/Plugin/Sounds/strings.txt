@@ -39,6 +39,7 @@ PLUGIN_SOUNDS_ALARMS
 	EN	Alarm Sounds
 	FR	Sons d'alarme
 	NL	Alarmgeluiden
+	NO	Alarmlyder
 	SV	Alarmljud
 
 PLUGIN_SOUNDS_EFFECTS
@@ -1324,6 +1325,7 @@ PLUGIN_SOUNDS_ALARM_BUZZER
 	EN	Alarm Buzzer
 	FR	Sonnerie d'alarme
 	HU	Riasztócsengő
+	NO	Alarmsummer
 	SV	Alarmsummer
 
 PLUGIN_SOUNDS_ALARM_ACCELERATING
@@ -1333,6 +1335,7 @@ PLUGIN_SOUNDS_ALARM_ACCELERATING
 	EN	Accelerating beep
 	FR	Bip accéléré
 	NL	Versnellende piep
+	NO	Stadig raskere pip
 	SV	Accelererande pip
 
 PLUGIN_SOUNDS_ALARM_HIGH_BEEP
@@ -1342,6 +1345,7 @@ PLUGIN_SOUNDS_ALARM_HIGH_BEEP
 	EN	High beep
 	FR	Bip aigu
 	NL	Hoge piep
+	NO	Høyt pip
 	SV	Högt pip
 
 PLUGIN_SOUNDS_ALARM_SIMPLE_CLOCK
@@ -1351,6 +1355,7 @@ PLUGIN_SOUNDS_ALARM_SIMPLE_CLOCK
 	EN	Simple beep
 	FR	Bip simple
 	NL	Eenvoudige piep
+	NO	Enkelt pip
 	SV	Enkel signalton
 
 PLUGIN_SOUNDS_ALARM_BEDSIDE
@@ -1360,6 +1365,7 @@ PLUGIN_SOUNDS_ALARM_BEDSIDE
 	EN	Quadrupel beep
 	FR	Bip quadruple
 	NL	Viervoudige piep
+	NO	Firedobbelt pip
 	SV	Fyrfaldigt pip
 
 PLUGIN_SOUNDS_ALARM_ELECTRONIC_BEEP
@@ -1369,6 +1375,7 @@ PLUGIN_SOUNDS_ALARM_ELECTRONIC_BEEP
 	EN	Electronical beep
 	FR	Bip électronique
 	NL	Elektronische piep
+	NO	Elektronisk pip
 	SV	Elektroniskt pip
 
 PLUGIN_SOUNDS_ALARM_DIGITAL
@@ -1378,6 +1385,7 @@ PLUGIN_SOUNDS_ALARM_DIGITAL
 	EN	Low beep
 	FR	Bip grave
 	NL	Lage piep
+	NO	Lavt pip
 	SV	Lågt pip
 
 PLUGIN_SOUNDS_ALARM_DISTORTED
@@ -1387,6 +1395,7 @@ PLUGIN_SOUNDS_ALARM_DISTORTED
 	EN	Distorted beep
 	FR	Bip distordu
 	NL	Vervormde piep
+	NO	Forvrengt pip
 	SV	Förvrängt pip
 
 PLUGIN_SOUNDS_ALARM_DUAL_TONE
@@ -1396,6 +1405,7 @@ PLUGIN_SOUNDS_ALARM_DUAL_TONE
 	EN	Alternating beep
 	FR	Bip alterné
 	NL	Afwisselende piep
+	NO	Vekslende pip
 	SV	Växlande pip
 
 PLUGIN_SOUNDS_ALARM_ELECTRONICAL
@@ -1405,6 +1415,7 @@ PLUGIN_SOUNDS_ALARM_ELECTRONICAL
 	EN	Electronical beep 2
 	FR	Bip électronique 2
 	NL	Elektronische piep 2
+	NO	Elektronisk pip 2
 	SV	Elektroniskt pip 2
 
 PLUGIN_SOUNDS_ALARM_FUTURISTIC
@@ -1414,6 +1425,7 @@ PLUGIN_SOUNDS_ALARM_FUTURISTIC
 	EN	Futuristic alarm
 	FR	Alarme futuriste
 	NL	Futuristisch alarm
+	NO	Futuristisk alarm
 	SV	Futuristiskt alarm
 
 PLUGIN_SOUNDS_ALARM_PHONE
@@ -1423,6 +1435,7 @@ PLUGIN_SOUNDS_ALARM_PHONE
 	EN	Ringing phone
 	FR	Téléphone qui sonne
 	NL	Rinkelende telefoon
+	NO	Telefon som ringer
 	SV	Ringande telefon
 
 PLUGIN_SOUNDS_ALARM_RINGING
@@ -1432,6 +1445,7 @@ PLUGIN_SOUNDS_ALARM_RINGING
 	EN	Ringing alarm
 	FR	Alarme sonore
 	NL	Rinkelend alarm
+	NO	Ringende alarm
 	SV	Ringande alarm
 
 PLUGIN_SOUNDS_ALARM_RINGTONE
@@ -1441,6 +1455,7 @@ PLUGIN_SOUNDS_ALARM_RINGTONE
 	EN	Ringtone
 	FR	Sonnerie
 	NL	Beltoon
+	NO	Ringetone
 	SV	Rington
 
 PLUGIN_SOUNDS_ALARM_TIC_TAC
@@ -1450,6 +1465,7 @@ PLUGIN_SOUNDS_ALARM_TIC_TAC
 	EN	Tic-Tac
 	FR	Tic-Tac
 	NL	Tik-Tak
+	NO	Tikk-takk
 	SV	Tick-tack
 
 PLUGIN_SOUNDS_ALARM_TICKING
@@ -1459,4 +1475,5 @@ PLUGIN_SOUNDS_ALARM_TICKING
 	EN	Ticking clock
 	FR	Horloge qui tic-tac
 	NL	Tikkende klok
+	NO	Tikkende klokke
 	SV	Tickande klocka

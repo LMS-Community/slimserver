@@ -5,6 +5,7 @@ PLUGIN_RADIO_ARTWORK
 	EN	Find Artwork for Radio Stations
 	FR	Rechercher des pochettes pour les radios internet
 	NL	Artwork zoeken voor radiostations
+	NO	Finn omslagsbilder for radiostasjoner
 	SV	Sök efter omslagsbilder för webradio
 
 PLUGIN_RADIO_ARTWORK_DESC
@@ -14,6 +15,7 @@ PLUGIN_RADIO_ARTWORK_DESC
 	EN	Try to find artwork for tracks played from radio stations which don't provide their own artwork. It's based on the widely used title format passed as "artist - title".
 	FR	Essayer de trouver des illustrations pour les pistes jouées depuis des stations de radio qui ne fournissent pas leurs propres illustrations. C'est basé sur le format de titre largement utilisé transmis comme "artiste - titre".
 	NL	Probeer artwork te vinden voor tracks die worden afgespeeld van radiostations die geen eigen artwork leveren. Het is gebaseerd op het veelgebruikte titelformaat dat wordt doorgegeven als "artiest - titel".
+	NO	Prøv å finne omslagsbilder for spor som spilles fra radiostasjoner som ikke har egne bilder. Dette bygger på det vanlige tittelformatet «artist - tittel».
 	SV	Försök att hitta omslagsbilder för spår som spelas av radiostationer som inte skickar med egna bilder. Sökningen baseras på den allmänt använda formatet "artist - titel".
 
 PLUGIN_ARTWORK_DONT_SEARCH_FOR_ARTWORK
@@ -23,6 +25,7 @@ PLUGIN_ARTWORK_DONT_SEARCH_FOR_ARTWORK
 	EN	Don't search for title artwork on this station
 	FR	Ne pas rechercher de pochettes de titres sur cette station
 	NL	Zoek niet naar titelafbeeldingen op dit station
+	NO	Ikke søk etter omslagsbilder for titler på denne stasjonen
 	SV	Sök inte efter omslagsbilder för den här stationen
 
 PLUGIN_ARTWORK_SEARCH_FOR_ARTWORK
@@ -32,6 +35,7 @@ PLUGIN_ARTWORK_SEARCH_FOR_ARTWORK
 	EN	Search for title artwork if possible
 	FR	Rechercher des pochettes de titres si possible
 	NL	Zoek indien mogelijk naar titelafbeeldingen
+	NO	Søk etter omslagsbilder for titler når det er mulig
 	SV	Sök efter omslagsbilder om det är möjligt
 
 PLUGIN_ARTWORK_ADDED_TO_IGNORELIST
@@ -41,6 +45,7 @@ PLUGIN_ARTWORK_ADDED_TO_IGNORELIST
 	EN	Will no longer search for artwork
 	FR	La recherche de pochettes est désactivée
 	NL	Zal niet langer zoeken naar artwork
+	NO	Søker ikke lenger etter omslagsbilder
 	SV	Söker inte längre efter omslagsbilder
 
 PLUGIN_ARTWORK_REMOVED_FROM_IGNORELIST
@@ -50,6 +55,7 @@ PLUGIN_ARTWORK_REMOVED_FROM_IGNORELIST
 	EN	Will search for track artwork
 	FR	La recherche de pochettes est réactivée
 	NL	Zal weer zoeken naar track artwork
+	NO	Søker etter omslagsbilder for spor
 	SV	Söker efter omslagsbilder igen
 
 PLUGIN_ARTWORK_SETTINGS_IGNORELIST
@@ -59,4 +65,5 @@ PLUGIN_ARTWORK_SETTINGS_IGNORELIST
 	EN	Don't look up artwork for the following radio stations (one URL per line):
 	FR	Ne recherchez pas de pochettes pour les stations de radio suivantes (une URL par ligne) :
 	NL	Zoek geen artwork voor de volgende radiostations (één URL per regel):
+	NO	Ikke slå opp omslagsbilder for disse radiostasjonene (én URL per linje):
 	SV	Sök inte efter omslagsbilder för dessa stationer (en URL på varje rad):

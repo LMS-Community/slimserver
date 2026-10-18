@@ -68,7 +68,7 @@ SETUP_GROUP_DATETIME_DEFAULTTIME
 	HU	Szerver alapértékek
 	IT	Impostazioni predefinite di server
 	NL	Standaardinstelling server
-	NO	Serverstandard
+	NO	Tjenerstandard
 	PL	Domyślne ustawienie serwera
 	RU	Серверное значение по умолчанию
 	SV	Server-standard
@@ -86,7 +86,7 @@ SETUP_GROUP_DATETIME_DEFAULTDATE
 	HU	Szerver alapértékek
 	IT	Impostazioni predefinite di server
 	NL	Standaardinstelling server
-	NO	Server-standard
+	NO	Tjenerstandard
 	PL	Domyślne ustawienie serwera
 	RU	Серверное значение по умолчанию
 	SV	Server-standard

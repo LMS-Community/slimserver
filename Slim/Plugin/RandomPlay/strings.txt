@@ -342,6 +342,7 @@ PLUGIN_RANDOM_WORK
 	FR	Œuvres aléatoires
 	HU	Művek keverése
 	NL	Werkmix
+	NO	Verksmiks
 	SV	Verkmix
 
 PLUGIN_RANDOM_WORK_ITEM
@@ -354,6 +355,7 @@ PLUGIN_RANDOM_WORK_ITEM
 	FR	Œuvre aléatoire
 	HU	Véletlen művek
 	NL	Willekeurig werk
+	NO	Tilfeldig verk
 	SV	Slumpmässiga verk
 
 PLUGIN_RANDOM_WORK_PLAYING
@@ -366,6 +368,7 @@ PLUGIN_RANDOM_WORK_PLAYING
 	FR	Lecture œuvres aléatoires
 	HU	Véletlen művek lejátszása
 	NL	Werk worden willekeurig afgespeeld
+	NO	Spiller av tilfeldige verk
 	SV	Slumpmässigt valda verk spelas
 
 PLUGIN_RANDOM_WORK_DISABLE
@@ -378,6 +381,7 @@ PLUGIN_RANDOM_WORK_DISABLE
 	FR	ne plus ajouter d'œuvres
 	HU	hagyja abba a művek hozzáadását
 	NL	stop toevoegen van werken
+	NO	slutte å legge til verk
 	SV	Sluta lägga till verk
 
 PLUGIN_RANDOM_WORK_WEB
@@ -390,6 +394,7 @@ PLUGIN_RANDOM_WORK_WEB
 	FR	Œuvres aléatoires
 	HU	Véletlenszerű művek
 	NL	Willekeurige werken
+	NO	Tilfeldige verk
 	SV	Slumpmässiga verk
 
 PLUGIN_RANDOM_GENRE_FILTER
@@ -722,6 +727,7 @@ PLUGIN_RANDOM_TITLEMIX_KEEP_GENRES
 	EN	Song Mix (keep genre selection)
 	FR	Morceaux aléatoires (conserver la sélection du genre)
 	HU	Dalmix (a műfajválasztás megtartása)
+	NO	Sangmiks (behold valgte sjangere)
 	SV	Spårmix (begränsad till den nuvarande genren)
 
 PLUGIN_RANDOM_ALBUM_MIX_KEEP_GENRES
@@ -732,4 +738,5 @@ PLUGIN_RANDOM_ALBUM_MIX_KEEP_GENRES
 	EN	Random Album (keep genre selection)
 	FR	Album aléatoire (conserver la sélection du genre)
 	HU	Véletlenszerű album (a műfajválasztás megtartása)
+	NO	Tilfeldig album (behold valgte sjangere)
 	SV	Albummix (behåll nuvarande genreurval)
