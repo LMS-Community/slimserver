@@ -92,7 +92,10 @@ sub find {
 
 	my $walk = sub {
 
-		$sthDeletePics->execute($artUrl, $artUrl . '/%') if $sthDeletePics;
+		if ($sthDeletePics) {
+			$sthDeletePics->execute($artUrl, $artUrl . '/%');
+			$sthDeletePics = undef;
+		}
 
 		my $file = $iter->();
 
