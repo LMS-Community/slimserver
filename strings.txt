@@ -6824,7 +6824,7 @@ SETUP_GUESSFILEFORMATS
 	IT	Rileva tag dal nome del file
 	JA	タグ フォーマットを推測する
 	NL	Tagformaten raden
-	NO	Gjett etikettformat
+	NO	Gjett taggformat
 	PL	Odgadnij formaty znaczników
 	PT	Deduzir formatos dos tags
 	RU	Определять форматы тегов
@@ -6845,7 +6845,7 @@ SETUP_GROUP_GUESSFILEFORMATS_DESC
 	IT	In caso di file non provvisti di tag appropriati, è possibile impostare Lyrion Music Server in modo che individui i tag corretti in base al percorso e al nome file. Utilizzando le stesse variabili adottate per il formato titolo, è possibile creare un modello con le stesse convenzioni di denominazione del file in modo da facilitare il rilevamento dei tag appropriati tramite il server. Di seguito è indicato l'ordine di priorità adottato. Viene utilizzato il primo modello corrispondente.
 	JA	正しいタグが含まれていないファイルに関しては、サーバーが推測するよう指定できます。どのようなパターンで推測するか指定してください。
 	NL	Je kunt Lyrion Music Server naar tags laten raden met behulp van pad en bestandsnaam voor bestanden die geen goede tag informatie hebben. Je kunt dezelfde variabelen als bij 'Titelformaat' gebruiken om een patroon te maken dat correspondeert met de gebruikte bestandsnaam conventie. Zodoende kan Lyrion Music Server raden wat de tags moeten zijn. De prioriteitsvolgorde staat hieronder. Het eerste correcte patroon wordt gebruikt.
-	NO	Hvis du har filer som ikke har forståelige etiketter, kan Lyrion Music Server gjette på etiketter ved å bruke informasjon om bane og filnavn. Ved å bruke noen av de samme variablene som i Tittelformat, kan du lage et mønster som passer måten du navngir filer på, slik at programmet lettere kan gjette hva etikettene skal være. Programmet prioriterer som oppgitt nedenfor. Det første gyldige treffet på mønster brukes.
+	NO	Hvis du har filer som ikke har forståelige tagger, kan Lyrion Music Server gjette på tagger ved å bruke informasjon om bane og filnavn. Ved å bruke noen av de samme variablene som i Tittelformat, kan du lage et mønster som passer måten du navngir filer på, slik at programmet lettere kan gjette hva taggene skal være. Programmet prioriterer som oppgitt nedenfor. Det første gyldige treffet på mønster brukes.
 	PL	W przypadku plików, które nie mają odpowiednich znaczników program Lyrion Music Server może odgadnąć tagi na podstawie ścieżki i nazwy pliku. Używając tej samej zmiennej co opcja Format tytułu, można utworzyć wzór odpowiedni do utworzenia konwencji nazywania plików, co ułatwi aplikacji utworzenie właściwego znacznika. Priorytety mają kolejność podaną poniżej. Stosowany jest pierwszy pasujący wzór.
 	RU	Lyrion Music Server может угадывать теги на основе пути и имени файла для тех файлов, у которых нет корректных тегов. С помощью переменных, аналогичных формату названия, можно создать шаблон, отвечающий условиям именования файлов, чтобы приложению было легче угадывать возможные теги. Приоритет присваивается в нижеследующем порядке. Используется первое допустимое совпадение шаблона.
 	SV	För filer som inte har taggats korrekt kan du låta Lyrion Music Server gissa taggarna med hjälp av sökväg och filnamn. Om du använder samma variabler som i titelformatet kan du skapa ett mönster som överensstämmer med hur man brukar namnge filer, så kan programmet gissa vad taggarna borde vara. Prioriteringsordningen är densamma som i listan är nedan. Det första giltiga mönstret används.
@@ -8200,7 +8200,7 @@ SETUP_COVERART_DESC
 	IT	Le immagini delle copertine, se disponibili, sono visualizzate insieme alle informazioni su un album o un brano. Le copertine possono essere inserite nei tag ID3 di ogni singolo brano o risiedere nella stessa cartella dei file dei brani. Per impostazione predefinita vengono utilizzate immagini denominate cover.jpg, folder.jpg, album.jpg o thumb.jpg. È possibile specificare un nome di file aggiuntivo da utilizzare per le copertine e nomi diversi per le miniature e le immagini intere. Anteporre all'opzione il carattere %, a cui può far seguito qualsiasi stringa composta dagli stessi elementi disponibili per il formato titolo. Ad esempio, con %ARTIST - ALBUM viene cercato il file Artista - Album.jpg corrispondente alle informazioni sull'artista e sull'album trovati.
 	JA	アルバムのアートワークがある場合には、アルバム/曲情報を見るときに表示されます。アートワーク イメージはそれぞれの曲のID3タグか、曲のファイルと同じフォルダーに入っています。工場出荷設定では"cover.jpg", "folder.jpg", "album.jpg", "thumb.jpg" が使われています。これらアルバム アートワークのファイル名は変更することができます。例えば%ARTIST - ALBUM, は Artist - Album.jpg を探します。
 	NL	Als er een albumhoes beschikbaar is, wordt deze getoond wanneer je informatie over een album of nummer bekijkt. Deze afbeeldingen staan in de ID3-tags voor afzonderlijke nummers of in dezelfde map als muziekbestanden. Standaard worden afbeeldingen met de volgende namen gebruikt: folder.jpg, album.jpg of thumb.jpg. Je kunt een aanvullende bestandsnaam opgeven voor albumhoezen. Je kunt andere bestandsnamen opgeven voor miniatuurafbeeldingen of afbeeldingen op volledig formaat. Wanneer je het voorvoegsel % voor de optie zet, kun je er een willekeurige string op laten volgen die uit dezelfde elementen als titelformaten bestaat. Bijvoorbeeld, %ARTIST - ALBUM zoekt naar 'Artist - Album.jpg' om artiest- en albuminformatie te vinden.
-	NO	Hvis albumomslag er tilgjengelig, kan dette vises når du ser informasjon om et album eller en sang. Bildefiler med albumomslag finnes i ID3-etikettene for enkeltsanger, eller de kan ligge i samme mappe som sangfilene. Bildefiler med navn som «cover.jpg», «folder.jpg», «album.jpg» eller «thumb.jpg» brukes som standard. Du kan angi et annet mulig navn på bildefilene for albumomslag, og også angi egne navn på filer med miniatyrversjoner av bildene. Hvis du skriver % før alternativet, kan du legge inn enhver streng med de samme elementene som er tilgjengelige for tittelformater etter det. (Eksempel: %ARTIST - ALBUM gjør at det søkes etter en fil som heter Artist – Album.jpg ut fra informasjon om artist og album som er å finne.
+	NO	Hvis albumomslag er tilgjengelig, kan dette vises når du ser informasjon om et album eller en sang. Bildefiler med albumomslag finnes i ID3-taggene for enkeltsanger, eller de kan ligge i samme mappe som sangfilene. Bildefiler med navn som «cover.jpg», «folder.jpg», «album.jpg» eller «thumb.jpg» brukes som standard. Du kan angi et annet mulig navn på bildefilene for albumomslag, og også angi egne navn på filer med miniatyrversjoner av bildene. Hvis du skriver % før alternativet, kan du legge inn enhver streng med de samme elementene som er tilgjengelige for tittelformater etter det. (Eksempel: %ARTIST - ALBUM gjør at det søkes etter en fil som heter Artist – Album.jpg ut fra informasjon om artist og album som er å finne.
 	PL	Obrazy okładki albumu (jeżeli są dostępne) pojawiają się po wyświetleniu informacji o albumie lub utworze. Obrazy okładek znajdują się w znacznikach ID3 poszczególnych utworów lub w tym samym folderze co pliki utworów. Domyślnie używane są obrazy o nazwie „cover.jpg”, „folder.jpg”, „album.jpg” lub „thumb.jpg”. Możliwe jest określenie dodatkowej nazwy pliku używanej dla okładek albumów. Można także określić inne nazwy plików dla miniatur i obrazów pełnowymiarowych. Poprzedzenie opcji znakiem % umożliwia dodanie dowolnego ciągu złożonego z tych samych elementów, jakie są używane w formatach tytułów (np. wpisanie tekstu %ARTIST - ALBUM spowoduje wyszukiwanie pliku Artist - Album.jpg w celu dopasowania do znalezionych informacji o wykonawcy i albumie.
 	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
 	RU	При просмотре информации об альбоме или песне отображаются доступные изображения обложек. Изображения обложек находятся в тегах ID3 отдельных песен или могут располагаться в той же папке, что и файлы песен. По умолчанию используются изображения с именами cover.jpg, folder.jpg, album.jpg или thumb.jpg. Можно указать дополнительное имя файла, используемое для изображений обложек альбома. Можно также задавать различные имена файлов для эскизов и полноразмерных изображений. Введите перед параметром символ "%", а затем укажите любую строку, состоящую из тех же элементов, которые доступны для форматов названия (например, при вводе %ARTIST — ALBUM будет выполнен поиск строки Artist — Album.jpg в соответствии с найденной информацией об исполнителе и альбоме).
@@ -9575,7 +9575,7 @@ SETUP_SPLITLIST
 	HU	Elválasztó több elemhez a címkékben
 	IT	Separatore di voci multiple nei tag
 	NL	Scheidingsteken voor meerdere items in tags
-	NO	Skilletegn for flere elementer i etiketter
+	NO	Skilletegn for flere elementer i tagger
 	PL	Separator kilku elementów w znacznikach
 	PT	Separador para multiplos elementos em tags
 	RU	Разделитель для нескольких элементов в тегах
@@ -9595,7 +9595,7 @@ SETUP_SPLITLIST_DESC
 	HU	A Lyrion Music Server több előadót, albumcímet és műfajt is kinyerhet a zenefájlokon belüli címkékből.  Ha megtalálja az alábbi szavakat vagy karaktereket a címkékben, akkor minden egyes elemhez külön listát hoz létre.  Például, ha pontosvesszőt tesz az alábbi listába, akkor a „J. S. Bach;Michael Tilson Thomas” előadói címkével ellátott dal megjelenik mind a „J. S. Bach”, mind a „Michael Tilson Thomas” előadói területén.  A beállítás módosítása elindítja a zenei könyvtár újraellenőrzését.
 	IT	Lyrion Music Server può estrarre più artisti, titoli di album o generi dai tag inseriti all'interno dei file musicali. Se trova nei tag qualsiasi parola o carattere indicato sotto, crea un elenco separato per ognuno di essi. Per esempio, inserendo un punto e virgola nella lista sottostante, un brano che ha come tag dell'artista Gino Paoli;Ornella Vanoni, apparirà nell'elenco artisti sia come Gino Paoli che come Ornella Vanoni. Cambiando questa impostazione viene eseguita un'analisi della libreria musicale.
 	NL	Lyrion Music Server kan meerdere artiesten, albumtitels en genres uit de tags in jouw mediabestanden halen. Als de server een van de onderstaande woorden of tekens in de tags vindt, wordt voor elk item apart opgeslagen. Als je bijvoorbeeld een puntkomma in de onderstaande lijst zet, verschijnt een nummer met de tag 'J.S. Bach;Michael Tilson Thomas' zowel bij 'J.S. Bach' als 'Michael Tilson Thomas'. Wanneer je deze instelling wijzigt, wordt de mediabibliotheek opnieuw gescand.
-	NO	Lyrion Music Server kan hente flere artister, albumtitler og sjangere fra etikettene i musikkfilene dine. Hvis den finner noen av ordene eller tegnene nedenfor i etikettene, oppretter den separate lister for hvert element. Hvis du for eksempel skriver et semikolon i listen nedenfor, kommer en sang med artistetiketten «J. S. Bach;Michael Tilson Thomas» opp under både «J. S. Bach» og «Michael Tilson Thomas». Hvis du endrer denne innstillingen, blir musikkbiblioteket gjennomsøkt på nytt.
+	NO	Lyrion Music Server kan hente flere artister, albumtitler og sjangere fra taggene i musikkfilene dine. Hvis den finner noen av ordene eller tegnene nedenfor i taggene, oppretter den separate lister for hvert element. Hvis du for eksempel skriver et semikolon i listen nedenfor, kommer en sang med artisttaggen «J. S. Bach;Michael Tilson Thomas» opp under både «J. S. Bach» og «Michael Tilson Thomas». Hvis du endrer denne innstillingen, blir musikkbiblioteket gjennomsøkt på nytt.
 	PL	Program Lyrion Music Server może wyodrębnić wykonawców, tytuły albumów i gatunki ze znaczników plików muzycznych. Jeżeli program Lyrion Music Server znajdzie poniższe słowa lub znaki w znacznikach, utworzy listy dla każdego elementu. Na przykład umieszczenie średnika na liście poniżej, spowoduje, że utwór ze znacznikiem wykonawcy „J. S. Bach;Michael Tilson Thomas” pojawi się w obszarze wykonawców dla „J. S. Bach” i „Michael Tilson Thomas”. Zmiana tego ustawienia spowoduje ponowne przeszukanie biblioteki muzyki.
 	RU	Lyrion Music Server может извлекать из тегов музыкальных файлов имена исполнителей, названия альбомов и жанры, даже если их несколько. Если в тегах обнаружатся какие-либо из нижеперечисленных слов или символов, для каждого элемента будут созданы отдельные записи. Например, если в списке ниже поставить точку с запятой, песня с тегом исполнителя "И. С. Бах; Майкл Тилсон Томас" появится в области исполнителей и под именем "И. С. Бах", и под именем "Майкл Тилсон Томас". При изменении этой настройки будет запущено повторное сканирование медиатеки.
 	SV	Lyrion Music Server har stöd för taggar med flera artistnamn, albumtitlar eller genrer för samma låt. Om ett eller flera av orden eller tecknen i taggarna hittas, så skapas självständiga poster för varje objekt. Om du t.ex. använder semikolon i listan nedan visas en låt med taggen J. S. Bach;Michael Tilson Thomas i artistvyn för både J. S. Bach och Michael Tilson Thomas. Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
@@ -14288,7 +14288,7 @@ TAGVERSION
 	IT	Versione tag
 	JA	タグ バージョン
 	NL	Tag-versie
-	NO	Etikettversjon
+	NO	Taggversjon
 	PL	Wersja znacznika
 	PT	Versão da Informação
 	RU	Версия тега
@@ -14307,7 +14307,7 @@ VIEW_TAGS
 	HU	Címkék megtekintése
 	IT	Visualizza tag
 	NL	Tags tonen
-	NO	Vis etiketter
+	NO	Vis tagger
 	PL	Wyświetl znaczniki
 	RU	Просмотреть теги
 	SV	Visa taggar
@@ -14325,7 +14325,7 @@ NO_TAGS_FOUND
 	HU	Nem találhatók címkék
 	IT	Nessun tag trovato
 	NL	Geen tags gevonden
-	NO	Finner ingen etiketter
+	NO	Finner ingen tagger
 	PL	Nie znaleziono znaczników
 	RU	Теги не найдены
 	SV	Inga taggar hittades
@@ -19887,7 +19887,7 @@ SETUP_USETPE2ASALBUMARTIST_DESC
 	HU	Az MP3 címkeformátum nem biztosít szabványos módot az album előadójának meghatározására.  Egyes MP3 címkéző eszközök a TPE2 mezőt használják az album előadójához (iTunes, Winamp, Windows Media Player), míg mások a „zenekar/zenekar” szándékolt jelentésére használhatják.  Válassza ki a Lyrion Music Server használatának jelentését.  A beállítás módosítása elindítja a zenei könyvtár újraellenőrzését.
 	IT	Il formato dei tag MP3 non fornisce un metodo standard per specificare l'artista di un album. Alcuni strumenti per l'assegnazione dei tag MP3 utilizzano il campo TPE2 per specificare l'artista dell'album (iTunes, Winamp, Windows Media Player), mentre altri lo utilizzano per indicare il gruppo o l'orchestra. Selezionare il significato che si desidera utilizzare in Lyrion Music Server. La modifica di questa impostazione avvierà di nuovo l'analisi della libreria musicale.
 	NL	De mp3-tagindeling biedt geen standaardmanier om een albumartiest te definiëren. Sommige mp3-tagtools gebruiken het TPE2-veld voor Albumartiest (iTunes, Winamp, Windows Media Player) terwijl andere het gebruiken voor de beoogde betekenis van 'Band/orkest'. Selecteer de betekenis die Lyrion Music Server moet gebruiken. Wanneer je deze instelling wijzigt, wordt de mediabibliotheek opnieuw gescand.
-	NO	Etikettformatet mp3 angir ikke en standardmåte å definere en albumartist på. Noen etikettverktøy for mp3 bruker TPE2-feltet til albumartist (iTunes, Winamp, Windows Media Player), mens andre bruker det for gruppe/orkester. Velg hvordan Lyrion Music Server skal tolke dette. Når du endrer denne innstillingen, startes et nytt søk i musikkbiblioteket.
+	NO	Taggformatet mp3 angir ikke en standardmåte å definere en albumartist på. Noen taggverktøy for mp3 bruker TPE2-feltet til albumartist (iTunes, Winamp, Windows Media Player), mens andre bruker det for gruppe/orkester. Velg hvordan Lyrion Music Server skal tolke dette. Når du endrer denne innstillingen, startes et nytt søk i musikkbiblioteket.
 	PL	Format znacznika pliku MP3 nie umożliwia definiowania wykonawcy albumu w standardowy sposób. Niektóre narzędzia do oznaczania plików MP3 używają do określenia wykonawcy albumu pola TPE2 (iTunes, Winamp, Windows Media Player), natomiast inne mogą używać go zgodnie z przeznaczeniem do określenia zespołu/orkiestry. Wybierz znaczenie, które ma być używane przez program Lyrion Music Server. Zmiana tego ustawienia powoduje ponowne przeszukanie biblioteki muzyki.
 	RU	Формат тега MP3 не предоставляет единого стандарта для задания исполнителя альбома. В некоторых средствах для редактирования тегов MP3 поле TPE2 используется для обозначения исполнителя альбома (например, в iTunes, Winamp, проигрывателе Windows Media), тогда как в других оно может иметь подразумеваемое значение "Группа/Оркестр". Выберите необходимое значение для использования в Lyrion Music Server. При изменении этой настройки начнется повторное сканирование медиатеки.
 	SV	Det finns inget standardsätt att ange albumartister med mp3-taggar. I vissa mp3-taggningsverktyg används TPE2-fältet för att ange albumartist (exempelvis i iTunes, Winamp och Windows Media Player), medan det i andra verktyg används för att ange band/orkester. Välj vilket alternativ Lyrion Music Server använder. Om du ändrar den här inställningen påbörjas en ny sökning av musikbiblioteket.
@@ -19905,7 +19905,7 @@ SETUP_USETPE2ASALBUMARTIST_1
 	HU	Kezelje a TPE2 MP3 címkét album előadójaként
 	IT	Considera il tag MP3 TPE2 come artista dell'album
 	NL	TPE2 MP3-label als albumartiest behandelen
-	NO	Behandle TPE2 mp3-etiketter som albumartist
+	NO	Behandle TPE2 mp3-tagger som albumartist
 	PL	Używaj znacznika TPE2 pliku MP3 jako wykonawcy albumu
 	PT	Trate a tag TPE2 como o Artista do albun
 	RU	Поле TPE2 тега MP3 содержит исполнителя альбома
@@ -19924,7 +19924,7 @@ SETUP_USETPE2ASALBUMARTIST_0
 	HU	Kezelje a TPE2 MP3 címkét előadójaként
 	IT	Considera il tag MP3 TPE2 come Gruppo/Orchestra
 	NL	TPE2 MP3-tag als band behandelen
-	NO	Behandle TPE2 mp3-etikett som gruppe
+	NO	Behandle TPE2 mp3-tagg som gruppe
 	PL	Używaj znacznika TPE2 pliku MP3 jako nazwy zespołu
 	PT	Trate a tag TPE2 como Banda
 	RU	Поле TPE2 тега MP3 содержит группу
