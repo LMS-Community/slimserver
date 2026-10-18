@@ -47,10 +47,10 @@ sub find {
 	} );
 
 	# Delete images first if requested
+	my ($sthDeletePics, $artUrl);
 	if ( my $artPath = $args->{delete_path} ) {
-		my $artUrl = Slim::Utils::Misc::fileURLFromPath($artPath);
-		my $sthDeletePics = $dbh->prepare("DELETE FROM scanned_pics WHERE folder_url = ? OR folder_url LIKE ?");
-		$sthDeletePics->execute($artUrl, $artUrl . '/%');
+		$artUrl = Slim::Utils::Misc::fileURLFromPath($artPath);
+		$sthDeletePics = $dbh->prepare("DELETE FROM scanned_pics WHERE folder_url = ? OR folder_url LIKE ?");
 	}
 
 	# Populate enhanced scanned_pics table (status E = already exists in the tracks table, status N = new)
@@ -62,7 +62,6 @@ sub find {
 		CASE WHEN EXISTS (SELECT 1 FROM tracks WHERE tracks.coverid = ?) THEN 'E' ELSE 'N' END,
 		?
 		)
-		--ON CONFLICT(full_path) DO NOTHING
 	} );
 
 	my $types = Slim::Music::Info::validTypeExtensions( ($args->{types} || 'audio') . '|image' );
@@ -92,6 +91,9 @@ sub find {
 	}, $path );
 
 	my $walk = sub {
+
+		$sthDeletePics->execute($artUrl, $artUrl . '/%') if $sthDeletePics;
+
 		my $file = $iter->();
 
 		if ( !defined $file ) {

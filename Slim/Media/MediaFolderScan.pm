@@ -63,7 +63,7 @@ sub startScan {
 
 		# scan the artfolder, but only if it isn't inside another path being scanned
 		my $artFolder = $prefs->get('artfolder');
-		if ( $artFolder && !grep { $artFolder =~ $_ } @{$dirs} ) {
+		if ( $artFolder && !grep { $artFolder =~ /^\Q$_\E/ } @$dirs ) {
 			Slim::Utils::Scanner::Local::Async->find( $artFolder, {
 				types => 'image',
 				no_async => 1,

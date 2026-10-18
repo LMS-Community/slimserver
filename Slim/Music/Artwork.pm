@@ -267,8 +267,8 @@ sub updateStandaloneArtwork {
 			SELECT * FROM scanned_pics
 			WHERE scanned_pics.full_path = tracks.cover
 		)
-		AND cover NOT LIKE 'https%'
-		AND CAST(CAST(cover AS INTEGER) AS TEXT) <> cover
+		AND tracks.cover NOT LIKE 'http%'
+		AND IS_NUMERIC(tracks.cover) <> 1
 		ON CONFLICT(full_path) DO NOTHING
 	} );
 
@@ -278,7 +278,7 @@ sub updateStandaloneArtwork {
 		SET artwork = tracks.coverid
 		FROM tracks
 		WHERE tracks.album = albums.id
-		AND ( tracks.cover IS NULL OR CAST(CAST(tracks.cover AS INTEGER) AS TEXT) = tracks.cover OR tracks.cover LIKE 'https%' )
+		AND ( tracks.cover IS NULL OR IS_NUMERIC(tracks.cover) = 1 OR tracks.cover LIKE 'http%' )
 		AND ( tracks.coverid <> albums.artwork OR albums.artwork IS NULL )
 		} );
 
@@ -308,7 +308,7 @@ sub updateStandaloneArtwork {
 		LEFT JOIN scanned_pics ON tracks.url BETWEEN scanned_pics.folder_url AND scanned_pics.folder_url||HEX(0xff)
 			AND INSTR(SUBSTR(tracks.url, LENGTH(scanned_pics.folder_url)+2), "/") < 1
 		WHERE albums.title <> ?
-		AND (tracks.cover IS NULL OR tracks.cover = '0' OR ( IS_NUMERIC(tracks.cover) <> 1 OR tracks.cover NOT LIKE 'https%') )
+		AND (tracks.cover IS NULL OR tracks.cover = '0' OR ( IS_NUMERIC(tracks.cover) <> 1 OR tracks.cover NOT LIKE 'http%') )
 		AND (scanned_pics.status IS NOT NULL OR tracks.coverid IS NULL OR FOLDER_FROM_PATH(tracks.cover) = ?)
 		ORDER BY albums.id, tracks.id
 	}
@@ -357,7 +357,7 @@ sub updateStandaloneArtwork {
 			tracks.cover IS NULL
 			OR tracks.cover = '0'
 			-- the following test excludes rows where cover is numeric (non-zero), which indicates an embedded cover.
-			OR CAST(CAST(tracks.cover AS INTEGER) AS TEXT) <> tracks.cover AND tracks.cover NOT LIKE 'https%'
+			OR IS_NUMERIC(tracks.cover) <> 1 AND tracks.cover NOT LIKE 'http%'
 		)
 		ORDER BY tracks.id
 	};
@@ -502,7 +502,7 @@ sub generateImageId {
 	my $mtime;
 	my $size;
 
-	if ( $image =~ /^https?/ ) {
+	if ( $image =~ /^https?:/ ) {
 		$mtime = $size = 1;
 		$args->{url} = $image; # use the image url, not the music file url 
 	}
@@ -817,7 +817,7 @@ sub precacheAllArtwork {
 			FROM   tracks
 			WHERE  tracks.album = ?
 			AND    tracks.coverid IS NOT NULL
-			ORDER BY CASE WHEN CAST(CAST(tracks.cover AS INTEGER) AS TEXT) = tracks.cover THEN '1' ELSE '0' END, tracks.disc, tracks.tracknum
+			ORDER BY IS_NUMERIC(tracks.cover), tracks.disc, tracks.tracknum
 			LIMIT 1
 	 	});
 

@@ -494,7 +494,7 @@ sub init {
 				require Slim::Utils::Scanner::Local::Async;
 				Slim::Utils::Scanner::Local::Async->find( $new, {
 					types => 'image',
-					no_async => 1,
+					no_async => 0,
 					delete_path => $old,
 				}, sub {} );
 			}
