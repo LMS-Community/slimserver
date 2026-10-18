@@ -85,7 +85,7 @@ PLUGIN_REMOTE_LIBRARY_ENTER_PASSWORD
 	FR	Veuillez saisir le mot de passe de l'autre Lyrion Music Server.
 	HU	Kérjük, adja meg a másik Lyrion zeneszerver jelszavát.
 	NL	Voer je wachtwoord in van de andere Lyrion Music Server.
-	NO	Vær så snill å skrive inn passordet for den andre Lyrion-tjeneren.
+	NO	Skriv inn passordet for den andre Lyrion-tjeneren.
 	PL	Proszę podać hasło do zdalnej instancji Lyrion Music Server.
 	SV	Ange ditt lösenord för den andra servern.
 
@@ -149,7 +149,7 @@ PLUGIN_REMOTE_LIBRARY_NOT_FOUND
 	FR	Aucun autre serveur multimédia n'a été trouvé sur votre réseau. Assurez-vous que le serveur est opérationnel et accessible. Puis réessayez dans une minute ou deux.
 	HU	Nem található más médiaszerver a hálózatán. Kérjük, győződjön meg arról, hogy működik, és elérhető. Ezután próbálja újra egy-két perc múlva.
 	NL	Er is geen andere mediaserver op je netwerk gevonden. Zorg ervoor dat deze beschikbaar en bereikbaar is. Probeer na een paar minuten weer.
-	NO	Fant ingen annen medietjener i nettverket ditt. Vær så snill å sørge for at tjeneren er oppe og tilgjengelig, og prøv igjen om et minutt eller to.
+	NO	Fant ingen annen medietjener i nettverket ditt. Sørg for at tjeneren er oppe og tilgjengelig, og prøv igjen om et minutt eller to.
 	PL	Nie znaleziono innego serwera mediów w twojej sieci. Upewnij się, że jest on uruchomiony i dostępny. Spróbuj ponownie po kilku minutach.
 	SV	Inget annat mediebibliotek hittades på närverket. Kontrollera att servern är startad och nåbar och prova igen om en minut eller två.
 
@@ -162,7 +162,7 @@ PLUGIN_REMOTE_LIBRARY_SERVERS_FOUND
 	FR	Au cas où le serveur souhaité serait manquant, assurez-vous que le logiciel est opérationnel et réessayez dans une minute ou deux.
 	HU	Abban az esetben, ha a kívánt példány hiányzik, ellenőrizze, hogy a szoftver működik-e, és egy-két perc múlva próbálkozzon újra.
 	NL	Als de gewenste locatie niet wordt gevonden, zorg ervoor dat de software beschikbaar en bereikbaar is, en probeer na een paar minuten weer.
-	NO	Dersom den ønskede tjeneren manglet, vær så snill å sørge for at tjenerprogrammet er oppe og går, og forsøk igjen om et par minutter.
+	NO	Hvis tjeneren du ville ha, manglet, sørg for at tjenerprogrammet er oppe og går, og prøv igjen om et par minutter.
 	PL	Jeśli pożądany serwer nie został znaleziony, upewnij się, że jest on uruchomiony i dostępny. Spróbuj ponownie po kilku minutach.
 	SV	Om den önskade server fattas, kontrollera on servern är startad och nåbar och prova igen om en minut eller två.
 
