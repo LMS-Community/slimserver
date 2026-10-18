@@ -1,6 +1,7 @@
 # String file for Rescan plugin
 
 PLUGIN_RESCAN_MUSIC_LIBRARY
+	CA	Reescaneja la biblioteca musical
 	CS	Znovu prohledání hudební knihovny
 	DA	Gennemsøg musikbibliotek igen
 	DE	Musiksammlung erneut durchsuchen
@@ -18,6 +19,7 @@ PLUGIN_RESCAN_MUSIC_LIBRARY
 	SV	Sök igenom musikbiblioteket igen
 
 PLUGIN_RESCAN_MUSIC_LIBRARY_DESC
+	CA	Escaneig automàtic de biblioteques
 	CS	Automatické prohledávání knihovny
 	DA	Automatisk gennemsøgning af biblioteket
 	DE	Automatisches Durchsuchen der Musiksammlung
@@ -34,6 +36,7 @@ PLUGIN_RESCAN_MUSIC_LIBRARY_DESC
 	SV	Automatisk bibliotekssökning
 
 PLUGIN_RESCAN_RESCANNING
+	CA	El servidor està tornant a escanejar...
 	CS	Server nyní prohledává...
 	DA	Serveren gennemsøger...
 	DE	Server durchsucht Ordner ...
@@ -51,6 +54,7 @@ PLUGIN_RESCAN_RESCANNING
 	SV	Servern genomför en ny sökning...
 
 PLUGIN_RESCAN_PRESS_PLAY
+	CA	Premeu PLAY per tornar a escanejar ara.
 	CS	Stiskněte PLAY k zahájení prohledávání nyní.
 	DA	Tryk på Afspil for at gennemsøge nu.
 	DE	Drücken Sie PLAY, um das Einlesen zu starten
@@ -68,6 +72,7 @@ PLUGIN_RESCAN_PRESS_PLAY
 	SV	Tryck på Play om du vill genomföra en ny sökning nu.
 
 PLUGIN_RESCAN_TIMER_NAME
+	CA	Temporitzador de reescaneig
 	CS	Časovač prohledávání
 	DA	Timer for gennemsøgning
 	DE	Automatisches Durchsuchen
@@ -85,6 +90,7 @@ PLUGIN_RESCAN_TIMER_NAME
 	SV	Sökningstimer
 
 PLUGIN_RESCAN_TIMER_SET
+	CA	Estableix l'hora de reescaneig
 	CS	Nastavení času prohledávání
 	DA	Foretag gennemsøgning kl.
 	DE	Startzeit für erneutes Durchsuchen festlegen
@@ -102,6 +108,7 @@ PLUGIN_RESCAN_TIMER_SET
 	SV	Ange tid för ny sökning
 
 PLUGIN_RESCAN_TIMER_SAVED
+	CA	S'està desant l'hora...
 	CS	Ukládání času...
 	DA	Gemmer klokkeslæt...
 	DE	Zeit wird gespeichert...
@@ -118,6 +125,7 @@ PLUGIN_RESCAN_TIMER_SAVED
 	SV	Sparar tid...
 
 PLUGIN_RESCAN_TIMER_TURNING_OFF
+	CA	Desactivant el temporitzador de reescaneig...
 	CS	Vypínání časovače prohledávání...
 	DA	Slår timer for genindlæsning fra...
 	DE	Automatisches Durchsuchen wird deaktiviert ...
@@ -135,6 +143,7 @@ PLUGIN_RESCAN_TIMER_TURNING_OFF
 	SV	Avaktiverar sökningstimern...
 
 PLUGIN_RESCAN_TIMER_TURNING_ON
+	CA	Activant el temporitzador de reescaneig...
 	CS	Zapínání časovače prohledávání...
 	DA	Slår timer for gennemsøgning til...
 	DE	Automatisches Durchsuchen wird aktiviert ...
@@ -152,6 +161,7 @@ PLUGIN_RESCAN_TIMER_TURNING_ON
 	SV	Aktiverar sökningstimern...
 
 PLUGIN_RESCAN_TIMER_ON
+	CA	Temporitzador de reescaneig ACTIVAT
 	CS	Časovač prohledávání Zapnut
 	DA	Timer for gennemsøgning TIL
 	DE	Automatisches Durchsuchen EIN
@@ -169,6 +179,7 @@ PLUGIN_RESCAN_TIMER_ON
 	SV	Sökningstimern är aktiverad.
 
 PLUGIN_RESCAN_TIMER_DESC
+	CA	Podeu triar permetre una reescanejada programada de la vostra biblioteca musical cada 24 hores. Definiu l'hora i configureu el temporitzador de reescanejada a ON per utilitzar aquesta funció.
 	CS	Můžete vybrat povolení plánovaného prohledání vaší hudební knihovny každých 24 hodin. K použití této vlastnosti nastavte čas a přepněte Časovač prohledávání na Zapnuto.
 	DA	Du kan vælge at musikbiblioteket skal gennemsøges en gang i døgnet. Du indstiller klokkeslættet og indstiller Timer for gennemsøgning til TIL
 	DE	Sie können ihre Musiksammlung automatisch alle 24h durchsuchen lassen. Legen Sie den Zeitpunkt fest und aktivieren Sie 'Automatisches Durchsuchen'.
@@ -186,6 +197,7 @@ PLUGIN_RESCAN_TIMER_DESC
 	SV	Du kan välja att aktivera en schemalagd sökning av ditt musikbibliotek en gång per dygn. Ange ett klockslag och aktivera sökningstimern om du vill använda den här funktionen.
 
 PLUGIN_RESCAN_TIMER_OFF
+	CA	Temporitzador de reescaneig DESACTIVAT
 	CS	Časovač prohledávání Vypnut
 	DA	Timer for gennemsøgning FRA
 	DE	Automatisches Durchsuchen AUS
@@ -203,6 +215,7 @@ PLUGIN_RESCAN_TIMER_OFF
 	SV	Sökningstimern är avaktiverad.
 
 PLUGIN_RESCAN_TIMER_TYPE
+	CA	Tipus de reescaneig
 	CS	Typ prohledávání
 	DA	Gennemsøgningstype
 	DE	Durchsuchmodus
@@ -220,6 +233,7 @@ PLUGIN_RESCAN_TIMER_TYPE
 	SV	Typ av ny sökning
 
 PLUGIN_RESCAN_PLEASE_WAIT
+	CA	Si us plau, espereu
 	CS	Čekejte, prosím
 	DA	Vent lidt
 	DE	Bitte warten

@@ -2,6 +2,7 @@ PLUGIN_CLASSICALRADIO_NAME
 	EN	ClassicalRadio.com
 
 PLUGIN_CLASSICALRADIO_DESC
+	CA	ClassicalRadio.com - Música clàssica seleccionada amb gust
 	CS	ClassicalRadio.com – Krásně vybraná klasická hudba
 	DA	ClassicalRadio.com - Smukt arrangeret klassisk musik
 	DE	ClassicalRadio.com - Wunderschön zusammengestellte klassische Musik
@@ -12,6 +13,7 @@ PLUGIN_CLASSICALRADIO_DESC
 	SV	ClassicalRadio.com - Vackert arrangerad klassisk musik
 
 PLUGIN_CLASSICALRADIO_MISSING_CREDS
+	CA	Si us plau, visiteu ClassicalRadio.com a la configuració del Lyrion Music Server per afegir les vostres credencials.
 	CS	Prosím, navštivte ClassicalRadio.com v nastavení Lyrion Music Serveru a přidejte své přihlašovací údaje.
 	DA	Besøg ClassicalRadio.com i Lyrion Music Server indstillinger for at tilføje dine loginoplysninger.
 	DE	Bitte rufen Sie ClassicalRadio.com in den Einstellungen des Lyrion Music Servers auf, um Ihre Anmeldedaten hinzuzufügen.
@@ -22,6 +24,7 @@ PLUGIN_CLASSICALRADIO_MISSING_CREDS
 	SV	Gå till Classical.com i Lyrion Music Server-inställningarna för att lägga till dina login-uppgfter
 
 PLUGIN_CLASSICALRADIO_LINK
+	CA	Per crear o gestionar el vostre compte, visiteu <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
 	CS	Chcete-li si vytvořit nebo spravovat svůj účet, navštivte <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
 	DA	Besøg <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a> for at oprette eller administrere din konto.
 	DE	Um ein Konto zu erstellen oder Ihr Konto zu verwalten, besuchen Sie bitte <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.

@@ -1,4 +1,5 @@
 PLUGIN_ANALYTICS_MODULE_NAME
+	CA	Comparteix dades de l'anàlisi
 	CS	Reportování analytických údajů
 	DA	Afrapportér analysedata
 	DE	Analytikdaten teilen
@@ -9,6 +10,7 @@ PLUGIN_ANALYTICS_MODULE_NAME
 	SV	Dela information om din Lyrion Music Server
 
 PLUGIN_ANALYTICS_MODULE_DESC
+	CA	Comparteix la versió del servidor, el nombre de reproductors, el nombre de pistes, els complements instal·lats, el sistema operatiu, la versió de Perl, l'aparença utilitzada i la plataforma de maquinari amb la comunitat LMS. Això ens ajudarà a prioritzar el desenvolupament posterior. Gràcies per habilitar aquest complement! Més informació a <a href="https://lyrion.org/analytics/learn-more/" target="_blank">https://lyrion.org/analytics/learn-more/</a>.
 	CS	Sdílejte s komunitou LMS verzi serveru, počet přehrávačů, počet skladeb, nainstalované zásuvné moduly, operační systém, verzi Perlu, použitý vzhled a hardwarovou platformu. Nám to pomůže stanovit priority dalšího vývoje. Děkujeme, že jste tento doplněk povolili! Další informace naleznete na <a href="https://lyrion.org/analytics/learn-more/" target="_blank">https://lyrion.org/analytics/learn-more/</a>.
 	DA	Rapporterer din server version, antal afspillere, antal numre, installerede plugins, operativsystem, Perl version, anvendt Skin, samt anvendt hardware og del denne information med LMS fællesskabet. Dette hjælper os med at prioritere videre udvikling. Mange tak for at aktivere denne plugin. Du kan lære mere om dette under <a href="https://lyrion.org/analytics/learn-more/" target="_blank">https://lyrion.org/analytics/learn-more/</a>.
 	DE	Teile Analytikdaten wie Serverversion, Anzahl Geräte, Anzahl Titel, installierte Plugins, Betriebssystem, Perlversion, verwendeter Skin und die verwendete Hardware mit der LMS Community. Dies hilft uns, Prioritäten in der Entwicklung richtig zu setzen. Vielen Dank fürs Vertrauen! Mehr Infos unter <a href="https://lyrion.org/analytics/learn-more/" target="_blank">https://lyrion.org/analytics/learn-more/</a>.

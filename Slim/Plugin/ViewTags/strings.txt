@@ -1,4 +1,5 @@
 PLUGIN_VIEW_TAGS
+	CA	Visualització avançada d'etiquetes
 	CS	Pokročilé zobrazení tagů
 	DA	Avanceret filmærke visning
 	DE	Erweiterte Tag Ansicht
@@ -9,6 +10,7 @@ PLUGIN_VIEW_TAGS
 	SV	Avancerad tag-vy
 
 PLUGIN_VIEW_TAGS_WCOM
+	CA	Informació comercial (WCOM)
 	CS	Obchodní informace (WCOM)
 	DA	Kommerciel information (WCOM)
 	DE	Kommerzielle Informationen (WCOM)
@@ -19,6 +21,7 @@ PLUGIN_VIEW_TAGS_WCOM
 	SV	Kommersiell information (WCOM)
 
 PLUGIN_VIEW_TAGS_WCOP
+	CA	Drets/informació legal (WCOP, LLICÈNCIA)
 	CS	Autorská práva/právní informace (WCOP, LICENSE)
 	DA	Ophavsret/Juridisk information (WCOP, LICENSE)
 	DE	Copyright/Rechtliche Informationen (WCOP, LICENSE)
@@ -29,6 +32,7 @@ PLUGIN_VIEW_TAGS_WCOP
 	SV	Upphovsrätt/Jrididsk information (WCOP, LICENS)
 
 PLUGIN_VIEW_TAGS_WOAF
+	CA	Pàgina web oficial de fitxers d'àudio (WOAF)
 	CS	Oficiální webová stránka zvukového souboru (WOAF)
 	DA	Officiel download webside (WOAF)
 	DE	Offizielle Download Website (WOAF)
@@ -39,6 +43,7 @@ PLUGIN_VIEW_TAGS_WOAF
 	SV	Officiell download websida (WOAF)
 
 PLUGIN_VIEW_TAGS_WOAR
+	CA	Pàgina oficial de l'intèrpret (WOAR, LLOC WEB)
 	CS	Oficiální webové stránky interpreta (WOAR, WEBSITE)
 	DA	Officiel kunstner webside (WOAR, WEBSITE)
 	DE	Offizielle Interpreten Website (WOAR, WEBSITE)
@@ -49,6 +54,7 @@ PLUGIN_VIEW_TAGS_WOAR
 	SV	Officiell artistwebsida (WOAR, WEBSITE)
 
 PLUGIN_VIEW_TAGS_WOAS
+	CA	Pàgina web oficial de fonts d'àudio (WOAS)
 	CS	Oficiální webová stránka zdroje zvuku (WOAS)
 	DA	Officiel lydkilde webside (WOAS)
 	DE	Offizielle Quelle der Audiodaten (WOAS)
@@ -59,6 +65,7 @@ PLUGIN_VIEW_TAGS_WOAS
 	SV	Officiell ursprungssida för ljudfilerna (WOAS)
 
 PLUGIN_VIEW_TAGS_WORS
+	CA	Pàgina d'inici de l'estació de ràdio (WORS)
 	CS	Domovská stránka rozhlasové stanice (WORS)
 	DA	Webside for radiostation (WORS)
 	DE	Website der Radiostation (WORS)
@@ -69,6 +76,7 @@ PLUGIN_VIEW_TAGS_WORS
 	SV	Websida för radiostation (WORS)
 
 PLUGIN_VIEW_TAGS_WPUB
+	CA	Lloc web de l'editorial (EPUB)
 	CS	Webové stránky vydavatele (WPUB)
 	DA	Udgiverens webside (WPUB)
 	DE	Website des Publishers (WPUB)
@@ -79,6 +87,7 @@ PLUGIN_VIEW_TAGS_WPUB
 	SV	Utgivarens websida (WPUB)
 
 PLUGIN_VIEW_TAGS_STD_URL
+	CA	Etiquetes d'URL estàndard
 	CS	Standardní tagy adres URL
 	DA	Standard URL mærker
 	DE	Standardtags mit URLs
@@ -89,6 +98,7 @@ PLUGIN_VIEW_TAGS_STD_URL
 	SV	Standard URL-taggar
 
 PLUGIN_VIEW_TAGS_CUSTOM_TAGS
+	CA	Etiquetes addicionals per mostrar
 	CS	Další tagy pro zobrazení
 	DA	Supplerende mærker at vise
 	DE	Zusätzliche anzuzeigende Tags
@@ -99,6 +109,7 @@ PLUGIN_VIEW_TAGS_CUSTOM_TAGS
 	SV	Visa även följande taggar
 
 PLUGIN_VIEW_TAGS_CUSTOM_TAGS_DESC
+	CA	"Nom de l'etiqueta" es refereix a l'etiqueta real, tal com s'emmagatzema al fitxer, p. "LLOC WEB". El menú "Mostra les etiquetes" les mostra. El "Nom que es mostrarà" és un nom més fàcil d'utilitzar a la interfície d'usuari. "URL" defineix si el camp conté un URL. En aquest cas, les interfícies d'usuari capaços d'enllaçar amb URL poden representar el contingut amb un enllaç.
 	CS	„Název tagu“ se vztahuje na skutečný tag, jak je uložen v souboru, např. „WEBSITE“. Zobrazí se v nabídce „Zobrazit tagy“. „Zobrazovaný název“ je uživatelsky přívětivější název, který se použije v uživatelském rozhraní. „Adresa URL“ určuje, zda pole obsahuje adresu URL. V tomto případě mohou uživatelská rozhraní, která jsou schopná odkazovat na adresy URL, zobrazit obsah s odkazem.
 	DA	"Mærkenavn" er det faktiske navn som er gemt i filen, f.eks. "WEBSITE". Dette vises også i "Vis mærker" menuen. "Mærkenavn at vise" er et mere brugervenligt navn, der vil blive vist i brugergrænsefladen. "URL" definerer, om den viste værdi skal vises som et link (hvis muligt).
 	DE	"Tag Name" ist der eigentliche Name, wie er in der Datei gespeichert ist, z.B. "WEBSITE". Dieser Name wird auch in "Tags anzeigen" eines Titels angezeigt. "Anzuzeigender Name" ist ein benutzerfreundlicherer Name, der in der Benutzeroberfläche angezeigt wird. "URL" definiert, ob der angezeigte Wert als Link dargestellt werden soll (wenn möglich).
@@ -109,6 +120,7 @@ PLUGIN_VIEW_TAGS_CUSTOM_TAGS_DESC
 	SV	"Tag namn" är det namnet som används i filen, t.ex "WEBSITE". Det namnet visas också i "Visa Taggar" menyn. "Tagnamn som visas" är ett mer användarvänligt namn som visas in användargränssnittet. "URL" bestämmer om det visade värdet visas som en länk eller inte.
 
 PLUGIN_VIEW_TAGS_TAG_NAME
+	CA	Nom de l'etiqueta
 	CS	Název tagu
 	DA	Mærkenavn
 	DE	Tag Name
@@ -119,6 +131,7 @@ PLUGIN_VIEW_TAGS_TAG_NAME
 	SV	Tagnamn
 
 PLUGIN_VIEW_TAGS_TAG_HUMAN_READABLE
+	CA	Nom de l'etiqueta que es mostra
 	CS	Zobrazovaný název tagu
 	DA	Mærkenavn at vise
 	DE	Anzuzeigender Name
@@ -129,6 +142,7 @@ PLUGIN_VIEW_TAGS_TAG_HUMAN_READABLE
 	SV	Tagnamn som visas
 
 PLUGIN_VIEW_TAGS_LEVEL
+	CA	Nivell al qual mostrar aquestes etiquetes
 	CS	Úroveň, na které se tyto tagy zobrazují
 	DA	Visningsniveaur for disse mærker
 	DE	Anzeigeebene für diese Tags
@@ -139,6 +153,7 @@ PLUGIN_VIEW_TAGS_LEVEL
 	SV	Nivå på vilken denna tag visas
 
 PLUGIN_VIEW_TAGS_TOPLEVEL
+	CA	Mostra les etiquetes al nivell superior
 	CS	Zobrazit tagy na nejvyšší úrovni
 	DA	Vis mærker på øverste niveau
 	DE	Tags auf oberster Ebene anzeigen
@@ -149,6 +164,7 @@ PLUGIN_VIEW_TAGS_TOPLEVEL
 	SV	Visa taggen på översta nivån
 
 PLUGIN_VIEW_TAGS_MOREINFO
+	CA	Mostra les etiquetes a "Més informació"
 	CS	Zobrazit tagy v „Další informace“
 	DA	Vis mærker i "Mere info"
 	DE	Tags in "Weitere Infos" anzeigen
@@ -159,6 +175,7 @@ PLUGIN_VIEW_TAGS_MOREINFO
 	SV	Visa taggen i "Mer information"
 
 PLUGIN_VIEW_TAGS_URL
+	CA	URL
 	CS	Adresa URL
 	DA	URL adresse
 	EN	URL

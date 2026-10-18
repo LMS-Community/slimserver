@@ -1,7 +1,9 @@
 PLUGIN_ROCKRADIO_NAME
+	CA	ROCKRADIO.COM
 	EN	ROCKRADIO.COM
 
 PLUGIN_ROCKRADIO_DESC
+	CA	ROCKRADIO.COM | música rock per a la vida
 	CS	ROCKRADIO.COM | rocková hudba pro život
 	DA	ROCKRADIO.COM | rockmusik for livet
 	DE	ROCKRADIO.COM | Rockmusik fürs Leben
@@ -12,6 +14,7 @@ PLUGIN_ROCKRADIO_DESC
 	SV	ROCKRADIO.COM | rockmusik för livet
 
 PLUGIN_ROCKRADIO_MISSING_CREDS
+	CA	Si us plau, visiteu ROCKRADIO.COM a la configuració del Lyrion Music Server per afegir les vostres credencials.
 	CS	Prosím, navštivte ROCKRADIO.COM v nastavení Lyrion Music Serveru a přidejte své přihlašovací údaje.
 	DA	Besøg ROCKRADIO.COM i Lyrion Music Server indstillinger for at tilføje dine loginoplysninger.
 	DE	Bitte rufen Sie ROCKRADIO.COM in den Einstellungen des Lyrion Music Servers auf, um Ihre Anmeldedaten hinzuzufügen.
@@ -22,6 +25,7 @@ PLUGIN_ROCKRADIO_MISSING_CREDS
 	SV	Gå till ROCKRADION.COM in Lyrion Music Server-inställningarna för att lägga till dina loginuppgifter.
 
 PLUGIN_ROCKRADIO_LINK
+	CA	Per crear o gestionar el vostre compte, visiteu <a href="https://www.rockradio.com" target="_blank">ROCKRADIO.COM</a>.
 	CS	Chcete-li si vytvořit nebo spravovat svůj účet, navštivte <a href="https://www.rockradio.com" target="_blank">ROCKRADIO.COM</a>.
 	DA	Besøg <a href="https://www.rockradio.com" target="_blank">ROCKRADIO.COM</a> for at oprette eller administrere din konto.
 	DE	Um ein Konto zu erstellen oder Ihr Konto zu verwalten, besuchen Sie bitte <a href="https://www.rockradio.com" target="_blank">ROCKRADIO.COM</a>.

@@ -1,4 +1,5 @@
 PLUGIN_REMOTE_LIBRARY_MODULE_NAME
+	CA	Biblioteques de música remotes
 	CS	Vzdálené hudební knihovny
 	DA	Eksterne musikbiblioteker
 	DE	Entfernte Musiksammlungen
@@ -12,6 +13,7 @@ PLUGIN_REMOTE_LIBRARY_MODULE_NAME
 	SV	Externa musikbibliotek
 
 PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC
+	CA	Permet la reproducció de música des d'altres Lyrion Music Server o servidors UPnP/DLNA sense canviar de reproductor.
 	CS	Umožňuje přehrávání hudby z jiných Lyrion Music Serverů nebo UPnP/DLNA bez nutnosti přepínání přehrávače.
 	DA	Denne plugin tillader gengivelse af musik fra andre Lyrion Music Servere eller UPnP/DLNA servere uden at måtte skifte afspiller.
 	DE	Dieses Plugin erlaubt die Wiedergabe von Musik aus der Sammlung von anderen Lyrion Music Server oder UPnP/DLNA Servern, ohne den Player umschalten zu müssen.
@@ -24,6 +26,7 @@ PLUGIN_REMOTE_LIBRARY_MODULE_NAME_DESC
 	SV	Detta pluginprogram gör det möjligt att spela musik från andra Lyrion Music Servrar eller UPnP/DLNA servrar utan att ansluta spelaren till den andra servern
 
 PLUGIN_REMOTE_LIBRARY_USERNAME
+	CA	Nom d'usuari
 	CS	Uživatelské jméno
 	DA	Brugernavn
 	DE	Benutzername
@@ -44,6 +47,7 @@ PLUGIN_REMOTE_LIBRARY_USERNAME
 	ZH_CN	用户名
 
 PLUGIN_REMOTE_LIBRARY_PASSWORD
+	CA	Contrasenya
 	CS	Heslo
 	DA	Adgangskode
 	DE	Kennwort
@@ -60,6 +64,7 @@ PLUGIN_REMOTE_LIBRARY_PASSWORD
 	SV	Lösenord
 
 PLUGIN_REMOTE_LIBRARY_PASSWORD_PROTECTED
+	CA	Aquest Lyrion Music Server està protegit amb contrasenya. Si us plau, introduïu el nom d'usuari i la contrasenya per a aquest servidor.
 	CS	Tento Lyrion Music Server je chráněn heslem. Zadejte prosím uživatelské jméno a heslo pro tento server.
 	DA	Denne Lyrion Music Server er beskyttet med adgangskode. Venligst angiv brugernavn og adgangskode for denne server.
 	DE	Dieser Lyrion Music Server ist Passwort geschützt. Bitte geben Sie Benutzernamen und Passwort des Servers ein.
@@ -72,6 +77,7 @@ PLUGIN_REMOTE_LIBRARY_PASSWORD_PROTECTED
 	SV	Denna Lyrion Music Server är lösenordsskyddad. Ange loginnamn och lösenord för denna server.
 
 PLUGIN_REMOTE_LIBRARY_ENTER_PASSWORD
+	CA	Si us plau, introduïu la contrasenya de l'altre Lyrion Music Server.
 	CS	Zadejte heslo pro jiný Lyrion Music Server.
 	DA	Venligst angiv adgangskode for den anden Lyrion Music Server.
 	DE	Bitte geben Sie das Passwort für den anderen Lyrion Music Server ein.
@@ -84,6 +90,7 @@ PLUGIN_REMOTE_LIBRARY_ENTER_PASSWORD
 	SV	Ange ditt lösenord för den andra servern.
 
 PLUGIN_REMOTE_LIBRARY_INVALID_USERNAME_PASSWORD
+	CA	Nom d'usuari o contrasenya no vàlids.
 	CS	Neplatné uživatelské jméno nebo heslo.
 	DA	Ugyldigt brugernavn eller adgangskode.
 	DE	Benutzername oder Kennwort ungültig.
@@ -100,6 +107,7 @@ PLUGIN_REMOTE_LIBRARY_INVALID_USERNAME_PASSWORD
 	SV	Ogiltigt användarnamn eller lösenord.
 
 PLUGIN_REMOTE_LIBRARY_LOGIN_SUCCESS
+	CA	Inici de sessió correcte
 	CS	Úspěšné přihlášení
 	DA	Du er logget på
 	DE	Erfolgreiche Anmeldung
@@ -116,6 +124,7 @@ PLUGIN_REMOTE_LIBRARY_LOGIN_SUCCESS
 	SV	Inloggningen lyckades
 
 PLUGIN_REMOTE_LIBRARY_LOGIN_FAILURE
+	CA	No s'ha pogut verificar el compte. Torneu-ho a intentar.
 	CS	Nelze ověřit váš účet, zkuste to znovu později.
 	DA	Din konto kunne ikke verificeres. Prøv igen senere.
 	DE	Ihr Konto konnte nicht bestätigt werden, versuchen Sie es noch einmal.
@@ -132,6 +141,7 @@ PLUGIN_REMOTE_LIBRARY_LOGIN_FAILURE
 	SV	Det går inte att verifiera kontot. Försök igen senare.
 
 PLUGIN_REMOTE_LIBRARY_NOT_FOUND
+	CA	No s'ha trobat cap altre servidor multimèdia a la xarxa. Assegureu-vos que estigui en funcionament i que sigui accessible. Torneu-ho a provar d'aquí a un minut o dos.
 	CS	Ve vaší síti nebyl nalezen žádný jiný mediální server. Ujistěte se, že je spuštěný a dosažitelný. Pak to zkuste za minutu nebo dvě znovu.
 	DA	Fandt ikke en anden medieserver på netværket. Venligst check at serveren kører og er tilgængelig, og prøv igen om et minut eller to.
 	DE	Es wurde kein anderer Medienserver im Netzwerk gefunden. Bitte stellen Sie sicher, dass einer ausgeführt wird und erreichbar ist. Und probieren Sie es in ein, zwei Minuten noch einmal.
@@ -144,6 +154,7 @@ PLUGIN_REMOTE_LIBRARY_NOT_FOUND
 	SV	Inget annat mediebibliotek hittades på närverket. Kontrollera att servern är startad och nåbar och prova igen om en minut eller två.
 
 PLUGIN_REMOTE_LIBRARY_SERVERS_FOUND
+	CA	En cas que falti la instància desitjada, assegureu-vos que el programari estigui en funcionament i torneu-ho a provar d'aquí a un minut o dos.
 	CS	Pokud požadovaná instance chyběla, zkontrolujte, zda je software spuštěn, a zkuste to za minutu nebo dvě znovu.
 	DA	Hvis den ønskede server mangler, check at serverprogrammet kører, og prøv igen om et minut eller to.
 	DE	Falls der gewünschte Server fehlt, überprüfen Sie, ob er ausgeführt wird. Und probieren Sie es in ein, zwei Minuten noch einmal.
@@ -156,6 +167,7 @@ PLUGIN_REMOTE_LIBRARY_SERVERS_FOUND
 	SV	Om den önskade server fattas, kontrollera on servern är startad och nåbar och prova igen om en minut eller två.
 
 PLUGIN_REMOTE_LIBRARY_UPNP_REQUEST_FAILED
+	CA	La sol·licitud UPnP/DLNA ha fallat. Comproveu el servidor UPnP/DLNA.
 	CS	Požadavek UPnP/DLNA se nepodařil, zkontrolujte server UPnP/DLNA.
 	DA	UPnP/DLNA-anmodning mislykkedes. Kontroller UPnP/DLNA-serveren.
 	DE	Fehler bei der UPnP/DLNA-Anforderung. Prüfen Sie den UPnP/DLNA-Server.
@@ -175,6 +187,7 @@ PLUGIN_REMOTE_LIBRARY_UPNP_REQUEST_FAILED
 
 # Settings
 PLUGIN_REMOTE_LIBRARY_LMS_DESC
+	CA	Aquest servidor hauria de buscar altres Lyrion Music Server a la vostra xarxa?
 	CS	Měl by tento server vyhledat další Lyrion Music Servery ve vaší síti?
 	DA	Skal serveren check for andre Lyrion Music Servere på netværket?
 	DE	Soll der Server nach weiteren Lyrion Music Servern in Ihrem Netzwerk suchen?
@@ -187,6 +200,7 @@ PLUGIN_REMOTE_LIBRARY_LMS_DESC
 	SV	Skall servern leta efter andra Lyrion Music Servrar på nätverket
 
 PLUGIN_REMOTE_LIBRARY_LMS_ENABLE
+	CA	Activat, busca altres Lyrion Music Server.
 	CS	Povoleno, hledat další Lyrion Music Servery.
 	DA	Aktiveret, søg efter andre Lyrion Music Servere.
 	DE	Ja, nach weiteren Lyrion Music Servern suchen.
@@ -199,6 +213,7 @@ PLUGIN_REMOTE_LIBRARY_LMS_ENABLE
 	SV	Ja, sök efter andra Lyrion Music Servrar
 
 PLUGIN_REMOTE_LIBRARY_LMS_DISABLE
+	CA	Desactivat, no es busca altres Lyrion Music Server
 	CS	Zakázáno, nehledat další Lyrion Music Servery.
 	DA	Deaktiveret, ikke søg efter andre Lyrion Music Servere.
 	DE	Nein, nicht nach Lyrion Music Servern suchen.
@@ -211,6 +226,7 @@ PLUGIN_REMOTE_LIBRARY_LMS_DISABLE
 	SV	Nej, sök inte efter andra Lyrion Music Servrar
 
 PLUGIN_REMOTE_LIBRARY_LMS_TRANSCODING
+	CA	Conversió de tipus de fitxer
 	CS	Konverze typů souborů
 	DA	Filformat konvertering
 	DE	Dateikonvertierung
@@ -220,6 +236,7 @@ PLUGIN_REMOTE_LIBRARY_LMS_TRANSCODING
 	SV	Filformatkonvertering
 
 PLUGIN_REMOTE_LIBRARY_LMS_TRANSCODING_DESC
+	CA	Podeu fer que el Lyrion Music Server remot ho converteixi a un format que es pugui reproduir sense cap processament addicional.
 	CS	Vzdálený Lyrion Music Server můžete nechat převést do formátu, který lze přehrávat bez dalšího zpracování.
 	DA	Du kan få den eksterne Lyrion Music Server til at konvertere filformatet til din afspiller uden yderligere processering.
 	DE	Sie können den entfernten Lyrion Music Server beauftragen, die Dateien in ein verständliches Format umzuwandeln.
@@ -229,6 +246,7 @@ PLUGIN_REMOTE_LIBRARY_LMS_TRANSCODING_DESC
 	SV	Du kan intruera den andra Lyrion Music Servern att den skall konvertera till ett filformat som kan spelas utan ytterligare bearbetning.
 
 PLUGIN_REMOTE_LIBRARY_SETUP_UPNP
+	CA	Client UPnP/DLNA
 	CS	Klient UPnP/DLNA
 	DA	UPnP/DLNA-klient
 	DE	UPnP/DLNA-Client
@@ -246,6 +264,7 @@ PLUGIN_REMOTE_LIBRARY_SETUP_UPNP
 	SV	UPnP/DLNA-klient
 
 PLUGIN_REMOTE_LIBRARY_UPNP_DESC
+	CA	El Lyrion Music Server hauria de buscar altres servidors multimèdia UPnP/DLNA a la vostra xarxa?
 	CS	Má Lyrion Music Server hledat na vaší síti další servery médií UPnP/DLNA?
 	DA	Skal Lyrion Music Server søge efter andre UPnP/DLNA-medieservere på dit netværk?
 	DE	Soll Lyrion Music Server nach weiteren UPnP/DLNA-Medienservern in Ihrem Netzwerk suchen?
@@ -263,6 +282,7 @@ PLUGIN_REMOTE_LIBRARY_UPNP_DESC
 	SV	Ska Lyrion Music Server söka efter andra UPnP/DLNA-medieservrar på nätverket?
 
 PLUGIN_REMOTE_LIBRARY_UPNP_ENABLE
+	CA	Activat, busca altres servidors multimèdia UPnP/DLNA.
 	CS	Povoleno, hledat další servery médií UPnP/DLNA.
 	DA	Aktiveret; søg efter andre UPnP/DLNA-medieservere.
 	DE	Ja, nach weiteren UPnP/DLNA-Medienservern suchen.
@@ -280,6 +300,7 @@ PLUGIN_REMOTE_LIBRARY_UPNP_ENABLE
 	SV	Ja: Sök efter andra UPnP/DLNA-medieservrar.
 
 PLUGIN_REMOTE_LIBRARY_UPNP_DISABLE
+	CA	Desactivat, no es busca altres servidors multimèdia UPnP/DLNA.
 	CS	Zakázáno, nehledat další servery médií UPnP/DLNA.
 	DA	Deaktiveret. Søg ikke efter andre UPnP/DLNA-medieservere.
 	DE	Nein, nicht nach UPnP/DLNA-Medienservern suchen.
@@ -297,6 +318,7 @@ PLUGIN_REMOTE_LIBRARY_UPNP_DISABLE
 	SV	Nej: Sök inte efter andra UPnP/DLNA-medieservrar.
 
 PLUGIN_REMOTE_LIBRARY_REMOTE_LMS
+	CA	Lyrion Music Servers remots
 	CS	Vzdálené Lyrion Music Servery
 	DA	Eksterne Lyrion Music Servere
 	DE	Entfernte Lyrion Music Server
@@ -309,6 +331,7 @@ PLUGIN_REMOTE_LIBRARY_REMOTE_LMS
 	SV	Externa Lyrion Music Servrar
 
 PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_DESC
+	CA	En determinades circumstàncies, els Lyrion Music Server remots no es poden descobrir automàticament (per exemple, quan s'utilitza una connexió VPN). Podeu introduir manualment les adreces dels servidors per resoldre aquests casos. Podeu utilitzar adreces IP o noms de domini completament qualificats. El port normalment és 9000, però pot ser diferent. Si us plau, comproveu-ho al vostre servidor remot.
 	CS	Za určitých okolností nelze vzdálené Lyrion Music Server automaticky vyhledat (např. při použití připojení VPN). Pro tyto případy můžete zadat adresy serverů ručně. Můžete použít IP adresy nebo plně kvalifikované názvy domén. Port je obvykle 9000, ale může být i jiný. Ověřte si to na svém vzdáleném serveru.
 	DA	Under visse omstændigheder kan eksterne Lyrion Music Servere ikke opdages automatisk (f.eks. ved brug af en VPN forbindelse). Du kan i disse tilfælde manuelt angive server adressen, enten med IP-adresse eller fuldt domænenavn. Standardporten er 9000, men kan være noget andet - check den eksterne server.
 	DE	Unter Umständen können entfernte Lyrion Music Server nicht entdeckt werden (z.B. bei Verwendung eines VPN). Hier können Sie für solche Fälle die Adresse des entfernten Servers manuell angeben. Es können sowohl IP-Adressen als auch Servernamen angegeben werden. Der Port ist üblicherweise 9000, kann aber davon abweichen. Bitte überprüfen Sie dies gegebenenfalls auf dem entfernten Server.
@@ -321,6 +344,7 @@ PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_DESC
 	SV	Vid vissa omständigheter kan externa Lyrion Music servrar inte hittas automatiskt (t.ex. om en VPN används). I dessa fall kan du ange serveradressen antingen med IP-adressen eller fullt domännamn. Standardporten är 9000, men kan vara ändrat, kontrollera den externa servern.
 
 PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_PROMPT
+	CA	http://yourserver:<Port> or http://<IP address>:9000
 	CS	http://vasserver:<port> nebo http://<IP adresa>:9000
 	DA	http://dinserver:<Port> or http://<IP addresse>:9000
 	DE	http://deinserver:<Port> oder http://<IP-Adresse>:9000
@@ -333,6 +357,7 @@ PLUGIN_REMOTE_LIBRARY_REMOTE_LMS_PROMPT
 	SV	http://dinserver:<Port> eller http://<IP adress>:9000
 
 PLUGIN_REMOTE_LIBRARY_IGNORE_MENU
+	CA	Ignora els menús UPnP/DLNA
 	CS	Ignorování nabídek UPnP/DLNA
 	DA	Ignorér UPnP/DLNA menuer
 	DE	UPnP/DLNA Menüs ignorieren
@@ -345,6 +370,7 @@ PLUGIN_REMOTE_LIBRARY_IGNORE_MENU
 	SV	Ignorera UPnP-/DLNA-menyer
 
 PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DESC
+	CA	Defineix una llista de noms de menús separats per comes, que s'han d'ignorar quan es navega per fonts UPnP/DLNA. Això pot incloure, per exemple, menús que proporcionen imatges, vídeos o altres continguts multimèdia que no siguin aplicables a Squeezebox. Deixa aquest camp buit si no voleu ometre cap carpeta.
 	CS	Definujte seznam názvů nabídek oddělených čárkou, které by měly být při procházení zdrojů UPnP/DLNA ignorovány. Může se jednat např. o nabídky s obrázky, videem nebo jinými médii, které se ve Squeezeboxu nepoužívají. Pokud nechcete žádnou složku vynechat, nechte toto pole prázdné.
 	DA	Definér en kommasepareret liste over mappenavne, som skal ignoreres når du bladrer i UPnP/DLNA kilder. Dette kan inkludere mapper som indeholder billeder, videoer, eller andre medier, der ikke kan afspilles med Squeezeboxen. Lad feltet være tomt, hvis du ikke ønsker at hoppe over nogen mapper.
 	DE	Geben Sie eine Komma-getrennte Liste von Ordnernamen an, die beim Durchsuchn von UPnP/DLNA Servern nicht angezeigt werden sollen. Dies können z.B. Ordner mit Fotos, Filmen oder anderen Medien sein, die nicht auf der Squeezebox abspielbar sind. Lassen Sie das Feld leer, um keine Ordner zu überspringen.
@@ -357,6 +383,7 @@ PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DESC
 	SV	Ange en kommaseparerad lista av mappar som skall ignoreras när du bläddrar på UPnP/DLNA servrar. Det kan vara mappar med bilder, videor ellear annan media som inte kan spelas på en Squeezebox-spelare.
 
 PLUGIN_REMOTE_LIBRARY_IGNORE_MENU_DEFAULT
+	CA	Pel·lícules, Vídeo, Fotografies, Imatges
 	CS	Filmy, Videa, Obrázky, Movies, Video, Pictures, Images
 	DA	Film, Videoer, Fotos, Billeder, Video, Foto, Billede
 	DE	Filme, Videos, Fotos, Bilder, Movies, Video, Pictures, Images

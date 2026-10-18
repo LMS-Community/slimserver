@@ -1,4 +1,5 @@
 PLUGIN_PRESETS_EDITOR
+	CA	Editor de preajustos
 	CS	Editor předvoleb
 	DA	Presets editor
 	DE	Presets bearbeiten
@@ -9,6 +10,7 @@ PLUGIN_PRESETS_EDITOR
 	SV	Redigera förinställningar
 
 PLUGIN_PRESETS_EDITOR_DESC
+	CA	Aquest complement us permet editar visualment la configuració de les tecles de preajustos de Squeezebox.
 	CS	Tento zásuvný modul umožňuje vizuálně upravovat konfiguraci předvoleb tlačítek Squeezeboxu.
 	DA	Dette plugin giver dig mulighed for at konfigurere de forudindstillede knapper på din Squeezebox.
 	DE	Dieses Plugin erlaubt es ihnen, die Preset-Tasten ihrer Squeezebox zu konfigurieren.
@@ -19,6 +21,7 @@ PLUGIN_PRESETS_EDITOR_DESC
 	SV	Detta pluginprogram gör det möjligt att visuellt programmera vilka förinställningar som skall ligga på spelarnas knappar.
 
 PLUGIN_PRESETS_EDITOR_NEED_WEBUI
+	CA	Cal activar la interfície web per utilitzar l'editor de preajustos.
 	CS	Chcete-li používat Editor předvoleb, musíte povolit webové uživatelské rozhraní.
 	DA	For at bruge Presets Editor skal du aktivere webgrænsefladen.
 	DE	Um den Presets Editor verwenden zu können müssen Sie das Web-Interface aktivieren.

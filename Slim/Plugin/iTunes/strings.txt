@@ -1,6 +1,7 @@
 # String file for iTunes plugin
 
 ITUNES
+	CA	iTunes
 	CS	iTunes
 	DA	iTunes
 	DE	iTunes
@@ -18,6 +19,7 @@ ITUNES
 	ZH_CN	iTunes
 
 ITUNES_DESC
+	CA	Integració d'iTunes
 	CS	Integrace iTunes
 	DA	Integration med iTunes
 	DE	iTunes Integration (Musik und Wiedergabelisten)
@@ -34,6 +36,7 @@ ITUNES_DESC
 	SV	iTunes-integration
 
 SETUP_ITUNESPLAYLISTFORMAT
+	CA	Format de llista de reproducció d'iTunes
 	CS	Formát seznamu skladeb iTunes
 	DA	Format for iTunes-afspilningslister
 	DE	iTunes-Wiedergabelistenformat
@@ -53,6 +56,7 @@ SETUP_ITUNESPLAYLISTFORMAT
 	ZH_CN	iTunes播放表
 
 SETUP_ITUNESPLAYLISTFORMAT_DESC
+	CA	Aquesta opció determina el format utilitzat en importar llistes de reproducció d'iTunes.
 	CS	Tato volba určuje formát, který je použit při importu seznamů skladeb iTunes.
 	DA	Denne indstilling definerer formatet som anvendes ved import af iTunes' spillelister.
 	DE	Diese Option definiert das Format der aus iTunes importierten Wiedergabelisten.
@@ -72,6 +76,7 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	ZH_CN	这个选项决定了导入iTunes播放表所使用的格式。
 
 ITUNES_PODCASTS
+	CA	Pòdcasts d'iTunes
 	CS	Podcasty iTunes
 	DA	iTunes-podcasts
 	DE	iTunes-Podcasts
@@ -90,6 +95,7 @@ ITUNES_PODCASTS
 	ZH_CN	iTunes Podcasts
 
 USE_ITUNES
+	CA	Utilitzeu iTunes
 	CS	Použít iTunes
 	DA	Anvend iTunes
 	DE	iTunes verwenden
@@ -110,6 +116,7 @@ USE_ITUNES
 	ZH_CN	使用iTunes
 
 SETUP_ITUNES
+	CA	iTunes
 	CS	iTunes
 	DA	iTunes
 	DE	iTunes
@@ -130,6 +137,7 @@ SETUP_ITUNES
 	ZH_CN	iTunes
 
 SETUP_ITUNES_DESC
+	CA	Lyrion Music Server pot utilitzar la vostra biblioteca de música i llistes de reproducció d'iTunes. Qualsevol canvi que feu a iTunes es reflectirà al vostre reproductor. Marqueu la casella següent si voleu importar la informació de la vostra biblioteca musical d'iTunes.
 	CS	Lyrion Music Server může použít vaši hudební knihovnu a seznamy skladeb iTunes. Veškeré změny, které provede v iTunes se odrazí ve vašem přehrávači. Zaškrtněte níže uvedené políčko, jestli chcete importovat informace o vaší hudební knihovně iTunes.
 	DA	Lyrion Music Server kan bruge musikbiblioteket og afspilningslisterne fra iTunes. Alt hvad der ændres i iTunes, bliver afspejlet på afspilleren. Du skal markere feltet nedenfor hvis du vil importere oplysninger om iTunes-musikbiblioteket.
 	DE	Lyrion Music Server kann die Musiksammlung und Wiedergabeliste aus iTunes nutzen. In iTunes vorgenommene Änderungen werden an den Player übertragen. Aktivieren Sie das Kontrollkästchen unten, wenn die iTunes-Musiksammlung importiert werden soll.
@@ -149,6 +157,7 @@ SETUP_ITUNES_DESC
 	ZH_CN	Lyrion Music Server可以使用您的iTunes音乐库和播放表。您在iTunes所作的所有变动都会显示在您的播放机。如果要导入您的iTunes音乐库信息，请点击如下的复选框。
 
 SETUP_ITUNESSCANINTERVAL
+	CA	Interval de recàrrega d'iTunes
 	CS	Interval znovunačtení iTunes
 	DA	Interval for genindlæsning af iTunes
 	DE	iTunes-Aktualisierungsintervall
@@ -168,6 +177,7 @@ SETUP_ITUNESSCANINTERVAL
 	ZH_CN	iTunes刷新间隔时间
 
 SETUP_ITUNESSCANINTERVAL_DESC
+	CA	Quan la biblioteca musical d'iTunes canviï, Lyrion Music Server importarà automàticament la informació de la biblioteca. Podeu especificar la quantitat mínima de temps (en segons) que el servidor esperarà abans de tornar a carregar la vostra biblioteca musical d'iTunes. Un valor de zero inhabilita la recàrrega.
 	CS	Když se změní knihovna iTunes Music, Lyrion Music Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude server čekat před znovunačtením knihovny iTunes Music. Nulová hodnota zakáže znovunačtení.
 	DA	Når noget i iTunes-musikbiblioteket ændres, importeres disse oplysninger automatisk i Lyrion Music Server. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før iTunes-musikbiblioteket genindlæses i serveren. Hvis værdien er 0, genindlæses det ikke.
 	DE	Wenn sich die iTunes-Musiksammlung ändert, importiert Lyrion Music Server die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die Lyrion Music Server mindestens warten soll, bevor die iTunes-Musiksammlung neu geladen wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
@@ -186,6 +196,7 @@ SETUP_ITUNESSCANINTERVAL_DESC
 	ZH_CN	当您的iTunes音乐库改变时，Lyrion Music Server将自动地导入最新音乐库信息。您可以指定Lyrion Music Server再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_ITUNES_LIBRARY_XML_PATH
+	CA	Ubicació de l'arxiu iTunes Music Library.xml
 	CS	Umístění iTunes Music Library.xml
 	DA	Placering af iTunes Music Library.xml
 	DE	Speicherort von iTunes Music Library.xml
@@ -205,6 +216,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH
 	ZH_CN	iTunes Music Library.xml地点
 
 SETUP_ITUNES_LIBRARY_XML_PATH_DESC
+	CA	Si esteu executant iTunes en un ordinador que no sigui el Lyrion Music Server, aquí podeu especificar una ruta explícita al fitxer iTunes Music Library.xml. Deixeu-ho en blanc si esteu executant iTunes al mateix ordinador que Lyrion Music Server.
 	CS	Pokud běží iTunes na jiném počítači než Lyrion Music Server, můžete zde specifikovat explicitní cestu k souboru iTunes Music Library.xml. Ponechte prázdné, pokud iTunes běží na stejném počítači jako Lyrion Music Server.
 	DA	Hvis iTunes kører på en anden computer end Lyrion Music Server, kan du angive stien til filen iTunes Music Library.xml her. Du skal lade feltet være tomt hvis iTunes kører på samme computer som Lyrion Music Server.
 	DE	Falls iTunes auf einem anderen Rechner als Lyrion Music Server ausgeführt wird, können Sie hier den expliziten Pfad zur Datei 'iTunes Music Library.xml' angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie Lyrion Music Server installiert ist.
@@ -225,6 +237,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH_DESC
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH
 #SLT: this term should match the one used in iTunes/Preferences/Advanced
+	CA	Carpeta multimèdia d'iTunes
 	CS	Složka iTunes Media
 	DA	iTunes-mediemappe
 	DE	Ordner 'iTunes Media'
@@ -244,6 +257,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 	ZH_CN	iTunes音乐文件夹
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
+	CA	Si esteu executant iTunes en un ordinador diferent del Lyrion Music Server, podeu especificar aquí una ruta explícita a la carpeta iTunes Media. Deixeu-ho en blanc si esteu executant iTunes al mateix ordinador que Lyrion Music Server.
 	CS	Pokud běží iTunes na jiném počítači než Lyrion Music Server, můžete zde specifikovat explicitní cestu ke složce iTunes Media. Ponechte prázdné, pokud iTunes běží na stejném počítači jako Lyrion Music Server.
 	DA	Hvis iTunes kører på en anden computer end Lyrion Music Server, kan du angive stien til iTunes-mediemappen her. Du skal lade feltet være tomt hvis iTunes kører på samme computer som Lyrion Music Server.
 	DE	Falls iTunes auf einem anderen Rechner als Lyrion Music Server ausgeführt wird, können Sie hier den vollständigen Pfad zum Ordner 'iTunes Media' angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie Lyrion Music Server installiert ist.
@@ -263,6 +277,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	ZH_CN	如果您选择指定iTunes音乐库的地点，请在此输入存有您iTunes音乐的文件夹名及其路径。
 
 SETUP_IGNOREDISABLEDITUNESTRACKS
+	CA	Cançons no marcades a l'iTunes
 	CS	Nezaškrtnuté skladby v iTunes
 	DA	Numre der ikke er markeret i iTunes
 	DE	Deaktivierte Lieder in iTunes
@@ -281,6 +296,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS
 	ZH_CN	在iTunes中未经由复选框筛选的歌曲
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
+	CA	De manera predeterminada, quan elimineu la marca de verificació al costat d'una cançó a iTunes, aquesta no apareixerà quan navegueu per la vostra música amb Lyrion Music Server. Podeu canviar aquest comportament a continuació.
 	CS	Standardně, pokud odstraníte zaškrtnutí vedle nějaké skladby v iTunes, tato skladba se neobjeví při prohlížení vaší hudby pomocí Lyrion Music Serveru. Toto chování můžete změnit níže.
 	DA	Som standard vil numre som du fjerner markeringen fra i iTunes, ikke være synlige når du gennemser din musiksamling i Lyrion Music Server. Du kan ændre det nedenfor.
 	DE	Standardmäßig werden Titeln, die in iTunes deaktiviert sind, nicht in Lyrion Music Server angezeigt. Sie können dieses Verhalten hier ändern.
@@ -300,6 +316,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
 	ZH_CN	根据缺省规定，当您去除iTunes歌曲旁边复选框的标志，该首歌曲就不会在您浏览Lyrion Music Server的音乐时出现。您可以在如下选择是否要遵照此缺省规定。
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_1
+	CA	Inclou totes les cançons
 	CS	Zahrnout všechny skladby
 	DA	Medtag alle numre
 	DE	Alle Lieder einschließen
@@ -318,6 +335,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_1
 	ZH_CN	包括所有歌曲在内
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_0
+	CA	No incloguis cançons sense marcar
 	CS	Nezahrnovat nezaškrtnuté skladby
 	DA	Medtag ikke umarkerede numre
 	DE	Deaktivierte Lieder nicht einschließen
@@ -336,6 +354,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_0
 	ZH_CN	不要包括未经由复选框筛选的歌曲
 
 DEBUG_PLUGIN_ITUNES
+	CA	Informació de sincronització d'iTunes
 	CS	Informace o synchronizaci iTunes
 	DA	Oplysninger om synkronisering med iTunes
 	DE	iTunes Synchronisation
@@ -352,6 +371,7 @@ DEBUG_PLUGIN_ITUNES
 	SV	Synkroniseringsinformation för iTunes
 
 ITUNES_PROGRESS
+	CA	Importació d'iTunes
 	CS	Import iTunes
 	DA	Import af iTunes
 	DE	iTunes Import
@@ -368,6 +388,7 @@ ITUNES_PROGRESS
 	SV	iTunes-import
 
 ITUNES_PLAYLISTS_PROGRESS
+	CA	Importació de llistes de reproducció d'iTunes
 	CS	Import seznamu skladeb iTunes
 	DA	Import af iTunes-spilleliste
 	DE	iTunes Wiedergabelisten Import
@@ -384,6 +405,7 @@ ITUNES_PLAYLISTS_PROGRESS
 	SV	Import av iTunes-spellistor
 
 ITUNES_ARTWORK_PHASE_1_PROGRESS
+	CA	Importació de portades descarregades d'iTunes
 	CS	Import obalů alb stažených do iTunes
 	DA	Import af coverbilleder hentet med iTunes
 	DE	Heruntergeladene iTunes-Plattenhüllen importieren
@@ -400,6 +422,7 @@ ITUNES_ARTWORK_PHASE_1_PROGRESS
 	SV	Import av albumomslag som laddats ner från iTunes
 
 ITUNES_ARTWORK_PHASE_2_PROGRESS
+	CA	Importació de portades afegides per l'usuari d'iTunes
 	CS	Import obalů alb děl přidaných uživatelem do iTunes
 	DA	Import af brugerdefinerede coverbilleder fra iTunes
 	DE	Vom Benutzer hinzugefügte iTunes-Plattenhüllen importieren
@@ -428,6 +451,7 @@ ITUNES_ARTWORK_PHASE_2_PROGRESS
 
 ITUNES_IGNORED_PLAYLISTS_DEFAULTS
 # SLT: These terms MUST correspond to the translation used in iTunes, or the filter will fail
+	CA	Biblioteca, Vídeos, Pel·lícules, Programes de Televisió, Música, Comprat, Pel·lícules llogades, Descarregat
 	CS	Knihovna, Videa, Filmy, TV pořady, Hudba, Zakoupeno, Půjčené filmy, Staženo
 	DA	Bibliotek, Videoer, Film, Tv-udsendelser, Musik, Indkøb, Lejede film, Hentet
 	DE	Mediathek, Videos, Filme, Fernsehsendungen, Musik, Einkäufe, Ausgeliehene Filme, Geladen
@@ -444,6 +468,7 @@ ITUNES_IGNORED_PLAYLISTS_DEFAULTS
 	SV	Bibliotek, Videor, Filmer, TV-program, Musik, Köpt, Hyrfilmer, Hämtat
 
 SETUP_ITUNES_IGNORED_PLAYLISTS
+	CA	Llistes de reproducció ignorades
 	CS	Ignorované seznamy skladeb
 	DA	Ignorerede afspilningslister
 	DE	Ignorierte Wiedergabelisten
@@ -460,6 +485,7 @@ SETUP_ITUNES_IGNORED_PLAYLISTS
 	SV	Ignorererade spellistor
 
 SETUP_ITUNES_IGNORED_PLAYLISTS_DESC
+	CA	Definiu una llista separada per comes de llistes de reproducció d'iTunes que no voleu que s'importin (p. ex., "Vídeos, comprades").
 	CS	Definujte čárkou oddělené seznamy skladeb iTunes, které nechcete importovat (např. „Videa, Zakoupeno“).
 	DA	Opret en kommaadskilt liste med de afspilningslister fra iTunes som ikke skal importeres (fx Videoklip, Købt).
 	DE	Definiert eine durch Komma getrennte Liste von iTunes-Wiedergabelisten, die nicht importiert werden sollen (z.B. "Videos, gekauft").
@@ -476,6 +502,7 @@ SETUP_ITUNES_IGNORED_PLAYLISTS_DESC
 	SV	Skapa en kommaavgränsad lista med iTunes-spellistor som du inte vill importera (t.ex. Videofilmer, köpta).
 
 SETUP_ITUNES_ARTWORK
+	CA	Portades d'iTunes
 	CS	Obaly alb iTunes
 	DA	iTunes-albumcovere
 	DE	iTunes-Cover
@@ -492,6 +519,7 @@ SETUP_ITUNES_ARTWORK
 	SV	iTunes-bilder
 
 SETUP_ITUNES_ARTWORK_DESC
+	CA	Activeu aquesta opció per extreure portades emmagatzemades a iTunes. Tingueu en compte que aquesta operació pot trigar molt de temps, ja que la interfície amb iTunes és lenta.
 	CS	Tuto možnost povolte k extrahování obalů alb uložených na iTunes. Vezměte na vědomí, že tato operace může trvat dlouho, protože rozhraní s iTunes je pomalé.
 	DA	Hvis du aktiverer denne funktion, hentes albumcovere fra iTunes. Bemærk: Det kan tage lang tid, fordi forbindelsen til iTunes er langsom.
 	DE	Aktivieren Sie diese Option, um in iTunes gespeicherte Cover zu verwenden. Beachten Sie, dass dieser Vorgang länger dauern kann, da die Benutzeroberfläche mit iTunes langsam ist.
@@ -508,6 +536,7 @@ SETUP_ITUNES_ARTWORK_DESC
 	SV	Aktivera det här alternativet om du vill packa om bilder (exempelvis skivomslag) som är lagrade i iTunes. Tänk på att detta kan ta tid eftersom överföringen från iTunes går långsamt.
 
 SETUP_ITUNES_EXTRACT_ARTWORK
+	CA	Extreure portades d'iTunes (experimental)
 	CS	Extrahovat obaly alb iTunes (experimentální)
 	DA	Hent iTunes-albumcovere (på prøvestadiet)
 	DE	iTunes-Cover verwenden (experimentell)

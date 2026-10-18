@@ -2,6 +2,7 @@ PLUGIN_DI_FM_NAME
 	EN	DI.FM - Digitally Imported
 
 PLUGIN_DI_FM_DESC
+	CA	DI.FM - Música electrònica addictiva
 	CS	DI.FM – Návyková elektronická hudba
 	DA	DI.FM - Vanedannende elektronisk musik
 	DE	DI.FM - Mitreißende elektronische Musik
@@ -12,6 +13,7 @@ PLUGIN_DI_FM_DESC
 	SV	DI.FM - Vanebildande elektronisk musik
 
 PLUGIN_DI_FM_MISSING_CREDS
+	CA	Si us plau, visiteu DI.FM a la configuració del Lyrion Music Server per afegir les vostres credencials.
 	CS	Prosím, navštivte DI.FM v nastavení Lyrion Music Serveru a přidejte své přihlašovací údaje.
 	DA	Besøg DI.FM i Lyrion Music Server indstillinger for at tilføje dine loginoplysninger.
 	DE	Bitte rufen Sie DI.FM in den Einstellungen des Lyrion Music Servers auf, um Ihre Anmeldedaten hinzuzufügen.
@@ -22,6 +24,7 @@ PLUGIN_DI_FM_MISSING_CREDS
 	SV	Gå till DI.FM in Lyrion Music Server-inställningarna för att lägga till dina loginuppgifter.
 
 PLUGIN_DI_FM_LINK
+	CA	Per crear o gestionar el vostre compte, visiteu <a href="https://www.di.fm" target="_blank">DI.FM</a>.
 	CS	Chcete-li si vytvořit nebo spravovat svůj účet, navštivte <a href="https://www.di.fm" target="_blank">DI.FM</a>.
 	DA	Besøg <a href="https://www.di.fm" target="_blank">DI.FM</a> for at oprette eller administrere din konto.
 	DE	Um ein Konto zu erstellen oder Ihr Konto zu verwalten, besuchen Sie bitte <a href="https://www.di.fm" target="_blank">DI.FM</a>.

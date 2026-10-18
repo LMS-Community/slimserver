@@ -2,6 +2,7 @@ PLUGIN_JAZZRADIO_NAME
 	EN	JAZZRADIO.com
 
 PLUGIN_JAZZRADIO_DESC
+	CA	JAZZRADIO.com - Gaudeix de bona música de jazz
 	CS	JAZZRADIO.com – Užijte si skvělý jazz
 	DA	JAZZRADIO.com - Nyd dejlig jazzmusik
 	DE	JAZZRADIO.com - Genießen Sie großartige Jazzmusik
@@ -12,6 +13,7 @@ PLUGIN_JAZZRADIO_DESC
 	SV	JAZZRADIO.com - Njut av fantastisk jazz
 
 PLUGIN_JAZZRADIO_MISSING_CREDS
+	CA	Si us plau, visiteu JAZZRADIO.com a la configuració del Lyrion Music Server per afegir les vostres credencials.
 	CS	Prosím, navštivte JAZZRADIO.com v nastavení Lyrion Music Serveru a přidejte své přihlašovací údaje.
 	DA	Besøg JAZZRADIO.com i Lyrion Music Server indstillinger for at tilføje dine loginoplysninger.
 	DE	Bitte rufen Sie JAZZRADIO.com in den Einstellungen des Lyrion Music Servers auf, um Ihre Anmeldedaten hinzuzufügen.
@@ -22,6 +24,7 @@ PLUGIN_JAZZRADIO_MISSING_CREDS
 	SV	Gå till JAZZRADIO.com i Lyrion Music Server-inställningarna och lägg till din inloggningsuppgifter.
 
 PLUGIN_JAZZRADIO_LINK
+	CA	Per crear o gestionar el vostre compte, visiteu <a href="https://www.jazzradio.com" target="_blank">JAZZRADIO.com</a>.
 	CS	Chcete-li si vytvořit nebo spravovat svůj účet, navštivte <a href="https://www.jazzradio.com" target="_blank">JAZZRADIO.com</a>.
 	DA	Besøg <a href="https://www.jazzradio.com" target="_blank">JAZZRADIO.com</a> for at oprette eller administrere din konto.
 	DE	Um ein Konto zu erstellen oder Ihr Konto zu verwalten, besuchen Sie bitte <a href="https://www.jazzradio.com" target="_blank">JAZZRADIO.com</a>.

@@ -1,6 +1,7 @@
 # String file for InfoBrowser
 
 PLUGIN_INFOBROWSER
+	CA	Navegador d'informació
 	CS	Informační prohlížeč
 	DA	Informationsaflæser
 	DE	Info-Browser
@@ -17,6 +18,7 @@ PLUGIN_INFOBROWSER
 	SV	Infoläsaren
 
 PLUGIN_INFOBROWSER_DESC
+	CA	Recupereu informació de fonts d'Internet i mostreu-la a través de pantalles remotes, de servidor o de reproductor. Consulteu la secció de configuració per obtenir informació sobre com afegir fonts d'informació addicionals.
 	CS	Získávejte informace z internetových zdrojů a zobrazujte je prostřednictvím dálkového ovladače, serveru nebo přehrávače. Informace o přidání dalších zdrojů informací naleznete v části Nastavení.
 	DA	Hent oplysninger fra kilder på internettet, og få dem vist på fjernbetjeningen, serveren eller afspillerens display. I afsnittet med indstillinger kan du læse hvordan man tilføjer flere informationskilder.
 	DE	Liest Informationen aus Internetquellen und zeigt Sie auf der Fernbedienung, dem Server oder dem Player an. Im Abschnitt 'Einstellungen' finden Sie Hinweise zu zusätzlichen Informationsquellen.
@@ -33,6 +35,7 @@ PLUGIN_INFOBROWSER_DESC
 	SV	Hämta information från Internet och visa den på fjärrkontrollen, servern eller spelarnas skärmar. Se avsnittet om inställningar för mer information om att lägga till fler informationskällor.
 
 SETUP_PLUGIN_INFOBROWSER_DESC
+	CA	El Navegador d'informació us permet llegir informació de fonts d'Internet al comandament a distància, al servidor o a la pantalla del reproductor Squeezebox. Podeu afegir més fonts d'informació mitjançant la interfície web, a Extres/Navegador d'informació.
 	CS	Informační prohlížeč vám umožňuje číst informace z internetových zdrojů na displeji dálkového ovladače vašeho Squeezeboxu, serveru nebo přehrávače. Více informací lze připojit s použitím webového rozhraní pod Doplňky/Informační prohlížeč.
 	DA	Informationsaflæseren giver dig mulighed for at læse informationer fra internetkilder på din Squeezebox-fjernbetjening, server eller afspillerens display. Der kan føjes flere informationskilder til via den webbaserede brugerflade under Ekstra/Informationsaflæser.
 	DE	Mit dem Informations-Browser können Sie Informationen aus Internetquellen auf der Fernbedienung, dem Server oder dem Player anzeigen. Weitere Informationsquellen können Sie in der Web-Benutzeroberfläche unter 'Extras/Informations-Browser' hinzufügen.
@@ -49,6 +52,7 @@ SETUP_PLUGIN_INFOBROWSER_DESC
 	SV	Med infoläsaren kan du visa information från Internetkällor på Squeezebox-fjärrkontrollen, servern eller spelarens skärm. Du kan lägga till fler informationskällor via menyn Extrafunktioner/Infoläsare i webbgränssnittet.
 
 SETUP_PLUGIN_INFOBROWSER_RESET
+	CA	Restablir
 	CS	Resetovat
 	DA	Nulstil
 	DE	Zurücksetzen
@@ -65,6 +69,7 @@ SETUP_PLUGIN_INFOBROWSER_RESET
 	SV	Återställ
 
 SETUP_PLUGIN_INFOBROWSER_RESET_DESC
+	CA	Restableix el menú superior del navegador d'informació a tots els canals predeterminats més tots els canals de complements que tingueu instal·lats.
 	CS	Resetujte nabídku vrchní úrovně informačního prohlížeče na výchozí vstupy a všechny dodatečné vstupy, které jste nainstalovali.
 	DA	Nulstil det øverste niveau i Informationslæseren til standardfeeds samt alle de ekstra feeds du har installeret.
 	DE	Setzt das Menü auf oberster Ebene im Informations-Browser auf die Standard-Feeds sowie die von Ihnen installierten zusätzlichen Feeds zurück.
@@ -81,6 +86,7 @@ SETUP_PLUGIN_INFOBROWSER_RESET_DESC
 	SV	Återställ huvudmenyn för Infoläsaren till alla standardflöden samt alla tilläggsflöden du har lagt till.
 
 SETUP_PLUGIN_INFOBROWSER_ADDONS
+	CA	Es poden mostrar altres fonts d'informació afegint complements del navegador d'informació. Podeu trobar més detalls sobre els complements del navegador d'informació a: <a href="https://wiki.lyrion.org/index.php/Information_Browser" target="wiki">https://wiki.lyrion.org/index.php/Information_Browser</a>.
 	CS	Další informační zdroje lze zobrazit přidáním doplňků informačního prohlížeče. Další podrobnosti o doplňcích informačního prohlížeče naleznete na <a href="https://wiki.lyrion.org/index.php/Information_Browser" target="wiki">https://wiki.lyrion.org/index.php/Information_Browser</a>.
 	DA	Der kan vises informationer fra andre kilder ved at føje udvidelsesmoduler til informationsaflæseren. Der er flere oplysninger om informationsaflæseren på: <a href="https://wiki.lyrion.org/index.php/Information_Browser" target="wiki">https://wiki.lyrion.org/index.php/Information_Browser</a>.
 	DE	Sie können weitere Informationsquellen anzeigen, indem Sie Add-ons für den Info-Browser installieren (siehe <a href="https://wiki.lyrion.org/index.php/Information_Browser" target="wiki">https://wiki.lyrion.org/index.php/Information_Browser</a>).

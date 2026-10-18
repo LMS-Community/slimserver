@@ -1,7 +1,9 @@
 PLUGIN_RADIOTUNES_NAME
+	CA	RadioTunes.com
 	EN	RadioTunes.com
 
 PLUGIN_RADIOTUNES_DESC
+	CA	RadioTunes.com - La teva dosi musical diària
 	CS	RadioTunes.com – Vaše každodenní dávka hudby
 	DA	RadioTunes.com - Din daglige dosis musik
 	DE	RadioTunes.com - Deine tägliche Dosis Musik
@@ -12,6 +14,7 @@ PLUGIN_RADIOTUNES_DESC
 	SV	RadioTunes.com - Din dagliga dos av musik
 
 PLUGIN_RADIOTUNES_MISSING_CREDS
+	CA	Si us plau, visiteu RadioTunes.com a la configuració del Lyrion Music Server per afegir les vostres credencials.
 	CS	Prosím, navštivte RadioTunes.com v nastavení Lyrion Music Serveru a přidejte své přihlašovací údaje.
 	DA	Besøg RadioTunes.com i Lyrion Music Server indstillinger for at tilføje dine loginoplysninger.
 	DE	Bitte rufen Sie RadioTunes.com in den Einstellungen des Lyrion Music Servers auf, um Ihre Anmeldedaten hinzuzufügen.
@@ -22,6 +25,7 @@ PLUGIN_RADIOTUNES_MISSING_CREDS
 	SV	Gå till RadioTunes.com i Lyrion Music Server-inställningarna för att lägga till dina loginuppgifter.
 
 PLUGIN_RADIOTUNES_LINK
+	CA	Per crear o gestionar el vostre compte, visiteu <a href="https://www.radiotunes.com" target="_blank">RadioTunes.com</a>.
 	CS	Chcete-li si vytvořit nebo spravovat svůj účet, navštivte <a href="https://www.radiotunes.com" target="_blank">RadioTunes.com</a>.
 	DA	Besøg <a href="https://www.radiotunes.com" target="_blank">RadioTunes.com</a> for at oprette eller administrere din konto.
 	DE	Um ein Konto zu erstellen oder Ihr Konto zu verwalten, besuchen Sie bitte <a href="https://www.radiotunes.com" target="_blank">RadioTunes.com</a>.

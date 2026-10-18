@@ -1,4 +1,5 @@
 PLUGIN_RADIO_ARTWORK
+	CA	Troba portades per a emissores de ràdio
 	CS	Vyhledávání obalů alb pro rádiové stanice
 	DE	Bilder für Radiosender finden
 	EN	Find Artwork for Radio Stations
@@ -7,6 +8,7 @@ PLUGIN_RADIO_ARTWORK
 	SV	Sök efter omslagsbilder för webradio
 
 PLUGIN_RADIO_ARTWORK_DESC
+	CA	Intenta trobar il·lustracions de pistes reproduïdes des d'emissores de ràdio que no proporcionen la seva pròpia il·lustració. Es basa en el format de títol més utilitzat que es passa com a "artista - títol".
 	CS	Pokuste se najít obaly alb pro skladby přehrávané z rádiových stanic, které neposkytují vlastní obal alba. Je založeno na běžně používaném formátu názvu „interpret - skladba“.
 	DE	Versucht, Bilder für Titel zu finden, die von Radiostationen gespielt werden, welche keine eigenen Bilder bereitstellen. Es basiert auf dem weit verbreiteten Titelformat "Künstler - Titel".
 	EN	Try to find artwork for tracks played from radio stations which don't provide their own artwork. It's based on the widely used title format passed as "artist - title".
@@ -15,6 +17,7 @@ PLUGIN_RADIO_ARTWORK_DESC
 	SV	Försök att hitta omslagsbilder för spår som spelas av radiostationer som inte skickar med egna bilder. Sökningen baseras på den allmänt använda formatet "artist - titel".
 
 PLUGIN_ARTWORK_DONT_SEARCH_FOR_ARTWORK
+	CA	No cerquis la il·lustració del títol en aquesta emissora
 	CS	Nehledat obal alba na této stanici
 	DE	Für diesen Sender nicht nach Titelbildern suchen
 	EN	Don't search for title artwork on this station
@@ -23,6 +26,7 @@ PLUGIN_ARTWORK_DONT_SEARCH_FOR_ARTWORK
 	SV	Sök inte efter omslagsbilder för den här stationen
 
 PLUGIN_ARTWORK_SEARCH_FOR_ARTWORK
+	CA	Cerca la il·lustració del títol si és possible
 	CS	Hledat obaly alb, pokud je to možné
 	DE	Suche nach Titelbildern, wenn möglich
 	EN	Search for title artwork if possible
@@ -31,6 +35,7 @@ PLUGIN_ARTWORK_SEARCH_FOR_ARTWORK
 	SV	Sök efter omslagsbilder om det är möjligt
 
 PLUGIN_ARTWORK_ADDED_TO_IGNORELIST
+	CA	Ja no es cercaran més il·lustracions
 	CS	Již nebude hledat obaly alb
 	DE	Suche nicht mehr nach Titelbildern
 	EN	Will no longer search for artwork
@@ -39,6 +44,7 @@ PLUGIN_ARTWORK_ADDED_TO_IGNORELIST
 	SV	Söker inte längre efter omslagsbilder
 
 PLUGIN_ARTWORK_REMOVED_FROM_IGNORELIST
+	CA	Es buscarà la il·lustració de la pista
 	CS	Bude hledat obaly alb
 	DE	Es wird wieder nach Titelbildern gesucht
 	EN	Will search for track artwork
@@ -47,6 +53,7 @@ PLUGIN_ARTWORK_REMOVED_FROM_IGNORELIST
 	SV	Söker efter omslagsbilder igen
 
 PLUGIN_ARTWORK_SETTINGS_IGNORELIST
+	CA	No es cercarà les il·lustracions de les següents emissores de ràdio (una URL per línia):
 	CS	Nehledat obaly alb pro následující rádiové stanice (jedna adresa URL na řádek):
 	DE	Für die folgenden Radiosender keine Titelbilder suchen (eine URL pro Zeile):
 	EN	Don't look up artwork for the following radio stations (one URL per line):

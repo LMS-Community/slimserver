@@ -1,6 +1,7 @@
 # String file for Podcast plugin
 
 PLUGIN_PODCAST
+	CA	Pòdcast
 	CS	Podcasty
 	DA	Podcasts
 	DE	Podcasts
@@ -18,6 +19,7 @@ PLUGIN_PODCAST
 	SV	Poddsändningar
 
 PLUGIN_PODCAST_DESC
+	CA	Accés a pòdcasts
 	CS	Přístup k podcastům
 	DA	Adgang til podcasts
 	DE	Zugang zu Podcasts
@@ -34,6 +36,7 @@ PLUGIN_PODCAST_DESC
 	SV	Tillgång till poddsändningar
 
 PODCAST_GROUP_DESC
+	CA	El connector Podcast Browser us permet veure i escoltar pòdcasts.
 	CS	Zásuvný modul prohlížeč podcastů vám umožňuje prohlížet a poslouchat podcasty.
 	DA	Udvidelsesmodulet til podcasts giver dig mulighed for at se og høre podcasts.
 	DE	Mit dem Podcast-Browser können Sie Podcasts wiedergeben.
@@ -51,6 +54,7 @@ PODCAST_GROUP_DESC
 	SV	Med plugin-programmet för poddsändningsläsaren kan du visa och lyssna på poddsändningar.
 
 SETUP_PLUGIN_PODCAST_ADD_FEED
+	CA	Afegiu un canal nou:
 	CS	Přidat nový kanál:
 	DA	Tilføj et nyt feed:
 	DE	Neuen Feed hinzufügen:
@@ -67,6 +71,7 @@ SETUP_PLUGIN_PODCAST_ADD_FEED
 	SV	Lägg till nytt flöde:
 
 SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
+	CA	Canals existents
 	CS	Stávající kanály:
 	DA	Eksisterende feeds:
 	DE	Eingetragene Feeds:
@@ -83,6 +88,7 @@ SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 	SV	Befintliga flöden:
 
 SETUP_PLUGIN_PODCAST_INVALID_FEED
+	CA	Canal no vàlid - %s
 	CS	Neplatný kanál – %s
 	DA	Ugyldigt feed - %s
 	DE	Ungültiger Feed - %s
@@ -99,6 +105,7 @@ SETUP_PLUGIN_PODCAST_INVALID_FEED
 	SV	Ogiltigt flöde – %s
 
 PLUGIN_PODCAST_PLAY_FROM_BEGINNING
+	CA	Reprodueix des del principi
 	CS	Přehrát od začátku
 	DA	Afspil fra begyndelsen
 	DE	Vom Anfang an wiedergeben
@@ -111,6 +118,7 @@ PLUGIN_PODCAST_PLAY_FROM_BEGINNING
 	SV	Spela från början
 
 PLUGIN_PODCAST_PLAY_FROM_POSITION_X
+	CA	Reprodueix des de l'última posició (%s)
 	CS	Přehrát z poslední pozice (%s)
 	DA	Afspil videre fra seneste position (%s)
 	DE	Von der letzten Position wiedergeben (%s)
@@ -123,6 +131,7 @@ PLUGIN_PODCAST_PLAY_FROM_POSITION_X
 	SV	Spela vidare från senaste positionen (%s)
 
 PLUGIN_PODCAST_SKIP_BACK_SECS
+	CA	Retrocedir segons
 	CS	Skok o několik sekund zpět
 	DA	Spring X sekunder tilbage
 	DE	Zurückspringen um X Sekunden
@@ -135,6 +144,7 @@ PLUGIN_PODCAST_SKIP_BACK_SECS
 	SV	Hoppa tillbaka X sekunder
 
 PLUGIN_PODCAST_SKIP_BACK_DESC
+	CA	El menú contextual dels pòdcasts ofereix una opció per retrocedir ràpidament dins del pòdcast. Per defecte, aquesta opció salta 15 segons enrere.
 	CS	Kontextová nabídka podcastů nabízí možnost rychlého skoku zpět v rámci podcastu. Ve výchozím nastavení tato možnost přeskočí o 15 sekund zpět.
 	DA	Podcasts kontekstmenuen giver mulighed for at springe hurtigt tilbage i podcasten. Som standard springer denne indstilling 15 sekunder baglæns. Angiv her hvor langt dette spring skal være.
 	DE	Das Kontextmenü bietet in Podcasts die Möglichkeit, schnell zurückzuspringen. Standardmässig sind dies 15 Sekunden. Geben Sie hier an, wie weit Sie zurückspringen wollen.
@@ -147,6 +157,7 @@ PLUGIN_PODCAST_SKIP_BACK_DESC
 	SV	Det är möjligt att från podsändningens meny snabbt hoppa tillbaka. Standarden är att hoppa tillbak 15 sekunder. Ange här hur många sekunder du vill hoppa tillbaka.
 
 PLUGIN_PODCAST_SKIP_BACK
+	CA	Retrocedeix %s segons
 	CS	Skok o %s sekund zpět
 	DA	Spring tilbage %s sekunder
 	DE	%s Sekunden zurück springen
@@ -159,6 +170,7 @@ PLUGIN_PODCAST_SKIP_BACK
 	SV	Hoppa tillbaka %s sekunder 
 
 PLUGIN_PODCAST_RECENTLY_PLAYED
+	CA	Reproduït recentment
 	CS	Nedávno přehrávané
 	DA	Nyligt afspillede
 	DE	Zuletzt wiedergegeben
@@ -169,6 +181,7 @@ PLUGIN_PODCAST_RECENTLY_PLAYED
 	SV	Nyligen spelade
 
 PLUGIN_PODCAST_SEARCH
+	CA	Cerca canals
 	CS	Prohledat kanály
 	DA	Søg feeds
 	DE	Shows suchen
@@ -179,6 +192,7 @@ PLUGIN_PODCAST_SEARCH
 	SV	Sök efter podsändningar
 
 PLUGIN_PODCAST_PROVIDER
+	CA	Proveïdor de pòdcasts
 	CS	Poskytovatel podcastů
 	DA	Podcast udbydere
 	DE	Podcastverzeichnis
@@ -189,6 +203,7 @@ PLUGIN_PODCAST_PROVIDER
 	SV	Podsändningsleverantör
 
 PLUGIN_PODCAST_PROVIDER_DESC
+	CA	Defineix el proveïdor de canals de pòdcast (agregador).
 	CS	Nastavit poskytovatele podcastových kanálů (agregátor).
 	DA	Vælg udbyder af ​​Podcast-feeds (aggregator).
 	DE	Wählen Sie das Podcastverzeichnis (Aggregator).
@@ -199,6 +214,7 @@ PLUGIN_PODCAST_PROVIDER_DESC
 	SV	Välj podsändningsleverantör
 
 PLUGIN_PODCAST_SEARCH_FAILED
+	CA	La cerca ha fallat
 	CS	Vyhledávání se nepodařilo
 	DA	Søgning fejlede
 	DE	Suche fehlgeschlagen
@@ -208,6 +224,7 @@ PLUGIN_PODCAST_SEARCH_FAILED
 	SV	Sökningen misslyckades
 
 PLUGIN_PODCAST_WHATSNEW
+	CA	Episodis nous dels darrers %s dies
 	CS	Nové epizody za posledních %s dní
 	DA	Nye afsnit fra de sidste %s dage
 	DE	Neue Episoden der letzten %s Tage
@@ -218,6 +235,7 @@ PLUGIN_PODCAST_WHATSNEW
 	SV	Nya avsnitt från de senaste %s dagarna
 
 PLUGIN_PODCAST_AUTHOR
+	CA	Autor:
 	CS	Autor:
 	DA	Forfatter:
 	DE	Autor:
@@ -228,6 +246,7 @@ PLUGIN_PODCAST_AUTHOR
 	SV	Upphovsman:
 
 PLUGIN_PODCAST_WHATSNEW_DESC
+	CA	Definiu quants dies passats voleu consultar els episodis nous i el nombre màxim d'episodis per flux. Tingueu en compte que és possible que el proveïdor no faci un seguiment dels canals afegits manualment.
 	CS	Nastavte, kolik dní zpětně se mají hledat nové epizody, a maximální počet epizod na tok. Všimněte si, že ručně přidané kanály nemusí být poskytovatelem sledovány
 	DA	Definerer den maksimale alder for nye afsnit (i dage) og det maksimale antal pr. podcast. Bemærk, at manuelt tilføjede feeds muligvis ikke spores af udbyderen
 	DE	Definieren Sie, wieviele Tage und Anzahl Episoden pro Show zurück verfolgt werden soll. Beachten Sie, dass manuell erfasste Podcasts diese Einstellungen u.U. nicht berücksichtigen können.
@@ -238,6 +257,7 @@ PLUGIN_PODCAST_WHATSNEW_DESC
 	SV	Definiera det maximala antalet dagar för att söka efter nya avsnitt och det maximala antalet avsnitt per flöde. Observera att manuellt tillagda podsändningar kanske inte uppdateras av leverantören.
 
 PLUGIN_PODCAST_NEWSINCE
+	CA	Nombre de dies d'història
 	CS	Počet dnů historie
 	DA	Antal dages historik
 	DE	Anzahl Tage im Verlauf
@@ -248,6 +268,7 @@ PLUGIN_PODCAST_NEWSINCE
 	SV	Antal dagars historik
 
 PLUGIN_PODCAST_MAXNEW
+	CA	Nombre de nous episodis per canal
 	CS	Počet nových epizod na kanál
 	DA	Antal nye afsnit per feed
 	DE	Anzahl neuer Episoden pro Show
@@ -258,6 +279,7 @@ PLUGIN_PODCAST_MAXNEW
 	SV	Antal nya avsnitt per flöde
 
 PLUGIN_PODCAST_COUNTRY_DESC
+	CA	Limita la cerca a un país (opcional)
 	CS	Omezit vyhledávání na zemi (volitelné)
 	DA	Begræns søgning til et land (valgfrit)
 	DE	Suche auf ein Land beschränken (optional)
@@ -268,6 +290,7 @@ PLUGIN_PODCAST_COUNTRY_DESC
 	SV	Begränsa sökningen till et land (valfritt)
 
 PLUGIN_PODCAST_COUNTRY
+	CA	País
 	CS	Země
 	DA	Land
 	DE	Land
@@ -278,6 +301,7 @@ PLUGIN_PODCAST_COUNTRY
 	SV	Land
 
 PLUGIN_PODCAST_SUBSCRIBE
+	CA	Subscripció a '%s'
 	CS	Přihlásit se k odběru „%s“
 	DA	Abonnér på '%s'
 	DE	Podcast '%s' abonnieren
@@ -288,6 +312,7 @@ PLUGIN_PODCAST_SUBSCRIBE
 	SV	Prenumerera på '%s'
 
 PLUGIN_PODCAST_UNSUBSCRIBE
+	CA	Cancel·la la subscripció a '%s'
 	CS	Odhlásit se z odběru „%s“
 	DA	Afmeld '%s'
 	DE	Von Podcast '%s' abmelden
@@ -298,6 +323,7 @@ PLUGIN_PODCAST_UNSUBSCRIBE
 	SV	Avbeställ prenumerationen '%s'
 
 PLUGIN_PODCAST_DONE
+	CA	Subscripció/Cancel·lada la subscripció al programa...
 	CS	Přihlášeno/odhlášeno z kanálu...
 	DA	Abonnementstatus justeret...
 	DE	Abonnement angepasst...

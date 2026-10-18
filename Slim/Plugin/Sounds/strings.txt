@@ -1,4 +1,5 @@
 PLUGIN_SOUNDS_MODULE_NAME
+	CA	Sons i efectes
 	CS	Zvuky a efekty
 	DA	Lyde og effekter
 	DE	Sounds & Effekte
@@ -15,6 +16,7 @@ PLUGIN_SOUNDS_MODULE_NAME
 	SV	Ljud och effekter
 
 PLUGIN_SOUNDS_ERROR
+	CA	Error de sons i efectes
 	CS	Chyba Zvuků a efektů
 	DA	Fejl ved lyde og effekter
 	DE	Fehler in Sounds & Effekte
@@ -31,6 +33,7 @@ PLUGIN_SOUNDS_ERROR
 	SV	Ljud och effekter: fel
 
 PLUGIN_SOUNDS_ALARMS
+	CA	Sons d'alarma
 	CS	Zvuky budíku
 	DE	Weckertöne
 	EN	Alarm Sounds
@@ -39,6 +42,7 @@ PLUGIN_SOUNDS_ALARMS
 	SV	Alarmljud
 
 PLUGIN_SOUNDS_EFFECTS
+	CA	Efectes de so
 	CS	Zvukové efekty
 	DA	Lydeffekter
 	DE	Soundeffekte
@@ -55,6 +59,7 @@ PLUGIN_SOUNDS_EFFECTS
 	SV	Ljudeffekter
 
 PLUGIN_SOUNDS_NATURAL
+	CA	Sons de la natura
 	CS	Zvuky přírody
 	DA	Naturlige lyde
 	DE	Naturgeräusche
@@ -71,6 +76,7 @@ PLUGIN_SOUNDS_NATURAL
 	SV	Naturljud
 
 PLUGIN_SOUNDS_MUSICAL
+	CA	Sons musicals
 	CS	Hudební zvuky
 	DA	Musikalske lyde
 	DE	Musikgeräusche
@@ -87,6 +93,7 @@ PLUGIN_SOUNDS_MUSICAL
 	SV	Musikljud
 
 PLUGIN_SOUNDS_BARN_FIRE
+	CA	Foc de graner
 	CS	Barn Fire
 	DA	Laden brænder
 	DE	Scheunenbrand
@@ -103,6 +110,7 @@ PLUGIN_SOUNDS_BARN_FIRE
 	SV	Ladan brinner
 
 PLUGIN_SOUNDS_BLUE_HENRY
+	CA	Flascó
 	CS	Blue Henry
 	DA	Blue Henry
 	DE	Blue Henry
@@ -119,6 +127,7 @@ PLUGIN_SOUNDS_BLUE_HENRY
 	SV	Blue Henry
 
 PLUGIN_SOUNDS_BLUE_ORCHID
+	CA	Orquídia blava
 	CS	Blue Orchid
 	DA	Blue Orchid
 	DE	Blaue Orchidee
@@ -135,6 +144,7 @@ PLUGIN_SOUNDS_BLUE_ORCHID
 	SV	Blå Orchidé
 
 PLUGIN_SOUNDS_BONGO_TECH
+	CA	Bongo Tech
 	CS	Bongo Tech
 	DA	Bongotech
 	DE	Bongo Tech
@@ -151,6 +161,7 @@ PLUGIN_SOUNDS_BONGO_TECH
 	SV	Bongo Tech
 
 PLUGIN_SOUNDS_BRAINFLUID
+	CA	Líquid cerebral
 	CS	Brainfluid
 	DA	Hjernemasse
 	DE	Hirnflüssigkeit
@@ -167,6 +178,7 @@ PLUGIN_SOUNDS_BRAINFLUID
 	SV	Hjärnvätska
 
 PLUGIN_SOUNDS_BUTTERY
+	CA	Mantegosa
 	CS	Buttery
 	DA	Buttery
 	DE	Cafeteria
@@ -183,6 +195,7 @@ PLUGIN_SOUNDS_BUTTERY
 	SV	Buttery
 
 PLUGIN_SOUNDS_CAPPUCINO
+	CA	Cappucino
 	CS	Cappucino
 	DA	Cappuccino
 	DE	Cappucino
@@ -199,6 +212,7 @@ PLUGIN_SOUNDS_CAPPUCINO
 	SV	Cappuccino
 
 PLUGIN_SOUNDS_COOL_CATS
+	CA	Gats genials
 	CS	Cool Cats
 	DA	Cool Cats
 	DE	Coole Katzen
@@ -215,6 +229,7 @@ PLUGIN_SOUNDS_COOL_CATS
 	SV	Cool Cats
 
 PLUGIN_SOUNDS_CORNFLOWER
+	CA	Blavet
 	CS	Cornflower
 	DA	Kornblomst
 	DE	Kornblume
@@ -231,6 +246,7 @@ PLUGIN_SOUNDS_CORNFLOWER
 	SV	Cornflower
 
 PLUGIN_SOUNDS_CRYSTALIZE
+	CA	Cristalització
 	CS	Crystalize
 	DA	Crystalize
 	DE	Kristall
@@ -247,6 +263,7 @@ PLUGIN_SOUNDS_CRYSTALIZE
 	SV	Crystalize
 
 PLUGIN_SOUNDS_EXPERIMENTAL
+	CA	Experimental
 	CS	Experimental
 	DA	Eksperimental
 	DE	Experimentell
@@ -263,6 +280,7 @@ PLUGIN_SOUNDS_EXPERIMENTAL
 	SV	Experimental
 
 PLUGIN_SOUNDS_HIBISCUS
+	CA	Hibisc
 	CS	Hibiscus
 	DA	Hibiscus
 	DE	Hibiskus
@@ -279,6 +297,7 @@ PLUGIN_SOUNDS_HIBISCUS
 	SV	Hibiscus
 
 PLUGIN_SOUNDS_JUNK_ARMOR
+	CA	Armadura escombraria
 	CS	Junk Armor
 	DA	Skrammelrustning
 	DE	Schrott
@@ -295,6 +314,7 @@ PLUGIN_SOUNDS_JUNK_ARMOR
 	SV	Skrotrustning
 
 PLUGIN_SOUNDS_MELANCHOLY_DAY
+	CA	Dia melancòlic
 	CS	Melancholy Day
 	DA	Melankolsk dag
 	DE	Melancholischer Tag
@@ -311,6 +331,7 @@ PLUGIN_SOUNDS_MELANCHOLY_DAY
 	SV	Melankolisk dag
 
 PLUGIN_SOUNDS_SLICKBABY
+	CA	Slickbaby
 	CS	Slickbaby
 	DA	Slickbaby
 	DE	Slickbaby
@@ -327,6 +348,7 @@ PLUGIN_SOUNDS_SLICKBABY
 	SV	Slick baby
 
 PLUGIN_SOUNDS_SLOG_IT_OUT
+	CA	Torna-hi
 	CS	Slog It Out
 	DA	Slog It Out
 	DE	Rauferei
@@ -343,6 +365,7 @@ PLUGIN_SOUNDS_SLOG_IT_OUT
 	SV	Slog It Out
 
 PLUGIN_SOUNDS_SOFT_HORIZON
+	CA	Horitzó suau
 	CS	Soft Horizon
 	DA	Soft Horizon
 	DE	Weicher Horizont
@@ -359,6 +382,7 @@ PLUGIN_SOUNDS_SOFT_HORIZON
 	SV	Soft Horizon
 
 PLUGIN_SOUNDS_SRI_LAMA
+	CA	Sri Lama
 	CS	Sri Lama
 	DA	Sri Lama
 	DE	Sri Lama
@@ -375,6 +399,7 @@ PLUGIN_SOUNDS_SRI_LAMA
 	SV	Sri Lama
 
 PLUGIN_SOUNDS_STARGAZER
+	CA	Observador d'estels
 	CS	Stargazer
 	DA	Stargazer
 	DE	Sternengucker
@@ -391,6 +416,7 @@ PLUGIN_SOUNDS_STARGAZER
 	SV	Stargazer
 
 PLUGIN_SOUNDS_SUPER_CHEESE
+	CA	Super formatge
 	CS	Super Cheese
 	DA	Super Cheese
 	DE	Superkäse
@@ -407,6 +433,7 @@ PLUGIN_SOUNDS_SUPER_CHEESE
 	SV	Super Cheese
 
 PLUGIN_SOUNDS_TAIL_HONKER
+	CA	Tail Honker
 	CS	Tail Honker
 	DA	Båthorn
 	DE	Hupe
@@ -423,6 +450,7 @@ PLUGIN_SOUNDS_TAIL_HONKER
 	SV	Tail Honker
 
 PLUGIN_SOUNDS_TONGUE_CHEEK
+	CA	Llengua i galta
 	CS	Tongue & Cheek
 	DA	Tongue & Cheek
 	DE	Zunge und Wange
@@ -439,6 +467,7 @@ PLUGIN_SOUNDS_TONGUE_CHEEK
 	SV	Tongue & Cheek
 
 PLUGIN_SOUNDS_TRANSLAB
+	CA	Translab
 	CS	TransLab
 	DA	TransLab
 	DE	TransLab
@@ -455,6 +484,7 @@ PLUGIN_SOUNDS_TRANSLAB
 	SV	TransLab
 
 PLUGIN_SOUNDS_TWEEDLEDUM
+	CA	Pocasolta
 	CS	Tweedledum
 	DA	Tweedledum
 	DE	Tweedledum
@@ -471,6 +501,7 @@ PLUGIN_SOUNDS_TWEEDLEDUM
 	SV	Tweedledum
 
 PLUGIN_SOUNDS_TWENSA
+	CA	Twensa
 	CS	Twensa
 	DA	Twensa
 	DE	Twensa
@@ -487,6 +518,7 @@ PLUGIN_SOUNDS_TWENSA
 	SV	Twensa
 
 PLUGIN_SOUNDS_BABBLING_BROOK
+	CA	Rierol murmurant
 	CS	Bublavý potok
 	DA	Rislende bæk
 	DE	Plätschernder Bach
@@ -503,6 +535,7 @@ PLUGIN_SOUNDS_BABBLING_BROOK
 	SV	Porlande bäck
 
 PLUGIN_SOUNDS_BUBBLES
+	CA	Bombolles
 	CS	Bubliny
 	DA	Bobler
 	DE	Seifenblasen
@@ -519,6 +552,7 @@ PLUGIN_SOUNDS_BUBBLES
 	SV	Bubblor
 
 PLUGIN_SOUNDS_CRICKETS
+	CA	Grills
 	CS	Cvrčci
 	DA	Fårekyllinger
 	DE	Grillen
@@ -535,6 +569,7 @@ PLUGIN_SOUNDS_CRICKETS
 	SV	Syrsor
 
 PLUGIN_SOUNDS_FIRE
+	CA	Foc
 	CS	Oheň
 	DA	Ild
 	DE	Feuer
@@ -551,6 +586,7 @@ PLUGIN_SOUNDS_FIRE
 	SV	Eld
 
 PLUGIN_SOUNDS_HARD_RAIN_THUNDER
+	CA	Pluja forta i trons
 	CS	Prudký déšť a hrom
 	DA	Hård regn og torden
 	DE	Heftiger Regen und Donner
@@ -567,6 +603,7 @@ PLUGIN_SOUNDS_HARD_RAIN_THUNDER
 	SV	Ösregn och åska
 
 PLUGIN_SOUNDS_HEARTBEAT_FAST
+	CA	Batec de cor accelerat
 	CS	Rychlý srdeční tep
 	DA	Hurtig hjertebanken
 	DE	Schnelles Herzklopfen
@@ -583,6 +620,7 @@ PLUGIN_SOUNDS_HEARTBEAT_FAST
 	SV	Snabba hjärtslag
 
 PLUGIN_SOUNDS_HEARTBEAT
+	CA	Batec de cor
 	CS	Srdeční tep
 	DA	Hjerteslag
 	DE	Herzschlag
@@ -599,6 +637,7 @@ PLUGIN_SOUNDS_HEARTBEAT
 	SV	Hjärtslag
 
 PLUGIN_SOUNDS_HORSE_WALKING
+	CA	Passejada a cavall
 	CS	Koňská kopyta
 	DA	Hest der traver
 	DE	Gehendes Pferd
@@ -615,6 +654,7 @@ PLUGIN_SOUNDS_HORSE_WALKING
 	SV	Häst i skritt
 
 PLUGIN_SOUNDS_HORSE_WHINNY
+	CA	Renill de cavall
 	CS	Řehtání koně
 	DA	Vrinskende hest
 	DE	Pferdewiehern
@@ -631,6 +671,7 @@ PLUGIN_SOUNDS_HORSE_WHINNY
 	SV	Hästgnägg
 
 PLUGIN_SOUNDS_LAPPING_WAVES
+	CA	Ones que llisquen
 	CS	Šplouchající vlny
 	DA	Bølgeskvulp
 	DE	Schwappende Wellen
@@ -647,6 +688,7 @@ PLUGIN_SOUNDS_LAPPING_WAVES
 	SV	Skvalpande vågor
 
 PLUGIN_SOUNDS_MEADOWLARK
+	CA	Garsa dels prats
 	CS	Skřivan
 	DA	Lærke
 	DE	Vogelgezwitscher
@@ -663,6 +705,7 @@ PLUGIN_SOUNDS_MEADOWLARK
 	SV	Stare
 
 PLUGIN_SOUNDS_OCEAN_SURF
+	CA	Ones de l'oceà
 	CS	Oceánský příboj
 	DA	Bølgeslag
 	DE	Brandung
@@ -679,6 +722,7 @@ PLUGIN_SOUNDS_OCEAN_SURF
 	SV	Surfning
 
 PLUGIN_SOUNDS_RAIN_THUNDER
+	CA	Pluja i trons
 	CS	Déšť a hrom
 	DA	Regn og torden
 	DE	Regen und Donner
@@ -695,6 +739,7 @@ PLUGIN_SOUNDS_RAIN_THUNDER
 	SV	Regn och åska
 
 PLUGIN_SOUNDS_RAIN_OUTSIDE
+	CA	Plou a fora
 	CS	Déšť venku
 	DA	Regn udenfor
 	DE	Regen draußen
@@ -711,6 +756,7 @@ PLUGIN_SOUNDS_RAIN_OUTSIDE
 	SV	Regn utanför
 
 PLUGIN_SOUNDS_RAIN_SPLASHING
+	CA	Esquitxades de pluja
 	CS	Stříkající déšť
 	DA	Plaskende regn
 	DE	Regentropfen
@@ -727,6 +773,7 @@ PLUGIN_SOUNDS_RAIN_SPLASHING
 	SV	Regn
 
 PLUGIN_SOUNDS_RIVER
+	CA	Riu
 	CS	Řeka
 	DA	Flod
 	DE	Fluss
@@ -743,6 +790,7 @@ PLUGIN_SOUNDS_RIVER
 	SV	Flod
 
 PLUGIN_SOUNDS_ROBINS
+	CA	Pit-roig
 	CS	Červenky
 	DA	Rødkælke
 	DE	Rotkehlchen
@@ -759,6 +807,7 @@ PLUGIN_SOUNDS_ROBINS
 	SV	Rödhakar
 
 PLUGIN_SOUNDS_ROOSTER_CROW
+	CA	El cant del gall
 	CS	Kohoutí kokrhání
 	DA	Hanegal
 	DE	Krähender Hahn
@@ -775,6 +824,7 @@ PLUGIN_SOUNDS_ROOSTER_CROW
 	SV	Tuppgalande
 
 PLUGIN_SOUNDS_RURAL
+	CA	Rural
 	CS	Venkov
 	DA	Landliv
 	DE	Land
@@ -791,6 +841,7 @@ PLUGIN_SOUNDS_RURAL
 	SV	Landsbyggd
 
 PLUGIN_SOUNDS_SHORE_SEAGULLS
+	CA	Costa i gavines
 	CS	Pobřeží a rackové
 	DA	Strand og måger
 	DE	Küste & Möwen
@@ -807,6 +858,7 @@ PLUGIN_SOUNDS_SHORE_SEAGULLS
 	SV	Strand med måsar
 
 PLUGIN_SOUNDS_SPRING_PEEPERS
+	CA	Granotes de primavera
 	CS	Rosničky křížkované
 	DA	Løvfrø
 	DE	Froschquaken
@@ -823,6 +875,7 @@ PLUGIN_SOUNDS_SPRING_PEEPERS
 	SV	Grodor
 
 PLUGIN_SOUNDS_STREAM_BIRDS
+	CA	Rierol i ocells
 	CS	Potok a ptáci
 	DA	Bæk og fugle
 	DE	Vögel am Bach
@@ -839,6 +892,7 @@ PLUGIN_SOUNDS_STREAM_BIRDS
 	SV	Bäck och fågelkvitter
 
 PLUGIN_SOUNDS_STREAM
+	CA	Riera
 	CS	Potok
 	DA	Stream
 	DE	Stream
@@ -855,6 +909,7 @@ PLUGIN_SOUNDS_STREAM
 	SV	Ström
 
 PLUGIN_SOUNDS_TROPICAL_AMBIENCE
+	CA	Ambient tropical
 	CS	Tropické prostředí
 	DA	Tropiske stemninger
 	DE	Tropengeräusche
@@ -871,6 +926,7 @@ PLUGIN_SOUNDS_TROPICAL_AMBIENCE
 	SV	Tropisk atmosfär
 
 PLUGIN_SOUNDS_WAVES
+	CA	Onades
 	CS	Vlny
 	DA	Bølger
 	DE	Wellen
@@ -887,6 +943,7 @@ PLUGIN_SOUNDS_WAVES
 	SV	Vågor
 
 PLUGIN_SOUNDS_WIND_WHISTLE
+	CA	Xiulet del vent
 	CS	Hvízdání větru
 	DA	Vindens fløjten
 	DE	Pfeifender Wind
@@ -903,6 +960,7 @@ PLUGIN_SOUNDS_WIND_WHISTLE
 	SV	Vindpipa
 
 PLUGIN_SOUNDS_WIND
+	CA	Vent
 	CS	Vítr
 	DA	Vind
 	DE	Wind
@@ -919,6 +977,7 @@ PLUGIN_SOUNDS_WIND
 	SV	Vind
 
 PLUGIN_SOUNDS_AMBULANCE
+	CA	Ambulància
 	CS	Ambulance
 	DA	Ambulance
 	DE	Martinshorn
@@ -935,6 +994,7 @@ PLUGIN_SOUNDS_AMBULANCE
 	SV	Ambulans
 
 PLUGIN_SOUNDS_BLENDER
+	CA	Batedora
 	CS	Mixér
 	DA	Blender
 	DE	Mixer
@@ -951,6 +1011,7 @@ PLUGIN_SOUNDS_BLENDER
 	SV	Mixer
 
 PLUGIN_SOUNDS_CITY
+	CA	Ciutat
 	CS	Město
 	DA	By
 	DE	Stadt
@@ -967,6 +1028,7 @@ PLUGIN_SOUNDS_CITY
 	SV	Ort
 
 PLUGIN_SOUNDS_COINS
+	CA	Monedes
 	CS	Mince
 	DA	Mønter
 	DE	Münzen
@@ -983,6 +1045,7 @@ PLUGIN_SOUNDS_COINS
 	SV	Mynt
 
 PLUGIN_SOUNDS_CROSSING_BELLS
+	CA	Campanes de pas
 	CS	Zvonky na přejezdech
 	DA	Signal fra jernbaneoverskæring
 	DE	Glockengeläut
@@ -999,6 +1062,7 @@ PLUGIN_SOUNDS_CROSSING_BELLS
 	SV	Varningsklockor
 
 PLUGIN_SOUNDS_ELECTRO_FUZZ
+	CA	Electro Fuzz
 	CS	Elektronický zvuk
 	DA	Elektroniske lyde
 	DE	Elektrisches Britzeln
@@ -1015,6 +1079,7 @@ PLUGIN_SOUNDS_ELECTRO_FUZZ
 	SV	Elektroniska ljud
 
 PLUGIN_SOUNDS_FOGHORN
+	CA	Sirena de boira
 	CS	Siréna
 	DA	Tågehorn
 	DE	Nebelhorn
@@ -1031,6 +1096,7 @@ PLUGIN_SOUNDS_FOGHORN
 	SV	Mistlur
 
 PLUGIN_SOUNDS_FREIGHT_TRAIN_PASSING
+	CA	Tren de mercaderies passant
 	CS	Průjezd nákladního vlaku
 	DA	Godstog kører forbi
 	DE	Vorbeifahrender Güterzug
@@ -1047,6 +1113,7 @@ PLUGIN_SOUNDS_FREIGHT_TRAIN_PASSING
 	SV	Godståg kör förbi
 
 PLUGIN_SOUNDS_FREIGHT_TRAIN
+	CA	Tren de mercaderies
 	CS	Nákladní vlak
 	DA	Godstog
 	DE	Güterzug
@@ -1063,6 +1130,7 @@ PLUGIN_SOUNDS_FREIGHT_TRAIN
 	SV	Godståg
 
 PLUGIN_SOUNDS_HAIR_DRYER
+	CA	Secador de cabells
 	CS	Fén na vlasy
 	DA	Hårtørrer
 	DE	Fön
@@ -1079,6 +1147,7 @@ PLUGIN_SOUNDS_HAIR_DRYER
 	SV	Hårtork
 
 PLUGIN_SOUNDS_MAGNETO_VAPOR
+	CA	Magneto Vapor
 	CS	Magneto Vapor
 	DA	Magneto Vapor
 	DE	Magneto Vapor
@@ -1095,6 +1164,7 @@ PLUGIN_SOUNDS_MAGNETO_VAPOR
 	SV	Magneto Vapor
 
 PLUGIN_SOUNDS_MOTORCYCLES
+	CA	Motocicletes
 	CS	Motorky
 	DA	Motorcykler
 	DE	Motorräder
@@ -1111,6 +1181,7 @@ PLUGIN_SOUNDS_MOTORCYCLES
 	SV	Motorcyklar
 
 PLUGIN_SOUNDS_SCUBA_DIVER
+	CA	Submarinista
 	CS	Potápěč
 	DA	Dykker
 	DE	Taucher
@@ -1127,6 +1198,7 @@ PLUGIN_SOUNDS_SCUBA_DIVER
 	SV	Dykare
 
 PLUGIN_SOUNDS_SPOOKY_FEEDBACK
+	CA	Comentaris esgarrifosos
 	CS	Nevšední zpětná vazba
 	DA	Uhyggelig feedback
 	DE	Unheimliche Rückkopplung
@@ -1143,6 +1215,7 @@ PLUGIN_SOUNDS_SPOOKY_FEEDBACK
 	SV	Spöklik rundgång
 
 PLUGIN_SOUNDS_STEAM_TRAIN_WHISTLE
+	CA	Tren de vapor i xiulet
 	CS	Parní lokomotiva a píšťalka
 	DA	Damplokomotiv og fløjte
 	DE	Dampflokomotive und -pfeife
@@ -1159,6 +1232,7 @@ PLUGIN_SOUNDS_STEAM_TRAIN_WHISTLE
 	SV	Ånglok och vissla
 
 PLUGIN_SOUNDS_SUB_ALERT
+	CA	Avís de submarí
 	CS	Dílčí výstraha
 	DA	Underadvarsel
 	DE	U-Boot-Wecker
@@ -1175,6 +1249,7 @@ PLUGIN_SOUNDS_SUB_ALERT
 	SV	Dyklarm
 
 PLUGIN_SOUNDS_TEA_KETTLE
+	CA	Tetera
 	CS	Čajová konvice
 	DA	Vandkedel
 	DE	Teekessel
@@ -1191,6 +1266,7 @@ PLUGIN_SOUNDS_TEA_KETTLE
 	SV	Tekanna
 
 PLUGIN_SOUNDS_TRAFFIC
+	CA	Trànsit
 	CS	Doprava
 	DA	Trafik
 	DE	Verkehr
@@ -1207,6 +1283,7 @@ PLUGIN_SOUNDS_TRAFFIC
 	SV	Trafik
 
 PLUGIN_SOUNDS_WIND_CHIME_FLOURISH
+	CA	Carilló de vent
 	CS	Tóny zvonkohry
 	DA	Vindharpe der svinger
 	DE	Windspiel mit Schwung
@@ -1223,6 +1300,7 @@ PLUGIN_SOUNDS_WIND_CHIME_FLOURISH
 	SV	Vindspelstoner
 
 PLUGIN_SOUNDS_WIND_CHIME
+	CA	Caramell de vent
 	CS	Větrná zvonkohra
 	DA	Vindharpe
 	DE	Windspiel
@@ -1239,6 +1317,7 @@ PLUGIN_SOUNDS_WIND_CHIME
 	SV	Vindspel
 
 PLUGIN_SOUNDS_ALARM_BUZZER
+	CA	So d'alarma
 	CS	Bzučák budíku
 	DA	Væækeur summetone
 	DE	Weckersummton
@@ -1248,6 +1327,7 @@ PLUGIN_SOUNDS_ALARM_BUZZER
 	SV	Alarmsummer
 
 PLUGIN_SOUNDS_ALARM_ACCELERATING
+	CA	Beep accelerat
 	CS	Zrychlující pípání
 	DE	Beschleunigendes Biepen
 	EN	Accelerating beep
@@ -1256,6 +1336,7 @@ PLUGIN_SOUNDS_ALARM_ACCELERATING
 	SV	Accelererande pip
 
 PLUGIN_SOUNDS_ALARM_HIGH_BEEP
+	CA	To agut
 	CS	Vysoké pípání
 	DE	Hohes Biepen
 	EN	High beep
@@ -1264,6 +1345,7 @@ PLUGIN_SOUNDS_ALARM_HIGH_BEEP
 	SV	Högt pip
 
 PLUGIN_SOUNDS_ALARM_SIMPLE_CLOCK
+	CA	To simple
 	CS	Jednoduché pípání
 	DE	Einfacher Signalton
 	EN	Simple beep
@@ -1272,6 +1354,7 @@ PLUGIN_SOUNDS_ALARM_SIMPLE_CLOCK
 	SV	Enkel signalton
 
 PLUGIN_SOUNDS_ALARM_BEDSIDE
+	CA	To quàdruple
 	CS	Čtyřnásobné pípání
 	DE	Vierfacher Signalton
 	EN	Quadrupel beep
@@ -1280,6 +1363,7 @@ PLUGIN_SOUNDS_ALARM_BEDSIDE
 	SV	Fyrfaldigt pip
 
 PLUGIN_SOUNDS_ALARM_ELECTRONIC_BEEP
+	CA	Bip electrònic
 	CS	Elektronické pípání
 	DE	Elektronisches Piepen
 	EN	Electronical beep
@@ -1288,6 +1372,7 @@ PLUGIN_SOUNDS_ALARM_ELECTRONIC_BEEP
 	SV	Elektroniskt pip
 
 PLUGIN_SOUNDS_ALARM_DIGITAL
+	CA	To greu
 	CS	Nízké pípání
 	DE	Tiefes Piepen
 	EN	Low beep
@@ -1296,6 +1381,7 @@ PLUGIN_SOUNDS_ALARM_DIGITAL
 	SV	Lågt pip
 
 PLUGIN_SOUNDS_ALARM_DISTORTED
+	CA	To distorsionat
 	CS	Zkreslené pípání
 	DE	Verzerrtes Piepen
 	EN	Distorted beep
@@ -1304,6 +1390,7 @@ PLUGIN_SOUNDS_ALARM_DISTORTED
 	SV	Förvrängt pip
 
 PLUGIN_SOUNDS_ALARM_DUAL_TONE
+	CA	To alternatiu
 	CS	Střídavé pípání
 	DE	Wechselndes Piepen
 	EN	Alternating beep
@@ -1312,6 +1399,7 @@ PLUGIN_SOUNDS_ALARM_DUAL_TONE
 	SV	Växlande pip
 
 PLUGIN_SOUNDS_ALARM_ELECTRONICAL
+	CA	Bip electrònic 2
 	CS	Elektronické pípání 2
 	DE	Elektronisches Piepen 2
 	EN	Electronical beep 2
@@ -1320,6 +1408,7 @@ PLUGIN_SOUNDS_ALARM_ELECTRONICAL
 	SV	Elektroniskt pip 2
 
 PLUGIN_SOUNDS_ALARM_FUTURISTIC
+	CA	Alarma futurista
 	CS	Futuristický alarm
 	DE	Futuristischer Alarm
 	EN	Futuristic alarm
@@ -1328,6 +1417,7 @@ PLUGIN_SOUNDS_ALARM_FUTURISTIC
 	SV	Futuristiskt alarm
 
 PLUGIN_SOUNDS_ALARM_PHONE
+	CA	Telèfon repicant
 	CS	Zvonící telefon
 	DE	Klingelndes Telefon
 	EN	Ringing phone
@@ -1336,6 +1426,7 @@ PLUGIN_SOUNDS_ALARM_PHONE
 	SV	Ringande telefon
 
 PLUGIN_SOUNDS_ALARM_RINGING
+	CA	Alarma repicant
 	CS	Zvonící alarm
 	DE	Klingelnder Alarm
 	EN	Ringing alarm
@@ -1344,6 +1435,7 @@ PLUGIN_SOUNDS_ALARM_RINGING
 	SV	Ringande alarm
 
 PLUGIN_SOUNDS_ALARM_RINGTONE
+	CA	To de trucada
 	CS	Vyzváněcí tón
 	DE	Klingelton
 	EN	Ringtone
@@ -1352,6 +1444,7 @@ PLUGIN_SOUNDS_ALARM_RINGTONE
 	SV	Rington
 
 PLUGIN_SOUNDS_ALARM_TIC_TAC
+	CA	Tic-Tac
 	CS	Tik-tak
 	DE	Tick-Tack
 	EN	Tic-Tac
@@ -1360,6 +1453,7 @@ PLUGIN_SOUNDS_ALARM_TIC_TAC
 	SV	Tick-tack
 
 PLUGIN_SOUNDS_ALARM_TICKING
+	CA	Rellotge caminant
 	CS	Tikající hodiny
 	DE	Tickende Uhr
 	EN	Ticking clock

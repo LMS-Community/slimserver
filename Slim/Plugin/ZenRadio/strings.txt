@@ -1,7 +1,9 @@
 PLUGIN_ZENRADIO_NAME
+	CA	Zen Radio
 	EN	Zen Radio
 
 PLUGIN_ZENRADIO_DESC
+	CA	Zen Radio - Música de relaxació i meditació
 	CS	Zen Radio – Relaxační a meditační hudba
 	DA	Zen Radio - Musik til afslapning og meditation
 	EN	Zen Radio - Entspannungs- und Meditationsmusik
@@ -12,6 +14,7 @@ PLUGIN_ZENRADIO_DESC
 	SV	Zen Radio - Musik för meditation och avslappning
 
 PLUGIN_ZENRADIO_MISSING_CREDS
+	CA	Visiteu Zen Radio a la configuració del Lyrion Music Server per afegir les vostres credencials.
 	CS	Prosím, navštivte Zen Radio v nastavení Lyrion Music Serveru a přidejte své přihlašovací údaje.
 	DA	Besøg Zen Radio i Lyrion Music Server indstillinger for at tilføje dine loginoplysninger.
 	DE	Bitte rufen Sie Zen Radio in den Einstellungen des Lyrion Music Servers auf, um Ihre Anmeldedaten hinzuzufügen.
@@ -22,6 +25,7 @@ PLUGIN_ZENRADIO_MISSING_CREDS
 	SV	Gå till Zen Radio in Lyrion Music Server-inställningarna för att lägga till dina loginuppgifter.
 
 PLUGIN_ZENRADIO_LINK
+	CA	Per crear o gestionar el vostre compte, visiteu <a href="https://www.zenradio.com" target="_blank">Zen Radio</a>.
 	CS	Chcete-li si vytvořit nebo spravovat svůj účet, navštivte <a href="https://www.zenradio.com" target="_blank">Zen Radio</a>.
 	DA	Besøg <a href="https://www.zenradio.com" target="_blank">Zen Radio</a> for at oprette eller administrere din konto.
 	DE	Um ein Konto zu erstellen oder Ihr Konto zu verwalten, besuchen Sie bitte <a href="https://www.zenradio.com" target="_blank">Zen Radio</a>.

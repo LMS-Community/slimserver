@@ -1,6 +1,7 @@
 # String file for Favorites plugin
 
 FAVORITES
+	CA	Preferits
 	CS	Oblíbené položky
 	DA	Favoritter
 	DE	Favoriten
@@ -19,6 +20,7 @@ FAVORITES
 	SV	Favoriter
 
 FAVORITES_RIGHT_TO_DELETE
+	CA	Eliminar preferit
 	CS	Odstranit oblíbenou položku
 	DA	Slet favorit
 	DE	Favorit entfernen
@@ -36,6 +38,7 @@ FAVORITES_RIGHT_TO_DELETE
 	SV	Ta bort favorit
 
 FAVORITES_ADDING
+	CA	Desant els preferits...
 	CS	Ukládání oblíbených položek...
 	DA	Gemmer favoritter...
 	DE	Favoriten werden gespeichert ...
@@ -55,6 +58,7 @@ FAVORITES_ADDING
 	ZH_CN	保存最喜爱的...
 
 FAVORITES_DELETING
+	CA	S'està eliminant el preferit...
 	CS	Odstraňování oblíbené položky...
 	DA	Sletter favorit...
 	DE	Favorit wird entfernt...
@@ -72,6 +76,7 @@ FAVORITES_DELETING
 	SV	Tar bort favorit...
 
 PLUGIN_FAVORITES_DESC
+	CA	Desa i edita els teus preferits
 	CS	Uložení a editace vašich oblíbených položek
 	DA	Gem og rediger dine favoritter
 	DE	Favoriten speichern und bearbeiten
@@ -89,6 +94,7 @@ PLUGIN_FAVORITES_DESC
 	SV	Spara och redigera favoriter
 
 PLUGIN_FAVORITES_USE_DSTM
+	CA	Que no s'aturi la música
 	CS	Nezastavuj přehrávání hudby
 	DA	Aldrig stop musikken
 	DE	Musikwiedergabe nie anhalten
@@ -100,6 +106,7 @@ PLUGIN_FAVORITES_USE_DSTM
 	SV	Stoppa inte musiken
 
 PLUGIN_FAVORITES_USE_DSTM_DESC
+	CA	Registra els preferits com a opcions per a "Don't Stop The Music".
 	CS	Zaregistrujte si oblíbené položky jako možnosti pro „Nezastavuj přehrávání hudby“.
 	DA	Benyt favoritter som valg for "Don't Stop The Music".
 	DE	Favoriten als Option für "Musikwiedergabe nie anhalten" verwenden.
@@ -112,6 +119,7 @@ PLUGIN_FAVORITES_USE_DSTM_DESC
 	SV	Använd favoriter som en option för Stoppa inte musiken
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR
+	CA	Navegador i editor de llistes de reproducció OPML
 	CS	Prohlížeč a editor seznamu skladeb OPML
 	DA	Se og rediger OPML-afspilningslister
 	DE	OPML Wiedergabelisten bearbeiten
@@ -128,6 +136,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	SV	Bläddring och redigering för opml-spellistor
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
+	CA	El connector de preferits també us permetrà navegar per les llistes de reproducció basades en opml i editar les llistes de reproducció opml emmagatzemades al vostre servidor. Seleccioneu l'opció següent per afegir aquest mode a "Extres" a la pàgina d'inici del servidor.
 	CS	Zásuvný modul Oblíbené položky vám také umožňuje procházet seznamy skladeb založené na OPML, které jsou uložené na vašem serveru. K přidání tohoto režimu do složky „Doplňky“ domovské stránky vašeho serveru zvolte níže uvedenou možnost.
 	DA	Med udvidelsesmodulet Favoritter kan du gennemse og redigere opml-baserede afspilningslister som er gemt på din server. Marker denne mulighed hvis du vil føje den til menuen Ekstra i den webbaserede brugerflade.
 	DE	Das Favoriten Plugin erlaubt es auch, OPML basierte Wiedergabelisten auf dem Server zu durchsuchen und bearbeiten. Aktiviere die folgende Option, um diesen Modus unter "Extras" auf dem Server Web-Interface anzuzeigen.
@@ -145,6 +154,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
 	SV	Plugin-programmet för favoriter ger dig också möjlighet att bläddra i opml-baserade spellistor och att redigera opml-spellistor som sparats på din server. Markera alternativet nedan om du vill lägga till det här läget under Extrafunktioner på det webbaserade användargränssnittet.
 
 PLUGIN_FAVORITES_LOAD
+	CA	Carrega
 	CS	Načíst
 	DA	Indlæs
 	DE	Laden
@@ -161,6 +171,7 @@ PLUGIN_FAVORITES_LOAD
 	SV	Läs in
 
 PLUGIN_FAVORITES_ADD
+	CA	Desa
 	CS	Uložit
 	DA	Gem
 	DE	Speichern
@@ -177,6 +188,7 @@ PLUGIN_FAVORITES_ADD
 	SV	Spara
 
 PLUGIN_FAVORITES_IMPORT
+	CA	Importa
 	CS	Importovat
 	DA	Importér
 	DE	Importieren
@@ -193,6 +205,7 @@ PLUGIN_FAVORITES_IMPORT
 	SV	Importera
 
 PLUGIN_FAVORITES_LOADFILE
+	CA	URL o nom de fitxer
 	CS	Adresa URL nebo název souboru
 	DA	URL adresse eller filnavn
 	DE	URL oder Dateiname
@@ -209,6 +222,7 @@ PLUGIN_FAVORITES_LOADFILE
 	SV	Webbadress eller filnamn
 
 PLUGIN_FAVORITES_SAVEFILE
+	CA	Nom de fitxer
 	CS	Název souboru
 	DA	Filnavn
 	DE	Dateiname
@@ -225,6 +239,7 @@ PLUGIN_FAVORITES_SAVEFILE
 	SV	Filnamn
 
 PLUGIN_FAVORITES_IMPORTFILE
+	CA	URL o nom de fitxer
 	CS	Adresa URL nebo název souboru
 	DA	URL adresse eller filnavn
 	DE	URL oder Dateiname
@@ -241,6 +256,7 @@ PLUGIN_FAVORITES_IMPORTFILE
 	SV	Webbadress eller filnamn
 
 PLUGIN_FAVORITES_NOFILE
+	CA	Fitxer no trobat
 	CS	Soubor nenalezen
 	DA	Filen blev ikke fundet
 	DE	Datei nicht gefunden
@@ -257,6 +273,7 @@ PLUGIN_FAVORITES_NOFILE
 	SV	Det går inte att hitta filen
 
 PLUGIN_FAVORITES_CANCEL
+	CA	Cancel·la
 	CS	Storno
 	DA	Annullér
 	DE	Abbrechen
@@ -273,6 +290,7 @@ PLUGIN_FAVORITES_CANCEL
 	SV	Avbryt
 
 PLUGIN_FAVORITES_CANCELLING
+	CA	Cancel·lant...
 	CS	Přerušování...
 	DA	Annullerer...
 	DE	Wird abgebrochen...
@@ -289,6 +307,7 @@ PLUGIN_FAVORITES_CANCELLING
 	SV	Avbryter...
 
 PLUGIN_FAVORITES_CUT
+	CA	Talla
 	CS	Vyjmout
 	DA	Klip
 	DE	Ausschneiden
@@ -305,6 +324,7 @@ PLUGIN_FAVORITES_CUT
 	SV	Klipp ut
 
 PLUGIN_FAVORITES_PASTE
+	CA	Enganxa
 	CS	Vložit
 	DA	Sæt ind
 	DE	Einfügen
@@ -321,6 +341,7 @@ PLUGIN_FAVORITES_PASTE
 	SV	Klistra in
 
 PLUGIN_FAVORITES_LOADING
+	CA	S'estan carregant els preferits...
 	CS	Načítání oblíbených položek...
 	DA	Indlæser Favoritter...
 	DE	Lade Favoriten...
@@ -338,6 +359,7 @@ PLUGIN_FAVORITES_LOADING
 	SV	Läser in favoriter...
 
 PLUGIN_FAVORITES_NEWFOLDER
+	CA	Nova carpeta
 	CS	Nová složka
 	DA	Ny mappe
 	DE	Neuer Ordner
@@ -354,6 +376,7 @@ PLUGIN_FAVORITES_NEWFOLDER
 	SV	Ny mapp
 
 PLUGIN_FAVORITES_NEWENTRY
+	CA	Nova entrada
 	CS	Nová položka
 	DA	Ny post
 	DE	Neuer Eintrag
@@ -370,6 +393,7 @@ PLUGIN_FAVORITES_NEWENTRY
 	SV	Ny post
 
 PLUGIN_FAVORITES_NEWFAVORITE
+	CA	Nou preferit
 	CS	Nová oblíbená položka
 	DA	Ny favorit
 	DE	Neuer Favorit
@@ -387,6 +411,7 @@ PLUGIN_FAVORITES_NEWFAVORITE
 	SV	Ny favorit
 
 PLUGIN_FAVORITES_LOADERROR
+	CA	S'ha produït un error en carregar el fitxer
 	CS	Chyba při načítání souboru
 	DA	Fejl ved indlæsning af fil
 	DE	Fehler beim Laden der Datei
@@ -403,6 +428,7 @@ PLUGIN_FAVORITES_LOADERROR
 	SV	Fel vid inläsning av filen
 
 PLUGIN_FAVORITES_REMOTELOADERROR
+	CA	S'ha produït un error en carregar l'URL
 	CS	Chyba při načítání URL
 	DA	Fejl ved indlæsning af URL adresse
 	DE	Fehler beim Lesen der URL
@@ -419,6 +445,7 @@ PLUGIN_FAVORITES_REMOTELOADERROR
 	SV	Fel vid inläsning av webbadressen
 
 PLUGIN_FAVORITES_SAVEERROR
+	CA	S'ha produït un error en desar el fitxer
 	CS	Chyba při ukládání souboru
 	DA	Der opstod en fejl da filen skulle gemmes
 	DE	Fehler beim Speichern der Datei
@@ -435,6 +462,7 @@ PLUGIN_FAVORITES_SAVEERROR
 	SV	Fel vid sparande av filen
 
 PLUGIN_FAVORITES_IMPORTERROR
+	CA	Error en importar la llista de reproducció
 	CS	Chyba při importu seznamu skladeb
 	DA	Fejl ved import af afspilningsliste
 	DE	Fehler beim Import von Wiedergabelisten
@@ -451,6 +479,7 @@ PLUGIN_FAVORITES_IMPORTERROR
 	SV	Fel vid import av spellista
 
 PLUGIN_FAVORITES_NOTITLE
+	CA	Sense títol
 	CS	Bez názvu
 	DA	Ingen titel
 	DE	Kein Titel
@@ -467,6 +496,7 @@ PLUGIN_FAVORITES_NOTITLE
 	SV	Ingen titel
 
 PLUGIN_FAVORITES_NAME
+	CA	Nom
 	CS	Název
 	DA	Navn
 	DE	Name
@@ -483,6 +513,7 @@ PLUGIN_FAVORITES_NAME
 	SV	Namn
 
 PLUGIN_FAVORITES_URL
+	CA	URL
 	CS	Adresa URL
 	DA	Internetadresse
 	DE	URL
@@ -499,6 +530,7 @@ PLUGIN_FAVORITES_URL
 	SV	Webbadress
 
 PLUGIN_FAVORITES_SAVE
+	CA	Desa a Preferits
 	CS	Uložit do oblíbených položek
 	DA	Føj til favoritter
 	DE	In Favoriten speichern
@@ -516,6 +548,7 @@ PLUGIN_FAVORITES_SAVE
 	SV	Spara i Favoriter
 
 PLUGIN_FAVORITES_REMOVE
+	CA	Elimina dels preferits
 	CS	Odstranit z oblíbených položek
 	DA	Fjern fra Favoritter
 	DE	Aus Favoriten entfernen
@@ -533,6 +566,7 @@ PLUGIN_FAVORITES_REMOVE
 	SV	Ta bort från favoriter
 
 PLUGIN_FAVORITES_DONT_BROWSEDB
+	CA	Comportament dels elements musicals locals
 	CS	Chování místních hudebních položek
 	DA	Opførsel med lokal musikbibliotek
 	DE	Verhalten mit lokaler Musik
@@ -546,6 +580,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB
 	SV	Funktion med lokal musik
 
 PLUGIN_FAVORITES_DONT_BROWSEDB_ON
+	CA	No naveguis pels elements quan estiguin seleccionats, només reprodueix-los (comportament antic)
 	CS	Při výběru neprohlížet položky, ale pouze je přehrát (staré chování)
 	DA	Ikke bladre i numre når de er valgt, bare afspil dem (gammel adfærd)
 	DE	Beim Anwählen eines Eintrages Favoriten abspielen, nicht durchsuchen (altes Verhalten)
@@ -559,6 +594,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB_ON
 	SV	Bläddra inte i spåren när de har valts, bara spela dem (gamla funktionen) 
 
 PLUGIN_FAVORITES_DONT_BROWSEDB_OFF
+	CA	Quan seleccioneu un col·laborador, gènere o àlbum preferit, aprofundiu en el seu contingut.
 	CS	Když vyberete oblíbeného přispěvatele, žánr nebo album, přejít k jeho obsahu.
 	DA	Når du vælger en favoritkunstner, -genre eller -album, vis detaljeret indhold.
 	DE	Beim Anwählen eines favorisierten Künstlers, Genres oder Album, dessen Details anzeigen

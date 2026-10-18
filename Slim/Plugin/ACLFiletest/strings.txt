@@ -1,4 +1,5 @@
 PLUGIN_ACL_FILETEST
+	CA	Habilita les proves de fitxers ACL
 	CS	Povolení testů souborů ACL
 	DA	Aktivér ACL filtester
 	EN	Enable ACL filetests
@@ -9,6 +10,7 @@ PLUGIN_ACL_FILETEST
 	SV	Aktivera ACL-filtester
 
 PLUGIN_ACL_FILETEST_DESC
+	CA	Aquest connector us permet comprovar els permisos de fitxers basats en les ACL en alguns sistemes. No activeu aquest connector si no sabeu que el vostre sistema admet les ACL i l'opció "use filetest" de Perl.
 	CS	Tento zásuvný modul umožňuje kontrolovat oprávnění k souborům na základě ACL v některých systémech. Tento doplněk nepovolujte, pokud nevíte, že váš systém podporuje ACL a Perl „use filetest“.
 	DA	Med dette pluginmodul kan du kontrollere filrettigheder baseret på ACL (Access-controlled list) på nogle systemer. Brug kun dette plugin hvis du ved, at dit system understøtter ACL'er og Perls 'use filetest'.
 	EN	This plugin allows you to check file permissions based on ACLs on some systems. Do not enable this plugin unless you know your system does support ACLs and Perl's 'use filetest'.

@@ -1,6 +1,7 @@
 # String file for SavePlaylist plugin
 
 SAVE_PLAYLIST_NAME
+	CA	Desa la llista de reproducció
 	CS	Uložení seznamu skladeb
 	DA	Gem afspilningsliste
 	DE	Wiedergabeliste speichern
@@ -20,6 +21,7 @@ SAVE_PLAYLIST_NAME
 	ZH_CN	保存播放表
 
 SAVE_PLAYLIST_NAME_DESC
+	CA	Desa llistes de reproducció des de la interfície d'usuari del reproductor
 	CS	Ukládání seznamu skladeb z UI přehrávače
 	DA	Gem afspilningslister fra afspillerens brugerflade
 	DE	Wiedergabelisten über das Player-Interface abspeichern
@@ -36,6 +38,7 @@ SAVE_PLAYLIST_NAME_DESC
 	SV	Spara spellistor från spelargränssnittet
 
 PLAYLIST_OVERWRITE
+	CA	Vés a la dreta per substituir la llista de reproducció existent:
 	CS	Přejděte doprava k nahrazení stávajícího seznamu skladeb:
 	DA	Tryk på højre for at erstatte eksisterende afspilningsliste:
 	DE	Drücken Sie RECHTS, um die vorhandene Wiedergabeliste zu überschreiben:
@@ -53,6 +56,7 @@ PLAYLIST_OVERWRITE
 	SV	Tryck på höger navigeringsknapp om du vill ersätta den befintliga spellistan:
 
 PLAYLIST_SAVE
+	CA	Premeu dreta de nou per desar la llista de reproducció com a:
 	CS	Opět doprava k uložení seznamu skladeb jako:
 	DA	Tryk på højre igen for at gemme afspilningslisten som:
 	DE	Drücken Sie zum Speichern der Wiedergabeliste RECHTS:
@@ -72,6 +76,7 @@ PLAYLIST_SAVE
 	ZH_CN	保存播放表请按右方向键：
 
 PLAYLIST_AS
+	CA	Desa la llista de reproducció actual com a:
 	CS	Uložit stávající seznam skladeb jako:
 	DA	Gem den nuværende afspilningsliste som:
 	DE	Aktuelle Wiedergabeliste speichern unter:
@@ -91,6 +96,7 @@ PLAYLIST_AS
 	ZH_CN	保存当前的播放表：
 
 PLAYLIST_SAVING
+	CA	Desant la llista de reproducció actual com a:
 	CS	Ukládám stávající seznam skladeb jako:
 	DA	Gemmer den nuværende afspilningsliste som:
 	DE	Wiedergabeliste wird gespeichert unter:
@@ -110,6 +116,7 @@ PLAYLIST_SAVING
 	ZH_CN	正在保存当前的播放表：
 
 NO_PLAYLIST_DIR
+	CA	Problema: no existeix una carpeta on desar les llistes de reproducció
 	CS	Problém: Neexistuje žádná složka s uloženými seznamy skladeb.
 	DA	Problem: Der er ingen mappe til gemte afspilningslister.
 	DE	Problem: kein Wiedergabelisten-Ordner
@@ -129,6 +136,7 @@ NO_PLAYLIST_DIR
 	ZH_CN	失误：播放表保存文件夹不存在
 
 NO_PLAYLIST_DIR_MORE
+	CA	Revisa la configuració del servidor per solucionar-ho.
 	CS	K opravě přejděte do nastavení serveru.
 	DA	Gå til Serverindstillinger for at korrigere dette.
 	DE	Beheben Sie dieses Problem in den Server-Einstellungen.

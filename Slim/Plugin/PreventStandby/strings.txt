@@ -1,6 +1,7 @@
 # String file for PreventStandby plugin
 
 PLUGIN_PREVENTSTANDBY
+	CA	Evitar que el sistema entri en repòs
 	CS	Zabránění pohotovostního režimu systému
 	DA	Forhindrer at systemet går på standby
 	DE	Standbymodus verhindern
@@ -17,6 +18,7 @@ PLUGIN_PREVENTSTANDBY
 	SV	Förhindra viloläge
 
 PLUGIN_PREVENTSTANDBY_DESC
+	CA	Aquest complement supervisa els reproductors SqueezeBox i evita que el sistema entri en mode d'espera d'estalvi d'energia mentre es reprodueix música, el Lyrion Music Server està escanejant, els reproductors s'estan actualitzant, etc. També evitarà que el sistema entri prematurament en mode d'espera dos minuts després de la reactivació per xarxa.
 	CS	Tento zásuvný modul monitoruje vaše přehrávače Squeezebox a zabrání systému v přechodu do úsporného pohotovostního režimu při přehrávání hudby, v průběhu prohledávání Lyrion Music Serveru, při aktualizaci přehrávačů atd. Zabrání také systému v přechodu do pohotovostního režimu po dvou minutách od dálkového spuštění počítače přes LAN.
 	DA	Dette udvidelsesmodul bruges til at overvåge Squeezebox-afspillere og forhindre at systemet går på standby mens der spilles musik, søges efter musikfiler i Lyrion Music Server, afspillerne opdateres osv. Det forhindrer også at systemet går på standby blot to minutter efter at det er vækket via lokalnetværket.
 	DE	Dieses Plugin überwacht die Squeezebox-Player und verhindert, dass das System in den Standbymodus geschaltet wird während Lyrion Music Server die Musiksammlung durchsucht, Player aktualisiert werden usw. Außerdem wird verhindert, dass das System zwei Minuten nach 'Wake on LAN' vorzeitig in den Standbymodus schaltet.
@@ -33,6 +35,7 @@ PLUGIN_PREVENTSTANDBY_DESC
 	SV	Detta plugin-program övervakar SqueezeBox-spelarna och förhindrar att systemet försätts i viloläge när du spelar musik, när sökning sker, spelare uppdateras o.s.v. Det förhindrar även att systemet automatiskt försätts i viloläge två minuter efter wake-on-lan.
 
 PLUGIN_PREVENTSTANDBY_IDLETIME
+	CA	Permetre l'estat d'espera després de quants minuts d'inactivitat?
 	CS	Po kolika minutách nečinnosti povolit pohotovostní režim?
 	DA	Gå på standby efter hvor mange minutters inaktivitet?
 	DE	Standby nach wie vielen Minuten Inaktivität zulassen?
@@ -49,6 +52,7 @@ PLUGIN_PREVENTSTANDBY_IDLETIME
 	SV	Efter hur många minuter ska viloläge tillåtas?
 
 PLUGIN_PREVENTSTANDBY_IDLETIME_DESC
+	CA	Introduïu el nombre de minuts (després que la reproducció s'aturi o després que el sistema es reprengui) al final dels quals el connector tornarà a permetre que el sistema entri en mode d'espera. Introduïu 0 (zero) per prohibir completament l'espera automàtica en aquest sistema.
 	CS	Zadejte počet minut (po zastavení přehrávání nebo po obnovení systému), po kterém tento zásuvný modul znovu povolí přechod systému do pohotovostního systému. K úplnému zákazu automatického přechodu tohoto systému do pohotovostního systému zadejte 0 (nulu).
 	DA	Angiv det antal minutter (fra afspilningen stopper eller systemet vækkes) der skal forløbe før systemet igen kan gå på standby. Hvis du vælger 0, kan systemet ikke automatisk gå på standby.
 	DE	Geben Sie an, nach wie vielen Minuten (nachdem die Wiedergabe beendet oder das System reaktiviert wurde) das Plugin zulässt, dass das System in den Standbymodus wechselt. Wenn Sie 0 (Null) eingeben, wird der automatische Wechsel in den Standbymodus vollständig unterbunden.
@@ -65,6 +69,7 @@ PLUGIN_PREVENTSTANDBY_IDLETIME_DESC
 	SV	Ange antal minuter (efter att spelaren stoppas eller systemet återupptas) som ska förflyta innan systemet åter kan försättas i viloläge. Ange 0 (noll) om du inte vill att det ska försättas i viloläge.
 
 PLUGIN_PREVENTSTANDBY_PLAYERSON
+	CA	Prohibir el mode d'espera si els reproductors estan activats?
 	CS	Zakázat pohotovostní režim při zapnutých přehrávačích?
 	DA	Forbyd standby hvis en afspiller er tændt?
 	DE	Standbymodus verhindern, wenn Player aktiv sind?
@@ -81,6 +86,7 @@ PLUGIN_PREVENTSTANDBY_PLAYERSON
 	SV	Ska viloläge förhindras när spelarna är påslagna?
 
 PLUGIN_PREVENTSTANDBY_PLAYERSON_DESC
+	CA	Activeu aquesta opció per prohibir el mode de repòs del sistema mentre els reproductors estan encesos, és a dir, que no mostrin el rellotge.
 	CS	Povolit toto nastavení k zákazu pohotovostního režimu systému při zapnutých přehrávačích, tzn. nezobrazení hodin.
 	DA	Vælg denne indstilling hvis systemet kan gå på standby mens en afspiller er tændt, dvs. uret bliver ikke vist.
 	DE	Aktiviert die Einstellung, mit der verhindert wird, dass das System in den Standbymodus wechselt, während Player aktiv sind, d.h. die Uhr nicht anzeigen.

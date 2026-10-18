@@ -1,4 +1,5 @@
 PLUGIN_DNDPLAY
+	CA	Arrossegueu i deixeu anar fitxers de música per reproduir-los
 	CS	Přehrávání hudebních souborů přetažením
 	DA	Drag & Drop afspilning af musikfiler
 	DE	Drag & Drop Musikdateien zur Wiedergabe
@@ -11,6 +12,7 @@ PLUGIN_DNDPLAY
 	SV	Drag & Drop musikfiler för att spela
 
 PLUGIN_DNDPLAY_SHORT
+	CA	Arrossegar i deixar anar fitxers de música
 	CS	Přetahování hudebních souborů
 	DA	Drag & Drop musikfiler
 	DE	Musikdatei Drag & Drop
@@ -23,6 +25,7 @@ PLUGIN_DNDPLAY_SHORT
 	SV	Drag & Drop musikfiler
 
 PLUGIN_DNDPLAY_DESC
+	CA	Aquest complement permet arrossegar i deixar anar fitxers d'àudio des del gestor de fitxers de l'escriptori (Finder, Explorer, etc.) a la interfície web del Lyrion Music Server per reproduir-los. Els fitxers que no estan disponibles al Lyrion Music Server es transfereixen temporalment per a la reproducció.
 	CS	Tento zásuvný modul umožňuje přetahovat zvukové soubory ze správce souborů na ploše (Finder, Průzkumník atd.) do webového rozhraní Lyrion Music Serveru a přehrávat je. Soubory, které nejsou k dispozici na Lyrion Music Serveru, jsou pro přehrávání dočasně přeneseny.
 	DA	Dette plugin giver dig mulighed for at trække og slippe lydfiler fra dit skrivebords filhåndtering (Finder, Explorer osv.) til Lyrion Music Server webgrænsefladen for at afspille dem. Filer, der ikke er tilgængelige fra Lyrion Music Server, overføres midlertidigt til afspilning.
 	DE	Dieses Plugin erlaubt es, Musikdateien aus dem Dateimanager des Betriebssystems (Finder, Explorer etc.) ins Lyrion Music Server Web-Interface zu ziehen, um diese wiederzugeben. Dateien, die nicht im Lyrion Music Server verfügbar sind, werden zur Wiedergabe temporär zum Server übertragen.
@@ -35,6 +38,7 @@ PLUGIN_DNDPLAY_DESC
 	SV	Detta pluginprogram låter dig dra och släppa musikfiler från din dators filhanteringsprogram (file explorer, etc) till Lyrion Music Servers webgränssnitt för att spela upp dem. Filer som inte är tillgängliga på Lyrion Music Server kopieras temporärt till servern.
 
 PLUGIN_DNDPLAY_NO_ITEMS
+	CA	No s'han trobat elements que es puguin reproduir. Només es poden reproduir fitxers d'àudio.
 	CS	Nebyly nalezeny žádné přehratelné položky. Přehrát lze pouze zvukové soubory.
 	DA	Fandt ingen afspilbare filer. Kun lydfiler kan afspilles.
 	DE	Keine der Dateien kann wiedergegeben werden. Nur Audio-Dateien werden akzeptiert.
@@ -47,6 +51,7 @@ PLUGIN_DNDPLAY_NO_ITEMS
 	SV	Inga spelbara filer hittades. Bara ljudfiler kan spelas upp.
 
 PLUGIN_DNDPLAY_NO_PLAYER_CONNECTED
+	CA	No es pot reproduir música sense un reproductor connectat.
 	CS	Bez připojeného přehrávače nelze přehrávat hudbu.
 	DA	Uden en tilsluttet afspiller, kan musik ikke afspilles.
 	DE	Sie können ohne Player nichts wiedergeben.
@@ -59,6 +64,7 @@ PLUGIN_DNDPLAY_NO_PLAYER_CONNECTED
 	SV	Utan en spelare kan inget spelas upp.
 
 PLUGIN_DNDPLAY_FILE_TOO_LARGE
+	CA	La mida del fitxer (%s) supera la mida màxima de càrrega (%s).
 	CS	Velikost souboru (%s) přesahuje maximální velikost pro odesílání (%s).
 	DA	Filstørrelsen (%s) overstiger den maksimale tilladte størrelse (%s).
 	DE	Die Dateigrösse (%s) überschreitet die maximal erlaubte Upload-Grösse (%s).
@@ -71,6 +77,7 @@ PLUGIN_DNDPLAY_FILE_TOO_LARGE
 	SV	Filen är för stor (%s), den största tillåtna storleken är (%s).
 
 PLUGIN_DNDPLAY_INVALID_DATA
+	CA	Sol·licitud no vàlida.
 	CS	Neplatný požadavek.
 	DA	Ugyldig forespørgsel.
 	DE	Ungültige Anfrage.
@@ -83,6 +90,7 @@ PLUGIN_DNDPLAY_INVALID_DATA
 	SV	Ogiltig förfrågan
 
 PLUGIN_DNDPLAY_MAX_FILESIZE
+	CA	Mida màxima de càrrega (en MB)
 	CS	Maximální velikost nahrávání (v MB)
 	DA	Maksimal tilladt overførselsstørrelse (i MB)
 	DE	Maximale Upload-Grösse (in MB)
@@ -95,6 +103,7 @@ PLUGIN_DNDPLAY_MAX_FILESIZE
 	SV	Maximalt tillåten kopieringsstorlek (i MB)
 
 PLUGIN_DNDPLAY_MAX_FILESIZE_DESC
+	CA	Pujar fitxers al servidor requerirà una quantitat considerable de memòria al servidor. Per tant, la mida màxima del fitxer està limitada a 100 MB per defecte. Si creieu que necessiteu poder reproduir fitxers més grans i el vostre servidor ofereix recursos addicionals, podeu ajustar la mida màxima de fitxer acceptada aquí.
 	CS	Nahrávání souborů na server bude vyžadovat značné množství paměti na serveru. Maximální velikost souboru je proto ve výchozím nastavení omezena na 100 MB. Pokud cítíte potřebu mít možnost přehrávat větší soubory a váš server nabízí dodatečné zdroje, můžete zde upravit maximální přípustnou velikost souboru.
 	DA	Overførsel af filer til deling kræver meget hukommelse på serveren. Derfor er den maksimale overførselstørrelse som standard begrænset til 100 MB. Hvis du vil afspille større filer, og din server har ressourcer nok, kan du øge denne grænse her.
 	DE	Der Transfer von Dateien für die Freigabe verlangt auf dem Server viel Speicher. Daher ist die maximale Upload-Grösse standardmässig auf 100MB beschränkt. Sollten Sie grössere Dateien abspielen wollen, und verfügt ihr Server über die entsprechenden Ressourcen, dann können Sie diese Beschränkung hier erhöhen.

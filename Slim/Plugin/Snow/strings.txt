@@ -1,6 +1,7 @@
 # String file for Snow plugin
 
 PLUGIN_SCREENSAVER_SNOW
+	CA	Protector de pantalla de neu
 	CS	Spořič obrazovky s motivem sněhu
 	DA	Pauseskærm:
 	DE	Schnee Bildschirmschoner
@@ -18,6 +19,7 @@ PLUGIN_SCREENSAVER_SNOW
 	SV	Snöskärmsläckare
 
 PLUGIN_SCREENSAVER_SNOW_SETTINGS
+	CA	Configuració del protector de pantalla de neu
 	CS	Nastavení spořiče obrazovky s motivem sněhu
 	DA	Vis indstillinger for pauseskærm
 	DE	Schnee-Einstellungen
@@ -35,6 +37,7 @@ PLUGIN_SCREENSAVER_SNOW_SETTINGS
 	SV	Inställningar för snöskärmsläckare
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY
+	CA	Quantitat de neu
 	CS	Množství sněhu
 	DA	Sneens kvalitet
 	DE	Schneemenge
@@ -52,6 +55,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY
 	SV	Snömängd
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
+	CA	Protector de pantalla de neu: Quantitat de neu
 	CS	Spořič obrazovky s motivem sněhu: Množství sněhu
 	DA	Pauseskærm: sneens kvalitet
 	DE	Bildschirmschoner 'Schnee': Schneemenge
@@ -69,6 +73,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
 	SV	Snöskärmsläckare: snömängd
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
+	CA	Ruixats lleugers
 	CS	Lehké sněžení
 	DA	Let byge
 	DE	Ein paar Flocken
@@ -86,6 +91,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
 	SV	Snöbyar
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
+	CA	Nadalenc
 	CS	Vánoční
 	DA	Juleagtigt
 	DE	Weiße Weihnachten
@@ -103,6 +109,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
 	SV	Julstämning
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
+	CA	Torb
 	CS	Blizzard
 	DA	Snestorm
 	DE	Schneesturm
@@ -120,6 +127,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
 	SV	Snöstorm
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
+	CA	Blanc total
 	CS	Bílá tma
 	DA	Hvidt
 	DE	Dichtes Schneetreiben
@@ -137,6 +145,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
 	SV	Igensnöat
 
 PLUGIN_SCREENSAVER_SNOW_STYLE
+	CA	Estil de la neu quan està activat
 	CS	Styl sněhu při zapnutí
 	DA	Sneens udseende når afspilleren er tændt
 	DE	Schnee bei Aktivierung
@@ -154,6 +163,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE
 	SV	Snötyp i påslaget läge
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
+	CA	Estil de la neu quan està desactivat
 	CS	Styl sněhu při vypnutí
 	DA	Sneens udseende når afspilleren er slukket
 	DE	Schnee bei Deaktivierung
@@ -171,6 +181,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
 	SV	Snötyp i avstängt läge
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
+	CA	Protector de pantalla de neu: Estil de neu
 	CS	Spořič obrazovky s motivem sněhu: Styl sněhu
 	DA	Pauseskærm: Sneens stil
 	DE	Bildschirmschoner 'Schnee': Schneeart
@@ -188,6 +199,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	SV	Snöskärmsläckare: Snötyp
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_1
+	CA	Reproduint ara, neu caient per darrera
 	CS	Právě hraje, sníh padá v pozadí
 	DA	Nu spiller: sne falder bagved
 	DE	Aktuelle Wiedergabe mit Schnee im Hintergrund
@@ -205,6 +217,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	SV	Snö i bakgrunden när Nu spelas visas
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_2
+	CA	Reproduint ara, neu caient per davant
 	CS	Právě hraje, sníh padá v popředí
 	DA	Nu spiller: sne falder foran
 	DE	Aktuelle Wiedergabe mit Schnee im Vordergrund
@@ -222,6 +235,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_2
 	SV	Snö i förgrunden när Nu spelas visas
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_3
+	CA	Dia/Hora
 	CS	Datum/čas
 	DA	Dato/klokkeslæt
 	DE	Datum/Zeit
@@ -239,6 +253,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_3
 	SV	Datum/Tid
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_4
+	CA	Només neu
 	CS	Pouze sníh
 	DA	Kun sne
 	DE	Nur Schnee
@@ -256,6 +271,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_4
 	SV	Vanlig snö
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_5
+	CA	Automàtic
 	CS	Automatický
 	DA	Automatisk
 	DE	Automatisch
@@ -273,6 +289,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_5
 	SV	Automatiskt
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_6
+	CA	Bones festes
 	CS	Přání k ročním obdobím
 	DA	Glædelig jul
 	DE	Frohe Feiertage!
@@ -290,6 +307,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_6
 	SV	Julhälsning
 
 PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
+	CA	5
 	CS	4
 	DA	5
 	DE	5
@@ -307,6 +325,7 @@ PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
 	SV	5
 
 PLUGIN_SCREENSAVER_SNOW_WORD_0
+	CA	BON
 	CS	VESELE
 	DA	GLÆDELIG
 	DE	FROHE
@@ -324,6 +343,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_0
 	SV	GOD
 
 PLUGIN_SCREENSAVER_SNOW_WORD_1
+	CA	NADAL
 	CS	VANOCE
 	DA	JUL
 	DE	WEIHNACHTEN
@@ -341,6 +361,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_1
 	SV	JUL
 
 PLUGIN_SCREENSAVER_SNOW_WORD_2
+	CA	I
 	CS	A STASTNY
 	DA	OG ET RIGTIG
 	DE	UND EIN GUTES
@@ -358,6 +379,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_2
 	SV	OCH ETT
 
 PLUGIN_SCREENSAVER_SNOW_WORD_3
+	CA	FELIÇ
 	CS	NOVY ROK!
 	DA	GODT
 	DE	GLÜCKLICHES
@@ -375,6 +397,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_3
 	SV	GOTT
 
 PLUGIN_SCREENSAVER_SNOW_WORD_4
+	CA	ANY NOU!
 	DA	NYTÅR!
 	DE	NEUES JAHR!
 	EN	NEW YEAR !
