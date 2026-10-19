@@ -1,6 +1,7 @@
 # String file for DigitalInput plugin
 
 PLUGIN_DIGITAL_INPUT
+	CA	Entrades digitals
 	CS	Digitální vstupy
 	DA	Digitale indgange
 	DE	Digitale Eingänge
@@ -18,6 +19,7 @@ PLUGIN_DIGITAL_INPUT
 	SV	Digitala ingångar
 
 PLUGIN_DIGITAL_INPUT_DESC
+	CA	Entrada digital per Transporter
 	CS	Digitální vstup pro Transporter
 	DA	Digitale indgange på Transporter
 	DE	Digitale Eingänge für den Transporter
@@ -34,6 +36,7 @@ PLUGIN_DIGITAL_INPUT_DESC
 	SV	Digital ingång för Transporter
 
 PLUGIN_DIGITAL_INPUT_BALANCED_AES
+	CA	AES/EBU equilibrat
 	CS	Vyvážený AES/EBU
 	DA	Afbalanceret AES/EBU
 	DE	AES/EBU symmetrisch
@@ -51,6 +54,7 @@ PLUGIN_DIGITAL_INPUT_BALANCED_AES
 	SV	Balanserat AES/EBU
 
 PLUGIN_DIGITAL_INPUT_BNC_SPDIF
+	CA	BNC Coaxial S/PDIF
 	CS	Koaxiální BNC S/PDIF
 	DA	BNC, Koaksial, S/PDIF
 	DE	BNC Koax S/PDIF
@@ -68,6 +72,7 @@ PLUGIN_DIGITAL_INPUT_BNC_SPDIF
 	SV	BNC-koaxial S/PDIF
 
 PLUGIN_DIGITAL_INPUT_RCA_SPDIF
+	CA	RCA Coaxial S/PDIF
 	CS	Koaxiální RCA S/PDIF
 	DA	RCA, Koaksial, S/PDIF
 	DE	Cinch Koax S/PDIF
@@ -85,6 +90,7 @@ PLUGIN_DIGITAL_INPUT_RCA_SPDIF
 	SV	RCA-koaxial S/PDIF
 
 PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF
+	CA	S/PDIF òptic (TOSLINK)
 	CS	Optický S/PDIF (TOSLINK)
 	DA	Optisk S/PDIF (TOSLINK)
 	DE	Optisch S/PDIF (TOSLINK)
@@ -102,6 +108,7 @@ PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF
 	SV	Optisk S/PDIF (TOSLINK)
 
 PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW
+	CA	Trieu una opció d'entrada digital a continuació:
 	CS	Vyberte níže uvedenou možnost digitálního vstupu:
 	DA	Vælg digital indgang nedenfor:
 	DE	Wählen Sie einen digitalen Eingang:

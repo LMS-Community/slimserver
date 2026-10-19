@@ -2,6 +2,7 @@ PLUGIN_CLASSICALRADIO_NAME
 	EN	ClassicalRadio.com
 
 PLUGIN_CLASSICALRADIO_DESC
+	CA	ClassicalRadio.com - Música clàssica seleccionada amb gust
 	CS	ClassicalRadio.com – Krásně vybraná klasická hudba
 	DA	ClassicalRadio.com - Smukt arrangeret klassisk musik
 	DE	ClassicalRadio.com - Wunderschön zusammengestellte klassische Musik
@@ -9,9 +10,11 @@ PLUGIN_CLASSICALRADIO_DESC
 	FR	ClassicalRadio.com - Musique classique magnifiquement organisée
 	NL	ClassicalRadio.com - Prachtig samengestelde klassieke muziek
 	HU	ClassicalRadio.com - Gyönyörűen válogatott klasszikus zene
+	NO	ClassicalRadio.com - Nøye utvalgt klassisk musikk
 	SV	ClassicalRadio.com - Vackert arrangerad klassisk musik
 
 PLUGIN_CLASSICALRADIO_MISSING_CREDS
+	CA	Si us plau, visiteu ClassicalRadio.com a la configuració del Lyrion Music Server per afegir les vostres credencials.
 	CS	Prosím, navštivte ClassicalRadio.com v nastavení Lyrion Music Serveru a přidejte své přihlašovací údaje.
 	DA	Besøg ClassicalRadio.com i Lyrion Music Server indstillinger for at tilføje dine loginoplysninger.
 	DE	Bitte rufen Sie ClassicalRadio.com in den Einstellungen des Lyrion Music Servers auf, um Ihre Anmeldedaten hinzuzufügen.
@@ -19,9 +22,11 @@ PLUGIN_CLASSICALRADIO_MISSING_CREDS
 	FR	Veuillez vous rendre dans ClassicalRadio.com dans les paramètres de Lyrion Music Server pour ajouter vos informations d'identification.
 	NL	Ga naar ClassicalRadio.com in de Lyrion Music Server Instellingen om je gegevens toe te voegen.
 	HU	Kérjük, látogasson el a ClassicalRadio.com oldalra a Lyrion Music Server beállításainál a hitelesítési adatok hozzáadásához.
+	NO	Gå til ClassicalRadio.com i innstillingene for Lyrion Music Server for å legge inn påloggingsopplysningene dine.
 	SV	Gå till Classical.com i Lyrion Music Server-inställningarna för att lägga till dina login-uppgfter
 
 PLUGIN_CLASSICALRADIO_LINK
+	CA	Per crear o gestionar el vostre compte, visiteu <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
 	CS	Chcete-li si vytvořit nebo spravovat svůj účet, navštivte <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
 	DA	Besøg <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a> for at oprette eller administrere din konto.
 	DE	Um ein Konto zu erstellen oder Ihr Konto zu verwalten, besuchen Sie bitte <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
@@ -29,4 +34,5 @@ PLUGIN_CLASSICALRADIO_LINK
 	FR	Pour créer ou gérer votre compte, veuillez accéder à <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
 	NL	Ga om een account aan te maken of te beheren naar <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
 	HU	Fiókja létrehozásához vagy kezeléséhez látogasson el a <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a> oldalra.
+	NO	Gå til <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a> for å opprette eller administrere kontoen din.
 	SV	Gå till <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a> för att skapa eller ändra ditt konto.

@@ -32,7 +32,8 @@ sub page {
 
 sub prefs {
 	return ($prefs, qw(musicip scan_interval player_settings host port mix_filter reject_size reject_type
-			   mix_genre mix_genre_filter mix_variety mix_style mix_type mix_size playlist_prefix playlist_suffix));
+			   mix_genre mix_genre_filter mix_variety mix_style mix_type mix_size playlist_prefix playlist_suffix
+			   path_conversion_enabled path_conversion_source path_conversion_dest));
 }
 
 sub handler {
@@ -45,16 +46,29 @@ sub handler {
 		return undef;
 	}
 
-	if ( $params->{'saveSettings'} && (my $selected = $params->{'pref_mix_genre_filter'}) ) {
-		# make sure we always store an arrayref, even if only one genre is selected
-		$params->{'pref_mix_genre_filter'} = [ $selected ] unless ref $selected && ref $selected eq 'ARRAY';
+	if ( $params->{'saveSettings'} ) {
+		my $selected = $params->{'pref_mix_genre_filter'};
+
+		# An empty multi-select submits no value at all (undef), which
+		# means "no genres excluded", not "leave unchanged" - store an
+		# empty arrayref for that case. A single selection submits as a
+		# plain scalar rather than a one-item array; wrap it.
+		$params->{'pref_mix_genre_filter'} = !defined $selected ? []
+			: ( ref $selected eq 'ARRAY' ? $selected : [ $selected ] );
 	}
 
 	$params->{'filters'}    = Slim::Plugin::MusicMagic::Common->getFilterList();
 	$params->{'genre_list'} = Slim::Plugin::MusicMagic::Common::getGenreList();
 
 	my ($classPrefs) = $class->prefs($client);
-	$params->{'mix_genre_filter'} = { map { $_ => 1 } @{ $classPrefs->get('mix_genre_filter') || [] } };
+
+	# Use a differently-named key for the checkbox-state lookup hash: it
+	# used to be called 'mix_genre_filter', identical to the actual pref
+	# name, which Slim::Web::Settings::handler flags and rejects on save
+	# when the filter is empty (it treats any non-'pref_'-prefixed param
+	# matching a real pref name as a template error).
+	my $genreFilter = Slim::Plugin::MusicMagic::Common::genreFilterList($classPrefs->get('mix_genre_filter'));
+	$params->{'mix_genre_filter_lookup'} = { map { $_ => 1 } @$genreFilter };
 
 	return $class->SUPER::handler($client, $params);
 }

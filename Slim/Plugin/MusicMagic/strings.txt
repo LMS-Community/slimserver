@@ -1,6 +1,7 @@
 # String file for MusicIP plugin
 
 MUSICMAGIC
+	CA	MusicIP
 	CS	MusicIP
 	DA	MusicIP
 	DE	MusicIP
@@ -17,6 +18,7 @@ MUSICMAGIC
 	SV	MusicIP
 
 MUSICMAGIC_DESC
+	CA	Integració amb MusicIP
 	CS	Integrace MusicIP
 	DA	Integration med MusicIP
 	DE	MusicIP Integration
@@ -33,6 +35,7 @@ MUSICMAGIC_DESC
 	SV	MusicIP-integration
 
 SETUP_MUSICMAGICPLAYLISTFORMAT
+	CA	Format de llista de reproducció de MusicIP
 	CS	Formát seznamu skladeb MusicIP
 	DA	Format af MusicIP-afspilningslister
 	DE	MusicIP-Wiedergabelistenformat
@@ -51,6 +54,7 @@ SETUP_MUSICMAGICPLAYLISTFORMAT
 	ZH_CN	MusicIP播放表格式
 
 SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
+	CA	Aquesta opció determina el format que s'utilitzarà en importar llistes de reproducció de MusicIP.
 	CS	Tato volba určuje formát použitý při importu seznamů skladeb MusicIP.
 	DA	Denne indstillinger definerer formatet som anvendes ved import af MusicIP-afspilningslister.
 	DE	Diese Option definiert das Format, in welcher MusicIP-Wiedergabelisten importiert werden.
@@ -69,6 +73,7 @@ SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
 	ZH_CN	这个选项决定了导入MusicIP播放表所使用的格式。
 
 SETUP_MIX_TYPE
+	CA	Tipus de mescla
 	CS	Typ mixu
 	DA	Mikstype
 	DE	Mix: Typ
@@ -87,6 +92,7 @@ SETUP_MIX_TYPE
 	ZH_CN	混音类型
 
 SETUP_MIX_SIZE
+	CA	Mida de la mescla
 	CS	Velikost mixu
 	DA	Miks: størrelse
 	DE	Mix: Größe
@@ -105,6 +111,7 @@ SETUP_MIX_SIZE
 	ZH_CN	混音量
 
 SETUP_MIX_SIZE_DESC
+	CA	Trieu la mida de la mescla
 	CS	Zvolte velikost mixu
 	DA	Vælg størrelse af miks
 	DE	Mix-Größe wählen
@@ -123,6 +130,7 @@ SETUP_MIX_SIZE_DESC
 	ZH_CN	请选择MusicIP混音量
 
 SETUP_MIX_FILTER
+	CA	Filtre de mescla
 	CS	Filtr mixu
 	DA	Miksfilter
 	DE	Mixfilter
@@ -141,6 +149,7 @@ SETUP_MIX_FILTER
 	ZH_CN	混音过滤器
 
 SETUP_MIX_FILTER_DESC
+	CA	Podeu crear conjunts de condicions de filtre amb nom a MusicIP i triar d'aquesta llista per aplicar aquests filtres a les mescles de MusicIP del Lyrion Music Server.
 	CS	Můžete vytvořit pojmenované sady filtrovacích podmínek v MusicIP a zvolit ze zde uvedeného seznamu aplikaci filtrů na MusicIP mixy v Lyrion Music Serveru.
 	DA	Du kan definere navngivne filterbetingelser i MusicIP og vælge at anvende disse filtre på miks fra MusicIP i Lyrion Music Server.
 	DE	In MusicIP können Sie Filtersätze unter einem Namen speichern. Wählen Sie hier einen dieser Sätze, der auf die MusicIP-Mixes im Lyrion Music Server angewendet werden soll.
@@ -159,6 +168,7 @@ SETUP_MIX_FILTER_DESC
 	ZH_CN	您可以利用MusicIP设立过滤器，并且从这表中选择应用在Lyrion Music Server内MusicIP混音的那些过滤器。
 
 SETUP_MIX_GENRE_FILTER
+	CA	Gèneres exclosos
 	CS	Vyloučené žánry
 	DA	Udelukkede genrer
 	DE	Ausgeschlossene Musikstile
@@ -177,6 +187,7 @@ SETUP_MIX_GENRE_FILTER
 	ZH_CN	排除的曲风
 
 SETUP_MIX_GENRE_FILTER_DESC
+	CA	Selecciona un o més gèneres de la teva biblioteca musical per excloure'ls de MusicIP Mixes. No deixis res seleccionat per permetre tots els gèneres.
 	CS	Vyberte jeden nebo více žánrů z vaší hudební knihovny, které chcete vyloučit z MusicIP mixů. Pokud nevyberete žádný, budou povoleny všechny žánry.
 	DA	Vælg en eller flere genrer fra dit musikbibliotek, som skal udelukkes fra MusicIP-miks. Lad intet være valgt for at tillade alle genrer.
 	DE	Wählen Sie eine oder mehrere Musikstile aus Ihrer Musikbibliothek aus, die aus MusicIP-Mixes ausgeschlossen werden sollen. Wenn nichts ausgewählt ist, sind alle Musikstile zulässig.
@@ -195,6 +206,7 @@ SETUP_MIX_GENRE_FILTER_DESC
 	ZH_CN	从您的音乐库中选择一个或多个要从MusicIP混音中排除的曲风。如果不选择任何曲风，则允许所有曲风。
 
 SETUP_MIX_GENRE
+	CA	Gènere de mescla
 	CS	Mix žánru
 	DA	Miks: Genre
 	DE	Mix: Musikstil
@@ -213,6 +225,7 @@ SETUP_MIX_GENRE
 	ZH_CN	混音曲风
 
 SETUP_MIX_GENRE_DESC
+	CA	Restringeix la mescla al gènere de la llavor (per defecte: no)
 	CS	Omezit mix na žánr výchozí skladby (Výchozí: ne)
 	DA	Begræns miks til samme genre som det første valg (Standardværdi: Nej)
 	DE	Beschränkung des Mix auf die Musikstile des Seeds (Standardwert: nein)
@@ -231,6 +244,7 @@ SETUP_MIX_GENRE_DESC
 	ZH_CN	将混音限制于种子的曲风（确省：不）
 
 SETUP_REJECT_TYPE
+	CA	Tipus de rebuig de MusicIP
 	CS	Typ odmítnutí MusicIP
 	DA	MusicIP-afvisningstype
 	DE	MusicIP - Ablehnungsart
@@ -249,6 +263,7 @@ SETUP_REJECT_TYPE
 	ZH_CN	MusicIP拒绝种类
 
 SETUP_REJECT_SIZE
+	CA	Mida del rebuig
 	CS	Odmítnout velikost
 	DA	Afvisningsstørrelse
 	DE	Ablehnungsgröße
@@ -267,6 +282,7 @@ SETUP_REJECT_SIZE
 	ZH_CN	拒绝量
 
 SETUP_REJECT_SIZE_DESC
+	CA	Defineix el nombre d'elements que s'han d'ometre abans de repetir un tipus. (Per defecte: 12)
 	CS	Nastavte počet položek k přeskočení před opakováním typu. (Výchozí: 12)
 	DA	Indstil antal elementer som skal springes over før en type gentages. (Standard: 12)
 	DE	Definieren Sie die Anzahl von Einträgen, die übersprungen werden sollen, bevor ein Typ wiederholt wird. (Standardwert: 12)
@@ -284,6 +300,7 @@ SETUP_REJECT_SIZE_DESC
 	ZH_CN	配置重播一类别前跳过的数量（确省:12)
 
 SETUP_MIX_STYLE
+	CA	Estil de la mescla
 	CS	Mix stylu
 	DA	Miks: Stil
 	DE	Mix: Stil
@@ -302,6 +319,7 @@ SETUP_MIX_STYLE
 	ZH_CN	混音风格
 
 SETUP_MIX_STYLE_DESC
+	CA	Semblança amb l'estil de l'artista (0 = ignorar (per defecte), 200 = estricte)
 	CS	Jak moc se podobá stylu interpreta (0 = ignorovat (výchozí), 200 = striktně)
 	DA	Hvor meget som kunstnerens stil (0 = ignorer (standard), 200 = streng)
 	DE	Wie ähnlich soll der Stil des Interpreten sein? 0=ignorieren (Standard), 200=sehr ähnlich
@@ -320,6 +338,7 @@ SETUP_MIX_STYLE_DESC
 	ZH_CN	有多接近艺人的风格 （0=不理睬（缺省），200=严格）
 
 SETUP_MIX_VARIETY
+	CA	Varietat de la mescla
 	CS	Mix rozmanitosti
 	DA	Miksx: Variation
 	DE	Mix: Vielseitigkeit
@@ -338,6 +357,7 @@ SETUP_MIX_VARIETY
 	ZH_CN	混音品种变化
 
 SETUP_MIX_VARIETY_DESC
+	CA	Quanta varietat hi ha a la mescla (0 = menys (per defecte), 9 = més)
 	CS	Jaká je rozmanitost mixu (0 = méně (výchozí), 9 = více)
 	DA	Hvor meget variation i mix (0 = lille (standard), 9 mere)
 	DE	Wie vielseitig soll der Mix sein? 0 = weniger (Standard), 9 = mehr
@@ -356,6 +376,7 @@ SETUP_MIX_VARIETY_DESC
 	ZH_CN	混音的变化程度 （0=少（缺省），9=多）
 
 MUSICMAGIC_MIXING
+	CA	Mescla MusicIP
 	CS	Mixování MusicIP
 	DA	MusicIP: Miksning
 	DE	MusicIP-Mixing
@@ -374,6 +395,7 @@ MUSICMAGIC_MIXING
 	ZH_CN	MusicIP混音
 
 SETUP_MMMPLAYERSETTINGS
+	CA	Configuració del reproductor per a cada mescla
 	CS	Nastavení přehrávače pro každý mix
 	DA	Afspillerindstillinger for hvert miks
 	DE	Mix-Player-Einstellungen
@@ -392,6 +414,7 @@ SETUP_MMMPLAYERSETTINGS
 	ZH_CN	播放机上各个混音的设置
 
 SETUP_MMMPLAYERSETTINGS_DESC
+	CA	Podeu optar per donar accés a cada reproductor a la configuració de la mescla de MusicIP abans de generar una mescla. Qualsevol configuració escollida pel reproductor anul·larà la configuració del servidor i es mantindrà fins que es torni a canviar des del reproductor. Si voleu passar directament a la creació d'una mescla utilitzant només la configuració del reproductor/servidor existent, trieu "no".
 	CS	Můžete si zvolit přidělení přístupu k nastavení MusicIP mixu pro každý přehrávač před vytvořením mixu. Jakékoli nastavení zvolené pro přehrávač bude mít přednost před nastavením serveru a bude zachováno, dokud z přehrávače nebude znovu změněno. Pokud chcete přeskočit přímo k vytvoření mixu s použitím existujícího nastavení přehrávače/serveru, zvolte Ne.
 	DA	Du kan vælge at give hver enkelt afspiller adgang til indstillingerne for MusicIP Mix før du opretter et miks. Alle indstillinger som vælges på afspilleren, har forrang frem for serverindstillingerne indtil de ændres igen på afspilleren. Hvis du vil gå videre og begynde at oprette et miks vha. de eksisterende indstillinger på afspilleren og serveren, skal du vælge Nej.
 	DE	Vor dem Erzeugen eines Mix können Sie jedem Player Zugriff auf die MusicIP-Mix-Einstellungen geben. Auf dem Player gewählte Einstellungen setzen die Server-Einstellungen außer Kraft und werden gespeichert, bis Sie wieder am Player geändert werden. Wenn Sie gleich einen Mix mit den vorhandenen Server- bzw. Player-Einstellungen erstellen möchten, wählen Sie 'Nein'.
@@ -403,13 +426,14 @@ SETUP_MMMPLAYERSETTINGS_DESC
 	HU	Dönthet úgy, hogy minden lejátszónak hozzáférést biztosít a MusicIP mix beállításaihoz, mielőtt egy mixet generál.  A lejátszó által választott beállítások felülírják a szerverbeállításokat, és mindaddig megmaradnak, amíg a lejátszó újra nem módosítja azokat. Ha közvetlenül a mix létrehozásához szeretne ugrani, csak a meglévő lejátszó/szerver beállításokat használva, válassza a Nem lehetőséget.
 	IT	È possibile impostare i singoli lettori per l'accesso alle impostazioni del mix MusicIP prima di creare il mix. Le impostazioni del lettore sostituiscono quelle del server e vengono mantenute fino a quando non vengono eseguite altre modifiche utilizzando il lettore stesso. Se si desidera passare direttamente alla creazione di un mix, utilizzare solo le impostazioni del lettore/server esistenti, quindi scegliere no.
 	NL	Je kunt ervoor kiezen elke muziekspeler toegang te geven tot de MusicIP-mixinstellingen voordat er een mix wordt gegenereerd. Instellingen op de muziekspeler gaan voor op de serverinstellingen en blijven van kracht tot ze via het systeem worden gewijzigd. Kies 'Nee' als je direct een mix wilt maken met de huidige systeem-/serverinstellingen.
-	NO	Du kan velge å gi hver spiller tilgang til mikseinnstillingene til MusicIP før du lager en miks. Enhver brukervalgt innstilling overstyrer serverinnstillinger, og brukervalgte innstillinger forblir aktive til de endres igjen fra spilleren. Hvis du vil gå rett til å lage en miks med bare eksisterende spiller- og serverinnstillinger, velger du nei.
+	NO	Du kan velge å gi hver spiller tilgang til mikseinnstillingene til MusicIP før du lager en miks. Enhver brukervalgt innstilling overstyrer tjenerinnstillinger, og brukervalgte innstillinger forblir aktive til de endres igjen fra spilleren. Hvis du vil gå rett til å lage en miks med bare eksisterende spiller- og tjenerinnstillinger, velger du nei.
 	PL	Przed utworzeniem składanki każdemu odtwarzaczowi można umożliwić uzyskanie dostępu do ustawień składanki w usłudze MusicIP. Ustawienia wybrane w odtwarzaczu zastąpią ustawienia na serwerze i pozostaną stałe do momentu ponownej zmiany w odtwarzaczu. Jeżeli chcesz od razu przejść do tworzenia składanki z wykorzystaniem istniejących ustawień odtwarzacza/serwera, wybierz opcję Nie.
 	RU	Перед созданием микса можно предоставить каждому плееру доступ к настройкам микса MusicIP. Настройки, заданные через плеер, переопределяют настройки сервера и сохраняются, пока вы снова не измените их через плеер. Чтобы сразу перейти к созданию микса, используя настройки плеера/сервера, выберите "Нет".
 	SV	Du kan välja att ge varje spelare tillgång till mixinställningarna för MusicIP innan du mixar. Spelarinställningar åsidosätter serverinställningar och gäller tills de ändras från spelaren. Välj Nej om du vill hoppa över det här steget och mixa direkt med endast befintliga spelar-/serverinställningar.
 	ZH_CN	您可以选择在生成混音之前让每一个播放机都拥有访问MusicIP混音设置的特权。任何播放机上的特定设置将藐视服务器上的设置，直到他们再由播放机上被修改。如果您希望跳过并单以现有的播放机/伺服器设置生成混音，请选择「不」。
 
 SETUP_MMMSETTINGS
+	CA	Configuració de la mescla de MusicIP
 	CS	Nastavení MusicIP mixu
 	DA	Indstillinger for MusicIP Mix
 	DE	MusicIP-Mix: Einstellungen
@@ -428,6 +452,7 @@ SETUP_MMMSETTINGS
 	ZH_CN	MusicIP混音设置
 
 MUSICMAGIC_MIXRIGHT
+	CA	(Ves a la dreta per mesclar)
 	CS	(Přejít přímo na Mix)
 	DA	(Tryk på højre for at mikse)
 	DE	(Zum Mixen RECHTS drücken)
@@ -446,6 +471,7 @@ MUSICMAGIC_MIXRIGHT
 	ZH_CN	（按右方向键开始混音）
 
 USE_MUSICMAGIC
+	CA	Utilitza MusicIP
 	CS	Použít MusicIP
 	DA	Anvend MusicIP
 	DE	MusicIP verwenden
@@ -465,6 +491,7 @@ USE_MUSICMAGIC
 	ZH_CN	使用MusicIP
 
 DONT_USE_MUSICMAGIC
+	CA	No utilitzis MusicIP
 	CS	Nepoužít MusicIP
 	DA	Anvend ikke MusicIP
 	DE	MusicIP nicht verwenden
@@ -484,6 +511,7 @@ DONT_USE_MUSICMAGIC
 	ZH_CN	不使用MusicIP
 
 SETUP_MUSICMAGIC
+	CA	MusicIP
 	CS	MusicIP
 	DA	MusicIP
 	DE	MusicIP
@@ -502,6 +530,7 @@ SETUP_MUSICMAGIC
 	ZH_CN	MusicIP
 
 SETUP_MUSICMAGIC_DESC
+	CA	El Lyrion Music Server pot utilitzar el vostre programa MusicIP com a font d'informació sobre el títol i el gènere. O el podeu utilitzar per generar mescles instantànies només a nivell de gènere, artista i cançó. Llegir la informació del títol i el gènere és molt més lent que llegir només l'estat de mesclabilitat, sobretot quan es busca només cançons noves i modificades.
 	CS	Lyrion Music Server může použít váš program MusicIP jako zdroj informací o titulech a žánrech. Nebo jej můžete použít pouze k vytvoření okamžitých mixů na úrovni žánrů, interpretů a skladeb. Načtení informací o titulech a žánrech je daleko pomalejší než pouze načtení mixovatelného stavu, obzvláště při prohledávání pouze nových a změněných skladeb.
 	DA	Lyrion Music Server kan bruge MusicIP som kilde til at hente oplysninger om titel og genre. Du kan også fremstille lynmiks baseret på en genre, en kunstner eller et nummer. Det tager længere tid at læse oplysninger om titel og genre end kun at læse oplysninger om miksets status, navnlig når der kun søges efter nye eller ændrede numre.
 	DE	Lyrion Music Server kann MusicIP als Quelle für Titel- und Stilrichtungsangaben verwenden. Sie können es auch dazu nutzen, um nur Instant Mixes auf Stilrichtungs-, Interpreten und Titelebene zu erstellen. Es dauert viel länger, die Titel- und Stilrichtungsangaben zu lesen als nur den mischbaren Status, vor allem wenn Sie nur nach neuen und geänderten Titeln suchen.
@@ -518,6 +547,7 @@ SETUP_MUSICMAGIC_DESC
 	SV	Lyrion Music Server kan använda MusicIP som källa till titel- och genreinformation. Dessutom kan du snabbt skapa mixer på genre-, artist- eller låtnivå. Det tar mycket längre tid att läsa in titel- och genreinformation än mixstatus, i synnerhet när programmet endast söker efter nya och ändrade låtar.
 
 MMMMIXTYPE_TRACKS
+	CA	Nombre de pistes
 	CS	Počet skladeb
 	DA	Antal numre
 	DE	Anzahl Titel
@@ -536,6 +566,7 @@ MMMMIXTYPE_TRACKS
 	ZH_CN	音轨数量
 
 MMMMIXTYPE_MIN
+	CA	Nombre de minuts
 	CS	Počet minut
 	DA	Antal minutter
 	DE	Dauer in Minuten
@@ -554,6 +585,7 @@ MMMMIXTYPE_MIN
 	ZH_CN	分钟总数
 
 MMMMIXTYPE_MBYTES
+	CA	Nombre de Megabytes
 	CS	Počet megabajtů
 	DA	Antal megabyte
 	DE	Anzahl Megabyte
@@ -572,6 +604,7 @@ MMMMIXTYPE_MBYTES
 	ZH_CN	兆字节总数
 
 SETUP_MUSICMAGICSCANINTERVAL
+	CA	Interval de recàrrega de MusicIP
 	CS	Interval znovunačtení MusicIP
 	DA	Interval for genindlæsning af MusicIP
 	DE	MusicIP-Aktualisierungsintervall
@@ -590,6 +623,7 @@ SETUP_MUSICMAGICSCANINTERVAL
 	ZH_CN	MusicIP刷新间隔时间
 
 SETUP_MUSICMAGICSCANINTERVAL_DESC
+	CA	Quan la base de dades MusicIP canvia, el Lyrion Music Server importarà automàticament la informació de la biblioteca. Podeu especificar el temps mínim (en segons) que el Lyrion Music Server esperarà abans de tornar a carregar la base de dades MusicIP. Un valor de zero desactiva la recàrrega.
 	CS	Když se změní databáze vašeho MusicIP, Lyrion Music Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude Lyrion Music Server čekat před znovunačtením vaší databáze MusicIP. Nulová hodnota zakáže znovunačtení.
 	DA	Når noget i MusicIP-databasen ændres, importeres disse oplysninger automatisk i Lyrion Music Server. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før MusicIP-databasen genindlæses i Lyrion Music Server. Hvis værdien er 0, genindlæses den ikke.
 	DE	Wenn sich die MusicIP-Datenbank ändert, importiert Lyrion Music Server die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die Lyrion Music Server mindestens warten soll, bevor die MusicIP-Datenbank erneut importiert wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
@@ -608,6 +642,7 @@ SETUP_MUSICMAGICSCANINTERVAL_DESC
 	ZH_CN	当您的MusicIP数据库改变时，Lyrion Music Server将自动地导入最新音乐库信息。您可以指定Lyrion Music Server再装您的MusicIP数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_MMSHOST
+	CA	Amfitrió MusicIP
 	CS	MusicIP host
 	DA	MusicIP-host
 	DE	MusicIP-Host
@@ -627,6 +662,7 @@ SETUP_MMSHOST
 	ZH_CN	MusicIP主机
 
 SETUP_MMSHOST_DESC
+	CA	El nom d'amfitrió o l'adreça IP del servidor MusicIP. Canvieu-ho si MusicIP s'executa en un amfitrió diferent del Lyrion Music Server (per exemple, en un contenidor o màquina virtual de Docker separat). Per defecte, s'utilitza localhost. Nota: les rutes de fitxer a la vostra música han de ser idèntiques en tots dos amfitrions. Els usuaris de Docker s'han d'assegurar d'això utilitzant rutes de muntatge de volum coincidents en tots dos contenidors.
 	CS	Název hostitele nebo IP adresa serveru MusicIP. Změňte toto nastavení, pokud MusicIP běží na jiném hostiteli než Lyrion Music Server (např. v samostatném kontejneru Docker nebo VM). Výchozí hodnota je localhost. Poznámka: cesty k hudebním souborům musí být na obou hostitelích identické. Uživatelé Dockeru to mohou zajistit použitím stejných cest pro připojení svazků v obou kontejnerech.
 	DA	Værtsnavn eller IP-adresse på MusicIP-serveren. Skift dette, hvis MusicIP kører på en anden vært end Lyrion Music Server (f.eks. i en separat Docker-container eller VM). Standard er localhost. Bemærk: filstier til din musik skal være identiske på begge værter. Docker-brugere bør sikre dette ved at bruge matchende volume-monteringsstier i begge containere.
 	DE	Der Hostname oder die IP-Adresse des MusicIP-Servers. Ändern Sie dies, wenn MusicIP auf einem anderen Host als Lyrion Music Server läuft (z. B. in einem separaten Docker-Container oder einer VM). Standardwert: localhost. Hinweis: Die Dateipfade zur Musik müssen auf beiden Hosts identisch sein. Docker-Benutzer sollten Volume-Mounts verwenden, um sicherzustellen, dass dieselben Pfade in beiden Containern sichtbar sind.
@@ -638,14 +674,55 @@ SETUP_MMSHOST_DESC
 	HU	A MusicIP-kiszolgáló gazdaneve vagy IP-címe. Módosítsa ezt, ha a MusicIP a Lyrion Music Servertől eltérő kiszolgálón fut (pl. külön Docker-tárolóban vagy VM-ben). Alapértelmezett érték: localhost. Megjegyzés: a zenefájlok elérési útjának mindkét kiszolgálón azonosnak kell lennie. Docker-felhasználóknak ezt a megfelelő kötetkötési útvonalak mindkét tárolóban való használatával kell biztosítaniuk.
 	IT	Il nome host o l'indirizzo IP del server MusicIP. Modificare questa impostazione se MusicIP è in esecuzione su un host diverso da Lyrion Music Server (ad es. in un contenitore Docker separato o in una VM). Il valore predefinito è localhost. Nota: i percorsi dei file musicali devono essere identici su entrambi gli host. Gli utenti Docker devono garantirlo utilizzando percorsi di montaggio del volume corrispondenti in entrambi i contenitori.
 	NL	De hostnaam of het IP-adres van de MusicIP-server. Wijzig dit als MusicIP op een andere host draait dan Lyrion Music Server (bijv. in een aparte Docker-container of VM). Standaard: localhost. Let op: de bestandspaden naar je muziek moeten identiek zijn op beide hosts. Docker-gebruikers dienen hiervoor overeenkomende volume-mounts in beide containers te gebruiken.
-	NO	Vertsnavn eller IP-adresse til MusicIP-serveren. Endre dette hvis MusicIP kjører på en annen vert enn Lyrion Music Server (f.eks. i en egen Docker-container eller VM). Standard er localhost. Merk: filbaner til musikken din må være identiske på begge verter. Docker-brukere bør sikre dette ved å bruke samsvarende volummonteringsstier i begge containerne.
+	NO	Vertsnavn eller IP-adresse til MusicIP-tjeneren. Endre dette hvis MusicIP kjører på en annen vert enn Lyrion Music Server (f.eks. i en egen Docker-container eller VM). Standard er localhost. Merk: filbaner til musikken din må være identiske på begge verter. Docker-brukere bør sikre dette ved å bruke samsvarende volummonteringsstier i begge containerne.
 	PL	Nazwa hosta lub adres IP serwera MusicIP. Zmień to ustawienie, jeśli MusicIP działa na innym hoście niż Lyrion Music Server (np. w osobnym kontenerze Docker lub maszynie wirtualnej). Domyślna wartość to localhost. Uwaga: ścieżki do plików muzycznych muszą być identyczne na obu hostach. Użytkownicy Dockera powinni to zapewnić, używając identycznych ścieżek montowania woluminów w obu kontenerach.
 	PT	O nome do host ou o endereço IP do servidor MusicIP. Altere isto se o MusicIP estiver a ser executado num host diferente do Lyrion Music Server (por exemplo, num contentor Docker separado ou numa VM). A predefinição é localhost. Nota: os caminhos dos ficheiros de música têm de ser idênticos em ambos os hosts. Os utilizadores de Docker devem garantir isso utilizando caminhos de montagem de volume correspondentes em ambos os contentores.
 	RU	Имя хоста или IP-адрес сервера MusicIP. Измените это, если MusicIP работает на другом хосте, отличном от Lyrion Music Server (например, в отдельном контейнере Docker или виртуальной машине). По умолчанию используется localhost. Примечание: пути к музыкальным файлам должны быть одинаковыми на обоих хостах. Пользователям Docker необходимо обеспечить это с помощью совпадающих путей монтирования томов в обоих контейнерах.
 	SV	Värdnamnet eller IP-adressen för MusicIP-servern. Ändra detta om MusicIP körs på en annan värd än Lyrion Music Server (t.ex. i en separat Docker-container eller VM). Standard är localhost. Obs: filsökvägarna till din musik måste vara identiska på båda värdarna. Docker-användare bör säkerställa detta genom att använda matchande volymmonterade sökvägar i båda containrarna.
 	ZH_CN	MusicIP服务器的主机名或IP地址。如果MusicIP运行在与Lyrion Music Server不同的主机上（例如在单独的Docker容器或虚拟机中），请更改此设置。默认为localhost。注意：音乐文件路径在两台主机上必须完全相同。Docker用户应通过在两个容器中使用相同的卷挂载路径来确保这一点。
 
+MUSICIP_PATH_CONVERSION
+	CA	Conversió de rutes
+	DE	Pfadkonvertierung
+	EN	Path Conversion
+	FR	Conversion de chemin
+	NL	Padconversie
+	NO	Baneomforming
+
+MUSICIP_PATH_CONVERSION_DESC
+	CA	Si MusicIP informa de rutes de cançons que no coincideixen amb el que espera el Lyrion Music Server (per exemple, quan MusicIP s'executa amb Wine i informa de rutes amb estil Windows, o quan s'executa MusicIP en un host diferent amb una disposició de muntatge diferent), activeu-ho i configureu una ruta d'origen i una de destinació perquè es tradueixin automàticament.
+	DE	Wenn MusicIP Pfade meldet, die nicht mit dem übereinstimmen, was Lyrion Music Server erwartet (z. B. wenn MusicIP selbst unter Wine läuft und Windows-Pfade meldet, oder wenn MusicIP auf einem anderen Host mit einem anderen Einhängepunkt-Layout läuft), aktivieren Sie diese Option und konfigurieren Sie einen Quell- und Zielpfad, damit diese automatisch übersetzt werden.
+	EN	If MusicIP reports song paths that don't match what Lyrion Music Server expects (for example when MusicIP itself runs under Wine and reports Windows-style paths, or when running MusicIP on a different host with a different mount layout), enable this and configure a source and destination path to have them translated automatically.
+	FR	Si MusicIP signale des chemins de morceaux qui ne correspondent pas à ce qu'attend Lyrion Music Server (par exemple lorsque MusicIP lui-même s'exécute sous Wine et signale des chemins Windows, ou lorsqu'il s'exécute sur un hôte différent avec une structure de montage différente), activez cette option et configurez un chemin source et un chemin de destination pour qu'ils soient traduits automatiquement.
+	NL	Als MusicIP liedpaden meldt die niet overeenkomen met wat Lyrion Music Server verwacht (bijvoorbeeld wanneer MusicIP zelf onder Wine draait en Windows-stijl paden meldt, of wanneer MusicIP op een andere host met een andere mount-indeling draait), schakel dit in en configureer een bron- en doelpad om deze automatisch te laten omzetten.
+	NO	Hvis MusicIP oppgir sangbaner som ikke samsvarer med det Lyrion Music Server forventer (for eksempel når MusicIP kjører under Wine og oppgir baner i Windows-format, eller når MusicIP kjører på en annen maskin med andre monteringspunkter), kan du slå på dette og angi en kilde- og målbane, så omformes banene automatisk.
+
+MUSICIP_PATH_CONVERSION_ENABLE
+	CA	Habilita la conversió de rutes
+	DE	Pfadkonvertierung aktivieren
+	EN	Enable Path Conversion
+	FR	Activer la conversion de chemin
+	NL	Padconversie inschakelen
+	NO	Slå på baneomforming
+
+MUSICIP_PATH_CONVERSION_SOURCE
+	CA	Ruta MusicIP (orígen)
+	DE	MusicIP-Pfad (Quelle)
+	EN	MusicIP path (source)
+	FR	Chemin MusicIP (source)
+	NL	MusicIP-pad (bron)
+	NO	MusicIP-bane (kilde)
+
+MUSICIP_PATH_CONVERSION_DEST
+	CA	Ruta MusicIP (destinació)
+	DE	Lyrion-Pfad (Ziel)
+	EN	Lyrion path (destination)
+	FR	Chemin Lyrion (destination)
+	NL	Lyrion-pad (bestemming)
+	NO	Lyrion-bane (mål)
+
 SETUP_MMSPORT
+	CA	Port HTTP de MusicIP
 	CS	HTTP port MusicIP
 	DA	MusicIP HTTP-port
 	DE	MusicIP - HTTP-Anschluss
@@ -664,6 +741,7 @@ SETUP_MMSPORT
 	ZH_CN	MusicIP HTTP端口
 
 SETUP_MMSPORT_DESC
+	CA	L'API del servei MusicIP permet seleccionar un port http per a consultes a l'API MusicIP. Introduïu aquí el número de port perquè coincideixi amb la configuració que heu triat a la configuració del mesclador MusicIP.
 	CS	API služby MusicIP umožňuje výběr http portu k použití pro dotazy na MusicIP API. Vložte zde číslo portu k přiřazení nastavení, které jste zvolili, k nastavení MusicIP Mixer.
 	DA	I grænsesnittet til MusicIP-tjenesten kan man definere en http-port der skal bruges ved forespørgsler til MusicIP. Her skal du angive det portnummer som svarer til det du valgte i indstillingerne for MusicIP Mixer.
 	DE	Mit dem MusicIP Service API können Sie einen HTTP-Anschluss für Anfragen an das MusicIP API auswählen. Geben Sie dieselbe Anschlussnummer wie in MusicIP Mixer ein.
@@ -675,13 +753,14 @@ SETUP_MMSPORT_DESC
 	HU	A MusicIP Service API lehetővé teszi a MusicIP API lekérdezéséhez használandó http port kiválasztását. Adja meg itt a portszámot, hogy megfeleljen a MusicIP Mixer beállításaiban kiválasztott beállításnak.
 	IT	La API del servizio MusicIP consente di selezionare una porta HTTP da utilizzare per l'invio di query all'API di MusicIP. Inserire qui il numero di porta corrispondente a quello indicato nelle impostazioni della raccolta MusicIP.
 	NL	De MusicIP-service API biedt de mogelijkheid om een HTTP-poort te gebruiken voor vragen aan de MusicIP-API. Geef hier het poortnummer op dat je in de MusicIP-mixerinstellingen hebt gekozen.
-	NO	I tjeneste-API-en for MusicIP kan du velge en http-port til henvendelser til MusicIP-API-en. Angi det samme portnummeret her som du har angitt i innstillingene for MusicIP-mikseren.
+	NO	I tjeneste-API-et for MusicIP kan du velge en http-port til henvendelser til MusicIP-API-et. Angi det samme portnummeret her som du har angitt i innstillingene for MusicIP-mikseren.
 	PL	Interfejs API usługi MusicIP umożliwia wybranie portu http używanego w celu wysyłania zapytań do tego interfejsu. Wprowadź tutaj numer portu zgodny z wybranymi miksera w usłudze MusicIP.
 	RU	Интерфейс MusicIP Service API позволяет выбрать НТТР-порт для запросов к MusicIP API. Введите здесь номер порта, соответствующий вашим настройкам MusicIP Mixer.
 	SV	I gränssnittet till MusicIP-tjänstens kan man ange en HTTP-port som ska användas vid förfrågningar till MusicIP. Ange ett portnummer här som motsvarar inställningen du gjort i Inställningar för MusicIP Mixer.
 	ZH_CN	您可以通过MusicIP的服务应用程序接口来选择用来询问MusicIP应用程序接口的http端口。请在此输入匹配您在MusicIP里已设置好的端口号。
 
 MUSICMAGIC_MIX
+	CA	Mescla MusicIP
 	CS	MusicIP Mix
 	DA	MusicIP Mix
 	DE	MusicIP-Mix
@@ -700,6 +779,7 @@ MUSICMAGIC_MIX
 	ZH_CN	MusicIP混音
 
 MUSICMAGIC_MOODS
+	CA	Mescla d'estats d'ànim de MusicIP
 	CS	MusicIP Mood Mix (podle nálady)
 	DA	MusicIP Mood Mix
 	DE	MusicIP-Stimmungs-Mix
@@ -718,6 +798,7 @@ MUSICMAGIC_MOODS
 	ZH_CN	MusicIP气氛混音
 
 DEBUG_PLUGIN_MUSICIP
+	CA	Registre de mescles i exportacions de MusicIP
 	CS	Protokolování MusicIP mixu a Exportu
 	DA	Logføring af MusicIP Mix og eksport
 	DE	MusicIP-Mix & Export
@@ -734,6 +815,7 @@ DEBUG_PLUGIN_MUSICIP
 	SV	MusicIP Mix och exportloggning
 
 MUSICIP_PROGRESS
+	CA	Impotració MusicIP
 	CS	Import MusicIP
 	DA	MusicIP: Import
 	DE	MusicIP-Import
@@ -750,6 +832,7 @@ MUSICIP_PROGRESS
 	SV	MusicIP-import
 
 MUSICIP_PLAYTHISMIX
+	CA	Reprodueix aquesta mescla
 	CS	Přehrát tento mix
 	DA	Afspil dette miks
 	DE	Diesen Mix wiedergeben
@@ -766,6 +849,7 @@ MUSICIP_PLAYTHISMIX
 	SV	Spela upp den här mixen
 
 MUSICIP_CREATEMIX
+	CA	Crea una mescla MusicIP
 	CS	Vytvořit MusicIP mix
 	DA	Opret MusicIP Mix
 	DE	MusicIP-Mix erstellen
@@ -782,6 +866,7 @@ MUSICIP_CREATEMIX
 	SV	Skapa MusicIP Mix
 
 MUSICIP_READSONGDATA
+	CA	Importa totes les dades de cançons de MusicIP (més lent)
 	CS	Importovat veškerá data o skladbách z MusicIP (pomalejší)
 	DA	Importer alle data om et nummer fra MusicIP (langsomt)
 	DE	Alle Titeldaten von MusicIP importieren (langsamer)
@@ -798,6 +883,7 @@ MUSICIP_READSONGDATA
 	SV	Importera all låtinformation från MusicIP (långsammare)
 
 MUSICIP_MIXABLE_CHECK
+	CA	Només llegeix l'estat de mesclabilitat des de MusicIP (més ràpid)
 	CS	Načíst pouze mixovatelný stav z MusicIP (rychlejší)
 	DA	Læs kun miksstatus fra MusicIP (hurtigere)
 	DE	Nur mischbaren Status von MusicIP lesen (schneller)
@@ -814,6 +900,7 @@ MUSICIP_MIXABLE_CHECK
 	SV	Läs endast in mixstatus från MusicIP (snabbare)
 
 MUSICIP_DUPLICATES
+	CA	Duplicats (MusicIP)
 	CS	Kopie (MusicIP)
 	DA	Dubletter (MusicIP)
 	DE	Dubletten (MusicIP)

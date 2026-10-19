@@ -370,7 +370,11 @@ sub cliQuery {
 		} );
 	}
 	else {
-		my $playlist = Slim::Schema->find( Playlist => $playlistId );
+		my $playlist = Slim::Schema->find( Playlist => $playlistId ) or do {
+			# an id from before a rescan, or a typo: no such object
+			$request->setStatusBadParams();
+			return;
+		};
 		$feed = Slim::Menu::PlaylistInfo->menu( $client, $playlist->url, $playlist, $tags, {
 			library_id => $request->getParam('library_id')
 		}  );

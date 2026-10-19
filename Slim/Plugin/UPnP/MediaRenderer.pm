@@ -29,37 +29,37 @@ my $prefs = preferences('server');
 my %models = (
 	slimp3      => {
 		modelName => 'SliMP3',
-		url       => 'https://lms-community.github.io/players-and-controllers/SLIMP3/',
+		url       => 'https://lyrion.org/players-and-controllers/SLIMP3/',
 		icon      => '/html/images/Players/slimp3',
 	},
 	Squeezebox  => {
 		modelName => 'Squeezebox 1',
-		url       => 'https://lms-community.github.io/players-and-controllers/squeezebox1/',
+		url       => 'https://lyrion.org/players-and-controllers/squeezebox1/',
 		icon      => '/html/images/Players/squeezebox',
 	},
 	squeezebox2 => {
 		modelName => 'Squeezebox 2',
-		url       => 'https://lms-community.github.io/players-and-controllers/squeezebox2/',
+		url       => 'https://lyrion.org/players-and-controllers/squeezebox2/',
 		icon      => '/html/images/Players/squeezebox',
 	},
 	squeezebox3 => {
 		modelName => 'Squeezebox 3',
-		url       => 'https://lms-community.github.io/players-and-controllers/squeezebox-classic/',
+		url       => 'https://lyrion.org/players-and-controllers/squeezebox-classic/',
 		icon      => '/html/images/Players/squeezebox3',
 	},
 	transporter => {
 		modelName => 'Transporter',
-		url       => 'https://lms-community.github.io/players-and-controllers/transporter/',
+		url       => 'https://lyrion.org/players-and-controllers/transporter/',
 		icon      => '/html/images/Players/transporter',
 	},
 	receiver    => {
 		modelName => 'Squeezebox Receiver',
-		url       => 'https://lms-community.github.io/players-and-controllers/squeezebox-receiver/',
+		url       => 'https://lyrion.org/players-and-controllers/squeezebox-receiver/',
 		icon      => '/html/images/Players/receiver',
 	},
 	boom        => {
 		modelName => 'Squeezebox Boom',
-		url       => 'https://lms-community.github.io/players-and-controllers/squeezebox-boom/',
+		url       => 'https://lyrion.org/players-and-controllers/squeezebox-boom/',
 		icon      => '/html/images/Players/boom',
 	},
 	softsqueeze => {
@@ -69,7 +69,7 @@ my %models = (
 	},
 	controller  => {
 		modelName => 'Squeezebox Controller',
-		url       => 'https://lms-community.github.io/players-and-controllers/squeezebox-controller/',
+		url       => 'https://lyrion.org/players-and-controllers/squeezebox-controller/',
 		icon      => '/html/images/Players/controller',
 	},
 	squeezeplay => {
@@ -79,12 +79,12 @@ my %models = (
 	},
 	baby        => {
 		modelName => 'Squeezebox Radio',
-		url       => 'https://lms-community.github.io/players-and-controllers/squeezebox-radio/',
+		url       => 'https://lyrion.org/players-and-controllers/squeezebox-radio/',
 		icon      => '/html/images/Players/baby',
 	},
 	fab4        => {
 		modelName => 'Squeezebox Touch',
-		url       => 'https://lms-community.github.io/players-and-controllers/squeezebox-touch/',
+		url       => 'https://lyrion.org/players-and-controllers/squeezebox-touch/',
 		icon      => '/html/images/Players/fab4',
 	},
 	default     => {

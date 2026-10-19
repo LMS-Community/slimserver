@@ -1,6 +1,7 @@
 # String file for Visualizer plugin
 
 PLUGIN_SCREENSAVER_VISUALIZER
+	CA	Salvapantalles Visualització
 	CS	Vizualizační spořič obrazovky
 	DA	Visualiseringspauseskærm
 	DE	Visualisierungs-Bildschirmschoner
@@ -18,6 +19,7 @@ PLUGIN_SCREENSAVER_VISUALIZER
 	SV	Skärmsläckare med mätare
 
 PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
+	CA	Squeezebox2 requerit
 	CS	Vyžaduje Squeezebox2
 	DA	Kræver Squeezebox2
 	DE	Squeezebox2 erforderlich
@@ -35,6 +37,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	SV	Kräver Squeezebox 2
 
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
+	CA	Salvapantalles per defecte
 	CS	Výchozí spořič obrazovky
 	DA	Standardpauseskærm
 	DE	Standard-Bildschirmschoner

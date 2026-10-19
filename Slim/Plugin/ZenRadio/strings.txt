@@ -1,7 +1,9 @@
 PLUGIN_ZENRADIO_NAME
+	CA	Zen Radio
 	EN	Zen Radio
 
 PLUGIN_ZENRADIO_DESC
+	CA	Zen Radio - Música de relaxació i meditació
 	CS	Zen Radio – Relaxační a meditační hudba
 	DA	Zen Radio - Musik til afslapning og meditation
 	EN	Zen Radio - Entspannungs- und Meditationsmusik
@@ -9,9 +11,11 @@ PLUGIN_ZENRADIO_DESC
 	FR	Zen Radio - Musique de relaxation et de méditation
 	NL	Zen Radio - Ontspannings- en meditatiemuziek
 	HU	Zen Radio - Relaxációs és meditációs zene
+	NO	Zen Radio - Avslappings- og meditasjonsmusikk
 	SV	Zen Radio - Musik för meditation och avslappning
 
 PLUGIN_ZENRADIO_MISSING_CREDS
+	CA	Visiteu Zen Radio a la configuració del Lyrion Music Server per afegir les vostres credencials.
 	CS	Prosím, navštivte Zen Radio v nastavení Lyrion Music Serveru a přidejte své přihlašovací údaje.
 	DA	Besøg Zen Radio i Lyrion Music Server indstillinger for at tilføje dine loginoplysninger.
 	DE	Bitte rufen Sie Zen Radio in den Einstellungen des Lyrion Music Servers auf, um Ihre Anmeldedaten hinzuzufügen.
@@ -19,9 +23,11 @@ PLUGIN_ZENRADIO_MISSING_CREDS
 	FR	Veuillez vous rendre dans Zen Radio dans les paramètres de Lyrion Music Server pour ajouter vos informations d'identification.
 	NL	Ga naar Zen Radio in de Lyrion Music Server Instellingen om je gegevens toe te voegen.
 	HU	Kérjük, keresse fel a Zen Radiot a Lyrion Music Server beállításainál a hitelesítési adatok hozzáadásához.
+	NO	Gå til Zen Radio i innstillingene for Lyrion Music Server for å legge inn påloggingsopplysningene dine.
 	SV	Gå till Zen Radio in Lyrion Music Server-inställningarna för att lägga till dina loginuppgifter.
 
 PLUGIN_ZENRADIO_LINK
+	CA	Per crear o gestionar el vostre compte, visiteu <a href="https://www.zenradio.com" target="_blank">Zen Radio</a>.
 	CS	Chcete-li si vytvořit nebo spravovat svůj účet, navštivte <a href="https://www.zenradio.com" target="_blank">Zen Radio</a>.
 	DA	Besøg <a href="https://www.zenradio.com" target="_blank">Zen Radio</a> for at oprette eller administrere din konto.
 	DE	Um ein Konto zu erstellen oder Ihr Konto zu verwalten, besuchen Sie bitte <a href="https://www.zenradio.com" target="_blank">Zen Radio</a>.
@@ -29,4 +35,5 @@ PLUGIN_ZENRADIO_LINK
 	FR	Pour créer ou gérer votre compte, veuillez accéder à <a href="https://www.zenradio.com" target="_blank">Zen Radio</a>.
 	NL	Ga om een account aan te maken of te beheren naar <a href="https://www.zenradio.com" target="_blank">Zen Radio</a>.
 	HU	Fiókja létrehozásához vagy kezeléséhez látogasson el a <a href="https://www.zenradio.com" target="_blank">Zen Radio</a> oldalra.
+	NO	Gå til <a href="https://www.zenradio.com" target="_blank">Zen Radio</a> for å opprette eller administrere kontoen din.
 	SV	Gå till <a href="https://www.zenradio.com" target="_blank">Zen Radio</a> för att skapa eller ändra ditt konto.

@@ -2,6 +2,7 @@
 
 
 PLUGIN_NETTEST
+	CA	Prova de xarxa
 	CS	Test sítě
 	DA	Test af netværk
 	DE	Netzwerktest
@@ -19,6 +20,7 @@ PLUGIN_NETTEST
 	SV	Nätverkstest
 
 PLUGIN_NETTEST_DESC
+	CA	Prova de xarxa
 	CS	Test sítě
 	DA	Test af netværk
 	DE	Netzwerktest
@@ -36,6 +38,7 @@ PLUGIN_NETTEST_DESC
 	SV	Nätverkstest
 
 PLUGIN_NETTEST_SELECT_RATE
+	CA	Premeu amunt/avall per seleccionar la velocitat
 	CS	Ke zvolení rychlosti stiskněte Nahoru/Dolů
 	DA	Tryk på Op/Ned for at vælge hastighed
 	DE	Drücken Sie zum Ändern der Rate OBEN/UNTEN
@@ -53,6 +56,7 @@ PLUGIN_NETTEST_SELECT_RATE
 	SV	Välj hastighet genom att trycka på Upp / Ner.
 
 PLUGIN_NETTEST_TESTING_TO
+	CA	Provant a
 	CS	Testovat
 	DA	Tester
 	DE	Test für
@@ -69,6 +73,7 @@ PLUGIN_NETTEST_TESTING_TO
 	SV	Testar med
 
 PLUGIN_NETTEST_NOT_SUPPORTED
+	CA	No compatible amb aquest reproductor
 	CS	Tento přehrávač není podporován
 	DA	Ikke understøttet af denne afspiller
 	DE	Auf diesem Player nicht unterstützt

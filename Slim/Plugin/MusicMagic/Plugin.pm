@@ -869,7 +869,8 @@ sub getMix {
 		($prefs->client($client)->get('mix_genre_filter') || $prefs->get('mix_genre_filter')) :
 		$prefs->get('mix_genre_filter');
 
-	my $genreFilterHash = { map { lc($_) => 1 } @{ $genreFilter || [] } };
+	$genreFilter = Slim::Plugin::MusicMagic::Common::genreFilterList($genreFilter);
+	my $genreFilterHash = { map { lc($_) => 1 } @$genreFilter };
 
 	# genre exclusion happens after MusicIP has already picked the mix, so it can leave us
 	# short of the requested size - ask for extra up front so we've got a top-up pool to draw from
@@ -932,11 +933,16 @@ sub getMix {
 
 		}
 
+		# Path Conversion - a no-op unless configured and the path
+		# actually matches the configured source prefix.
+		$songs[$j] = Slim::Plugin::MusicMagic::Common::translatePath($songs[$j]);
+
 		if ( -e $songs[$j] || -e Slim::Utils::Unicode::utf8encode_locale($songs[$j]) ) {
 
 			my $url = Slim::Utils::Misc::fileURLFromPath($songs[$j]);
 
-			next unless $canTopUp && _trackHasExcludedGenre($url, $genreFilterHash);
+			# $canTopUp is false whenever no genre exclusion filter is configured
+			next if $canTopUp && _trackHasExcludedGenre($url, $genreFilterHash);
 
 			push @mix, $url;
 		} else {

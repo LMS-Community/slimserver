@@ -2,6 +2,7 @@ PLUGIN_AUDIO_ADDICT_NAME
 	EN	AudioAddict
 
 PLUGIN_AUDIO_ADDICT_DESC
+	CA	AudioAddict - proporciona accés a ClassicalRadio, DI.fm, JazzRadio, RadioTunes, RockRadio i ZenRadio
 	CS	AudioAddict – poskytuje přístup ke ClassicalRadio, DI.fm, JazzRadio, RadioTunes, RockRadio, ZenRadio
 	DA	AudioAddict - giver adgang til ClassicalRadio, DI.fm, JazzRadio, RadioTunes, RockRadio, ZenRadio
 	DE	AudioAddict - Zugang zu ClassicalRadio, DI.fm, JazzRadio, RadioTunes, RockRadio, ZenRadio
@@ -9,4 +10,5 @@ PLUGIN_AUDIO_ADDICT_DESC
 	FR	AudioAddict - donne accès à ClassicalRadio, DI.fm, JazzRadio, RadioTunes, RockRadio, ZenRadio
 	NL	AudioAddict - biedt toegang tot ClassicalRadio, DI.fm, JazzRadio, RadioTunes, RockRadio, ZenRadio
 	HU	AudioAddict – hozzáférést biztosít a ClassicalRadio, DI.fm, JazzRadio, RadioTunes, RockRadio, ZenRadio rádiókhoz
+	NO	AudioAddict - gir tilgang til ClassicalRadio, DI.fm, JazzRadio, RadioTunes, RockRadio, ZenRadio
 	SV	AudioAddict - ger tillgång till ClassicalRadio, DI.fm, JazzRadio, RadioTunes, RockRadio, ZenRadio

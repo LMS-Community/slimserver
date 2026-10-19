@@ -1,6 +1,7 @@
 # String file for CLI plugin
 
 PLUGIN_CLI
+	CA	Interfície de línia d'ordres (CLI)
 	CS	Příkazový řádek (CLI)
 	DA	Kommandolinjegrænseflade
 	DE	Befehlszeilenschnittstelle (CLI)
@@ -18,6 +19,7 @@ PLUGIN_CLI
 	SV	Kommandoradsgränssnitt
 
 PLUGIN_CLI_DESC
+	CA	El connector d'interfície de línia d'ordres permet controlar el programari Squeezebox i els reproductors de forma remota a través d'una connexió TCP/IP, per exemple, mitjançant un sistema d'automatització de tercers com AMX o Crestron.
 	CS	Zásuvný modul Příkazový řádek umožňuje dálkové ovládání softwaru Squeezebox a přehrávačů přes spojení TCP/IP, například automatickým systémem třetí strany jako AMX nebo Crestron.
 	DA	Udvidelsesmodulet Kommandolinjegrænseflade giver mulighed for at kontrollere Squeezebox-softwaren og -afspillerne eksternt over en TCP/IP-forbindelse, for eksempel med et automatiseringssystem fra tredjepart som AMX eller Creston.
 	DE	Mithilfe des Befehlszeilen-Plugin kann die Squeezebox-Software über eine TCP/IP-Verbindung ferngesteuert werden (z.B. über ein Automatisierungsystem eines anderen Herstellers wie AMX oder Creston).
@@ -35,6 +37,7 @@ PLUGIN_CLI_DESC
 	SV	Med plugin-programmet för kommandoradsgränssnitt kan Squeezebox-spelarna fjärrstyras via en TCP/IP-anslutning, exempelvis av ett automatiseringssystem från tredje part såsom AMX eller Crestron.
 
 SETUP_CLIPORT
+	CA	Número de port de la interfície de línia d'ordres
 	CS	Číslo portu Příkazového řádku
 	DA	Portnummer til kommandolinjegrænsefladen
 	DE	Anschlussnummer der Befehlszeilenschnittstelle
@@ -55,6 +58,7 @@ SETUP_CLIPORT
 	ZH_CN	命令行界面端口号
 
 SETUP_CLIPORT_DESC
+	CA	Podeu canviar el número de port que utilitza una interfície de línia d'ordres per controlar el reproductor.
 	CS	Můžete změnit číslo portu používaného Příkazovým řádkem k ovládání přehrávače.
 	DA	Du kan ændre hvilket portnummer der bruges til at styre afspilleren via kommandolinjegrænsefladen.
 	DE	Sie können die Anschlussnummer ändern, die von der Befehlszeilenschnittstelle zum Steuern des Players verwendet werden soll.

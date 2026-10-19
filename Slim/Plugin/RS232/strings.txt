@@ -1,6 +1,7 @@
 # String file for RS232 plugin
 
 PLUGIN_RS232_NAME
+	CA	RS232
 	CS	RS232
 	DA	RS232
 	DE	RS232
@@ -17,6 +18,7 @@ PLUGIN_RS232_NAME
 	SV	RS232
 
 PLUGIN_RS232_NAME_DESC
+	CA	Accés RS232 per a Transporter
 	CS	RS232 přístup pro Transporter
 	DA	Adgang til Transporter via RS232
 	DE	RS232 Unterstützung für den Transporter
@@ -33,6 +35,7 @@ PLUGIN_RS232_NAME_DESC
 	SV	RS232-åtkomst för Transporter
 
 SETUP_CLI_OVER_RS232
+	CA	Interfície CLI sobre RS232
 	CS	Příkazový řádek (CLI) přes RS232
 	DA	Kommandolinjegrænseflade via RS232
 	DE	Kommandozeileninterface (CLI) über serielle Schnittstelle
@@ -49,6 +52,7 @@ SETUP_CLI_OVER_RS232
 	SV	Kommandoradsgränssnitt över RS232
 
 SETUP_CLI_OVER_RS232_ENABLE
+	CA	Permetre
 	CS	Povolit
 	DA	Aktiver
 	DE	Aktivieren

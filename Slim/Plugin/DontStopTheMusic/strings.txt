@@ -1,4 +1,5 @@
 PLUGIN_DSTM
+	CA	Que no s'aturi la música
 	CS	Nezastavuj přehrávání hudby
 	DA	Aldrig stop musikken
 	DE	Musikwiedergabe nie anhalten
@@ -10,6 +11,7 @@ PLUGIN_DSTM
 	SV	Stoppa inte musiken
 
 PLUGIN_DSTM_DESC
+	CA	Don't Stop The Music s'assegurarà que el silenci no mati el teu ritme. Un cop s'arribi al final de la teva llista de reproducció, afegirà automàticament música similar a la que has estat escoltant.
 	CS	Nezastavuj přehrávání hudby se postará o to, aby vám ticho nezničilo plynulost. Jakmile se dostanete na konec seznamu skladeb, automaticky přidá podobnou hudbu, jakou jste poslouchali doposud.
 	DA	Don't Stop The Music sikrer at stilhed ikke dræber dit flow. Ved afslutningen af ​​din afspilleliste, tilføjer modulet automatisk musik, der ligner det du har lyttet til.
 	DE	Don't Stop The Music bewahrt Sie davor, von der Stille überrascht zu werden. Wenn sich die Wiedergabeliste dem Ende neigt, wird automatisch passende Musik angehängt. Über das Menü Extras auf der Hauptseite können Sie für jeden Player separat die Auswahl der hinzuzufügenden Titel bestimmen oder abschalten.
@@ -22,6 +24,7 @@ PLUGIN_DSTM_DESC
 	SV	Stoppa inte musiken säkerställer att tystnad inte dödar ditt flyt. Pluginprogrammet lägger automatiskt till mer musik av samma typ som du har lyssnat till när slutet av din spellista nås. 
 
 PLUGIN_DSTM_HELP
+	CA	Seleccioneu què voleu reproduir un cop finalitzada una llista de reproducció. L'opció pot variar segons els complements que hàgiu instal·lat i configurat.
 	CS	Vyberte, co chcete přehrát po skončení seznamu skladeb. Výběr se může lišit v závislosti na nainstalovaných a nakonfigurovaných Zásuvných modulech.
 	DA	Vælg, hvad du vil afspille, når en afspilleliste er slut. Valget kan variere afhængigt af de plugin moduler, du har installeret og konfigureret.
 	DE	Wählen Sie, was abgespielt werden soll, wenn eine Wiedergabe zu Ende geht. Die Auswahl variiert in Abhängigkeit der installierten Plugins.

@@ -452,7 +452,9 @@ sub setRemoteMetadata {
 
 	if ( $meta->{bitrate} ) {
 		$attr->{BITRATE}   = $meta->{bitrate} * 1000;
-		$attr->{VBR_SCALE} = ( exists $cbr{ $meta->{bitrate} } ) ? undef : 1;
+		$attr->{VBR_SCALE} = exists $meta->{vbr_scale}
+			? $meta->{vbr_scale}
+			: ( exists $cbr{ $meta->{bitrate} } ) ? undef : 1;
 	}
 
 	if ( $meta->{year} ) {
@@ -1040,7 +1042,7 @@ sub splitTag {
 
 				push @temp, $item if $item !~ /^\s*$/;
 
-				if (!scalar @temp <= 1) {
+				if (scalar @temp > 1) {
 
 					if ( main::INFOLOG && $log->is_info ) {
 						$log->info("Splitting $tag by $splitOn = @temp");
@@ -1341,6 +1343,14 @@ sub isImage {
 
 	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'image') {
 		return $type;
+	}
+}
+
+sub isLossy {
+	my $type = shift;
+
+	if (defined $type && $type !~ /flc|ogf|wav|pcm|alcx?|aif|dff|dsf|wvpx?/) {
+		return 1;
 	}
 }
 

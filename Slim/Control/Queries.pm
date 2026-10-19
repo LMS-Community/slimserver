@@ -239,6 +239,7 @@ sub alarmsQuery {
 			$request->addResultLoop($loopname, $cnt, 'shufflemode', $alarm->shufflemode());
 			$request->addResultLoop($loopname, $cnt, 'time', $alarm->time());
 			$request->addResultLoop($loopname, $cnt, 'volume', $alarm->volume());
+			$request->addResultLoop($loopname, $cnt, 'usesdefaultvolume', $alarm->usesDefaultVolume() ? 1 : 0);
 			$request->addResultLoop($loopname, $cnt, 'url', $alarm->playlist() || 'CURRENT_PLAYLIST');
 			$cnt++;
 		}
@@ -1252,6 +1253,15 @@ sub artistsQuery {
 			$sql .= ($wantExternal ? 'LEFT ' : '') . 'JOIN library_contributor ON library_contributor.contributor = contributors.id ';
 			push @{$w}, 'library_contributor.library = ?';
 			push @{$p}, $libraryID;
+			if ( $sql =~ /JOIN albums/ ) {
+				$sql .= ($wantExternal ? 'LEFT ' : '') . 'JOIN library_album ON library_album.album = albums.id ';
+				push @{$w}, 'library_album.library = ?';
+				push @{$p}, $libraryID;
+			}
+			# Adjust VA check to only check for VA artists in the library
+			$sql_va .= 'JOIN library_album ON library_album.album = albums.id ';
+			push @{$w_va}, 'library_album.library = ?';
+			push @{$p_va}, $libraryID;
 		}
 	}
 
@@ -2562,7 +2572,7 @@ sub playerXQuery {
 			} elsif ($entity eq "ip") {
 				$request->addResult("_$entity", $client->ipport());
 			} elsif ($entity eq "model") {
-				$request->addResult("_$entity", $client->model());
+				$request->addResult("_$entity", $client->model(1));
 			} elsif ($entity eq "isplayer") {
 				$request->addResult("_$entity", $client->isPlayer());
 			} elsif ($entity eq "displaytype") {
@@ -2570,8 +2580,8 @@ sub playerXQuery {
 			} elsif ($entity eq "canpoweroff") {
 				$request->addResult("_$entity", $client->canPowerOff());
 			} elsif ($entity eq "uuid") {
-                                $request->addResult("_$entity", $client->uuid());
-                        }
+				$request->addResult("_$entity", $client->uuid());
+			}
 		}
 	}
 
@@ -3762,7 +3772,7 @@ sub serverstatusQuery {
 
 	$request->addResult('newversion', $::newVersion) if $::newVersion;
 	$request->addResult('needsrestart', 1) if Slim::Utils::PluginManager->needsRestart;
-	$request->addResult('pluginsdownloading', 1) if Slim::Utils::PluginDownloader->downloading;
+	$request->addResult('pluginsdownloading', 1) if main::WEBUI && Slim::Utils::PluginDownloader->downloading;
 	if (my $newPlugins = Slim::Utils::PluginManager->message) {
 		$request->addResult('newplugins', $newPlugins);
 	}
@@ -4009,6 +4019,7 @@ sub statusQuery {
 	# get the initial parameters
 	my $client = $request->client();
 	my $menu = $request->getParam('menu');
+	my $tags = $request->getParam('tags') || '';
 
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
@@ -4108,6 +4119,43 @@ sub statusQuery {
 		my $trackGain = $song->replayGain();
 		if (defined $trackGain) {
 			$request->addResult('replay_gain', $trackGain);
+		}
+
+		my $transcoded = $song->transcoded();
+		if (defined $transcoded) {
+			$request->addResult('is_transcoded', $transcoded);
+		}
+
+		my $streamFormat;
+		if ($tags =~ /o/) {   # get the song's format (type)
+			$streamFormat ||= $song->streamformat();
+			if ($streamFormat) {
+				$request->addResult('type', $streamFormat);
+			}
+		}
+
+		if ($tags =~ /b/) {   # get the song's current bitrate
+			my $vbr = $transcoded ? 0 : $song->currentTrack()->vbr_scale;
+			my $bitrate = $song->streambitrate();
+			if ($bitrate) {
+				$streamFormat ||= $song->streamformat();
+				$bitrate = Slim::Schema::Track->buildPrettyBitRate($bitrate, $vbr, $streamFormat);
+				$request->addResult('bitrate', $bitrate);
+			}
+		}
+
+		if ($tags =~ /T/) {   # get the song's sample rate
+			my $samplerate = $song->samplerate();
+			if (defined $samplerate) {
+				$request->addResult('samplerate', $samplerate);
+			}
+		}
+
+		if ($tags =~ /I/) {   # get the song's sample size
+			my $samplesize = $song->samplesize();
+			if (defined $samplesize) {
+				$request->addResult('samplesize', $samplesize);
+			}
 		}
 	}
 
@@ -4312,7 +4360,6 @@ sub statusQuery {
 
 		main::DEBUGLOG && $isDebug && $log->debug("statusQuery(): setup non-zero player response");
 		# get the other parameters
-		my $tags     = $request->getParam('tags') || '';
 		my $index    = $request->getParam('_index');
 		my $quantity = $request->getParam('_quantity');
 
@@ -5734,7 +5781,7 @@ my %colMap = (
 	k => 'comment',
 	o => 'tracks.content_type',
 	v => 'tracks.tagversion',
-	r => sub { Slim::Schema::Track->buildPrettyBitRate( $_[0]->{'tracks.bitrate'}, $_[0]->{'tracks.vbr_scale'} ) },
+	r => sub { Slim::Schema::Track->buildPrettyBitRate( $_[0]->{'tracks.bitrate'}, $_[0]->{'tracks.vbr_scale'}, $_[0]->{'tracks.content_type'} ) },
 	f => 'tracks.filesize',
 	j => sub { $_[0]->{'tracks.cover'} ? 1 : 0 },
 	J => 'albums.artwork',
