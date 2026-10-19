@@ -802,9 +802,15 @@ sub handleRequest {
 					return unless $mac eq $request->client->id;
 				}
 
+				# The request object is shared with every other listener of this notification (e.g. RandomPlay's
+				# commandCallback checks its source to ignore its own requests): set ours only for requestCallback(),
+				# which reads it right away, then restore the original.
+				my $source = $request->source;
 				$request->source( "$response|$id|$priority|$clid|$ua" );
 
 				requestCallback( $request );
+
+				$request->source( $source );
 			};
 
 			# Need to store this callback for use later in unsubscribe
