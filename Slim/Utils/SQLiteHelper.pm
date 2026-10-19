@@ -160,9 +160,12 @@ sub collate {
 	}
 
 	if ($hasICU) {
-		my $lang = $prefs->get('language');
+		my $lang = Slim::Utils::Strings::getLanguage();
 
 		my $collation = Slim::Utils::Strings::getLocales()->{$lang};
+
+		# our ICU data file has no nynorsk collation, but sorts the same as bokmål
+		$collation = 'nb_NO' if $collation && $collation eq 'nn_NO';
 
 		if ( $collation && $currentICU ne $collation ) {
 			if ( !$loadedICU->{$collation} ) {

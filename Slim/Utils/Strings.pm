@@ -61,6 +61,23 @@ our $defaultStrings;
 our $currentLang;
 my $failsafeLang  = 'EN';
 
+# Norwegian used to be NO, which was bokmål. It's now NB (bokmål) and NN (nynorsk).
+# NO is still read from string files, so third party plugins keep their Norwegian strings.
+my %langAliases = (
+	NO => 'NB',
+);
+
+my %langFallbacks = (
+	NB => ['NO'],
+	NN => ['NB', 'NO'],
+);
+
+# clients asking for the parent language get the server's variant
+my %langParents = (
+	NB => 'NO',
+	NN => 'NO',
+);
+
 my $log = logger('server');
 
 my $prefs = preferences('server');
@@ -242,6 +259,8 @@ sub loadAdditional {
 		$lang = 'ZH_CN';
 	}
 
+	$lang = canonicalLanguage($lang);
+
 	if ( exists $strings->{$lang} ) {
 		return $strings->{$lang};
 	}
@@ -408,8 +427,13 @@ sub storeString {
 		$log->debug("redefined string: $name in $file");
 	}
 
+	my ($fallbackLang) = grep { defined $curString->{$_} } @{ $langFallbacks{$currentLang} || [] };
+
 	if (defined $curString->{$currentLang}) {
 		$strings->{$currentLang}->{$name} = $curString->{$currentLang};
+
+	} elsif ($fallbackLang) {
+		$strings->{$currentLang}->{$name} = $curString->{$fallbackLang};
 
 	} elsif (defined $curString->{$failsafeLang}) {
 		$strings->{$currentLang}->{$name} = $curString->{$failsafeLang};
@@ -620,13 +644,24 @@ sub languageOptions {
 }
 
 sub getLanguage {
-	return $prefs->get('language') || $failsafeLang;
+	return canonicalLanguage($prefs->get('language')) || $failsafeLang;
+}
+
+# map a legacy language code to the one in use (NO -> NB)
+sub canonicalLanguage {
+	my $lang = shift;
+
+	return $lang unless $lang;
+
+	my $alias = $langAliases{uc($lang)};
+
+	return $alias && !($strings->{'langchoices'} && $strings->{'langchoices'}->{uc($lang)}) ? $alias : $lang;
 }
 
 sub isLanguageRegionalVersion {
 	my $lang = shift;
 
-	my $currentLanguage = $prefs->get('language') || $failsafeLang;
+	my $currentLanguage = getLanguage();
 
 	if ( $lang !~ /_/ && $currentLanguage =~ /(.+)_/ ) { # contains a regional variation e.g. EN_GB
 
@@ -636,11 +671,16 @@ sub isLanguageRegionalVersion {
 
 	}
 
+	# eg. a client asking for NO while the server uses NB or NN
+	if ( $langParents{$currentLanguage} && $langParents{$currentLanguage} eq uc($lang) ) {
+		return $currentLanguage;
+	}
+
 	return;
 }
 
 sub setLanguage {
-	my $lang = shift;
+	my $lang = canonicalLanguage(shift);
 
 	if ($strings->{'langchoices'}->{$lang}) {
 
@@ -684,7 +724,7 @@ sub clientStrings {
 sub storeFailsafe {
 	return ($currentLang ne $failsafeLang &&
 			($prefs->get('loadFontsSqueezeboxG') || $prefs->get('loadFontsText') ) &&
-			$currentLang !~ /CS|DE|DA|EN|ES|FI|FR|IT|NL|NO|PT|SV/ ) ? 1 : 0;
+			$currentLang !~ /CS|DE|DA|EN|ES|FI|FR|IT|NB|NL|NN|PT|SV/ ) ? 1 : 0;
 }
 
 
