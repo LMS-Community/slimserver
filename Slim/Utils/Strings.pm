@@ -67,15 +67,11 @@ my %langAliases = (
 	NO => 'NB',
 );
 
-my %langFallbacks = (
-	NB => ['NO'],
-	NN => ['NB', 'NO'],
-);
-
-# clients asking for the parent language get the server's variant
+# each language falls back to its parent's strings, then the parent's parent etc.
+# Clients asking for the topmost parent get the server's variant.
 my %langParents = (
 	NB => 'NO',
-	NN => 'NO',
+	NN => 'NB',
 );
 
 my $log = logger('server');
@@ -427,7 +423,7 @@ sub storeString {
 		$log->debug("redefined string: $name in $file");
 	}
 
-	my ($fallbackLang) = grep { defined $curString->{$_} } @{ $langFallbacks{$currentLang} || [] };
+	my ($fallbackLang) = grep { defined $curString->{$_} } _langAncestors($currentLang);
 
 	if (defined $curString->{$currentLang}) {
 		$strings->{$currentLang}->{$name} = $curString->{$currentLang};
@@ -672,11 +668,26 @@ sub isLanguageRegionalVersion {
 	}
 
 	# eg. a client asking for NO while the server uses NB or NN
-	if ( $langParents{$currentLanguage} && $langParents{$currentLanguage} eq uc($lang) ) {
+	my $topParent = (_langAncestors($currentLanguage))[-1];
+
+	if ( $topParent && $topParent eq uc($lang) ) {
 		return $currentLanguage;
 	}
 
 	return;
+}
+
+# parent, grandparent etc. of a language, eg. NN -> (NB, NO)
+sub _langAncestors {
+	my $lang = shift;
+
+	my (@ancestors, %seen);
+
+	while ( ($lang = $langParents{$lang}) && !$seen{$lang}++ ) {
+		push @ancestors, $lang;
+	}
+
+	return @ancestors;
 }
 
 sub setLanguage {
