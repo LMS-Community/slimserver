@@ -430,13 +430,11 @@ sub storeString {
 		$log->debug("redefined string: $name in $file");
 	}
 
-	my ($fallbackLang) = grep { defined $curString->{$_} } _langAncestors($currentLang);
-
 	if (defined $curString->{$currentLang}) {
 		$strings->{$currentLang}->{$name} = $curString->{$currentLang};
 
-	} elsif ($fallbackLang) {
-		$strings->{$currentLang}->{$name} = $curString->{$fallbackLang};
+	} elsif ( my ($ancestorString) = grep { defined } @{$curString}{ _langAncestors($currentLang) } ) {
+		$strings->{$currentLang}->{$name} = $ancestorString;
 
 	} elsif (defined $curString->{$failsafeLang}) {
 		$strings->{$currentLang}->{$name} = $curString->{$failsafeLang};
