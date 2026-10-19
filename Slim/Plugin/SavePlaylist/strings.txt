@@ -149,7 +149,7 @@ NO_PLAYLIST_DIR_MORE
 	IT	Verificare le impostazioni del server per risolvere il problema.
 	JA	サーバー セッティングを調整して下さい
 	NL	Ga naar serverinstellingen om dit te corrigeren.
-	NO	Du kan fikse dette fra serverinnstillinger.
+	NO	Du kan fikse dette fra tjenerinnstillinger.
 	PL	Przejdź do obszaru Ustawienia serwera, aby rozwiązać problem.
 	RU	Чтобы устранить неполадку, используйте настройки сервера.
 	SV	Gå till Serverinställningar om du vill korrigera detta.

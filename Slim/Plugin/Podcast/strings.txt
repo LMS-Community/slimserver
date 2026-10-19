@@ -178,6 +178,7 @@ PLUGIN_PODCAST_RECENTLY_PLAYED
 	FR	Pistes récentes
 	HU	Nemrég játszott
 	NL	Recent afgespeeld
+	NO	Nylig spilt
 	SV	Nyligen spelade
 
 PLUGIN_PODCAST_SEARCH
@@ -189,6 +190,7 @@ PLUGIN_PODCAST_SEARCH
 	FR	Rechercher des flux
 	HU	Hírcsatornák keresése
 	NL	Zoek feeds
+	NO	Søk i feeder
 	SV	Sök efter podsändningar
 
 PLUGIN_PODCAST_PROVIDER
@@ -200,6 +202,7 @@ PLUGIN_PODCAST_PROVIDER
 	FR	Fournisseur de Podcast
 	HU	Podcast szolgáltató
 	NL	Podcast aanbieder
+	NO	Podkastleverandør
 	SV	Podsändningsleverantör
 
 PLUGIN_PODCAST_PROVIDER_DESC
@@ -211,6 +214,7 @@ PLUGIN_PODCAST_PROVIDER_DESC
 	FR	Configurez le fournisseur (concentrateur) de Podcasts
 	HU	Állítsa be a Podcast feed-szolgáltatót (összesítőt).
 	NL	Configureer de podcast feed aanbieder (aggregator)
+	NO	Velg leverandør (aggregator) av podkastfeeder.
 	SV	Välj podsändningsleverantör
 
 PLUGIN_PODCAST_SEARCH_FAILED
@@ -221,6 +225,7 @@ PLUGIN_PODCAST_SEARCH_FAILED
 	EN	Search failed
 	FR	Echec de recherche
 	NL	Zoeken mislukt
+	NO	Søket mislyktes
 	SV	Sökningen misslyckades
 
 PLUGIN_PODCAST_WHATSNEW
@@ -232,6 +237,7 @@ PLUGIN_PODCAST_WHATSNEW
 	FR	Nouveaux épisodes des %s derniers jours
 	HU	Új epizódok az elmúlt %s napból
 	NL	Nieuwe afleveringen van de laatste %s dagen
+	NO	Nye episoder de siste %s dagene
 	SV	Nya avsnitt från de senaste %s dagarna
 
 PLUGIN_PODCAST_AUTHOR
@@ -243,6 +249,7 @@ PLUGIN_PODCAST_AUTHOR
 	FR	Auteur :
 	HU	Szerző:
 	NL	Auteur:
+	NO	Forfatter:
 	SV	Upphovsman:
 
 PLUGIN_PODCAST_WHATSNEW_DESC
@@ -254,6 +261,7 @@ PLUGIN_PODCAST_WHATSNEW_DESC
 	FR	Définit l'ancienneté maximale des nouveaux épisodes (en jours) et le nombre maximum par flux. Notez que les flux ajoutés manuellement peuvent ne pas être suivis par le fournisseur.
 	HU	Állítsa be, hogy hány napig nézzen vissza az új epizódok után, és adja meg az epizódok maximális számát folyamonként. Vegye figyelembe, hogy a manuálisan hozzáadott hírcsatornákat a szolgáltató nem követheti nyomon
 	NL	Stel het maximale aantal afleveringen en de hoeveelheid dagen die je wilt terugkijken voor het traceren van nieuwe afleveringen in. Houd er rekening mee dat handmatig toegevoegde feeds mogelijk niet worden bijgehouden door de aanbieder.
+	NO	Angi hvor mange dager tilbake det skal letes etter nye episoder, og høyeste antall episoder per feed. Merk at leverandøren kanskje ikke følger med på feeder som er lagt til manuelt
 	SV	Definiera det maximala antalet dagar för att söka efter nya avsnitt och det maximala antalet avsnitt per flöde. Observera att manuellt tillagda podsändningar kanske inte uppdateras av leverantören.
 
 PLUGIN_PODCAST_NEWSINCE
@@ -265,6 +273,7 @@ PLUGIN_PODCAST_NEWSINCE
 	FR	Nombre de jours d'historique
 	HU	A történelem napjainak száma
 	NL	Aantal dagen terug
+	NO	Antall dager tilbake
 	SV	Antal dagars historik
 
 PLUGIN_PODCAST_MAXNEW
@@ -276,6 +285,7 @@ PLUGIN_PODCAST_MAXNEW
 	FR	Nombre de nouveaux épisodes par flux
 	HU	Új epizódok száma hírcsatornánként
 	NL	Aantal nieuwe afleveringen per feed
+	NO	Antall nye episoder per feed
 	SV	Antal nya avsnitt per flöde
 
 PLUGIN_PODCAST_COUNTRY_DESC
@@ -287,6 +297,7 @@ PLUGIN_PODCAST_COUNTRY_DESC
 	FR	Limite la recherche à un pays (optionnel)
 	HU	Keresés korlátozása egy országra (opcionális)
 	NL	Zoekopdracht beperken tot een land (optioneel)
+	NO	Begrens søket til ett land (valgfritt)
 	SV	Begränsa sökningen till et land (valfritt)
 
 PLUGIN_PODCAST_COUNTRY
@@ -298,6 +309,7 @@ PLUGIN_PODCAST_COUNTRY
 	HU	Ország
 	FR	Pays
 	NL	Land
+	NO	Land
 	SV	Land
 
 PLUGIN_PODCAST_SUBSCRIBE
@@ -309,6 +321,7 @@ PLUGIN_PODCAST_SUBSCRIBE
 	FR	S'abonner à '%s'
 	HU	Feliratkozás a következőre: '%s'
 	NL	Abonneren op '%s'
+	NO	Abonner på «%s»
 	SV	Prenumerera på '%s'
 
 PLUGIN_PODCAST_UNSUBSCRIBE
@@ -320,6 +333,7 @@ PLUGIN_PODCAST_UNSUBSCRIBE
 	FR	Se désabonner de '%s'
 	HU	Leiratkozás a következőről: '%s'
 	NL	Afmelden van '%s'
+	NO	Avslutt abonnementet på «%s»
 	SV	Avbeställ prenumerationen '%s'
 
 PLUGIN_PODCAST_DONE
@@ -331,4 +345,5 @@ PLUGIN_PODCAST_DONE
 	FR	Abonné/Désabonné ...
 	HU	Feliratkozott/leiratkozott a műsorról...
 	NL	Abonneren/Afmelden...
+	NO	Abonnementet på podkasten er endret...
 	SV	Prenumerationsstatus uppdaterad

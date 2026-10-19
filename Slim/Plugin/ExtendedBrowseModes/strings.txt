@@ -86,6 +86,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_CLASSICAL_MUSIC_BY_CONDUCTOR
 	EN	Classical Music by Conductor
 	HU	Klasszikus zene adott karmestertől
 	NL	Klassieke muziek van Dirigent
+	NO	Klassisk musikk etter dirigent
 	SV	Klassisk musik sorterad efter dirigent
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS
@@ -96,6 +97,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS
 	EN	Jazz Composers
 	HU	Jazz zeneszerzők
 	NL	Jazz Componisten
+	NO	Jazzkomponister
 	SV	Jazz kompositörer
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
@@ -120,6 +122,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE
 	FR	Type de sortie :
 	HU	Kiadás típusa:
 	NL	Release type:
+	NO	Utgivelsestype:
 	SV	Utgåvetyp
 
 PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT
@@ -131,6 +134,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT
 	FR	Types de sorties :
 	HU	Kiadás típusai:
 	NL	Release typen:
+	NO	Utgivelsestyper:
 	SV	Utgåvetyper
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
@@ -270,6 +274,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED
 	FR	Albums modifiés récemment
 	HU	Nemrég frissített albumok
 	NL	Recent Gewijzigde Albums
+	NO	Nylig oppdaterte album
 	SV	Nyligen ändrade album
 
 PLUGIN_EXTENDED_BROWSEMODES_POPULAR_ALBUMS
@@ -279,6 +284,7 @@ PLUGIN_EXTENDED_BROWSEMODES_POPULAR_ALBUMS
 	EN	Popular Albums
 	FR	Albums les plus écoutés récemment
 	NL	Recent meest afgespeelde albums
+	NO	Populære album
 	SV	Populära album
 
 PLUGIN_EXTENDED_BROWSEMODES_TOP_ARTISTS
@@ -288,6 +294,7 @@ PLUGIN_EXTENDED_BROWSEMODES_TOP_ARTISTS
 	EN	Popular Artists
 	FR	Artistes les plus populaires
 	NL	Populairste artiesten
+	NO	Populære artister
 	SV	Populära artister
 
 PLUGIN_EXTENDED_BROWSEMODES_NEW_ARTISTS
@@ -297,6 +304,7 @@ PLUGIN_EXTENDED_BROWSEMODES_NEW_ARTISTS
 	EN	New Artists
 	FR	Nouveaux artistes
 	NL	Nieuwe artiesten
+	NO	Nye artister
 	SV	Nya artister
 
 PLUGIN_EXTENDED_BROWSEMODES_ARTISTS_RECENTLY_PLAYED
@@ -306,6 +314,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ARTISTS_RECENTLY_PLAYED
 	EN	Recently Played Artists
 	FR	Artistes récemment écoutés
 	NL	Onlangs afgespeelde artiesten
+	NO	Nylig spilte artister
 	SV	Nyligen spelade artister
 
 PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
@@ -386,6 +395,7 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS
 	FR	Livres audio
 	HU	Hangoskönyvek
 	NL	Luisterboeken
+	NO	Lydbøker
 	SV	Ljudböcker
 
 PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
@@ -397,6 +407,7 @@ PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
 	FR	Toute la musique sans les livres audio
 	HU	Minden zene hangoskönyvek nélkül
 	NL	Alle muziek zonder luisterboeken
+	NO	All musikk uten lydbøker
 	SV	All musik förutom ljudböcker
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
@@ -408,6 +419,7 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
 	FR	Créer une bibliothèque thématique de livres audio et une bibliothèque sans les livres audio en fonction des genres suivants :
 	HU	Hozzon létre egy Hangoskönyvek könyvtárnézetet és egy hangoskönyvek nélküli nézetet a következő műfajok alapján:
 	NL	Maak een luisterboek weergave en een weergave zonder luisterboeken gebaseerd op de volgende genres:
+	NO	Lag en bibliotekvisning med lydbøker og en visning uten lydbøker basert på disse sjangerne:
 	SV	Skapa ett "delbibliotek för ljudböcker" och ett "Allt utom ljudböcker delbibliotek" baserat på följande genrer:
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
@@ -419,6 +431,7 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
 	FR	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Livre audio, Livres audio, Parlé, Discours
 	HU	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Livre audio, Livres audio, Parlé, Discours
 	NL	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Luisterboeken
+	NO	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Lydbok, Lydbøker, Opplesning, Tale, Komedie, Kabaret, Humor, Podkast
 	SV	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Talat, Tal, Ljudbok, Hörbok, Audiobok
 
 PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
@@ -430,5 +443,6 @@ PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
 	FR	Auteurs
 	HU	Szerzők
 	NL	Schrijvers
+	NO	Forfattere
 	SV	Författare
 

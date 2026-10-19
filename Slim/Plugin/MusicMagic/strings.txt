@@ -426,7 +426,7 @@ SETUP_MMMPLAYERSETTINGS_DESC
 	HU	Dönthet úgy, hogy minden lejátszónak hozzáférést biztosít a MusicIP mix beállításaihoz, mielőtt egy mixet generál.  A lejátszó által választott beállítások felülírják a szerverbeállításokat, és mindaddig megmaradnak, amíg a lejátszó újra nem módosítja azokat. Ha közvetlenül a mix létrehozásához szeretne ugrani, csak a meglévő lejátszó/szerver beállításokat használva, válassza a Nem lehetőséget.
 	IT	È possibile impostare i singoli lettori per l'accesso alle impostazioni del mix MusicIP prima di creare il mix. Le impostazioni del lettore sostituiscono quelle del server e vengono mantenute fino a quando non vengono eseguite altre modifiche utilizzando il lettore stesso. Se si desidera passare direttamente alla creazione di un mix, utilizzare solo le impostazioni del lettore/server esistenti, quindi scegliere no.
 	NL	Je kunt ervoor kiezen elke muziekspeler toegang te geven tot de MusicIP-mixinstellingen voordat er een mix wordt gegenereerd. Instellingen op de muziekspeler gaan voor op de serverinstellingen en blijven van kracht tot ze via het systeem worden gewijzigd. Kies 'Nee' als je direct een mix wilt maken met de huidige systeem-/serverinstellingen.
-	NO	Du kan velge å gi hver spiller tilgang til mikseinnstillingene til MusicIP før du lager en miks. Enhver brukervalgt innstilling overstyrer serverinnstillinger, og brukervalgte innstillinger forblir aktive til de endres igjen fra spilleren. Hvis du vil gå rett til å lage en miks med bare eksisterende spiller- og serverinnstillinger, velger du nei.
+	NO	Du kan velge å gi hver spiller tilgang til mikseinnstillingene til MusicIP før du lager en miks. Enhver brukervalgt innstilling overstyrer tjenerinnstillinger, og brukervalgte innstillinger forblir aktive til de endres igjen fra spilleren. Hvis du vil gå rett til å lage en miks med bare eksisterende spiller- og tjenerinnstillinger, velger du nei.
 	PL	Przed utworzeniem składanki każdemu odtwarzaczowi można umożliwić uzyskanie dostępu do ustawień składanki w usłudze MusicIP. Ustawienia wybrane w odtwarzaczu zastąpią ustawienia na serwerze i pozostaną stałe do momentu ponownej zmiany w odtwarzaczu. Jeżeli chcesz od razu przejść do tworzenia składanki z wykorzystaniem istniejących ustawień odtwarzacza/serwera, wybierz opcję Nie.
 	RU	Перед созданием микса можно предоставить каждому плееру доступ к настройкам микса MusicIP. Настройки, заданные через плеер, переопределяют настройки сервера и сохраняются, пока вы снова не измените их через плеер. Чтобы сразу перейти к созданию микса, используя настройки плеера/сервера, выберите "Нет".
 	SV	Du kan välja att ge varje spelare tillgång till mixinställningarna för MusicIP innan du mixar. Spelarinställningar åsidosätter serverinställningar och gäller tills de ändras från spelaren. Välj Nej om du vill hoppa över det här steget och mixa direkt med endast befintliga spelar-/serverinställningar.
@@ -674,7 +674,7 @@ SETUP_MMSHOST_DESC
 	HU	A MusicIP-kiszolgáló gazdaneve vagy IP-címe. Módosítsa ezt, ha a MusicIP a Lyrion Music Servertől eltérő kiszolgálón fut (pl. külön Docker-tárolóban vagy VM-ben). Alapértelmezett érték: localhost. Megjegyzés: a zenefájlok elérési útjának mindkét kiszolgálón azonosnak kell lennie. Docker-felhasználóknak ezt a megfelelő kötetkötési útvonalak mindkét tárolóban való használatával kell biztosítaniuk.
 	IT	Il nome host o l'indirizzo IP del server MusicIP. Modificare questa impostazione se MusicIP è in esecuzione su un host diverso da Lyrion Music Server (ad es. in un contenitore Docker separato o in una VM). Il valore predefinito è localhost. Nota: i percorsi dei file musicali devono essere identici su entrambi gli host. Gli utenti Docker devono garantirlo utilizzando percorsi di montaggio del volume corrispondenti in entrambi i contenitori.
 	NL	De hostnaam of het IP-adres van de MusicIP-server. Wijzig dit als MusicIP op een andere host draait dan Lyrion Music Server (bijv. in een aparte Docker-container of VM). Standaard: localhost. Let op: de bestandspaden naar je muziek moeten identiek zijn op beide hosts. Docker-gebruikers dienen hiervoor overeenkomende volume-mounts in beide containers te gebruiken.
-	NO	Vertsnavn eller IP-adresse til MusicIP-serveren. Endre dette hvis MusicIP kjører på en annen vert enn Lyrion Music Server (f.eks. i en egen Docker-container eller VM). Standard er localhost. Merk: filbaner til musikken din må være identiske på begge verter. Docker-brukere bør sikre dette ved å bruke samsvarende volummonteringsstier i begge containerne.
+	NO	Vertsnavn eller IP-adresse til MusicIP-tjeneren. Endre dette hvis MusicIP kjører på en annen vert enn Lyrion Music Server (f.eks. i en egen Docker-container eller VM). Standard er localhost. Merk: filbaner til musikken din må være identiske på begge verter. Docker-brukere bør sikre dette ved å bruke samsvarende volummonteringsstier i begge containerne.
 	PL	Nazwa hosta lub adres IP serwera MusicIP. Zmień to ustawienie, jeśli MusicIP działa na innym hoście niż Lyrion Music Server (np. w osobnym kontenerze Docker lub maszynie wirtualnej). Domyślna wartość to localhost. Uwaga: ścieżki do plików muzycznych muszą być identyczne na obu hostach. Użytkownicy Dockera powinni to zapewnić, używając identycznych ścieżek montowania woluminów w obu kontenerach.
 	PT	O nome do host ou o endereço IP do servidor MusicIP. Altere isto se o MusicIP estiver a ser executado num host diferente do Lyrion Music Server (por exemplo, num contentor Docker separado ou numa VM). A predefinição é localhost. Nota: os caminhos dos ficheiros de música têm de ser idênticos em ambos os hosts. Os utilizadores de Docker devem garantir isso utilizando caminhos de montagem de volume correspondentes em ambos os contentores.
 	RU	Имя хоста или IP-адрес сервера MusicIP. Измените это, если MusicIP работает на другом хосте, отличном от Lyrion Music Server (например, в отдельном контейнере Docker или виртуальной машине). По умолчанию используется localhost. Примечание: пути к музыкальным файлам должны быть одинаковыми на обоих хостах. Пользователям Docker необходимо обеспечить это с помощью совпадающих путей монтирования томов в обоих контейнерах.
@@ -687,6 +687,7 @@ MUSICIP_PATH_CONVERSION
 	EN	Path Conversion
 	FR	Conversion de chemin
 	NL	Padconversie
+	NO	Baneomforming
 
 MUSICIP_PATH_CONVERSION_DESC
 	CA	Si MusicIP informa de rutes de cançons que no coincideixen amb el que espera el Lyrion Music Server (per exemple, quan MusicIP s'executa amb Wine i informa de rutes amb estil Windows, o quan s'executa MusicIP en un host diferent amb una disposició de muntatge diferent), activeu-ho i configureu una ruta d'origen i una de destinació perquè es tradueixin automàticament.
@@ -694,6 +695,7 @@ MUSICIP_PATH_CONVERSION_DESC
 	EN	If MusicIP reports song paths that don't match what Lyrion Music Server expects (for example when MusicIP itself runs under Wine and reports Windows-style paths, or when running MusicIP on a different host with a different mount layout), enable this and configure a source and destination path to have them translated automatically.
 	FR	Si MusicIP signale des chemins de morceaux qui ne correspondent pas à ce qu'attend Lyrion Music Server (par exemple lorsque MusicIP lui-même s'exécute sous Wine et signale des chemins Windows, ou lorsqu'il s'exécute sur un hôte différent avec une structure de montage différente), activez cette option et configurez un chemin source et un chemin de destination pour qu'ils soient traduits automatiquement.
 	NL	Als MusicIP liedpaden meldt die niet overeenkomen met wat Lyrion Music Server verwacht (bijvoorbeeld wanneer MusicIP zelf onder Wine draait en Windows-stijl paden meldt, of wanneer MusicIP op een andere host met een andere mount-indeling draait), schakel dit in en configureer een bron- en doelpad om deze automatisch te laten omzetten.
+	NO	Hvis MusicIP oppgir sangbaner som ikke samsvarer med det Lyrion Music Server forventer (for eksempel når MusicIP kjører under Wine og oppgir baner i Windows-format, eller når MusicIP kjører på en annen maskin med andre monteringspunkter), kan du slå på dette og angi en kilde- og målbane, så omformes banene automatisk.
 
 MUSICIP_PATH_CONVERSION_ENABLE
 	CA	Habilita la conversió de rutes
@@ -701,6 +703,7 @@ MUSICIP_PATH_CONVERSION_ENABLE
 	EN	Enable Path Conversion
 	FR	Activer la conversion de chemin
 	NL	Padconversie inschakelen
+	NO	Slå på baneomforming
 
 MUSICIP_PATH_CONVERSION_SOURCE
 	CA	Ruta MusicIP (orígen)
@@ -708,6 +711,7 @@ MUSICIP_PATH_CONVERSION_SOURCE
 	EN	MusicIP path (source)
 	FR	Chemin MusicIP (source)
 	NL	MusicIP-pad (bron)
+	NO	MusicIP-bane (kilde)
 
 MUSICIP_PATH_CONVERSION_DEST
 	CA	Ruta MusicIP (destinació)
@@ -715,6 +719,7 @@ MUSICIP_PATH_CONVERSION_DEST
 	EN	Lyrion path (destination)
 	FR	Chemin Lyrion (destination)
 	NL	Lyrion-pad (bestemming)
+	NO	Lyrion-bane (mål)
 
 SETUP_MMSPORT
 	CA	Port HTTP de MusicIP
@@ -748,7 +753,7 @@ SETUP_MMSPORT_DESC
 	HU	A MusicIP Service API lehetővé teszi a MusicIP API lekérdezéséhez használandó http port kiválasztását. Adja meg itt a portszámot, hogy megfeleljen a MusicIP Mixer beállításaiban kiválasztott beállításnak.
 	IT	La API del servizio MusicIP consente di selezionare una porta HTTP da utilizzare per l'invio di query all'API di MusicIP. Inserire qui il numero di porta corrispondente a quello indicato nelle impostazioni della raccolta MusicIP.
 	NL	De MusicIP-service API biedt de mogelijkheid om een HTTP-poort te gebruiken voor vragen aan de MusicIP-API. Geef hier het poortnummer op dat je in de MusicIP-mixerinstellingen hebt gekozen.
-	NO	I tjeneste-API-en for MusicIP kan du velge en http-port til henvendelser til MusicIP-API-en. Angi det samme portnummeret her som du har angitt i innstillingene for MusicIP-mikseren.
+	NO	I tjeneste-API-et for MusicIP kan du velge en http-port til henvendelser til MusicIP-API-et. Angi det samme portnummeret her som du har angitt i innstillingene for MusicIP-mikseren.
 	PL	Interfejs API usługi MusicIP umożliwia wybranie portu http używanego w celu wysyłania zapytań do tego interfejsu. Wprowadź tutaj numer portu zgodny z wybranymi miksera w usłudze MusicIP.
 	RU	Интерфейс MusicIP Service API позволяет выбрать НТТР-порт для запросов к MusicIP API. Введите здесь номер порта, соответствующий вашим настройкам MusicIP Mixer.
 	SV	I gränssnittet till MusicIP-tjänstens kan man ange en HTTP-port som ska användas vid förfrågningar till MusicIP. Ange ett portnummer här som motsvarar inställningen du gjort i Inställningar för MusicIP Mixer.

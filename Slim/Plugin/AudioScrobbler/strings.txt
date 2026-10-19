@@ -15,6 +15,7 @@ PLUGIN_AUDIOSCROBBLER_LISTENBRAINZ_LABEL
 	EN	ListenBrainz API (Experimental)
 	FR	API ListenBrainz (Expérimental)
 	NL	ListenBrainz API (Experimenteel)
+	NO	ListenBrainz API (eksperimentell)
 	SV	ListenBrainz API (experimentellt)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS
@@ -231,6 +232,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES
 	FR	Ignorer les titres
 	HU	Címek kizárása
 	NL	Negeer titels
+	NO	Ignorer titler
 	SV	Ignorera spår
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC
@@ -242,6 +244,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC
 	FR	Définissez une liste de titres séparés par des virgules. Les morceaux qui correspondent à l'un de ces titres ne seront pas envoyés (scrobblés).
 	HU	Adja meg a címek vagy nevek vesszővel elválasztott listáját. Azok a számok, amelyek megfelelnek ezen karakterláncok valamelyikének, nem lesznek elküldve.
 	NL	Definieer een door komma's gescheiden lijst van titels. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
+	NO	Angi en kommadelt liste over titler eller navn. Spor som samsvarer med en av disse, blir ikke scrobblet.
 	SV	Ange en komma-separerad list med låt- eller spårnamn. Spår med namn som överenstämmer med någon av textsträngarna i listan blir inte rapporterade (scrobblade) til Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS
@@ -253,6 +256,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS
 	FR	Ignorer les artistes
 	HU	Előadók kizárása
 	NL	Negeer artiesten
+	NO	Ignorer artister
 	SV	Ignorera artister
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC
@@ -264,6 +268,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC
 	FR	Définissez une liste de noms d'artistes séparés par des virgules. Les morceaux dont l'artiste correspond à l'un de ces noms ne seront pas envoyés (scrobblés).
 	HU	Adja meg az előadónevek vesszővel elválasztott listáját. Azok a számok, amelyek megfelelnek ezen karakterláncok valamelyikének, nem lesznek elküldve.
 	NL	Definieer een door komma's gescheiden lijst van artiesten. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
+	NO	Angi en kommadelt liste over artistnavn. Spor som samsvarer med en av disse, blir ikke scrobblet.
 	SV	Ange en komma-separerad list med artistnamn. Spår av artister som överenstämmer med någon av textsträngarna i listan blir inte rapporterade (scrobblade) til Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS
@@ -275,6 +280,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS
 	FR	Ignorer les titres des albums
 	HU	Albumcímek kizárása
 	NL	Negeer albums
+	NO	Ignorer albumtitler
 	SV	Ignorera album
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS_DESC
@@ -286,6 +292,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS_DESC
 	FR	Définissez une liste de noms d'albums séparés par des virgules. Les morceaux dont l'album correspond à l'un de ces noms ne seront pas envoyés (scrobblés).
 	HU	Adja meg az albumnevek vesszővel elválasztott listáját. Azok a számok, amelyek megfelelnek ezen karakterláncok valamelyikének, nem lesznek elküldve.
 	NL	Definieer een door komma's gescheiden lijst van albums. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
+	NO	Angi en kommadelt liste over albumnavn. Spor som samsvarer med en av disse, blir ikke scrobblet.
 	SV	Ange en komma-separerad list med albumnamn. Spår från ett album som överenstämmer med någon av textsträngarna i listan blir inte rapporterade (scrobblade) til Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES
@@ -297,6 +304,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES
 	FR	Ignorer les genres
 	HU	Műfajok kizárása
 	NL	Negeer genres
+	NO	Ignorer sjangere
 	SV	Ignorera genrer
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES_DESC
@@ -308,6 +316,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES_DESC
 	FR	Définissez une liste de genres séparés par des virgules. Les morceaux dont le genre correspond à l'un de ces genres ne seront pas envoyés (scrobblés).
 	HU	Adja meg a műfajok vesszővel elválasztott listáját. Azok a számok, amelyek megfelelnek ezen karakterláncok valamelyikének, nem lesznek elküldve.
 	NL	Definieer een door komma's gescheiden lijst van genres. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
+	NO	Angi en kommadelt liste over sjangere. Spor som samsvarer med en av disse, blir ikke scrobblet.
 	SV	Ange en komma-separerad list med genrer. Spår med en genre som överenstämmer med någon av textsträngarna i listan blir inte rapporterade (scrobblade) til Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_BANNED
@@ -385,6 +394,7 @@ SETUP_AUDIOSCROBBLER_VALID_CREDENTIALS
 	EN	Successfully validated your account information.
 	FR	Vos informations de compte ont été validées avec succès.
 	NL	Uw accountgegevens zijn succesvol gevalideerd.
+	NO	Kontoopplysningene dine er bekreftet.
 	SV	Din kontoinformation har verifierats.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER
@@ -496,6 +506,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_VALIDATION_ERROR
 	EN	There was an error validating your account information. Please try again later. (%s)
 	FR	Une erreur est survenue lors de la validation des informations de votre compte. Veuillez réessayer ultérieurement. (%s)
 	NL	Er is een fout opgetreden bij de verificatie van jouw account bij. Probeer het later opnieuw. (%s)
+	NO	Kunne ikke bekrefte kontoopplysningene dine. Prøv igjen senere. (%s)
 	SV	Ett fel uppstod vid verifieringen av Last.fm-kontot. Försök igen senare. (%s)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW
