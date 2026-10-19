@@ -84,20 +84,20 @@ LOCALE
 
 CREDITS
 	CA	Raf Roset
-	CS	Roman Smetak
+	CS	Roman Smetak, mipa87
 	DA	Ulrik Mehr, Morten Fischer-Madsen
 	DE	Melkon Torosyan, Thorsten Faltings, Michael Herger
 	ES	Andy Spiers, Néstor Spedalieri
 	FI	Tomi Tuominen, Jarkko Ahonen
-	FR	Serge Froment, Cédric Blancher, Terry Adams, Nicolas Guillemain
+	FR	Serge Froment, Cédric Blancher, Terry Adams, Nicolas Guillemain, Franck-Berry
 	HE	Avi Stone
 	HU	Ambrits Tamás
 	IT	Riccardo Raponi
 	JA	Ken Hokugo
-	NL	Terry Adams, Patrick van Zweden, Carel Bast, Lieven Hollevoet, Willem Oepkes, Daan Oudenhoven
+	NL	Terry Adams, Patrick van Zweden, Carel Bast, Lieven Hollevoet, Willem Oepkes, Daan Oudenhoven, Blackfiction
 	NO	Øyvind L. Eggen, Georg Engstrand, Simen E. Sandberg, Lars Simonsen
 	PT	Walter Wullschleger, Bruno Rodrigues, Paulo Mannheimer, Luis DuLac
-	SV	Andreas Olsson, Hans Nystrom, Johan Hübner, Peter Nõu
+	SV	Andreas Olsson, Hans Nystrom, Johan Hübner, Peter Nõu, Johan Saaw
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
@@ -146,7 +146,7 @@ LOADING_SQUEEZEBOX_SERVER
 	PL	Trwa ładowanie programu Lyrion Music Server...
 	PT	Carregando Lyrion Music Server...
 	RU	Загрузка Lyrion Music Server...
-	SV	Startar Lyrion Music Server... 
+	SV	Startar Lyrion Music Server...
 	ZH_CN	正在加载Lyrion Music Server...
 
 EN_SKIN
