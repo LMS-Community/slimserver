@@ -74,6 +74,13 @@ my %langParents = (
 	NN => 'NB',
 );
 
+# parent, grandparent etc. of each language, eg. NN => [NB, NO]
+my %langAncestors = map {
+	my ($lang, @ancestors) = $_;
+	push @ancestors, $lang while $lang = $langParents{$lang};
+	$_ => \@ancestors;
+} keys %langParents;
+
 my $log = logger('server');
 
 my $prefs = preferences('server');
@@ -681,13 +688,7 @@ sub isLanguageRegionalVersion {
 sub _langAncestors {
 	my $lang = shift;
 
-	my (@ancestors, %seen);
-
-	while ( ($lang = $langParents{$lang}) && !$seen{$lang}++ ) {
-		push @ancestors, $lang;
-	}
-
-	return @ancestors;
+	return @{ $langAncestors{$lang} || [] };
 }
 
 sub setLanguage {
