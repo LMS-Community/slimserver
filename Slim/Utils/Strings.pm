@@ -68,7 +68,7 @@ my %langAliases = (
 );
 
 # each language falls back to its parent's strings, then the parent's parent etc.
-# Clients asking for the topmost parent get the server's variant.
+# Clients asking for the topmost parent (NO) get the server's variant (NB or NN).
 my %langParents = (
 	NB => 'NO',
 	NN => 'NB',
