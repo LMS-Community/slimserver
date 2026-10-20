@@ -11,6 +11,7 @@ PLUGIN_CLASSICALRADIO_DESC
 	NL	ClassicalRadio.com - Prachtig samengestelde klassieke muziek
 	HU	ClassicalRadio.com - Gyönyörűen válogatott klasszikus zene
 	NB	ClassicalRadio.com - Nøye utvalgt klassisk musikk
+	NN	ClassicalRadio.com - Nøye utvald klassisk musikk
 	SV	ClassicalRadio.com - Vackert arrangerad klassisk musik
 
 PLUGIN_CLASSICALRADIO_MISSING_CREDS
@@ -23,6 +24,7 @@ PLUGIN_CLASSICALRADIO_MISSING_CREDS
 	NL	Ga naar ClassicalRadio.com in de Lyrion Music Server Instellingen om je gegevens toe te voegen.
 	HU	Kérjük, látogasson el a ClassicalRadio.com oldalra a Lyrion Music Server beállításainál a hitelesítési adatok hozzáadásához.
 	NB	Gå til ClassicalRadio.com i innstillingene for Lyrion Music Server for å legge inn påloggingsopplysningene dine.
+	NN	Gå til ClassicalRadio.com i innstillingane for Lyrion Music Server for å leggje inn påloggingsopplysningane dine.
 	SV	Gå till Classical.com i Lyrion Music Server-inställningarna för att lägga till dina login-uppgfter
 
 PLUGIN_CLASSICALRADIO_LINK
@@ -35,4 +37,5 @@ PLUGIN_CLASSICALRADIO_LINK
 	NL	Ga om een account aan te maken of te beheren naar <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a>.
 	HU	Fiókja létrehozásához vagy kezeléséhez látogasson el a <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a> oldalra.
 	NB	Gå til <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a> for å opprette eller administrere kontoen din.
+	NN	Gå til <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a> for å opprette eller administrere kontoen din.
 	SV	Gå till <a href="https://www.classicalradio.com" target="_blank">ClassicalRadio.com</a> för att skapa eller ändra ditt konto.

@@ -14,6 +14,7 @@ PLUGIN_RANDOMPLAY
 	IT	Raccolta casuale
 	NB	Tilfeldig miks
 	NL	Willekeurige Mix
+	NN	Tilfeldig miks
 	PL	Składanka losowa
 	RU	Произвольный микс
 	SV	Slumpmässig mix
@@ -31,6 +32,7 @@ PLUGIN_RANDOM_DESC
 	IT	Jukebox per la raccolta musicale personale
 	NB	Jukeboks til musikken
 	NL	Jukebox voor jouw muziek
+	NN	Jukeboks til musikken
 	PL	Zmieniacz na Twoją muzykę
 	RU	Музыкальный автомат для ваших песен
 	SV	Jukebox för din musik
@@ -45,6 +47,7 @@ PLUGIN_RANDOM_DISABLE
 	HU	Véletlenszerű keverést leállítása
 	NB	Stopp Tilfeldig miks
 	NL	Stop Willekeurige mix
+	NN	Stopp Tilfeldig miks
 	PL	Zatrzymaj składankę losową
 	SV	Stoppa den slumpmässiga mixen
 
@@ -62,6 +65,7 @@ PLUGIN_RANDOM_DISABLED
 	IT	Raccolta casuale interrotta
 	NB	Tilfeldig miks stanset
 	NL	Willekeurige mix gestopt
+	NN	Tilfeldig miks stansa
 	PL	Składanka losowa zatrzymana
 	RU	Произвольный микс остановлен
 	SV	Den slumpmässiga mixen har stoppats
@@ -79,6 +83,7 @@ PLUGIN_RANDOM_TRACK
 	IT	Raccolta di brani
 	NB	Sangmiks
 	NL	Nummermix
+	NN	Songmiks
 	PL	Składanka utworów
 	RU	Микс по песням
 	SV	Låtmix
@@ -97,6 +102,7 @@ PLUGIN_RANDOM_TRACK_PLAYING
 	IT	Riproduzione casuale di brani
 	NB	Spiller av tilfeldige sanger
 	NL	Nummers worden willekeurig afgespeeld
+	NN	Spelar av tilfeldige songar
 	PL	Odtwarzanie losowych utworów
 	RU	Воспроизведение произвольных песен
 	SV	Spelar upp slumpmässigt valda låtar
@@ -115,6 +121,7 @@ PLUGIN_RANDOM_TRACK_DISABLE
 	IT	interrompi aggiunta brani
 	NB	slutte å legge til sanger
 	NL	stop toevoegen van nummers
+	NN	slutte å leggje til songar
 	PL	zatrzymaj dodawanie utworów
 	RU	прекратить добавление песен
 	SV	sluta lägga till låtar
@@ -132,6 +139,7 @@ PLUGIN_RANDOM_ALBUM
 	IT	Raccolta di album
 	NB	Albummiks
 	NL	Albummix
+	NN	Albummiks
 	PL	Składanka albumów
 	RU	Микс по альбомам
 	SV	Albummix
@@ -150,6 +158,7 @@ PLUGIN_RANDOM_ALBUM_ITEM
 	IT	Album casuale
 	NB	Tilfeldig album
 	NL	Willekeurig album
+	NN	Tilfeldig album
 	PL	Losowy album
 	RU	Произвольный альбом
 	SV	Slumpmässigt valt album
@@ -168,6 +177,7 @@ PLUGIN_RANDOM_ALBUM_PLAYING
 	IT	Riproduzione casuale album
 	NB	Spiller av tilfeldige album
 	NL	Albums worden willekeurig afgespeeld
+	NN	Spelar av tilfeldige album
 	PL	Odtwarzanie losowych albumów
 	RU	Воспроизведение произвольных альбомов
 	SV	Spelar upp slumpmässigt valda album
@@ -186,6 +196,7 @@ PLUGIN_RANDOM_ALBUM_DISABLE
 	IT	interrompi aggiunta album
 	NB	slutte å legge til album
 	NL	stop toevoegen van albums
+	NN	slutte å leggje til album
 	PL	zatrzymaj dodawanie albumów
 	RU	прекратить добавление альбомов
 	SV	sluta lägga till album
@@ -203,6 +214,7 @@ PLUGIN_RANDOM_CONTRIBUTOR
 	IT	Raccolta di artisti
 	NB	Miks fra artister
 	NL	Artiestenmix
+	NN	Miks frå artistar
 	PL	Składanka z różnych wykonawców
 	RU	Микс по исполнителям
 	SV	Artistmix
@@ -221,6 +233,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_ITEM
 	IT	Artista casuale
 	NB	Tilfeldig artist
 	NL	Willekeurige artiest
+	NN	Tilfeldig artist
 	PL	Losowy wykonawca
 	RU	Произвольный исполнитель
 	SV	Slumpmässigt vald artist
@@ -239,6 +252,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_PLAYING
 	IT	Riproduzione casuale di artisti
 	NB	Spiller av tilfeldige artister
 	NL	Artiesten worden willekeurig afgespeeld
+	NN	Spelar av tilfeldige artistar
 	PL	Odtwarzanie losowych wykonawców
 	RU	Воспроизведение произвольных исполнителей
 	SV	Spelar upp slumpmässigt valda artister
@@ -257,6 +271,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_DISABLE
 	IT	interrompi aggiunta artisti
 	NB	slutte å legge til artister
 	NL	stop toevoegen van artiesten
+	NN	slutte å leggje til artistar
 	PL	zatrzymaj dodawanie wykonawców
 	RU	прекратить добавление исполнителей
 	SV	sluta lägga till artister
@@ -274,6 +289,7 @@ PLUGIN_RANDOM_YEAR
 	IT	Raccolta di anni
 	NB	Miks fra år
 	NL	Jaarmix
+	NN	Miks frå år
 	PL	Składanka z różnych lat
 	RU	Микс по годам
 	SV	Årsmix
@@ -292,6 +308,7 @@ PLUGIN_RANDOM_YEAR_ITEM
 	IT	Anno casuale
 	NB	Tilfeldig år
 	NL	Willekeurig jaar
+	NN	Tilfeldig år
 	PL	Losowy rok
 	RU	Произвольный год
 	SV	Slumpmässigt valt år
@@ -310,6 +327,7 @@ PLUGIN_RANDOM_YEAR_PLAYING
 	IT	Riproduzione casuale per anni
 	NB	Spiller av tilfeldige år
 	NL	Jaren worden willekeurig afgespeeld
+	NN	Spelar av tilfeldige år
 	PL	Odtwarzanie utworów z losowych lat
 	RU	Воспроизведение произвольных лет
 	SV	Spelar upp slumpmässigt valda år
@@ -328,6 +346,7 @@ PLUGIN_RANDOM_YEAR_DISABLE
 	IT	interrompi aggiunta anni
 	NB	slutte å legge til flere år
 	NL	stop toevoegen van jaren
+	NN	slutte å leggje til fleire år
 	PL	zatrzymaj dodawanie lat
 	RU	прекратить добавление годов
 	SV	sluta lägga till år
@@ -343,6 +362,7 @@ PLUGIN_RANDOM_WORK
 	HU	Művek keverése
 	NB	Verksmiks
 	NL	Werkmix
+	NN	Verksmiks
 	SV	Verkmix
 
 PLUGIN_RANDOM_WORK_ITEM
@@ -356,6 +376,7 @@ PLUGIN_RANDOM_WORK_ITEM
 	HU	Véletlen művek
 	NB	Tilfeldig verk
 	NL	Willekeurig werk
+	NN	Tilfeldig verk
 	SV	Slumpmässiga verk
 
 PLUGIN_RANDOM_WORK_PLAYING
@@ -369,6 +390,7 @@ PLUGIN_RANDOM_WORK_PLAYING
 	HU	Véletlen művek lejátszása
 	NB	Spiller av tilfeldige verk
 	NL	Werk worden willekeurig afgespeeld
+	NN	Spelar av tilfeldige verk
 	SV	Slumpmässigt valda verk spelas
 
 PLUGIN_RANDOM_WORK_DISABLE
@@ -382,6 +404,7 @@ PLUGIN_RANDOM_WORK_DISABLE
 	HU	hagyja abba a művek hozzáadását
 	NB	slutte å legge til verk
 	NL	stop toevoegen van werken
+	NN	slutte å leggje til verk
 	SV	Sluta lägga till verk
 
 PLUGIN_RANDOM_WORK_WEB
@@ -395,6 +418,7 @@ PLUGIN_RANDOM_WORK_WEB
 	HU	Véletlenszerű művek
 	NB	Tilfeldige verk
 	NL	Willekeurige werken
+	NN	Tilfeldige verk
 	SV	Slumpmässiga verk
 
 PLUGIN_RANDOM_GENRE_FILTER
@@ -410,6 +434,7 @@ PLUGIN_RANDOM_GENRE_FILTER
 	IT	Includi generi musicali
 	NB	Inkluder sjangere
 	NL	Genres toevoegen
+	NN	Ta med sjangrar
 	PL	Dodaj gatunki
 	RU	Включить жанры
 	SV	Inkludera genrer
@@ -428,6 +453,7 @@ PLUGIN_RANDOM_SELECT_ALL
 	IT	Selezionare tutto
 	NB	Velg alle
 	NL	Alles selecteren
+	NN	Vel alle
 	PL	Zaznacz wszystko
 	RU	Выделить все
 	SV	Välj alla
@@ -446,6 +472,7 @@ PLUGIN_RANDOM_SELECT_NONE
 	IT	Deselezionare tutto
 	NB	Velg ingen
 	NL	Niets selecteren
+	NN	Vel ingen
 	PL	Nie wybieraj żadnych
 	RU	Не выбирать ничего
 	SV	Välj ingen
@@ -460,6 +487,7 @@ PLUGIN_RANDOM_LIBRARY_FILTER
 	HU	Használja a könyvtári nézetet
 	NB	Bruk delbiblioteker
 	NL	Gebruik deelcollectie
+	NN	Bruk delbibliotek
 	SV	Använd delbibliotek
 
 PLUGIN_RANDOM_CHOOSE_BELOW
@@ -476,6 +504,7 @@ PLUGIN_RANDOM_CHOOSE_BELOW
 	IT	Scegliere una raccolta casuale di musica dalla libreria:
 	NB	Velg en tilfeldig musikkmiks fra biblioteket:
 	NL	Een willekeurige mix van muziek uit je collectie kiezen:
+	NN	Vel ein tilfeldig musikkmiks frå biblioteket:
 	PL	Wybierz losową składankę muzyki z biblioteki:
 	RU	Выберите произвольный микс песен из вашей медиатеки:
 	SV	Välj en slumpmässig mix av musik från ditt bibliotek:
@@ -494,6 +523,7 @@ PLUGIN_RANDOM_TRACK_WEB
 	IT	Brani casuali
 	NB	Tilfeldige sanger
 	NL	Willekeurige nummers
+	NN	Tilfeldige songar
 	PL	Losowe utwory
 	RU	Произвольные песни
 	SV	Slumpmässigt valda låtar
@@ -512,6 +542,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_WEB
 	IT	Artisti casuali
 	NB	Tilfeldige artister
 	NL	Willekeurige artiesten
+	NN	Tilfeldige artistar
 	PL	Losowi wykonawcy
 	RU	Произвольные исполнители
 	SV	Slumpmässigt valda artister
@@ -530,6 +561,7 @@ PLUGIN_RANDOM_ALBUM_WEB
 	IT	Album casuali
 	NB	Tilfeldige album
 	NL	Willekeurige albums
+	NN	Tilfeldige album
 	PL	Losowe albumy
 	RU	Произвольные альбомы
 	SV	Slumpmässigt valda album
@@ -548,6 +580,7 @@ PLUGIN_RANDOM_YEAR_WEB
 	IT	Anni casuali
 	NB	Tilfeldige år
 	NL	Willekeurige jaren
+	NN	Tilfeldige år
 	PL	Losowe lata
 	RU	Произвольные годы
 	SV	Slumpmässigt valda år
@@ -566,6 +599,7 @@ PLUGIN_RANDOM_GENRE_FILTER_WEB
 	IT	Generi musicali da includere nella raccolta:
 	NB	Sjangere som skal inkluderes i miksen:
 	NL	Genres om toe te voegen aan je mix:
+	NN	Sjangrar som skal takast med i miksen:
 	PL	Gatunki do dodania do składanki:
 	RU	Жанры, добавляемые в микс:
 	SV	Genrer som ska tas med i mixen:
@@ -583,6 +617,7 @@ PLUGIN_RANDOM_CHOOSE_GENRES
 	IT	Scegli generi
 	NB	Velg sjangere
 	NL	Genres kiezen
+	NN	Vel sjangrar
 	PL	Wybierz gatunki
 	RU	Выбрать жанры
 	SV	Välj genrer
@@ -601,6 +636,7 @@ PLUGIN_RANDOM_BEFORE_NUM_TRACKS
 	IT	Vengono visualizzati i brani in corso di riproduzione
 	NB	Viser Spilles nå
 	NL	'Speelt nu' toont:
+	NN	Viser Spelar no
 	PL	Zostaną wyświetlone teraz odtwarzane elementy
 	RU	Появится надпись "Воспроизводится"
 	SV	Visar Nu spelas
@@ -619,6 +655,7 @@ PLUGIN_RANDOM_AFTER_NUM_TRACKS
 	IT	prossimi brani e
 	NB	kommende sanger og
 	NL	komende nummers en
+	NN	komande songar og
 	PL	kolejne utwory i
 	RU	предстоящие песни и
 	SV	låtar som kommer att spelas och
@@ -637,6 +674,7 @@ PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 	IT	ultimi brani riprodotti.
 	NB	nylig spilte sanger.
 	NL	recent gespeelde nummers.
+	NN	nyleg spelte songar.
 	PL	ostatnio odtwarzane utwory.
 	RU	недавно воспроизведенные песни.
 	SV	nyligen spelade låtar.
@@ -655,6 +693,7 @@ PLUGIN_RANDOM_CONTINUOUS_MODE
 	IT	Aggiungere nuovi elementi al termine dei precedenti
 	NB	Legg til nye elementer når de gamle er ferdigspilt
 	NL	Nieuwe items toevoegen zodra oude eindigen
+	NN	Legg til nye element når dei gamle er ferdigspelte
 	PL	Dodaj nowe elementy po zakończeniu odtwarzania starych
 	RU	Добавить новые элементы по завершении старых
 	SV	Lägg till nya objekt när de gamla tar slut.
@@ -673,6 +712,7 @@ PLUGIN_RANDOM_GENERAL_HELP
 	IT	È possibile aggiungere o rimuovere brani dalla raccolta in qualsiasi momento. Per interrompere una raccolta casuale, svuotare la playlist o fare clic per
 	NB	Du kan når som helst legge til og fjerne sanger i miksen. Hvis du vil stanse en miks, kan du enten tømme spillelisten, eller klikke for å
 	NL	Je kunt op elk moment nummers toevoegen aan of verwijderen uit je mix. Als je een willekeurige mix wilt stoppen, wis je de playlist of klik je op
+	NN	Du kan når som helst leggje til og fjerne songar i miksen. Viss du vil stanse ein miks, kan du anten tømme spelelista eller klikke for å
 	PL	Utwory można dodawać do składanki lub usuwać je z niej w dowolnej chwili. Aby zatrzymać odtwarzanie losowej składanki, wyczyść listę odtwarzania lub kliknij, aby
 	RU	Вы можете добавлять и удалять песни из своего микса. Чтобы остановить произвольный микс, очистите плей-лист или щелкните
 	SV	Du kan alltid lägga till eller ta bort låtar från en mix. Om du vill stoppa en slumpmässig mix rensar du spellistan, eller klickar om du vill
@@ -691,6 +731,7 @@ PLUGIN_RANDOM_PRESS_RIGHT
 	IT	Premere il pulsante DESTRA per
 	NB	Gå til høyre for å
 	NL	Druk RECHTS om
+	NN	Gå til høgre for å
 	PL	Naciśnij przycisk W PRAWO, aby
 	RU	Нажмите RIGHT, чтобы
 	SV	Tryck på RIGHT om du vill
@@ -705,6 +746,7 @@ PLUGIN_RANDOM_TITLEMIX_WITH_GENRES
 	HU	Dalmix (az aktuális műfajokra korlátozva)
 	NB	Sangmiks (begrenset til nåværende sjangre)
 	NL	Nummermix (alleen binnen huidige genres)
+	NN	Songmiks (avgrensa til dei noverande sjangrane)
 	SV	Spårmix (begränsad till den nuvarande genren)
 
 PLUGIN_RANDOM_ALBUM_MIX_WITH_GENRES
@@ -717,6 +759,7 @@ PLUGIN_RANDOM_ALBUM_MIX_WITH_GENRES
 	HU	Véletlenszerű album (az aktuális műfajokra korlátozva)
 	NB	Tilfeldig album (begrenset til nåværende sjangre)
 	NL	Willekeurig album (alleen binnen huidige genres)
+	NN	Tilfeldig album (avgrensa til dei noverande sjangrane)
 	SV	Albummix (begränsad till den nuvarande genren)
 
 PLUGIN_RANDOM_TITLEMIX_KEEP_GENRES
@@ -728,6 +771,7 @@ PLUGIN_RANDOM_TITLEMIX_KEEP_GENRES
 	FR	Morceaux aléatoires (conserver la sélection du genre)
 	HU	Dalmix (a műfajválasztás megtartása)
 	NB	Sangmiks (behold valgte sjangere)
+	NN	Songmiks (behald dei valde sjangrane)
 	SV	Spårmix (begränsad till den nuvarande genren)
 
 PLUGIN_RANDOM_ALBUM_MIX_KEEP_GENRES
@@ -739,4 +783,5 @@ PLUGIN_RANDOM_ALBUM_MIX_KEEP_GENRES
 	FR	Album aléatoire (conserver la sélection du genre)
 	HU	Véletlenszerű album (a műfajválasztás megtartása)
 	NB	Tilfeldig album (behold valgte sjangere)
+	NN	Tilfeldig album (behald dei valde sjangrane)
 	SV	Albummix (behåll nuvarande genreurval)

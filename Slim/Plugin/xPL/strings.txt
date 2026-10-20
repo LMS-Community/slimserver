@@ -14,6 +14,7 @@ PLUGIN_XPL
 	IT	Interfaccia xPL
 	NB	xPL-grensesnitt
 	NL	xPL interface
+	NN	xPL-grensesnitt
 	PL	Interfejs xPL
 	RU	Интерфейс xPL
 	SV	xPL-gränssnitt
@@ -33,6 +34,7 @@ SETUP_GROUP_XPL
 	JA	xPL セッティング
 	NB	xPL-innstillinger
 	NL	xPL instellingen
+	NN	xPL-innstillingar
 	PL	Ustawienia protokołu xPL
 	RU	Параметры xPL
 	SV	xPL-inställningar
@@ -54,6 +56,7 @@ SETUP_GROUP_XPL_DESC
 	JA	これらのセッティングはxPLプロトコルを調節します
 	NB	Dette er innstillinger for xPL-protokollen
 	NL	Deze instellingen bepalen het gedrag van het xPL-protocol.
+	NN	Dette er innstillingar for xPL-protokollen
 	PL	Te ustawienia umożliwiają konfigurację działania protokołu xPL
 	RU	Эти настройки служат для управления протоколом xPL
 	SV	De här inställningarna styr hur xPL-protokollet fungerar
@@ -74,6 +77,7 @@ SETUP_XPLINTERVAL
 	JA	インターバル
 	NB	Intervall for hjerteslag
 	NL	Heartbeat interval
+	NN	Intervall for hjerteslag
 	PL	Interwał pulsu
 	RU	Интервал подтверждения соединения
 	SV	Hjärtslagsintervall
@@ -94,6 +98,7 @@ SETUP_XPLIR
 	JA	赤外線プロセシング
 	NB	Infrarød prosessering
 	NL	Infraroodverwerking
+	NN	Infraraud prosessering
 	PL	Przetwarzanie za pomocą podczerwieni
 	RU	Обработка инфракрасного сигнала
 	SV	IR-bearbetning
@@ -114,6 +119,7 @@ SETUP_XPLIR_NONE
 	JA	なし
 	NB	Ingen
 	NL	Geen
+	NN	Ingen
 	PL	Brak
 	RU	Нет
 	SV	Inget
@@ -134,6 +140,7 @@ SETUP_XPLIR_BUTTONS
 	JA	ボタン
 	NB	Knapper
 	NL	Knoppen
+	NN	Knappar
 	PL	Przyciski
 	RU	Кнопки
 	SV	Knappar
@@ -154,6 +161,7 @@ SETUP_XPLIR_RAW
 	JA	列
 	NB	Ubehandlet
 	NL	Ruw (Raw)
+	NN	Ubehandlet
 	PL	Nieprzetworzone
 	RU	Исходный
 	SV	Rå
@@ -174,6 +182,7 @@ SETUP_XPLIR_BOTH
 	JA	両方
 	NB	Begge
 	NL	Beide
+	NN	Begge
 	PL	Obie
 	RU	Оба
 	SV	Båda

@@ -15,6 +15,7 @@ PLUGIN_NETTEST
 	IT	Verifica rete
 	NB	Nettverkstest
 	NL	Netwerktest
+	NN	Nettverkstest
 	PL	Test sieci
 	RU	Сетевой тест
 	SV	Nätverkstest
@@ -33,6 +34,7 @@ PLUGIN_NETTEST_DESC
 	IT	Verifica rete
 	NB	Nettverkstest
 	NL	Netwerktest
+	NN	Nettverkstest
 	PL	Test sieci
 	RU	Сетевой тест
 	SV	Nätverkstest
@@ -51,6 +53,7 @@ PLUGIN_NETTEST_SELECT_RATE
 	IT	Per selezionare la velocità, premere il pulsante Su/Giù
 	NB	Trykk på opp/ned-knappene for å velge hastighet
 	NL	Druk op omhoog/omlaag om de snelheid te selecteren
+	NN	Trykk på opp/ned-knappane for å velje fart
 	PL	Naciśnij przycisk w górę/w dół, aby wybrać szybkość
 	RU	Для выбора скорости используйте кнопки ВВЕРХ/ВНИЗ
 	SV	Välj hastighet genom att trycka på Upp / Ner.
@@ -68,6 +71,7 @@ PLUGIN_NETTEST_TESTING_TO
 	IT	Esecuzione verifica su
 	NB	Tester mot
 	NL	Testen van
+	NN	Tester mot
 	PL	Testowanie do
 	RU	Тестирование
 	SV	Testar med
@@ -86,6 +90,7 @@ PLUGIN_NETTEST_NOT_SUPPORTED
 	IT	Non supportato in questo lettore
 	NB	Ikke støttet på denne spilleren
 	NL	Niet ondersteund op deze muziekspeler
+	NN	Ikkje støtta på denne spelaren
 	PL	Nieobsługiwane w tym odtwarzaczu
 	RU	Не поддерживается в этом плеере
 	SV	Stöds inte på den här spelaren

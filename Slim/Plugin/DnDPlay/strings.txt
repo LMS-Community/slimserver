@@ -8,6 +8,7 @@ PLUGIN_DNDPLAY
 	HU	Drag & drop zenefájlok lejátszásához
 	NB	Dra og slipp musikkfiler for å spille
 	NL	Drag & drop muziekbestanden om af te spelen
+	NN	Dra og slepp musikkfiler for å spele
 	PL	Przeciągnij i upuść pliki muzyczne do odtworzenia
 	SV	Drag & Drop musikfiler för att spela
 
@@ -21,6 +22,7 @@ PLUGIN_DNDPLAY_SHORT
 	HU	Drag & Drop zenefájlok
 	NB	Dra og slipp musikkfiler
 	NL	Drag & Drop Muziekbestanden
+	NN	Dra og slepp musikkfiler
 	PL	Przeciągnij i upuść pliki muzyczne
 	SV	Drag & Drop musikfiler
 
@@ -34,6 +36,7 @@ PLUGIN_DNDPLAY_DESC
 	HU	Ez a beépülő modul lehetővé teszi, hogy hangfájlokat húzzon át az asztali fájlkezelőből (Finder, Explorer stb.) a Lyrion Music Server webes felületére, hogy lejátssza őket. Azok a fájlok, amelyek nem érhetők el a Lyrion Music Serverről, ideiglenesen átkerülnek a lejátszáshoz.
 	NB	Denne plugin-modulen lar deg spille av lydfiler ved å dra og slippe dem fra filbehandleren (Finder, Explorer etc.) til nettgrensesnittet til Lyrion Music Server. Filer som ikke allerede ligger på tjeneren blir midlertidig overført for avspilling.
 	NL	Deze plug-in maakt drag & drop mogelijk van muziekbestanden, vanuit de bestandsverkenner naar de Lyrion Music Server webinterface, om ze af te spelen. Bestanden die niet beschikbaar zijn in Lyrion Music Server worden tijdelijk overgebracht om afgespeeld te worden.
+	NN	Med denne plugin-modulen kan du spele av lydfiler ved å dra og sleppe dei frå filhandsamaren (Finder, Explorer osv.) til nettgrensesnittet til Lyrion Music Server. Filer som ikkje alt ligg på tenaren, blir mellombels overførte for avspeling.
 	PL	Ten dodatek pozwala na otwarzanie plików muzycznych poprzez "przeciągnięcie" z twojego pulpitu i "upuszczenie" na interfejsie internetowym programu Lyrion Music Server. Pliki, które nie są bezpośrednio dostępne dla Lyrion Music Server zostaną przesłane i tymczasowo zapisane na serwerze, w celu odtworzenia.
 	SV	Detta pluginprogram låter dig dra och släppa musikfiler från din dators filhanteringsprogram (file explorer, etc) till Lyrion Music Servers webgränssnitt för att spela upp dem. Filer som inte är tillgängliga på Lyrion Music Server kopieras temporärt till servern.
 
@@ -47,6 +50,7 @@ PLUGIN_DNDPLAY_NO_ITEMS
 	HU	Nem található lejátszható elem. Csak audio fájlok játszhatók le.
 	NB	Fant ingen avspillbare filer. Kun lydfiler kan avspilles.
 	NL	Geen afspeelbare items gevonden. Alleen muziekbestanden kunnen worden afgespeeld.
+	NN	Fann ingen filer som kan spelast av. Berre lydfiler kan spelast av.
 	PL	Brak plików do odtworzenia. Akceptowane są wyłącznie pliki muzyczne.
 	SV	Inga spelbara filer hittades. Bara ljudfiler kan spelas upp.
 
@@ -60,6 +64,7 @@ PLUGIN_DNDPLAY_NO_PLAYER_CONNECTED
 	HU	Nem játszható le zene csatlakoztatott lejátszó nélkül.
 	NB	Kan ikke spille musikk uten en tilkoblet spiller.
 	NL	Kan zonder muziekspeler niets afspelen.
+	NN	Kan ikkje spele musikk utan ein tilkopla spelar.
 	PL	Nie można uruchomić odtwarzania bez podpiętego odtwarzacza.
 	SV	Utan en spelare kan inget spelas upp.
 
@@ -73,6 +78,7 @@ PLUGIN_DNDPLAY_FILE_TOO_LARGE
 	HU	A fájl mérete (%s) meghaladja a maximális feltöltési méretet (%s).
 	NB	Filstørrelse (%s) overstiger maksimal opplastingsstørrelse (%s).
 	NL	Bestandsgrootte (%s) is groter dan de maximale uploadgrootte (%s).
+	NN	Filstorleiken (%s) er større enn den største opplastingsstorleiken (%s).
 	PL	Rozmiar pliku (%s) przekracza dozwolony rozmiar (%s).
 	SV	Filen är för stor (%s), den största tillåtna storleken är (%s).
 
@@ -86,6 +92,7 @@ PLUGIN_DNDPLAY_INVALID_DATA
 	HU	Érvénytelen kérés.
 	NB	Ugyldig forespørsel.
 	NL	Ongeldig verzoek.
+	NN	Ugyldig førespurnad.
 	PL	Nieprawidłowe żądanie.
 	SV	Ogiltig förfrågan
 
@@ -99,6 +106,7 @@ PLUGIN_DNDPLAY_MAX_FILESIZE
 	HU	Maximális feltöltési méret (MB-ban)
 	NB	Maksimal opplastingsstørrelse (i MB)
 	NL	Maximale uploadgrootte (in MB)
+	NN	Største opplastingsstorleik (i MB)
 	PL	Maksymalny rozmiar przesyłanego pliku (MB)
 	SV	Maximalt tillåten kopieringsstorlek (i MB)
 
@@ -112,5 +120,6 @@ PLUGIN_DNDPLAY_MAX_FILESIZE_DESC
 	HU	A fájlok szerverre való feltöltése jelentős mennyiségű memóriát igényel a szerveren. A maximális fájlméret ezért alapértelmezés szerint 100 MB-ra van korlátozva. Ha úgy érzi, nagyobb fájlok lejátszására van szüksége, és a szervere további erőforrásokat kínál, itt beállíthatja a maximálisan elfogadott fájlméretet.
 	NB	Opplasting av filer til tjeneren krever en anselig mengde minne på tjeneren. Filstørrelsen er derfor begrenset til maksimalt 100 MB som standard. Dersom du vil ha muligheten til å spille av større filer, og tjeneren din er kraftig nok, kan du endre maksimal filstørrelse her.
 	NL	Het uploaden van bestanden kost een aanzienlijke hoeveelheid geheugen op de server. De maximale bestandsgrootte is daarom standaard 100MB. Als je grotere bestanden wilt afspelen, kun je de maximale toegestane bestandsgrootte hier aanpassen.
+	NN	Opplasting av filer til tenaren krev ein god del minne på tenaren. Filstorleiken er difor avgrensa til 100 MB som standard. Viss du vil kunne spele av større filer, og tenaren din er kraftig nok, kan du endre den største filstorleiken her.
 	PL	Przesyłanie plików na serwer wymaga użycia znacznej ilości pamięci na serwerze. Dlatego też domyślny maksymalny rozmiar przesyłanego pliku to 100 MB. Jeśli uznasz, że twój serwer jest w stanie obsłużyć większe pliki, możesz tutaj zwiększyć dopuszczalny rozmiar przesyłanego pliku.
 	SV	Kopiering av filer för att spela upp dem, kräver mycket minne på servern. En begränsning till 100 MB har därför satts som standard. Skall större filer spelas upp, och din server har tillräckligt mycket minne, kan du öka gränsen här.  

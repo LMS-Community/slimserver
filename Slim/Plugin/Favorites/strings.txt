@@ -15,6 +15,7 @@ FAVORITES
 	IT	Preferiti
 	NB	Favoritter
 	NL	Favorieten
+	NN	Favorittar
 	PL	Ulubione
 	RU	Выбранное
 	SV	Favoriter
@@ -33,6 +34,7 @@ FAVORITES_RIGHT_TO_DELETE
 	IT	Rimuovi preferito
 	NB	Fjern favoritt
 	NL	Favoriet verwijderen
+	NN	Fjern favoritt
 	PL	Usuń ulubiony
 	RU	Удалить выбранное
 	SV	Ta bort favorit
@@ -52,6 +54,7 @@ FAVORITES_ADDING
 	IT	Salvataggio preferiti in corso...
 	NB	Lagrer favoritter...
 	NL	Favorieten worden opgeslagen...
+	NN	Lagrar favorittar...
 	PL	Zapisywanie...
 	RU	Сохранение выбранного...
 	SV	Sparar favoriter...
@@ -71,6 +74,7 @@ FAVORITES_DELETING
 	IT	Rimozione preferito in corso...
 	NB	Fjerner favoritt ...
 	NL	Favoriet wordt verwijderd...
+	NN	Fjernar favoritt ...
 	PL	Usuwanie ulubionego...
 	RU	Удаление выбранного...
 	SV	Tar bort favorit...
@@ -89,6 +93,7 @@ PLUGIN_FAVORITES_DESC
 	IT	Salva e modifica i preferiti
 	NB	Lagre og rediger favoritter
 	NL	Favorieten opslaan en bewerken
+	NN	Lagre og rediger favorittar
 	PL	Zapisz i edytuj ulubione
 	RU	Сохраните и отредактируйте выбранное
 	SV	Spara och redigera favoriter
@@ -103,6 +108,7 @@ PLUGIN_FAVORITES_USE_DSTM
 	HU	Ne hagyd abba a zenét
 	NB	Ikke stopp musikken
 	NL	Don't Stop The Music
+	NN	Ikkje stopp musikken
 	SV	Stoppa inte musiken
 
 PLUGIN_FAVORITES_USE_DSTM_DESC
@@ -116,6 +122,7 @@ PLUGIN_FAVORITES_USE_DSTM_DESC
 	HU	A kedvencek beállítása a „Ne hagyja abba a zenét” opcióként.
 	NB	Legg inn favoritter som valg for "Ikke stopp musikken".
 	NL	Gebruik favorieten als opties voor Don't Stop The Music.
+	NN	Legg inn favorittar som val for "Ikkje stopp musikken".
 	SV	Använd favoriter som en option för Stoppa inte musiken
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR
@@ -131,6 +138,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	IT	Browser ed editor delle playlist OPML
 	NB	Redigerings- og leseprogram for opml-spillelister
 	NL	OPML Afspeellijst Editor
+	NN	Redigerings- og leseprogram for opml-spelelister
 	PL	Przeglądarka i edytor list odtwarzania OPML
 	RU	Браузер и редактор плей-листов OPML
 	SV	Bläddring och redigering för opml-spellistor
@@ -149,6 +157,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
 	IT	Il plugin dei preferiti consente anche di sfogliare le playlist in formato OPML e di modificare le playlist OPML memorizzate nel server. Selezionare l'opzione sottostante per aggiungere questa modalità negli Extra nella home page del server.
 	NB	Med plugin-modulen for favoritter kan du bla i opml-baserte spillelister, og redigere opml-baserte spillelister som er lagret på tjeneren din. Du kan legge til denne modusen under "Tillegg" i hovedmenyen til tjeneren ved å velge alternativet nedenfor.
 	NL	Met behulp van de plug-in Favorieten kun je opml afspeellijsten die op jouw server zijn opgeslagen, bekijken en bewerken. Selecteer de onderstaande optie om deze modus toe te voegen onder Extra's in het server hoofdmenu.
+	NN	Med plugin-modulen for favorittar kan du bla i opml-baserte spelelister og redigere opml-baserte spelelister som er lagra på tenaren din. Du kan leggje til denne modusen under "Tillegg" i hovudmenyen til tenaren ved å velje alternativet nedanfor.
 	PL	Dodatek do ulubionych elementów umożliwia także przeglądanie i edytowanie list odtwarzania opartych na języku opml zapisanych na serwerze. Wybierz opcję poniżej, aby dodać ten tryb w obszarze „Dodatki” na stronie głównej serwera.
 	RU	Плагин "Выбранное" позволяет просматривать плей-листы OPML, а также редактировать те из них, что хранятся на сервере. Выберите вариант ниже, чтобы добавить этот режим в раздел "Дополнения" на домашней странице сервера.
 	SV	Plugin-programmet för favoriter ger dig också möjlighet att bläddra i opml-baserade spellistor och att redigera opml-spellistor som sparats på din server. Markera alternativet nedan om du vill lägga till det här läget under Extrafunktioner på det webbaserade användargränssnittet.
@@ -166,6 +175,7 @@ PLUGIN_FAVORITES_LOAD
 	IT	Carica
 	NB	Last inn
 	NL	Laden
+	NN	Last inn
 	PL	Załaduj
 	RU	Загрузить
 	SV	Läs in
@@ -183,6 +193,7 @@ PLUGIN_FAVORITES_ADD
 	IT	Salva
 	NB	Lagre
 	NL	Opslaan
+	NN	Lagre
 	PL	Zapisz
 	RU	Сохранить
 	SV	Spara
@@ -200,6 +211,7 @@ PLUGIN_FAVORITES_IMPORT
 	IT	Importa
 	NB	Importer
 	NL	Importeren
+	NN	Importer
 	PL	Importuj
 	RU	Импорт
 	SV	Importera
@@ -217,6 +229,7 @@ PLUGIN_FAVORITES_LOADFILE
 	IT	URL o nome file
 	NB	Url eller filnavn
 	NL	URL of bestandsnaam
+	NN	Url eller filnamn
 	PL	Adres URL lub nazwa pliku
 	RU	URL или имя файла
 	SV	Webbadress eller filnamn
@@ -234,6 +247,7 @@ PLUGIN_FAVORITES_SAVEFILE
 	IT	Nome file
 	NB	Filnavn
 	NL	Bestandsnaam
+	NN	Filnamn
 	PL	Nazwa pliku
 	RU	Имя файла
 	SV	Filnamn
@@ -251,6 +265,7 @@ PLUGIN_FAVORITES_IMPORTFILE
 	IT	URL o nome file
 	NB	Url eller filnavn
 	NL	URL of bestandsnaam
+	NN	Url eller filnamn
 	PL	Adres URL lub nazwa pliku
 	RU	URL или имя файла
 	SV	Webbadress eller filnamn
@@ -268,6 +283,7 @@ PLUGIN_FAVORITES_NOFILE
 	IT	File non trovato
 	NB	Finner ikke filen
 	NL	Bestand niet gevonden
+	NN	Finn ikkje fila
 	PL	Nie znaleziono pliku
 	RU	Файл не найден
 	SV	Det går inte att hitta filen
@@ -285,6 +301,7 @@ PLUGIN_FAVORITES_CANCEL
 	IT	Annulla
 	NB	Avbryt
 	NL	Annuleren
+	NN	Avbryt
 	PL	Anuluj
 	RU	Отмена
 	SV	Avbryt
@@ -302,6 +319,7 @@ PLUGIN_FAVORITES_CANCELLING
 	IT	Annullamento in corso...
 	NB	Avbryter ...
 	NL	Bezig met annuleren...
+	NN	Avbryt ...
 	PL	Anulowanie...
 	RU	Отмена...
 	SV	Avbryter...
@@ -319,6 +337,7 @@ PLUGIN_FAVORITES_CUT
 	IT	Taglia
 	NB	Klipp ut
 	NL	Knippen
+	NN	Klipp ut
 	PL	Wytnij
 	RU	Вырезать
 	SV	Klipp ut
@@ -336,6 +355,7 @@ PLUGIN_FAVORITES_PASTE
 	IT	Incolla
 	NB	Lim inn
 	NL	Plakken
+	NN	Lim inn
 	PL	Wklej
 	RU	Вставить
 	SV	Klistra in
@@ -354,6 +374,7 @@ PLUGIN_FAVORITES_LOADING
 	IT	Caricamento dei preferiti in corso...
 	NB	Laster favoritter...
 	NL	Favorieten worden geladen...
+	NN	Lastar favorittar...
 	PL	Ładowanie ulubionych...
 	RU	Загрузка выбранного...
 	SV	Läser in favoriter...
@@ -371,6 +392,7 @@ PLUGIN_FAVORITES_NEWFOLDER
 	IT	Nuova cartella
 	NB	Ny mappe
 	NL	Nieuwe map
+	NN	Ny mappe
 	PL	Nowy folder
 	RU	Новая папка
 	SV	Ny mapp
@@ -388,6 +410,7 @@ PLUGIN_FAVORITES_NEWENTRY
 	IT	Nuova voce
 	NB	Ny oppføring
 	NL	Nieuwe ingang
+	NN	Ny oppføring
 	PL	Nowy wpis
 	RU	Новая запись
 	SV	Ny post
@@ -406,6 +429,7 @@ PLUGIN_FAVORITES_NEWFAVORITE
 	IT	Nuovo preferito
 	NB	Ny favoritt
 	NL	Nieuwe favoriet
+	NN	Ny favoritt
 	PL	Nowy ulubiony
 	RU	Новое выбранное
 	SV	Ny favorit
@@ -423,6 +447,7 @@ PLUGIN_FAVORITES_LOADERROR
 	IT	Errore durante il caricamento del file
 	NB	Feil ved lasting av fil
 	NL	Fout tijdens laden bestand
+	NN	Feil ved lasting av fil
 	PL	Błąd ładowania pliku
 	RU	Ошибка при загрузке файла
 	SV	Fel vid inläsning av filen
@@ -440,6 +465,7 @@ PLUGIN_FAVORITES_REMOTELOADERROR
 	IT	Errore durante il caricamento dell'URL
 	NB	Feil ved lasting av url
 	NL	Fout tijdens laden URL
+	NN	Feil ved lasting av url
 	PL	Błąd ładowania adresu URL
 	RU	Ошибка при загрузке URL
 	SV	Fel vid inläsning av webbadressen
@@ -457,6 +483,7 @@ PLUGIN_FAVORITES_SAVEERROR
 	IT	Errore durante il salvataggio del file
 	NB	Feil ved lagring av fil
 	NL	Fout tijdens opslaan bestand
+	NN	Feil ved lagring av fil
 	PL	Błąd zapisywania pliku
 	RU	Ошибка при сохранении файла
 	SV	Fel vid sparande av filen
@@ -474,6 +501,7 @@ PLUGIN_FAVORITES_IMPORTERROR
 	IT	Errore durante l'importazione della playlist
 	NB	Feil ved importering av spilleliste
 	NL	Fout tijdens importeren van afspeellijst
+	NN	Feil ved import av speleliste
 	PL	Błąd importowania listy odtwarzania
 	RU	Ошибка при импортировании плей-листа
 	SV	Fel vid import av spellista
@@ -491,6 +519,7 @@ PLUGIN_FAVORITES_NOTITLE
 	IT	Nessun titolo
 	NB	Ingen tittel
 	NL	Geen titel
+	NN	Utan tittel
 	PL	Bez tytułu
 	RU	Нет названия
 	SV	Ingen titel
@@ -508,6 +537,7 @@ PLUGIN_FAVORITES_NAME
 	IT	Nome
 	NB	Navn
 	NL	Naam
+	NN	Namn
 	PL	Nazwa
 	RU	Имя
 	SV	Namn
@@ -525,6 +555,7 @@ PLUGIN_FAVORITES_URL
 	IT	URL
 	NB	Url
 	NL	URL
+	NN	Url
 	PL	Adres URL
 	RU	URL
 	SV	Webbadress
@@ -543,6 +574,7 @@ PLUGIN_FAVORITES_SAVE
 	IT	Salva nei preferiti
 	NB	Lagre i favoritter
 	NL	In favorieten opslaan
+	NN	Lagre i favorittar
 	PL	Zapisz w ulubionych
 	RU	Сохранить в избранном
 	SV	Spara i Favoriter
@@ -561,6 +593,7 @@ PLUGIN_FAVORITES_REMOVE
 	IT	Rimuovi dai preferiti
 	NB	Fjern fra favoritter
 	NL	Uit favorieten verwijderen
+	NN	Fjern frå favorittar
 	PL	Usuń z ulubionych
 	RU	Удалить из выбранного
 	SV	Ta bort från favoriter
@@ -576,6 +609,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB
 	FR	Comportement pour la musique locale
 	NB	Oppførsel med lokal musikksamling
 	NL	Gedrag bij lokale muziek
+	NN	Åtferd med lokal musikksamling
 	PL	Sposób przeglądania ulubionych
 	SV	Funktion med lokal musik
 
@@ -590,6 +624,7 @@ PLUGIN_FAVORITES_DONT_BROWSEDB_ON
 	HU	Ne böngésszen a kiválasztott elemek között, csak játssza le őket (régi viselkedés)
 	NB	Spill av valgt oppføring, ikke bla videre (gammel oppførsel)
 	NL	Niet door bladeren op een geselecteerd item, maar speel af (oude gedrag)
+	NN	Spel av den valde oppføringa, ikkje bla vidare (gammal åtferd)
 	PL	Nie przeglądaj utworów, po prostu je odtwarzaj (klasyczne zachowanie)
 	SV	Bläddra inte i spåren när de har valts, bara spela dem (gamla funktionen) 
 
@@ -604,5 +639,6 @@ PLUGIN_FAVORITES_DONT_BROWSEDB_OFF
 	HU	Ha kiválaszt egy kedvenc közreműködőt, műfajt vagy albumot, részletezze a tartalmát
 	NB	Når du velger en favorittutøver, -sjanger eller -album, bla videre til innholdet.
 	NL	Als je een favoriete uitvoerende, genre of album selecteert, blader door tot de inhoud ervan
+	NN	Når du vel ein favorittutøvar, -sjanger eller -album, bla vidare til innhaldet.
 	PL	Gdy wybierzesz ulubionego wykonawcę, gatunek lub album, wyświetl utwory im odpowiadające
 	SV	När en favorit väljs, så visa detaljerat innehåll (nya funktionen)

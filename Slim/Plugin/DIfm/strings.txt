@@ -11,6 +11,7 @@ PLUGIN_DI_FM_DESC
 	NL	DI.FM - Verslavende elektronische muziek
 	HU	DI.FM - Addiktív elektronikus zene
 	NB	DI.FM - Vanedannende elektronisk musikk
+	NN	DI.FM - Vanedannande elektronisk musikk
 	SV	DI.FM - Vanebildande elektronisk musik
 
 PLUGIN_DI_FM_MISSING_CREDS
@@ -23,6 +24,7 @@ PLUGIN_DI_FM_MISSING_CREDS
 	NL	Ga naar DI.FM in de instellingen van de Lyrion Music Server om uw referenties toe te voegen.
 	HU	Kérjük, látogasson el a DI.FM oldalra a Lyrion zeneszerver beállításainál a hitelesítési adatok hozzáadásához.
 	NB	Gå til DI.FM i innstillingene for Lyrion Music Server for å legge inn påloggingsopplysningene dine.
+	NN	Gå til DI.FM i innstillingane for Lyrion Music Server for å leggje inn påloggingsopplysningane dine.
 	SV	Gå till DI.FM in Lyrion Music Server-inställningarna för att lägga till dina loginuppgifter.
 
 PLUGIN_DI_FM_LINK
@@ -35,4 +37,5 @@ PLUGIN_DI_FM_LINK
 	NL	Ga om een account aan te maken of te beheren naar <a href="https://www.di.fm" target="_blank">DI.FM</a>.
 	HU	Fiókja létrehozásához vagy kezeléséhez látogasson el a <a href="https://www.di.fm" target="_blank">DI.FM</a> oldalra.
 	NB	Gå til <a href="https://www.di.fm" target="_blank">DI.FM</a> for å opprette eller administrere kontoen din.
+	NN	Gå til <a href="https://www.di.fm" target="_blank">DI.FM</a> for å opprette eller administrere kontoen din.
 	SV	Gå till <a href="https://www.di.fm" target="_blank">DI.FM</a> för att skapa eller ändra ditt konto.

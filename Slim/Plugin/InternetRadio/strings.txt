@@ -11,6 +11,7 @@ PLUGIN_INTERNET_RADIO_MODULE_NAME_DESC
 	IT	Directory di radio Internet
 	NB	Katalog med nettradiostasjoner
 	NL	Directory's van internetradio
+	NN	Katalog med nettradiostasjonar
 	PL	Katalogi internetowych stacji radiowych
 	RU	Каталоги радиостанций Интернета
 	SV	Kataloger för webbradio
@@ -31,6 +32,7 @@ PLUGIN_RADIOTIME_MODULE_NAME
 	IT	TuneIn Radio
 	NB	TuneIn Radio
 	NL	TuneIn Radio
+	NN	TuneIn Radio
 	PL	TuneIn Radio
 	RU	TuneIn Radio
 	SV	TuneIn Radio
@@ -48,6 +50,7 @@ PLUGIN_RADIOTIME_MODULE_TITLE
 	IT	TuneIn Radio
 	NB	TuneIn Radio
 	NL	TuneIn Radio
+	NN	TuneIn Radio
 	PL	TuneIn Radio
 	RU	TuneIn Radio
 	SV	TuneIn Radio
@@ -66,6 +69,7 @@ PLUGIN_RADIOTIME_LOADING
 	IT	Caricamento TuneIn Radio...
 	NB	Laster TuneIn Radio ..
 	NL	TuneIn Radio wordt geladen...
+	NN	Lastar TuneIn Radio ..
 	PL	Ładowanie usługi TuneIn Radio...
 	RU	Идет загрузка TuneIn Radio...
 	SV	Läser in TuneIn Radio...
@@ -83,6 +87,7 @@ PLUGIN_RADIOTIME_OPTIONS
 	IT	Opzioni TuneIn Radio
 	NB	Alternativer for TuneIn Radio
 	NL	Opties voor TuneIn Radio
+	NN	Alternativ for TuneIn Radio
 	PL	Opcje TuneIn Radio
 	RU	Параметры TuneIn Radio
 	SV	Alternativ för TuneIn Radio
@@ -100,6 +105,7 @@ RADIOTIME_LANGUAGE
 	IT	Per lingua
 	NB	Etter språk
 	NL	Op taal
+	NN	Etter språk
 	PL	Wg języka
 	RU	По языкам
 	SV	Efter språk
@@ -117,6 +123,7 @@ RADIOTIME_LOCAL
 	IT	Radio locale
 	NB	Lokalradio
 	NL	Lokale Radio
+	NN	Lokalradio
 	PL	Lokalne radio
 	RU	Местное радио
 	SV	Lokalradio
@@ -134,6 +141,7 @@ RADIOTIME_LOCATION
 	IT	Per luogo
 	NB	Etter plassering
 	NL	Op locatie
+	NN	Etter stad
 	PL	Wg lokalizacji
 	RU	По регионам
 	SV	Efter land
@@ -151,6 +159,7 @@ RADIOTIME_WORLD
 	IT	Per luogo
 	NB	Etter plassering
 	NL	Op locatie
+	NN	Etter stad
 	PL	Wg lokalizacji
 	RU	По регионам
 	SV	Efter land
@@ -168,6 +177,7 @@ RADIOTIME_MUSIC
 	IT	Musica
 	NB	Musikk
 	NL	Muziek
+	NN	Musikk
 	PL	Muzyka
 	RU	Музыка
 	SV	Musik
@@ -185,6 +195,7 @@ RADIOTIME_NEWS
 	IT	Notizie
 	NB	Nyheter
 	NL	Nieuws
+	NN	Nyheiter
 	PL	Aktualności
 	RU	Новости
 	SV	Nyheter
@@ -202,6 +213,7 @@ RADIOTIME_PODCAST
 	IT	Podcast
 	NB	Podkaster
 	NL	Podcasts
+	NN	Podkastar
 	PL	Podcasty
 	RU	Подкасты
 	SV	Poddsändningar
@@ -219,6 +231,7 @@ RADIOTIME_SEARCH
 	IT	Cerca in TuneIn
 	NB	Søk TuneIn
 	NL	TuneIn doorzoeken
+	NN	Søk i TuneIn
 	PL	Szukaj w usłudze TuneIn
 	RU	Поиск на TuneIn
 	SV	Sök på TuneIn
@@ -236,6 +249,7 @@ RADIOTIME_SPORTS
 	IT	Sport
 	NB	Sport
 	NL	Sport
+	NN	Sport
 	PL	Sport
 	RU	Спорт
 	SV	Sport
@@ -253,6 +267,7 @@ RADIOTIME_TALK
 	HU	Beszélgetés
 	NB	Prat
 	NL	Gesproken
+	NN	Prat
 	PL	Rozmowa
 	RU	Разговорное
 	SV	Pratradio
@@ -271,6 +286,7 @@ RADIOTIME_MY_PRESETS
 	IT	Stazioni predefinite
 	NB	Mine forhåndsinnstilte frekvenser
 	NL	Mijn Voorkeuren
+	NN	Mine førehandsinnstilte frekvensar
 	PL	Moje wstępnie zdefiniowane stacje radiowe
 	RU	Мои предустановки
 	SV	Mina förinställningar
@@ -290,6 +306,7 @@ PLUGIN_RADIOTIME_USERNAME
 	JA	ユーザー名
 	NB	Brukernavn
 	NL	Gebruikersnaam
+	NN	Brukarnamn
 	PL	Nazwa użytkownika
 	PT	Utilizador
 	RU	Имя пользователя

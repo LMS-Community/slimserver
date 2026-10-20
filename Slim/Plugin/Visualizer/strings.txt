@@ -14,6 +14,7 @@ PLUGIN_SCREENSAVER_VISUALIZER
 	IT	Screen saver con visualizzatore
 	NB	Skjermsparer med effektvisning
 	NL	Visualisatie screensaver
+	NN	Skjermsparar med effektvising
 	PL	Wygaszacz ekranu Wizualizacja
 	RU	Экранная заставка "Визуализатор"
 	SV	Skärmsläckare med mätare
@@ -32,6 +33,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	IT	È richiesto Squeezebox2
 	NB	Krever Squeezebox2
 	NL	Vereist Squeezebox2
+	NN	Krev Squeezebox2
 	PL	Wymaga urządzenia Squeezebox2
 	RU	Требуется Squeezebox2
 	SV	Kräver Squeezebox 2
@@ -50,6 +52,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	IT	Screen saver predefinito
 	NB	Standard skjermsparer
 	NL	Standaard screensaver
+	NN	Standard skjermsparar
 	PL	Domyślny wygaszacz ekranu
 	RU	Экранная заставка по умолчанию
 	SV	Standardskärmsläckare

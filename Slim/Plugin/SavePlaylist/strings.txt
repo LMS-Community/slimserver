@@ -15,6 +15,7 @@ SAVE_PLAYLIST_NAME
 	JA	プレイリストを保存する
 	NB	Lagre spilleliste
 	NL	Afspeellijst opslaan
+	NN	Lagre speleliste
 	PL	Zapisz listę odtwarzania
 	RU	Сохранить плей-лист
 	SV	Spara spellista
@@ -33,6 +34,7 @@ SAVE_PLAYLIST_NAME_DESC
 	HU	Lejátszási listák mentése a lejátszó felhasználói felületéről
 	NB	Lagre spillelister fra spillergrensesnittet
 	NL	Afspeellijsten vanuit de interface van de muziekspeler opslaan
+	NN	Lagre spelelister frå spelargrensesnittet
 	PL	Zapisz listy odtwarzania z interfejsu odtwarzacza
 	RU	Сохранить плей-листы из пользовательского интерфейса плеера
 	SV	Spara spellistor från spelargränssnittet
@@ -51,6 +53,7 @@ PLAYLIST_OVERWRITE
 	IT	Premere DESTRA per sostituire la playlist corrente:
 	NB	Gå til høyre for å bytte ut den eksisterende spillelisten:
 	NL	Druk RECHTS om de bestaande afspeellijst te vervangen:
+	NN	Gå til høgre for å byte ut den eksisterande spelelista:
 	PL	Przejdź w prawo, aby zastąpić istniejącą listę odtwarzania:
 	RU	Перейдите вправо, чтобы заменить существующий плей-лист:
 	SV	Tryck på höger navigeringsknapp om du vill ersätta den befintliga spellistan:
@@ -70,6 +73,7 @@ PLAYLIST_SAVE
 	JA	プレイリストを保存するにはRIGHTをもう一度押してください :
 	NB	Gå til høyre igjen for å lagre spillelisten som:
 	NL	Druk opnieuw RECHTS om de afspeellijst op te slaan als:
+	NN	Gå til høgre igjen for å lagre spelelista som:
 	PL	Ponownie w prawo, aby zapisać listę odtwarzania jako:
 	RU	Снова вправо, чтобы сохранить плей-лист как:
 	SV	Tryck på högerknappen igen för att spara spellistan som:
@@ -90,6 +94,7 @@ PLAYLIST_AS
 	JA	現在のプレイリストを別の名前で保存する :
 	NB	Lagre spillelisten som:
 	NL	Huidige afspeellijst opslaan als:
+	NN	Lagre spelelista som:
 	PL	Zapisz bieżącą listę odtwarzania jako:
 	RU	Сохранить текущий плей-лист как:
 	SV	Spara aktuell spellista som:
@@ -110,6 +115,7 @@ PLAYLIST_SAVING
 	JA	現在のプレイリストを別の名前で保存する :
 	NB	Lagrer spillelisten som:
 	NL	Huidige afspeellijst opslaan als:
+	NN	Lagrar spelelista som:
 	PL	Zapisywanie bieżącej listy odtwarzania jako:
 	RU	Сохранение текущего плей-листа как:
 	SV	Sparar aktuell låtlista som:
@@ -130,6 +136,7 @@ NO_PLAYLIST_DIR
 	JA	エラー: プレイ  リストがみつかりません
 	NB	Problem: Ingen mappe for lagrede spillelister.
 	NL	Probleem: geen map met opgeslagen afspeellijsten.
+	NN	Problem: Inga mappe for lagra spelelister.
 	PL	Problem: brak folderu Zapisana lista odtwarzania.
 	RU	Проблема: папка "Сохраненные плей-листы" отсутствует.
 	SV	Problem: Det finns ingen mapp för sparade spellistor.
@@ -150,6 +157,7 @@ NO_PLAYLIST_DIR_MORE
 	JA	サーバー セッティングを調整して下さい
 	NB	Du kan fikse dette fra tjenerinnstillinger.
 	NL	Ga naar serverinstellingen om dit te corrigeren.
+	NN	Du kan fikse dette i tenarinnstillingane.
 	PL	Przejdź do obszaru Ustawienia serwera, aby rozwiązać problem.
 	RU	Чтобы устранить неполадку, используйте настройки сервера.
 	SV	Gå till Serverinställningar om du vill korrigera detta.

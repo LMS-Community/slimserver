@@ -11,6 +11,7 @@ PLUGIN_MY_APPS_MODULE_NAME
 	IT	Applicazioni
 	NB	Mine tjenester
 	NL	Mijn Toepassingen
+	NN	Mine tenester
 	PL	Moje aplikacje
 	RU	Мои приложения
 	SV	Mina program
@@ -25,5 +26,6 @@ PLUGIN_MY_APPS_NO_APPS
 	HU	Nincs telepítve alkalmazás
 	NB	Ingen tjenester er installert
 	NL	Geen toepassing geïnstalleerd
+	NN	Ingen tenester er installerte
 	PL	Brak zainstalowanych aplikacji
 	SV	Inga program är installerade
