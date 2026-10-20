@@ -19,7 +19,7 @@ END %]
 			[% BLOCK helpTopic %]
 				<div class="selectorMarker" onmouseover="Highlighter.highlight(this);" id="[% href %]">
 					<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
-						<a href="[% href %][% IF NOT url.match('^http') %]?player=[% playerURI %][% END %]" [% IF target %]target="[% target %]" [% END %][% IF href.match('^http:') %]target="_new" [% END %] class="browseItemLink">[% title %]</a>
+						<a href="[% href %][% IF NOT href.match('^https?:') %]?player=[% playerURI %][% END %]" [% IF target %]target="[% target %]" [% END %][% IF href.match('^https?:') %]target="_blank" [% END %] class="browseItemLink">[% title %]</a>
 					</div>
 				</div>
 			[% END -%]

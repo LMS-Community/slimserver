@@ -75,7 +75,7 @@ sub alarmCommand {
 	my $client      = $request->client();
 	my $cmd         = $request->getParam('_cmd');
 
-	my @tags = qw( id dow dowAdd dowDel enabled repeat time volume shufflemode playlisturl url cmd );
+	my @tags = qw( id dow dowAdd dowDel enabled repeat time volume usedefaultvolume shufflemode playlisturl url cmd );
 
 	# legacy support for "bare" alarm cli command (i.e., sending all tagged params)
 	my $params;
@@ -184,7 +184,14 @@ sub alarmCommand {
 			  }
 			}
 
-			$alarm->volume($params->{volume}) if defined $params->{volume};
+			# usedefaultvolume:1 makes the alarm follow the player's default alarm volume again (it wins over volume).
+			# volume(undef) rather than usesDefaultVolume(1): it also refreshes the player's RTC alarm.
+			if ($params->{usedefaultvolume}) {
+				$alarm->volume(undef);
+			}
+			elsif (defined $params->{volume}) {
+				$alarm->volume($params->{volume});
+			}
 			$alarm->shufflemode($params->{shufflemode}) if defined $params->{shufflemode};
 			$alarm->enabled($params->{enabled}) if defined $params->{enabled};
 			$alarm->repeat($params->{repeat}) if defined $params->{repeat};
@@ -1400,7 +1407,11 @@ sub playlistXitemCommand {
 
 	# correct the path
 	# this only seems to be useful for playlists?
-	if (!Slim::Music::Info::isRemoteURL($path) && !-e $path && !(Slim::Music::Info::isPlaylistURL($path))) {
+	if ( !Slim::Music::Info::isRemoteURL($path)
+		&& !-e $path
+		&& !-e Slim::Utils::Misc::pathFromFileURL($path)
+		&& !(Slim::Music::Info::isPlaylistURL($path))
+	) {
 
 		my $easypath = catfile(Slim::Utils::Misc::getPlaylistDir(), basename($url) . ".m3u");
 
@@ -2755,11 +2766,12 @@ sub rescanCommand {
 
 		my $dbh = Slim::Schema->dbh;
 		my $sth = $dbh->prepare_cached('DELETE FROM scanned_files WHERE url = ?');
+		my @trackList;
+		my $sthPics = $dbh->prepare_cached('DELETE FROM scanned_pics WHERE folder = ?');
 		my @paths = Slim::Utils::Misc::uniq(
 			map {
-				# reset the track's timestamp so changes are certainly picked up
-				$_->timestamp(0);
-				$_->update;
+				# build list of tracks to rescan
+				push @trackList, $_->id;
 
 				# delete entry in scanned_files - otherwise rescan doesn't handle deletions for non-recursive scans
 				$sth->execute($_->url);
@@ -2768,16 +2780,21 @@ sub rescanCommand {
 			} @tracks
 		);
 
-		# need to delete the entry for the folder, too
+		# need to delete the entry for the folder and images in the folder, too
 		foreach (@paths) {
 			$sth->execute(Slim::Utils::Misc::fileURLFromPath($_));
+			$sthPics->execute($_);
 		}
 
-		Slim::Utils::Scanner::Local->rescan(\@paths, {
-			no_async  => 1,
-			types     => 'audio',
-			recursive => 0,
-		} ) if scalar @paths;
+		if (scalar @paths) {
+			Slim::Utils::Scanner::Local->rescan(\@paths, {
+				no_async  => 1,
+				types     => 'audio',
+				recursive => 0,
+				trackList => \@trackList,
+			} );
+			Slim::Music::Artwork->precacheAllArtwork;
+		}
 	}
 	else {
 		# In-process scan

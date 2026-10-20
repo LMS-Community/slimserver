@@ -433,6 +433,8 @@ sub getConvertCommand2 {
 
 		my $streamformat = (split (/-/, $profile))[1];
 
+		my $defaultRateLimit = $track->samplerate > 44100 ? 48000 : 44100;
+
 		$transcoder = {
 			command          => $command,
 			profile          => $profile,
@@ -440,7 +442,7 @@ sub getConvertCommand2 {
 			streamMode       => $streamMode,
 			streamformat     => $streamformat,
 			rateLimit        => $rateLimit || 320,
-			samplerateLimit  => $samplerateLimit || 44100,
+			samplerateLimit  => $samplerateLimit || $defaultRateLimit,
 			clientid         => $clientid || 'undefined',
 			groupid          => $clientprefs ? ($clientprefs->get('syncgroupid') || 0) : 0,
 			name             => $client ? $client->name : 'undefined',

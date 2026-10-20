@@ -9,16 +9,32 @@ package Slim::Plugin::UPnP::MediaRenderer::ProtocolHandler;
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);
 
+use File::Temp ();
+use Audio::Scan;
+
 use Slim::Utils::Cache;
 use Slim::Utils::Errno;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
+use Slim::Plugin::UPnP::MediaRenderer::AVTransport ();
+
 use constant MAX_RAW_READ => 32768;
+
+# How much of the (already dechunked/decoded) audio stream to initially buffer in
+# _scanBitrateFeed() below before giving up on determining its bitrate, matching
+# Slim::Utils::Scanner::Remote::parseAudioStream()'s default buffer size.
+use constant SCAN_READ_BYTES => 128 * 1024;
+# How many bytes of audio frames past the end of an ID3v2 tag to also buffer
+# to have something to determine the bitrate from.
+use constant SCAN_READ_PAST_ID3 => 16 * 1024;
 
 my $log = logger('plugin.upnp');
 
 sub isRemote { 1 }
+
+# We are caching the cover image on our own
+sub shouldCacheImage { 0 }
 
 # Always proxy through the server so the outgoing connection to the source uses
 # the same IP address that was published for this player via UPnP, and so we can
@@ -68,6 +84,23 @@ sub response {
 }
 
 sub _sysread {
+	my $self = $_[0];
+
+	my $ret = $self->_sysread_impl( $_[1], $_[2], $_[3] );
+
+	# note: we'll do an on-the-fly bitrate scan as data is read if required
+	if ( $ret ) {
+		$self->_scanBitrateFeed( substr( $_[1], $_[3] || 0, $ret ) );
+	}
+	elsif ( defined $ret ) {
+		# graceful stream end - finalize a still-pending scan with whatever we have
+		$self->_scanBitrateFeed( undef, 1 );
+	}
+
+	return $ret;
+}
+
+sub _sysread_impl {
 	my $self    = $_[0];
 	my $dechunk = ${*$self}{'_dechunk'} || return $self->SUPER::_sysread($_[1], $_[2], $_[3]);
 
@@ -78,7 +111,18 @@ sub _sysread {
 		my $raw = $self->SUPER::_sysread( my $buf, MAX_RAW_READ, 0 );
 
 		# propagate "no data yet" (EWOULDBLOCK/EINTR) and real read errors as-is
-		return $raw unless $raw;
+		if ( !$raw ) {
+			# A closed socket ($raw defined as 0) or a hard read error (undef $raw
+			# with an errno other than "try again") before we ever saw the chunk
+			# stream's own 0-size terminator below means the source dropped the
+			# connection rather than ending the stream gracefully. Undo the
+			# isLive(0) set by parseHeaders() so StreamingController::_RetryOrNext()
+			# reconnects, same as it would for any other isLive stream that got cut off.
+			if ( ( defined($raw) || ( $! != EWOULDBLOCK && $! != EINTR ) ) && ( my $song = ${*$self}{'song'} ) ) {
+				$song->isLive(1);
+			}
+			return $raw;
+		}
 
 		$dechunk->{'raw'} .= $buf;
 
@@ -122,14 +166,18 @@ sub getFormatForURL {
 	my $class = shift;
 	my $url = shift;
 
-	# if typeFromSuffix can't find a result it returns the mp3 default.
-	my $type = Slim::Music::Info::typeFromSuffix($url, 'mp3');
-	return $type;
+    my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor($url);
+    return ( $meta && exists $meta->{ct} ) ? $meta->{ct} : undef;
 }
 
-# XXX use DLNA.ORG_OP value, and/or MIME type
-sub canSeek { 1 } # We'll assume Range requests are supported by all servers,
-                  # and this is also needed for pause to work properly
+sub canSeek {
+	my ( $class, $client, $song ) = @_;
+
+	return 1 unless $song;
+
+	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor( $song->currentTrack->url );
+	return ( $meta && exists $meta->{seekable} ) ? $meta->{seekable} : 1;
+}
 
 sub canSeekError { return ( 'SEEK_ERROR_TYPE_NOT_SUPPORTED', 'UPnP/DLNA' ); }
 
@@ -148,23 +196,203 @@ sub new {
 		url     => $streamUrl,
 		song    => $args->{song},
 		client  => $client,
-		bitrate => 128_000, # XXX
+		bitrate => $song->bitrate() || 128_000,
 	} ) || return;
 
-	${*$sock}{contentType} = 'audio/mpeg'; # XXX
+	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor( $song->currentTrack->url );
+	${*$sock}{contentType} = ( $meta && $meta->{res}->{mime} ) || 'audio/mpeg';
 
 	return $sock;
 }
 
-# Avoid scanning
+# Avoid scanning here. Only scan on-the-fly when the track is actually played
+# and the bitrate is still unknown, see _scanBitrateInit and _scanBitrateFeed.
 sub scanUrl {
 	my ($class, $url, $args) = @_;
+
+	# $url is a synthetic per-playlist-entry id (see AVTransport::_newTrackId),
+	# looked up via AVTransport's client-independent registry rather than
+	# $args->{client}'s pluginData: in a sync group, this is called with the
+	# sync-group's master client, which may not be the client this UPnP
+	# session's state was stored on.
+	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor($url);
+
+	if ( ref($meta) eq 'HASH' && ( my $uri = $meta->{res}->{content} ) ) {
+		$args->{song}->streamUrl($uri);
+	}
+
 	$args->{cb}->($args->{song}->currentTrack());
+}
+
+
+# Formats we can determine the bitrate of on the fly
+my %AUDIO_SCAN_FORMAT = (
+	mp3 => [ 'mp3',  \&_scanMP3Info ],
+	wav => [ 'wav',  \&_scanPCMInfo ],
+	aif => [ 'aif',  \&_scanPCMInfo ],
+	ogg => [ 'ogg',  \&_scanVorbisInfo ],
+	ops => [ 'opus', \&_scanVorbisInfo ],
+);
+
+sub _scanMP3Info {
+	my $info = shift;
+	return ( $info->{bitrate}, $info->{vbr} );
+}
+
+sub _scanPCMInfo {
+	my $info = shift;
+	return ( $info->{bitrate}, 0 );
+}
+
+sub _scanVorbisInfo {
+	my $info = shift;
+
+	my $vbr = 0;
+	if ( defined $info->{bitrate_upper} && defined $info->{bitrate_lower} ) {
+		$vbr = $info->{bitrate_upper} != $info->{bitrate_lower} ? 1 : 0;
+	}
+
+	my $bitrate = $info->{bitrate_average} || $info->{bitrate_nominal};
+
+	return ( $bitrate, $vbr );
+}
+
+sub _scanBitrateInit {
+	my $self = shift;
+
+	# check preconditions
+
+	if ( my $range = ${*$self}{'contentRange'} ) {
+		my ($first) = $range =~ /^(\d+)-/;
+		return 0 if $first;
+	}
+	return 0 if ${*$self}{'metaInterval'};
+
+	my $song = ${*$self}{'song'} || return 0;
+	return 0 if Slim::Music::Info::getBitrate( $song->currentTrack->url );
+
+	my $type = Slim::Music::Info::contentType( $song->currentTrack->url ) || return 0;
+	my $format = $AUDIO_SCAN_FORMAT{$type} || return 0;
+
+	# all preconditions met, so start scanning on the fly
+
+	main::DEBUGLOG && $log->is_debug && $log->debug( 'Scanning ' . $song->currentTrack->url . ' on the fly for bitrate' );
+
+	return {
+		fh        => File::Temp->new( DIR => Slim::Utils::Misc::getTempDir ),
+		len       => 0,
+		scanLen   => SCAN_READ_BYTES,
+		url       => $song->currentTrack->url,
+		type      => $type,
+		asFormat  => $format->[0],
+		extractor => $format->[1],
+	};
+}
+
+# Tees received data into a temp file until enough has been buffered
+# (or the stream ends) to run it through Audio::Scan->scan_fh().
+# This is similar to Slim::Utils::Scanner::Remote::parseAudioStream(), but
+# we won't open a separate connection for this.
+sub _scanBitrateFeed {
+	my ( $self, $data, $eof ) = @_;
+
+	my $scan = ${*$self}{'_bitrateScan'};
+
+	# undef means "not yet decided", 0 means "decided: nothing to do"
+	if ( !defined $scan ) {
+		$scan = ${*$self}{'_bitrateScan'} = $self->_scanBitrateInit;
+	}
+
+	return unless $scan;
+
+	if ( defined $data && length $data ) {
+		if ( !$scan->{len} && $scan->{type} eq 'mp3' && $data =~ /^ID3/ ) {
+			# ID3v2 tag on the very first chunk - grow the buffer to cover
+			# the full tag (which may hold a sizeable embedded cover image)
+			# plus some trailing audio frames to determine the bitrate from,
+			# same as Slim::Utils::Scanner::Remote::parseAudioStream() does.
+
+			# get ID3v2 tag length from bytes 7-10
+			my $id3size = 0;
+			for my $b ( unpack 'C4', substr( $data, 6, 4 ) ) {
+				$id3size = ($id3size << 7) + $b;
+			}
+			$id3size += 10;
+
+			$scan->{scanLen} = $id3size + SCAN_READ_PAST_ID3;
+
+			main::DEBUGLOG && $log->is_debug && $log->debug( "ID3v2 tag detected, will buffer $scan->{scanLen} bytes for $scan->{url}" );
+		}
+
+		$scan->{fh}->write( $data, length $data );
+		$scan->{len} += length $data;
+	}
+
+	return if !$eof && $scan->{len} < $scan->{scanLen};
+
+	# enough data buffered (or stream ended) - scan once and stop
+	${*$self}{'_bitrateScan'} = 0;
+
+	$scan->{fh}->seek( 0, 0 );
+
+	# we only want the bitrate here, not tags or embedded artwork
+	local $ENV{AUDIO_SCAN_NO_ARTWORK} = 1;
+
+	my $info = eval { Audio::Scan->scan_fh( $scan->{asFormat}, $scan->{fh} )->{info} };
+
+	my ( $bitrate, $vbr );
+
+	if ( $@ ) {
+		$log->error("Unable to scan bitrate for $scan->{url}: $@");
+	}
+	elsif ( $info ) {
+		( $bitrate, $vbr ) = $scan->{extractor}->($info);
+	}
+
+	if ( $bitrate && $bitrate > 0 ) {
+		main::DEBUGLOG && $log->is_debug && $log->debug("Scanned bitrate for $scan->{url}: $bitrate");
+
+		Slim::Music::Info::setBitrate( $scan->{url}, $bitrate, $vbr );
+		if ( my $song = ${*$self}{'song'} ) {
+			$song->bitrate($bitrate);
+		}
+		# Update the playlist time so the web will refresh, etc
+		# this is copied from Slim::Plugin::RemoteLibrary::ProtocolHandler::_gotMetadata
+		if ( my $client = ${*$self}{'client'} ) {
+			$client->currentPlaylistUpdateTime( Time::HiRes::time() );
+			Slim::Control::Request::notifyFromArray( $client, ['newmetadata'] );
+		}
+	}
 }
 
 sub audioScrobblerSource { 'P' }
 
-# XXX parseHeaders, needed?
+# Slim::Player::Protocols::HTTP::parseHeaders() sets isLive(1) whenever no
+# Content-Length is known, which is also the case for chunked-encoded streams.
+#
+# StreamingController::_RetryOrNext() treats isLive tracks as infinite radio
+# and, once played for more than 10s, tries to reconnect to the same URI.
+# DLNA/UPnP tracks are finite, discrete tracks despite lacking a known length,
+# so we override parseHeaders() to set isLive(0) for them instead.
+#
+# Only chunked responses get this treatment: they're the only ones where
+# _sysread() can tell a graceful stream end (its own EOF chunk) apart from a
+# genuine connection abort, and re-arms isLive(1) itself when it sees the
+# latter, so a real disconnect still triggers a reconnect.
+# For any other response (fixed Content-Length, or no chunking), leave
+# isLive exactly as the base class set it.
+sub parseHeaders {
+        my $self = shift;
+        my $ret  = $self->SUPER::parseHeaders(@_);
+
+        if ( grep { /^Transfer-Encoding\s*:\s*chunked/i } @_ ) {
+                if ( my $song = ${*$self}{'song'} ) {
+                        $song->isLive(0);
+                }
+        }
+
+        return $ret;
+}
 
 # XXX parseDirectHeaders, needed?
 
@@ -182,42 +410,32 @@ sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 
 	# This returns metadata for any tracks added to the playlist via the plugin.
+	# $url is a synthetic per-playlist-entry id (see AVTransport::_newTrackId),
+	# looked up via AVTransport's client-independent registry rather than
+	# $client's pluginData: in a sync group, this is called with the sync-group's
+	# master client, which may not be the client this UPnP session's state was
+	# stored on.
+	my $meta = Slim::Plugin::UPnP::MediaRenderer::AVTransport->trackMetaFor($url) || {};
 
-	# convert protocal handler
-	$url =~ s/^upnp/http/;
+	# support Icy Metadata updates
+	my $title = Slim::Music::Info::getCurrentTitle( $client, $url );
 
-	my $pd = ($client && $client->pluginData()) || {};
-	my $meta = $pd->{avt_AVTransportURIMetaData_hash};
-	my $res = $meta->{res};
-	my $currentUri = $res->{uri};
+	# may reflect a bitrate determined on the fly (see _scanBitrateFeed)
+	my $bitrate = Slim::Music::Info::getCurrentBitrate($url) || 0;
+	my $duration = Slim::Music::Info::getDuration($url) || 0;
 
-	# if $url doesn't match CurrentURI check against NextUri
-	if ( $url && $currentUri && $url ne $currentUri ) {
-		my $nextMeta = $pd->{avt_NextAVTransportURIMetaData_hash};
+	my $type = uc( Slim::Music::Info::contentType($url) || '' ) . ' (UPnP/DLNA)'; 
 
-		# check for cleared NextUri
-		if ( ref($nextMeta) eq 'HASH' ) {
-
-			my $nextRes = $nextMeta->{res};
-			$currentUri = $nextRes->{uri};
-
-			if ( $currentUri && $url eq $currentUri ) {
-				$meta = $nextMeta;
-				$res = $nextRes;
-			}
-		}
-	}
-
-	main::DEBUGLOG && $log->is_debug && $log->debug( 'Metadata returned for  ' . $meta->{title} );
+	main::DEBUGLOG && $log->is_debug && $log->debug( 'Metadata returned for  ' . $title );
 	return {
 		artist   => $meta->{artist},
 		album    => $meta->{album},
-		title    => $meta->{title},
-		cover    => $meta->{cover} || '', # XXX default
+		title    => $title,
+		type     => $type,
+		bitrate  => $bitrate,
+		duration => $duration,
 		icon     => '', # XXX default icon
-		duration => $res->{secs} || 0,
-		bitrate  => $res->{bitrate} ? ($res->{bitrate} / 1000) . 'kbps' : 0,
-		type     => $res->{mime} . ' (UPnP/DLNA)',
+		cover    => $meta->{cover} || '', # XXX default
 	};
 }
 

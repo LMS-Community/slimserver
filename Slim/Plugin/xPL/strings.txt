@@ -1,6 +1,7 @@
 # String file for xPL plugin
 
 PLUGIN_XPL
+	CA	Interfície xPL
 	CS	Rozhraní xPL
 	DA	xPL-grænseflade
 	DE	xPL-Schnittstelle
@@ -18,6 +19,7 @@ PLUGIN_XPL
 	SV	xPL-gränssnitt
 
 SETUP_GROUP_XPL
+	CA	Configuració xPL
 	CS	Nastavení xPL
 	DA	Indstillinger for xPL
 	DE	xPL-Einstellungen
@@ -37,6 +39,7 @@ SETUP_GROUP_XPL
 	ZH_CN	xPL设置
 
 SETUP_GROUP_XPL_DESC
+	CA	Aquests paràmetres controlen el comportament del protocol xPL
 	CS	Tato nastavení řídí chování protokolu xPL
 	DA	Disse indstillinger fastlægger hvordan xPL-protokollen fungerer.
 	DE	Diese Einstellungen steuern das Verhalten des xPL-Protokolls.
@@ -57,6 +60,7 @@ SETUP_GROUP_XPL_DESC
 	ZH_CN	控制xPL协议的设置
 
 SETUP_XPLINTERVAL
+	CA	Interval de batecs
 	CS	Interval srdečního tepu
 	DA	Pause mellem hjerteslag
 	DE	Heartbeat-Intervall
@@ -76,6 +80,7 @@ SETUP_XPLINTERVAL
 	ZH_CN	心跳间隔时间
 
 SETUP_XPLIR
+	CA	Processament d'infrarojos
 	CS	Zpracování infračerveného spojení
 	DA	Infrarød behandling
 	DE	Infrarot-Verarbeitung
@@ -95,6 +100,7 @@ SETUP_XPLIR
 	ZH_CN	红外线处理
 
 SETUP_XPLIR_NONE
+	CA	Cap
 	CS	Žádný
 	DA	Ingen
 	DE	Keine
@@ -114,6 +120,7 @@ SETUP_XPLIR_NONE
 	ZH_CN	无
 
 SETUP_XPLIR_BUTTONS
+	CA	Botons
 	CS	Tlačítka
 	DA	Knapper
 	DE	Tasten
@@ -133,6 +140,7 @@ SETUP_XPLIR_BUTTONS
 	ZH_CN	按钮
 
 SETUP_XPLIR_RAW
+	CA	Cru
 	CS	Základní
 	DA	Rå
 	DE	Raw
@@ -152,6 +160,7 @@ SETUP_XPLIR_RAW
 	ZH_CN	生
 
 SETUP_XPLIR_BOTH
+	CA	Tots dos
 	CS	Oba
 	DA	Begge
 	DE	Beide

@@ -1,6 +1,7 @@
 # String file for LineIn plugin
 
 PLUGIN_LINE_IN
+	CA	Entrada de línia
 	CS	Linkový vstup
 	DA	Linjeindgang
 	DE	Line-In
@@ -17,6 +18,7 @@ PLUGIN_LINE_IN
 	SV	Ljudingång
 
 PLUGIN_LINE_IN_DESC
+	CA	Entrada de línia per a Boom
 	CS	Linkový vstup pro Boom
 	DA	Linjeindgang på Boom
 	DE	Line-In für Boom
@@ -33,6 +35,7 @@ PLUGIN_LINE_IN_DESC
 	SV	Ljudingång för Boom
 
 PLUGIN_LINE_IN_LINE_IN
+	CA	Entrada de línia
 	CS	Linkový vstup
 	DA	Linjeindgang
 	DE	Line-In
@@ -49,6 +52,7 @@ PLUGIN_LINE_IN_LINE_IN
 	SV	Ljudingång
 
 PLUGIN_LINE_IN_IN_USE
+	CA	L'entrada de línia està activa
 	CS	Linkový vstup aktivní
 	DA	Linjeindgangen er valgt
 	DE	Line-In ist aktiv
@@ -65,6 +69,7 @@ PLUGIN_LINE_IN_IN_USE
 	SV	Ljudingången är aktiv
 
 LINE_IN_LEVEL
+	CA	Nivell d'entrada de línia
 	CS	Hladina linkového vstupu
 	DA	Niveau for linjeindgang
 	DE	Line-In-Pegel
@@ -81,6 +86,7 @@ LINE_IN_LEVEL
 	SV	Nivå för linjeingång
 
 LINE_IN_LEVEL_DESC
+	CA	Amb aquesta configuració podeu ajustar el guany de l'entrada de línia.
 	CS	S použitím tohoto nastavení můžete upravit zisk linkového vstupu.
 	DA	Du kan bruge denne indstiling til at justere forstærkningen af linjeindgangens signal.
 	DE	Mit dieser Einstellung können Sie die Line-In-Verstärkung anpassen.
@@ -97,6 +103,7 @@ LINE_IN_LEVEL_DESC
 	SV	Med det här alternativet kan du justera hur linjeingångens signal förstärks.
 
 LINE_IN_ALWAYS_ON
+	CA	Entrada de línia sempre activada
 	CS	Linkový vstup vždy zapnutý
 	DA	Linjeindgang altid til
 	DE	Line-In immer aktiv
@@ -113,6 +120,7 @@ LINE_IN_ALWAYS_ON
 	SV	Linjeingång alltid på
 
 LINE_IN_ALWAYS_ON_DESC
+	CA	Aquesta opció activa l'entrada de línia tot el temps, per permetre que els usuaris que vulguin barrejar-la s'hi incorporin constantment (per exemple, per a karaoke).
 	CS	Tato volba trvale zapne linkový vstup, aby se uživatelé, kteří se chtějí připojit k linkovému vstupu, mohli kdykoli připojit (např. pro Karaoke)
 	DA	Denne indstilling aktiverer linjeindgangen hele tiden sådan at man kan mikse linjeindgangens signal ind over lydsporet, fx ved Karaoke
 	DE	Diese Option aktiviert den Line-In-Eingang permanent, damit er jederzeit nutzbar ist (z.B. für Karaoke).

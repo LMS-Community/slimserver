@@ -475,14 +475,9 @@ sub prettyBitRate {
 
 	my $bitrate  = $self->bitrate;
 	my $vbrScale = $self->vbr_scale;
-
-	my $mode = defined $vbrScale ? 'VBR' : 'CBR';
-
-	if ($bitrate) {
-		return int ($bitrate/1000) . Slim::Utils::Strings::string('KBPS') . ' ' . $mode;
-	}
-
-	return 0;
+	my $format = $self->content_type;
+	
+	return Slim::Schema::Track->buildPrettyBitRate($bitrate, $vbrScale, $format);
 }
 
 sub duration {

@@ -1,4 +1,5 @@
 PLUGIN_FULLTEXT
+	CA	Cerca de text complet
 	CS	Fulltextové vyhledávání
 	DA	Fuldtekst søgning
 	DE	Volltextsuche
@@ -11,6 +12,7 @@ PLUGIN_FULLTEXT
 	SV	Fulltextssökning
 
 PLUGIN_FULLTEXT_DESC
+	CA	Aquesta extensió substitueix la cerca de títol, força simplista, per una cerca de text complet. Això permetria, per exemple, trobar llistes de reproducció amb una pista del títol cercat o filtrar els fitxers amb pèrdua afegint "flac" al terme de cerca. Si desactiveu aquest connector, es restaura l'antiga cerca de títol simple. Usuaris avançats, tingueu en compte que la cerca de text complet no està disponible quan s'utilitza MySQL.
 	CS	Tento zásuvný modul nahrazuje poměrně zjednodušené vyhledávání v názvech fulltextovým vyhledáváním. Umožní např. najít seznamy skladeb se skladbou hledaného názvu nebo odfiltrovat ztrátové soubory přidáním slova „flac“ k hledanému výrazu. Vypnutím tohoto zásuvného modulu se obnoví staré, jednoduché vyhledávání názvů. Upozornění pro pokročilé uživatele: fulltextové vyhledávání není k dispozici při použití MySQL.
 	DA	Denne Plugin erstatter den simple titelsøgning med en fuldtekst søgning. Dette vil f.eks. finde titler på numre i afspillelister, eller bortfiltrere filer komprimeret med tab af opløsning ved at tilføje "Flac" i søgefeltet. Ved deaktivering af denne plugin genetableres den simple titelsøgning. Info til avancerede brugere: Fuldtekst søgning er ikke tilgængelig når man bruger MySQL.
 	DE	Diese Erweiterung ersetzt die einfache Titelsuche durch eine Volltextsuche, welche z.B. auch Titel innerhalb einer Playlist findet, oder durch einfache Eingabe von "flac" alle verlustbehafteten Dateien aus den Suchresultaten ausblendet. Deaktivieren dieses Plugins stellt die alte, einfache Titelsuche wieder her. Achtung Power-User: bei Verwendung von MySQL steht die Volltextsuche nicht zur Verfügung.
@@ -23,6 +25,7 @@ PLUGIN_FULLTEXT_DESC
 	SV	Detta pluginprogram ersätter den enkla titelsökningen med en fulltextsökning. Den hittar t.ex. spellistor med ett spår från den sökta titeln, eller filtrera ut förlustbehäftade genom att lägga till strängen "flac" sökkriteriet. Avaktivering av detta pluginprogram återställer gamla enkla sökfunktionen.
 
 PLUGIN_FULLTEXT_PROGRESS
+	CA	Creació d'un índex de text complet
 	CS	Vytváření fulltextového indexu
 	DA	Opret fuldtekst index
 	DE	Volltext Index erstellen

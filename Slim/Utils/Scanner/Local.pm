@@ -63,7 +63,10 @@ sub find {
 	if ( $args->{recursive} && !$args->{dirs} ) {
 		# XXX how best to delete files in non-recursive mode?
 		# Delete the directory itself and all children
-		$dbh->do("DELETE FROM scanned_files WHERE url = '${file}' OR url LIKE '${file}/%'");
+		my $sthDelete = $dbh->prepare("DELETE FROM scanned_files WHERE url = ? OR url LIKE ?");
+		$sthDelete->execute($file, $file . '/%');
+		$sthDelete = $dbh->prepare("DELETE FROM scanned_pics WHERE folder_url = ? OR folder_url LIKE ?");
+		$sthDelete->execute($file, $file . '/%');
 	}
 
 	stat $path;
@@ -197,7 +200,7 @@ sub rescan {
 
 		my $basedir = Slim::Utils::Misc::fileURLFromPath($next);
 
-		$log->error("Connect do DB") unless main::SCANNER && $main::progress;
+		$log->error("Connect to DB") unless main::SCANNER && $main::progress;
 		my $dbh = Slim::Schema->dbh;
 
 		$log->error("Get latest ID") unless main::SCANNER && $main::progress;
@@ -268,17 +271,18 @@ sub rescan {
 		# 3. Files that have changed mtime or size.
 		$log->error("Build temporary table for changed tracks") unless main::SCANNER && $main::progress;
 		$dbh->do('DROP TABLE IF EXISTS changed');
+
+		my $trackFilter = $args->{trackList}
+			? "tracks.id IN (" . join(',', @{$args->{trackList}}) . ")"
+			: "scanned_files.timestamp != tracks.timestamp OR scanned_files.filesize  != tracks.filesize";
+
 		$dbh->do( qq{
 			CREATE $createTemporary TABLE changed AS
 				SELECT DISTINCT(scanned_files.url) AS url
 				FROM   scanned_files
 				JOIN   tracks ON (
 					scanned_files.url = tracks.url
-					AND (
-						scanned_files.timestamp != tracks.timestamp
-						OR
-						scanned_files.filesize  != tracks.filesize
-					)
+					AND ( $trackFilter )
 					AND tracks.content_type $ctFilter
 				)
 				WHERE  scanned_files.url LIKE '$basedir%'
@@ -1061,35 +1065,10 @@ sub changed {
 
 			my $album = $track->album;
 
-			# Add/replace coverid
+			# remove cover, we'll update in Slim::Music::Artwork->updateStandaloneArtwork()
 			$track->coverid(undef);
 			$track->cover_cached(undef);
-
-			# Check for cover.jpg here
-			if ( !$track->cover ) {
-				# Track does not have embedded artwork, look for standalone cover
-				# findStandaloneArtwork returns either a full path to cover art or 0
-				# to indicate no artwork was found.
-				my $cover = Slim::Music::Artwork->findStandaloneArtwork(
-					{ _track => $track },	# pass track object to avoid deflation unless necessary
-					{},
-					Slim::Utils::Misc::fileURLFromPath(
-						dirname(Slim::Utils::Misc::pathFromFileURL($url))
-					),
-				);
-
-				$track->cover($cover) if $cover;
-			}
-
 			$track->update;
-
-			# Make sure album.artwork points to this track, so the album
-			# uses the newest available artwork
-			if ( my $coverid = $track->coverid ) {
-				if ( $album->artwork ne $coverid ) {
-					$album->artwork($coverid);
-				}
-			}
 
 			# Reset compilation status as it may have changed
 			if ( $album ) {

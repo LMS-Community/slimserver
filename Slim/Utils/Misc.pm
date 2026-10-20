@@ -33,10 +33,10 @@ use Exporter::Lite;
 
 our @EXPORT = qw(assert msg msgf errorMsg specified dumpFiltered safe_md5_hex);
 
-use File::Basename qw(basename);
+use File::Basename qw(basename dirname);
 use File::Spec::Functions qw(:ALL);
 use File::Path qw(mkpath rmtree);
-use File::Temp qw(tempdir);
+use File::Temp qw(tempdir tempfile);
 use File::Slurp;
 use FindBin qw($Bin);
 use List::Util qw();
@@ -334,6 +334,17 @@ sub fileURLFromPath {
 
 	return $file;
 }
+
+sub folderURLFromPath {
+	my ($path) = @_;
+	return fileURLFromPath(dirname($path));
+}
+
+sub folderFromURL {
+	my ($url) = @_;
+	return dirname(pathFromFileURL($url));
+}
+
 
 ########
 
@@ -673,6 +684,27 @@ sub makeTempDir {
 		$tempdir = tempdir( CLEANUP => 1 );
 		$ospathslog->warn("still can't make private temp dir, using $tempdir");
 	}
+}
+
+sub isDirWritable {
+	my ($dir) = @_;
+
+	my $filename;
+	eval {
+		(undef, $filename) = tempfile(
+			TEMPLATE => 'LMS_WRITABLE_XXXX',
+			DIR => $dir,
+			UNLINK => 1,
+		);
+	};
+
+	if ($filename && -f $filename) {
+		unlink $filename;
+		return 1;
+	}
+
+	$osfileslog->warn("Directory seems to be write protected: $dir ($@)");
+	return;
 }
 
 =head2 getAudioDir()
@@ -1233,6 +1265,12 @@ sub userAgentString {
 sub apiHeaders {
 	my ($module) = @_;
 
+	# use the calling module as the plugin ID if none is specified, but only if it's a plugin
+	if (!$module) {
+		$module = caller(0);
+		$module = '' if $module !~ /\bPlugins?\b/
+	}
+
 	eval {
 		if (!$apiHeaders) {
 			$apiHeaders = {};
@@ -1241,12 +1279,13 @@ sub apiHeaders {
 			}
 		}
 
-		$apiHeaders->{'X-LMS-Plugin-ID'} = $module;
+		$apiHeaders->{'X-LMS-Plugin-ID'} = $module if $module;
 	};
 
 	# we might be called before the analytics module was available - don't cache the header data to force re-initialization
 	if ($@) {
 		$apiHeaders = undef;
+		return () if !$module;
 		return (
 			'X-LMS-Plugin-ID' => $module,
 		);

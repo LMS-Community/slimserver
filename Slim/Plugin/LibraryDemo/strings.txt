@@ -1,4 +1,5 @@
 PLUGIN_LIBRARY_DEMO
+	CA	Demostració de la subbiblioteca
 	CS	Ukázka dílčí knihovny
 	DA	Underbibliotek demo
 	EN	Sub-Library demo
@@ -9,6 +10,7 @@ PLUGIN_LIBRARY_DEMO
 	SV	Delbiblioteksdemo
 
 PLUGIN_LIBRARY_DEMO_DESC
+	CA	Complement per demostrar la compatibilitat amb biblioteques múltiples (o virtuals). Aquest complement crearà algunes biblioteques virtuals (en part inútils). Està pensat principalment com a inspiració per als desenvolupadors de complements.
 	CS	Zásuvný modul pro demonstraci podpory více (nebo virtuálních) knihoven. Tento zásuvný modul vytvoří několik (částečně zbytečných) virtuálních knihoven. Je určen především jako inspirace pro vývojáře zásuvných modulů.
 	DA	Udvidelsesmodul (plugin) til at demonstrere understøttelse af flere (eller virtuelle) biblioteker. Dette modul vil skabe nogle (delvist ubrugelige) virtuelle biblioteker. Det er mest tænkt som en inspiration for plugin-udviklere.
 	EN	Plugin to demonstrate support for multiple (or virtual) libraries. This plugin will create some (partly useless) virtual libraries. It's mostly intended as an inspiration for plugin developers.
@@ -19,6 +21,7 @@ PLUGIN_LIBRARY_DEMO_DESC
 	SV	Ett pluginprogram för att demonstrera hur delbibliotek kan implementeras. Programmet kommer att skapa flera, delvis oanvändbara delbibliotek. Programmet är mest tänkt som inspiration till pluginprogramsutvecklare.
 
 PLUGIN_LIBRARY_DEMO_ARTISTS
+	CA	Intèrprets que prefereixen les cançons llargues
 	CS	Interpreti milující dlouhé skladby
 	DA	Kunstnere med lange numre
 	EN	Artists loving long tracks
@@ -29,6 +32,7 @@ PLUGIN_LIBRARY_DEMO_ARTISTS
 	SV	Artister som gärna gör långa låtar
 
 PLUGIN_LIBRARY_DEMO_ALBUMS
+	CA	Àlbums amb outro i altres pistes llargues
 	CS	Alba s přídavky a dalšími dlouhými skladbami
 	DA	Albums med finaler og andre lange numre
 	EN	Albums with outros and other longish tracks

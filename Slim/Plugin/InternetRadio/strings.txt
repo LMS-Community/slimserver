@@ -1,4 +1,5 @@
 PLUGIN_INTERNET_RADIO_MODULE_NAME_DESC
+	CA	Directoris de ràdio per Internet
 	CS	Adresáře internetových rádií
 	DA	Katalog over internetradiostationer
 	DE	Internetradio-Verzeichnisse
@@ -17,6 +18,7 @@ PLUGIN_INTERNET_RADIO_MODULE_NAME_DESC
 # String file for TuneIn Radio plugin
 
 PLUGIN_RADIOTIME_MODULE_NAME
+	CA	TuneIn Radio
 	CS	TuneIn Radio
 	DA	TuneIn Radio
 	DE	TuneIn Radio
@@ -34,6 +36,7 @@ PLUGIN_RADIOTIME_MODULE_NAME
 	SV	TuneIn Radio
 
 PLUGIN_RADIOTIME_MODULE_TITLE
+	CA	TuneIn Radio
 	CS	TuneIn Radio
 	DA	TuneIn Radio
 	DE	TuneIn Radio
@@ -50,6 +53,7 @@ PLUGIN_RADIOTIME_MODULE_TITLE
 	SV	TuneIn Radio
 
 PLUGIN_RADIOTIME_LOADING
+	CA	S'està carregant TuneIn Radio...
 	CS	Načítání TuneIn Radio...
 	DA	Indlæser TuneIn Radio...
 	DE	TuneIn Radio wird geladen...
@@ -67,6 +71,7 @@ PLUGIN_RADIOTIME_LOADING
 	SV	Läser in TuneIn Radio...
 
 PLUGIN_RADIOTIME_OPTIONS
+	CA	Opcions de TuneIn Radio
 	CS	Možnosti TuneIn Radio
 	DA	TuneIn Radio-indstillinger
 	DE	Optionen für TuneIn Radio
@@ -83,6 +88,7 @@ PLUGIN_RADIOTIME_OPTIONS
 	SV	Alternativ för TuneIn Radio
 
 RADIOTIME_LANGUAGE
+	CA	Per idioma
 	CS	Podle jazyka
 	DA	Efter Sprog
 	DE	Nach Sprache
@@ -99,6 +105,7 @@ RADIOTIME_LANGUAGE
 	SV	Efter språk
 
 RADIOTIME_LOCAL
+	CA	Ràdio local
 	CS	Místní rádio
 	DA	Lokal Radio
 	DE	Lokales Radio
@@ -115,6 +122,7 @@ RADIOTIME_LOCAL
 	SV	Lokalradio
 
 RADIOTIME_LOCATION
+	CA	Per ubicació
 	CS	Podle lokality
 	DA	Efter sted
 	DE	Nach Standort
@@ -131,6 +139,7 @@ RADIOTIME_LOCATION
 	SV	Efter land
 
 RADIOTIME_WORLD
+	CA	Per ubicació
 	CS	Svět
 	DA	Efter sted
 	DE	Nach Standort
@@ -147,6 +156,7 @@ RADIOTIME_WORLD
 	SV	Efter land
 
 RADIOTIME_MUSIC
+	CA	Música
 	CS	Hudba
 	DA	Musik
 	DE	Musik
@@ -163,6 +173,7 @@ RADIOTIME_MUSIC
 	SV	Musik
 
 RADIOTIME_NEWS
+	CA	Notícies
 	CS	Zprávy
 	DA	Nyheder
 	DE	Nachrichten
@@ -179,6 +190,7 @@ RADIOTIME_NEWS
 	SV	Nyheter
 
 RADIOTIME_PODCAST
+	CA	Pòdcasts
 	CS	Podcasty
 	DA	Podcasts
 	DE	Podcasts
@@ -195,6 +207,7 @@ RADIOTIME_PODCAST
 	SV	Poddsändningar
 
 RADIOTIME_SEARCH
+	CA	Cerca a TuneIn
 	CS	Hledat na TuneIn
 	DA	Søg i TuneIn
 	DE	TuneIn durchsuchen
@@ -211,6 +224,7 @@ RADIOTIME_SEARCH
 	SV	Sök på TuneIn
 
 RADIOTIME_SPORTS
+	CA	Esports
 	CS	Sport
 	DA	Sport
 	DE	Sport
@@ -227,6 +241,7 @@ RADIOTIME_SPORTS
 	SV	Sport
 
 RADIOTIME_TALK
+	CA	Entrevistes
 	CS	Mluvené slovo
 	DA	Tale
 	DE	Talksendungen
@@ -243,6 +258,7 @@ RADIOTIME_TALK
 	SV	Pratradio
 
 RADIOTIME_MY_PRESETS
+	CA	Els meus preajustos
 	CS	Moje předvolby
 	DA	Mine forvalg
 	DE	Eigene Voreinstellungen
@@ -260,6 +276,7 @@ RADIOTIME_MY_PRESETS
 	SV	Mina förinställningar
 
 PLUGIN_RADIOTIME_USERNAME
+	CA	Nom d'usuari de TuneIn
 	CS	Uživatelské jméno
 	DA	Brugernavn
 	DE	TuneIn Benutzername

@@ -438,6 +438,10 @@ sub processSong {
 	}
 	else {
 		$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
+
+		# Path Conversion - a no-op unless configured and the path
+		# actually matches the configured source prefix.
+		$songInfo{'file'} = Slim::Plugin::MusicMagic::Common::translatePath($songInfo{'file'});
 	}
 
 	main::DEBUGLOG && $log->debug("Exporting song: $songInfo{'file'}");

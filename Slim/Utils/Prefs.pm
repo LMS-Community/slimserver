@@ -292,7 +292,7 @@ sub init {
 	}
 
 	unless (-d $path) { mkdir $path; }
-	unless (-d $path && -w $path) {
+	unless (-d $path && Slim::Utils::Misc::isDirWritable($path)) {
 		logError("unable to write to preferences directory $path");
 	}
 
@@ -486,6 +486,19 @@ sub init {
 			my $old = $_[3];
 			Slim::Music::Import->nextScanTask if $old && !$new;
 		}, 'dontTriggerScanOnPrefChange' );
+
+		$prefs->setChange( sub {
+			my $new = $_[1];
+			my $old = $_[3];
+			if ($new ne $old) {
+				require Slim::Utils::Scanner::Local::Async;
+				Slim::Utils::Scanner::Local::Async->find( $new, {
+					types => 'image',
+					no_async => 0,
+					delete_path => $old,
+				}, sub {} );
+			}
+		}, 'artfolder' );
 	}
 
 	if ( !main::SCANNER ) {
@@ -739,7 +752,7 @@ sub defaultCacheDir {
 
 	my $CacheParent = catdir(@CacheDirs);
 
-	if ((!-e $CacheDir && !-w $CacheParent) || (-e $CacheDir && !-w $CacheDir)) {
+	if ((!-e $CacheDir && !Slim::Utils::Misc::isDirWritable($CacheParent)) || (-e $CacheDir && !Slim::Utils::Misc::isDirWritable($CacheDir))) {
 		$CacheDir = undef;
 	}
 

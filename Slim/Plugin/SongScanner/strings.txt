@@ -1,6 +1,7 @@
 # String file for SongScanner plugin
 
 PLUGIN_SONGSCANNER
+	CA	Escàner de cançons
 	CS	Prohledávání skladby
 	DA	Analyse af nummer
 	DE	Titel-Scanner
@@ -17,6 +18,7 @@ PLUGIN_SONGSCANNER
 	SV	Låtsökaren
 
 PLUGIN_SONGSCANNER_DESC
+	CA	Interfície de reproductor per saltar a posicions arbitràries dins de la cançó que s'està reproduint actualment (només Squeezebox Classic, Squeezebox Boom, Transporter)
 	CS	Rozhraní přehrávače pro přeskakování na libovolné pozice v rámci právě přehrávané skladby (pouze Squeezebox Classic, Squeezebox Boom, Transporter)
 	DA	Kontrolpanel til at springe til vilkårlige steder i det nummer som spilles (Squeezebox Classic, Squeezebox Boom, Transporter)
 	DE	Player-Schnittstelle zum Springen an zufällige Positionen im aktuellen Titel (nur Squeezebox Classic, Squeezebox Boom, Transporter)
@@ -33,6 +35,7 @@ PLUGIN_SONGSCANNER_DESC
 	SV	Spelargränssnitt för att hoppa till godtyckliga ställen i låten som spelas upp (Squeezebox Classic, Squeezebox Boom, Transporter)
 
 PLUGIN_SONGSCANNER_SET
+	CA	Temps:
 	CS	Čas:
 	DA	Spilletid:
 	DE	Zeit:
@@ -49,6 +52,7 @@ PLUGIN_SONGSCANNER_SET
 	SV	Tid:
 
 PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE
+	CA	No es pot escanejar la pista perquè se'n desconeix la durada
 	CS	Nelze prohledat skladbu, protože není známa doba trvání
 	DA	Nummeret kan ikke analyseres hurtigere da dets længde er ukendt
 	DE	Scannen im Titel nicht möglich, da Dauer unbekannt
@@ -65,6 +69,7 @@ PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE
 	SV	Det går inte att söka igenom spåret eftersom varaktigheten är okänd
 
 PLUGIN_SONGSCANNER_ERR_NOTRACK
+	CA	Cap pista
 	CS	Žádná skladba
 	DA	Ingen numre
 	DE	Kein Titel
@@ -81,6 +86,7 @@ PLUGIN_SONGSCANNER_ERR_NOTRACK
 	SV	Inget spår
 
 PLUGIN_SONGSCANNER_MAX_RATE_FWD
+	CA	S'ha assolit la velocitat màxima d'avanç ràpid
 	CS	Dosažena maximální rychlost převíjení vpřed
 	DA	Der kan ikke spoles hurtigere
 	DE	Maximale Vorspulgeschwindigkeit erreicht
@@ -97,6 +103,7 @@ PLUGIN_SONGSCANNER_MAX_RATE_FWD
 	SV	Maximal framspolningstakt har uppnåtts
 
 PLUGIN_SONGSCANNER_MAX_RATE_REW
+	CA	S'ha assolit la velocitat màxima de rebobinat
 	CS	Dosažena maximální rychlost zpětného převíjení
 	DA	Der kan ikke spoles hurtigere
 	DE	Maximale Rückspulgeschwindigkeit erreicht

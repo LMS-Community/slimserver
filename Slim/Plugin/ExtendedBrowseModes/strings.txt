@@ -1,4 +1,5 @@
 PLUGIN_EXTENDED_BROWSEMODES
+	CA	Modes de navegació addicionals
 	CS	Další režimy procházení
 	DA	Flere musik menuer
 	DE	Erweiterte Musik Menüs
@@ -11,6 +12,7 @@ PLUGIN_EXTENDED_BROWSEMODES
 	SV	Ytterligare blädder-menyer
 
 PLUGIN_EXTENDED_BROWSEMODES_DESC
+	CA	Crea modes de navegació addicionals per explorar la teva biblioteca musical per intèrprets, compositors, gèneres seleccionats i més.
 	CS	Vytvořte další režimy procházení a procházejte svou hudební knihovnu podle interpretů alba, skladatelů, vybraných žánrů a dalších.
 	DA	Opret flere menuer for at gennemse dit musikbibliotek efter albumkunstnere, komponister, udvalgte genrer, osv.
 	DE	Erstellen Sie erweiterte Menüs, um die Musiksammlung zu durchsuchen, z.B. Album-Interpreten, Komponisten, eine Auswahl von Stilrichtungen etc.
@@ -23,6 +25,7 @@ PLUGIN_EXTENDED_BROWSEMODES_DESC
 	SV	Skapa ytterligare menyer för att bläddra is musiksamlingen via albumartister, kompositörer, valda genrer osv.
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST
+	CA	Intèrprets de l'àlbum
 	CS	Interpreti alba
 	DA	Albumkunstner
 	DE	Album-Interpreten
@@ -41,6 +44,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST
 	ZH_CN	专辑艺人
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
+	CA	Compositors
 	CS	Skladatelé
 	DA	Komponister
 	DE	Komponisten
@@ -54,6 +58,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 	SV	Kompositörer
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_PLAYLIST_FOLDER
+	CA	Carpeta de llistes de reproducció
 	CS	Složka seznamů skladeb
 	DA	Mappe med afspilningslister
 	DE	Wiedergabelisten-Ordner
@@ -74,24 +79,29 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_PLAYLIST_FOLDER
 	ZH_CN	播放表文件夹
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_CLASSICAL_MUSIC_BY_CONDUCTOR
+	CA	Música clàssica per director
 	CS	Klasická hudba podle dirigenta
 	DA	Klassisk musik sorteret efter dirigent
 	DE	Klassische Musik nach Dirigent
 	EN	Classical Music by Conductor
 	HU	Klasszikus zene adott karmestertől
 	NL	Klassieke muziek van Dirigent
+	NO	Klassisk musikk etter dirigent
 	SV	Klassisk musik sorterad efter dirigent
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS
+	CA	Compositor de jazz
 	CS	Jazzoví skladatelé
 	DA	Jazz komponister
 	DE	Jazz Komponisten
 	EN	Jazz Composers
 	HU	Jazz zeneszerzők
 	NL	Jazz Componisten
+	NO	Jazzkomponister
 	SV	Jazz kompositörer
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
+	CA	Rols de col·laborador:
 	CS	Role přispěvatelů:
 	DA	Roller for kunstnerne:
 	DE	Rolle des Künstlers:
@@ -104,6 +114,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	SV	Artistroll
 
 PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE
+	CA	Tipus de llançament:
 	CS	Typ vydání:
 	DA	Udgivelsestype:
 	DE	Veröffentlichungstyp:
@@ -111,9 +122,11 @@ PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE
 	FR	Type de sortie :
 	HU	Kiadás típusa:
 	NL	Release type:
+	NO	Utgivelsestype:
 	SV	Utgåvetyp
 
 PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT
+	CA	Tipus de llançaments:
 	CS	Typy vydání:
 	DA	Udgivelsestyper:
 	DE	Veröffentlichungstypen:
@@ -121,9 +134,11 @@ PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT
 	FR	Types de sorties :
 	HU	Kiadás típusai:
 	NL	Release typen:
+	NO	Utgivelsestyper:
 	SV	Utgåvetyper
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
+	CA	Navega per:
 	CS	Procházet podle:
 	DA	Visning efter:
 	DE	Anzeigen:
@@ -136,6 +151,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 	SV	Bläddra efter:
 
 PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO
+	CA	Aplica a:
 	CS	Použít pro:
 	DA	Anvendes på:
 	DE	Anwenden auf:
@@ -148,6 +164,7 @@ PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO
 	SV	Använd på:
 
 PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS
+	CA	Recopilacions
 	CS	Sbírky
 	DA	Albumsamlinger
 	DE	Kompilationen
@@ -166,6 +183,7 @@ PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS
 	ZH_CN	合辑
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS
+	CA	Discs i carpetes
 	CS	Disky a složky
 	DA	Diske og mapper
 	DE	Dateisystem
@@ -178,6 +196,7 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS
 	SV	Filer och mappar
 
 PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
+	CA	Rols de col·laboradors:
 	CS	Role přispěvatelů:
 	DA	Kunstner roller:
 	DE	Künstler-Rollen:
@@ -190,6 +209,7 @@ PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
 	SV	Artistroll:
 
 PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
+	CA	Tota la biblioteca (per defecte)
 	CS	Všechny knihovny (výchozí)
 	DA	Hele musikbiblioteket (Standard)
 	DE	Ganze Musiksammlung (Standard)
@@ -202,6 +222,7 @@ PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	SV	Hela musiksamlingen (standard)
 
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
+	CA	Amaga els duplicats amb pèrdua si hi ha disponible una pista sense pèrdua
 	CS	Skrýt ztrátové duplikáty, pokud je k dispozici bezeztrátová verze skladby
 	DA	Skjul duplikater af numre komprimeret med tab af opløsning, hvis tabsfrie numre er til rådighed
 	DE	Keine verlustbehafteten Duplikate anzeigen
@@ -214,6 +235,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 	SV	Dölj förlustbehäftade dubbletter om det finns förlustfria versioner.
 
 PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
+	CA	Crea una vista de biblioteca que intenti suprimir les pistes duplicades amagant les versions amb pèrdua si hi ha disponible una versió sense pèrdues de la mateixa gravació. Això és especialment útil si manteniu una col·lecció de pistes per utilitzar a casa (sense pèrdues) i fora de casa (amb pèrdues).
 	CS	Vytvořte zobrazení knihovny, které se snaží potlačit duplicitní skladby skrytím ztrátových verzí, pokud je k dispozici bezeztrátová verze stejné nahrávky. To je užitečné zejména pokud uchováváte sbírku skladeb pro použití doma (bezeztrátová) a na cestách (ztrátová).
 	DA	Opret en biblioteksvisning som skjuler duplikater af numre komprimeret med tab af opløsning, hvis en tabsfri version af samme optagelse er til rådighed. Dette er nyttigt hvis du har et bibliotek af numre til brug i hjemmet (tabsfri) og en for brug på farten (komprimeret med tab).
 	DE	Erstelle eine Ansicht, in welcher versucht wird, Duplikate zu unterdrücken, indem eine verlustbehaftet komprimierte Version eines Tracks (mp3, m4a etc.) nicht angezeigt wird, falls eine verlustfreie Version verfügbar ist (flac, alac etc.). Dies ist insbesondere hilfreich, wenn Aufnahmen doppelt für zuhause (verlustfrei) und unterwegs (verlustbehaftete) vorhanden sind.
@@ -226,6 +248,7 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
 	SV	Skapa ett delbibliotek som inte visar förlustbehäftade dubbletter när samma spår finns i en förlustfri version. Detta är speciellt användbart om du har skapat förlustbehäftade kopior av din musik för att använda i mobila apparater.
 
 PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
+	CA	Àlbums aleatoris
 	CS	Náhodná alba
 	DA	Miks baseret på tilfældige album
 	DE	Zufällige Alben
@@ -243,6 +266,7 @@ PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
 	SV	Slumpmässigt valda album
 
 PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED
+	CA	Àlbums actualitzats recentment
 	CS	Nedávno aktualizovaná alba
 	DA	Nyligt opdaterede albums
 	DE	Zuletzt aktualisierte Alben
@@ -250,41 +274,51 @@ PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED
 	FR	Albums modifiés récemment
 	HU	Nemrég frissített albumok
 	NL	Recent Gewijzigde Albums
+	NO	Nylig oppdaterte album
 	SV	Nyligen ändrade album
 
 PLUGIN_EXTENDED_BROWSEMODES_POPULAR_ALBUMS
+	CA	Àlbums populars
 	CS	Oblíbená alba
 	DE	Populäre Alben
 	EN	Popular Albums
 	FR	Albums les plus écoutés récemment
 	NL	Recent meest afgespeelde albums
+	NO	Populære album
 	SV	Populära album
 
 PLUGIN_EXTENDED_BROWSEMODES_TOP_ARTISTS
+	CA	Intèrprets populars
 	CS	Oblíbení interpreti
 	DE	Populäre Interpreten
 	EN	Popular Artists
 	FR	Artistes les plus populaires
 	NL	Populairste artiesten
+	NO	Populære artister
 	SV	Populära artister
 
 PLUGIN_EXTENDED_BROWSEMODES_NEW_ARTISTS
+	CA	Intèrprets nous
 	CS	Noví interpreti
 	DE	Neue Interpreten
 	EN	New Artists
 	FR	Nouveaux artistes
 	NL	Nieuwe artiesten
+	NO	Nye artister
 	SV	Nya artister
 
 PLUGIN_EXTENDED_BROWSEMODES_ARTISTS_RECENTLY_PLAYED
+	CA	Intèrprets escoltats recentment
 	CS	Nedávno přehrávaní interpreti
 	DE	Kürzlich gespielte Interpreten
 	EN	Recently Played Artists
 	FR	Artistes récemment écoutés
 	NL	Onlangs afgespeelde artiesten
+	NO	Nylig spilte artister
 	SV	Nyligen spelade artister
 
 PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
+	CA	Pistes principals
 	CS	Nejlepší skladby
 	DA	Mest populære numre
 	DE	Top-Titel
@@ -301,6 +335,7 @@ PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
 	SV	Toppspår
 
 PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
+	CA	Pistes menys valorades
 	CS	Skladby propadáku
 	DA	Mindst afspillede numre
 	DE	Flop-Titel
@@ -313,6 +348,7 @@ PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
 	SV	Floppspår
 
 PLUGIN_EXTENDED_BROWSEMODES_USE_X
+	CA	Utilitza '%s'
 	CS	Použít „%s“
 	DA	Benyt '%s'
 	DE	'%s' verwenden
@@ -325,6 +361,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USE_X
 	SV	Använd '%s'
 
 PLUGIN_EXTENDED_BROWSEMODES_USING_X
+	CA	Ara s'està utilitzant '%s'
 	CS	Nyní používáte „%s“
 	DA	Bruger nu '%s'
 	DE	Verwende nun '%s'
@@ -337,6 +374,7 @@ PLUGIN_EXTENDED_BROWSEMODES_USING_X
 	SV	Används nu '%s'
 
 PLUGIN_EXTENDED_BROWSEMODES_DELETED
+	CA	Vista de la biblioteca suprimida
 	CS	Zobrazení knihovny odstraněno
 	DA	Delbibliotek slettet
 	DE	Bibliotheksansicht gelöscht
@@ -349,6 +387,7 @@ PLUGIN_EXTENDED_BROWSEMODES_DELETED
 	SV	Delbibliotek suddat
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS
+	CA	Audiollibres
 	CS	Audioknihy
 	DA	Lydbøger
 	DE	Hörbücher
@@ -356,9 +395,11 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS
 	FR	Livres audio
 	HU	Hangoskönyvek
 	NL	Luisterboeken
+	NO	Lydbøker
 	SV	Ljudböcker
 
 PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
+	CA	Tota la música excepte audiollibres
 	CS	Všechna hudba bez audioknih
 	DA	Al musik bortset fra lydbøger
 	DE	Alles ohne Hörbücher
@@ -366,9 +407,11 @@ PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
 	FR	Toute la musique sans les livres audio
 	HU	Minden zene hangoskönyvek nélkül
 	NL	Alle muziek zonder luisterboeken
+	NO	All musikk uten lydbøker
 	SV	All musik förutom ljudböcker
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
+	CA	Crea una vista de biblioteca d'audiollibres i una vista sense audiollibres basada en els gèneres següents:
 	CS	Vytvořit zobrazení knihovny audioknih a zobrazení bez audioknih na základě následujících žánrů:
 	DA	Opret et "Lydbøger" delbibliotek og et delbibliotek uden lydbøger baseret på følgende genrer:
 	DE	Erstelle eine "Hörbücher" und eine "Alles ohne Hörbücher" Ansicht, basierend auf den folgenden Stilrichtungen:
@@ -376,9 +419,11 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
 	FR	Créer une bibliothèque thématique de livres audio et une bibliothèque sans les livres audio en fonction des genres suivants :
 	HU	Hozzon létre egy Hangoskönyvek könyvtárnézetet és egy hangoskönyvek nélküli nézetet a következő műfajok alapján:
 	NL	Maak een luisterboek weergave en een weergave zonder luisterboeken gebaseerd op de volgende genres:
+	NO	Lag en bibliotekvisning med lydbøker og en visning uten lydbøker basert på disse sjangerne:
 	SV	Skapa ett "delbibliotek för ljudböcker" och ett "Allt utom ljudböcker delbibliotek" baserat på följande genrer:
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
+	CA	Audiobook, Audiollibre, Audiollibres, Parlat, Locució, Comèdia, Parlat i àudio, Llibres i parlat, Cabaret, Humor, Podcast
 	CS	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Audiokniha, Audioknihy, Mluvené, Řeč, Komedie, Mluvené a audio, Knihy a mluvené, Kabaret, Humor
 	DA	Lydbog, Lydbøger, Tale, Snak, Komedie, Lydbog & Tale, Kabaret, Humor, Podcast, Audiobook, Audiobooks, Spoken, Speech, Spoken & Audio, Books & Spoken, Cabaret, Humour
 	DE	Hörbuch, Hörspiel, Comedy, Cabaret, Humor, Hörbuch & Gesprochene Inhalte, Hörbuch & gesprochene Inhalte, Kabarett, Podcast, Sprache, Audiobook, Audiobooks, Spoken, Speech
@@ -386,9 +431,11 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
 	FR	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Livre audio, Livres audio, Parlé, Discours
 	HU	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Livre audio, Livres audio, Parlé, Discours
 	NL	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Luisterboeken
+	NO	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Lydbok, Lydbøker, Opplesning, Tale, Komedie, Kabaret, Humor, Podkast
 	SV	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Talat, Tal, Ljudbok, Hörbok, Audiobok
 
 PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
+	CA	Autors
 	CS	Autoři
 	DA	Lydbogsforfattere
 	DE	Hörbuch-Autoren
@@ -396,5 +443,6 @@ PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
 	FR	Auteurs
 	HU	Szerzők
 	NL	Schrijvers
+	NO	Forfattere
 	SV	Författare
 

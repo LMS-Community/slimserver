@@ -12,6 +12,7 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::Strings qw(string);
 
 my $prefs = preferences('server');
 my $log = logger('scan.scanner');
@@ -96,7 +97,7 @@ sub handler {
 				push @paths, $path;
 
 				if ($paramRef->{"pref_rescan_mediadir$i"}) {
-					$singleDirScan = Slim::Utils::Misc::fileURLFromPath($path);
+					$singleDirScan = Slim::Utils::Misc::fileURLFromPath(Slim::Utils::Unicode::encode_locale($path));
 				}
 
 				push @{ $ignoreFolders }, $path if !$paramRef->{"pref_ignoreInAudioScan$i"};
@@ -116,8 +117,14 @@ sub handler {
 		}
 
 		if ( keys %oldPaths || !$oldCount || scalar @paths != $oldCount ) {
-			main::INFOLOG && $log->is_info && $log->info("Triggering scan...");
-			$prefs->set('mediadirs', \@paths);
+			if ($prefs->validate('mediadirs', \@paths)) {
+				main::INFOLOG && $log->is_info && $log->info("Triggering scan...");
+				$prefs->set('mediadirs', \@paths);
+			}
+			else {
+				$log->error("Invalid value for mediadirs: " . join(',', @paths));
+				$paramRef->{'warning'} .= string('SETTINGS_INVALIDVALUE', join(',', @paths), string('SETUP_MEDIADIRS')) . '<br/>';
+			}
 		}
 		# only run single folder scan if the paths haven't changed (which would trigger a rescan anyway)
 		elsif ( $singleDirScan ) {

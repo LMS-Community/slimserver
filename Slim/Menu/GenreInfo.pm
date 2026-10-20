@@ -299,7 +299,11 @@ sub cliQuery {
 		$feed = Slim::Menu::GenreInfo->menu( $client, $url, undef, $tags );
 	}
 	else {
-		my $genre = Slim::Schema->find( Genre => $genreId );
+		my $genre = Slim::Schema->find( Genre => $genreId ) or do {
+			# an id from before a rescan, or a typo: no such object
+			$request->setStatusBadParams();
+			return;
+		};
 		$feed     = Slim::Menu::GenreInfo->menu( $client, $genre->url, $genre, $tags );
 	}
 

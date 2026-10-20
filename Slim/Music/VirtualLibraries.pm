@@ -123,7 +123,7 @@ sub init {
 				# only add this overhead if the library definition tells us to do so
 				return unless grep { $_->{rebuildOnUpdate} } values %libraries;
 
-				Slim::Schema->dbh->sqlite_update_hook(\&_autoRebuild);
+				Slim::Schema->dbh->sqlite_update_hook(\&autoRebuild);
 			};
 		}
 		else {
@@ -404,16 +404,26 @@ sub rebuild {
 	return keys %rebuildQueue ? 1 : 0;
 }
 
-sub _autoRebuild {
+sub autoRebuild {
 	my (undef, $db, $table) = @_;
+
+	if (main::SCANNER) {
+		logBacktrace('Library autoRebuild() must not be run in the scanner!');
+		return;
+	}
+
+	# call without any param to force a rebuild on all libraries
+	my $forceAll = !($db && $table);
+	$table ||= '';
 
 	return if $table =~ /^library_/; 	# ignore updates to the library tables - it's most likely ourselves
 
 	foreach my $id ( sort { ($libraries{$a}->{priority} || 0) <=> ($libraries{$b}->{priority} || 0) } keys %libraries ) {
 
-		my $filter = $libraries{$id}->{rebuildOnUpdate} || next;
-
-		next if "$db.$table" !~ $filter;
+		if (!$forceAll) {
+			my $filter = $libraries{$id}->{rebuildOnUpdate} || next;
+			next if "$db.$table" !~ $filter;
+		}
 
 		main::DEBUGLOG && $log->is_debug && $log->debug("Library view needs an update: '" . $libraries{$id}->{name} . "'");
 
@@ -427,7 +437,7 @@ sub _autoRebuild {
 # wrapper around rebuild, to be used when called by timers
 sub _rebuild {
 	Slim::Utils::Scheduler::remove_task(\&rebuild);
-	Slim::Utils::Scheduler::add_task(\&rebuild);
+	Slim::Utils::Scheduler::add_ordered_task(\&rebuild);
 }
 
 sub getLibraries {

@@ -1,6 +1,7 @@
 # String file for SlimTris plugin
 
 SLIMTRIS
+	CA	SlimTris
 	CS	SlimTris
 	DA	SlimTris
 	DE	SlimTris
@@ -18,6 +19,7 @@ SLIMTRIS
 	SV	SlimTris
 
 SLIMTRIS_DESC
+	CA	Tetris per al teu Squeezebox o Transporter!
 	CS	Tetris pro váš Squeezebox nebo Transporter!
 	DA	Tetris til din Squeezebox eller Transporter
 	DE	Tetris für ihre Squeezebox oder den Transporter!
