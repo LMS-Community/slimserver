@@ -12,6 +12,7 @@ PLUGIN_ROCKRADIO_DESC
 	NL	ROCKRADIO.COM | rockmuziek voor het leven
 	HU	ROCKRADIO.COM | rockzene egy életre
 	NB	ROCKRADIO.COM | rockemusikk for livet
+	NN	ROCKRADIO.COM | rockemusikk for livet
 	SV	ROCKRADIO.COM | rockmusik för livet
 
 PLUGIN_ROCKRADIO_MISSING_CREDS
@@ -24,6 +25,7 @@ PLUGIN_ROCKRADIO_MISSING_CREDS
 	NL	Ga naar ROCKRADIO.COM in de Lyrion Music Server-instellingen om je gegevens toe te voegen.
 	HU	Kérjük, keresse fel a ROCKRADIO.COM webhelyet a Lyrion Music Server beállításainál a hitelesítési adatok hozzáadásához.
 	NB	Gå til ROCKRADIO.COM i innstillingene for Lyrion Music Server for å legge inn påloggingsopplysningene dine.
+	NN	Gå til ROCKRADIO.COM i innstillingane for Lyrion Music Server for å leggje inn påloggingsopplysningane dine.
 	SV	Gå till ROCKRADION.COM in Lyrion Music Server-inställningarna för att lägga till dina loginuppgifter.
 
 PLUGIN_ROCKRADIO_LINK
@@ -36,4 +38,5 @@ PLUGIN_ROCKRADIO_LINK
 	NL	Ga om een account aan te maken of te beheren naar <a href="https://www.rockradio.com" target="_blank">ROCKRADIO.COM</a>.
 	HU	Fiókja létrehozásához vagy kezeléséhez látogasson el a <a href="https://www.rockradio.com" target="_blank">ROCKRADIO.COM</a> webhelyre.
 	NB	Gå til <a href="https://www.rockradio.com" target="_blank">ROCKRADIO.COM</a> for å opprette eller administrere kontoen din.
+	NN	Gå til <a href="https://www.rockradio.com" target="_blank">ROCKRADIO.COM</a> for å opprette eller administrere kontoen din.
 	SV	Gå till <a href="https://www.rockradio.com" target="_blank">ROCKRADIO.COM</a> för att skapa eller ändra ditt konto.

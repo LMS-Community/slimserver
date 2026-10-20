@@ -14,6 +14,7 @@ PLUGIN_PODCAST
 	IT	Podcast
 	NB	Podkaster
 	NL	Podcasts
+	NN	Podkastar
 	PL	Podcasty
 	RU	Подкасты
 	SV	Poddsändningar
@@ -31,6 +32,7 @@ PLUGIN_PODCAST_DESC
 	IT	Accesso ai podcast
 	NB	Tilgang til podkaster
 	NL	Toegang tot Podcasts
+	NN	Tilgang til podkastar
 	PL	Dostęp do podcastów
 	RU	Доступ к подкастам
 	SV	Tillgång till poddsändningar
@@ -49,6 +51,7 @@ PODCAST_GROUP_DESC
 	IT	Il plugin Podcast Browser consente di visualizzare e ascoltare podcast.
 	NB	Med plugin-modulen for podkastlesing kan du se og høre på podkaster.
 	NL	Met de Podcast plug-in kun je podcasts bekijken en beluisteren.
+	NN	Med plugin-modulen for podkastar kan du sjå og høyre på podkastar.
 	PL	Dodatek Przeglądarka podcastów umożliwia wyświetlanie i słuchanie podcastów.
 	RU	Подключаемый модуль "Браузер подкастов" позволяет просматривать и прослушивать подкасты.
 	SV	Med plugin-programmet för poddsändningsläsaren kan du visa och lyssna på poddsändningar.
@@ -66,6 +69,7 @@ SETUP_PLUGIN_PODCAST_ADD_FEED
 	IT	Aggiungi nuovo feed:
 	NB	Legg til en ny feed:
 	NL	Nieuwe feed toevoegen:
+	NN	Legg til ein ny feed:
 	PL	Dodaj nowe źródło:
 	RU	Добавить новый веб-канал:
 	SV	Lägg till nytt flöde:
@@ -83,6 +87,7 @@ SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 	IT	Feed esistenti:
 	NB	Eksisterende feeder:
 	NL	Bestaande feed:
+	NN	Eksisterande feedar:
 	PL	Istniejące źródła:
 	RU	Существующие веб-каналы:
 	SV	Befintliga flöden:
@@ -100,6 +105,7 @@ SETUP_PLUGIN_PODCAST_INVALID_FEED
 	IT	Feed non valido. %s
 	NB	Ugyldig feed: %s
 	NL	Ongeldige feed - %s
+	NN	Ugyldig feed: %s
 	PL	Nieprawidłowe źródło — %s
 	RU	Недействительный веб-канал — %s
 	SV	Ogiltigt flöde – %s
@@ -114,6 +120,7 @@ PLUGIN_PODCAST_PLAY_FROM_BEGINNING
 	HU	Lejátszás az elejétől
 	NB	Spill av fra begynnelsen
 	NL	Speel af vanaf het begin
+	NN	Spel av frå byrjinga
 	PL	Odtwórz od początku
 	SV	Spela från början
 
@@ -127,6 +134,7 @@ PLUGIN_PODCAST_PLAY_FROM_POSITION_X
 	HU	Lejátszás az utolsó pozíciótól (%s)
 	NB	Spill videre fra siste posisjon (%s)
 	NL	Speel af vanaf laatste positie (%s)
+	NN	Spel vidare frå siste posisjon (%s)
 	PL	Wznów od ostatniej pozycji (%s)
 	SV	Spela vidare från senaste positionen (%s)
 
@@ -140,6 +148,7 @@ PLUGIN_PODCAST_SKIP_BACK_SECS
 	HU	Ugorj vissza X másodpercet
 	NB	Hopp sekunder tilbake
 	NL	Spring seconden terug
+	NN	Hopp sekund tilbake
 	PL	Przewijanie do tyłu
 	SV	Hoppa tillbaka X sekunder
 
@@ -153,6 +162,7 @@ PLUGIN_PODCAST_SKIP_BACK_DESC
 	HU	A podcastok helyi menüje lehetőséget kínál a gyors visszaugrásra a podcaston belül. Alapértelmezés szerint ez az opció 15 másodperccel visszaugrik.
 	NB	Kontekstmenyen for podkaster tilbyr å kjapt hoppe tilbake i podkasten. Standardspranget er 15 sekunder. Angi hvor langt spranget skal være.
 	NL	In het contextmenu van de podcast kun je snel terugspringen in de podcast. Standaard spring je 15 seconden terug.
+	NN	Kontekstmenyen for podkastar lèt deg raskt hoppe tilbake i podkasten. Standardhoppet er 15 sekund. Vel kor langt hoppet skal vere.
 	PL	Menu kontekstowe podcastu zawiera opcję do szybkiego przewinięcia do tyłu. Domyślnie ta opcja przewija o 15 sekund do tyłu.
 	SV	Det är möjligt att från podsändningens meny snabbt hoppa tillbaka. Standarden är att hoppa tillbak 15 sekunder. Ange här hur många sekunder du vill hoppa tillbaka.
 
@@ -166,6 +176,7 @@ PLUGIN_PODCAST_SKIP_BACK
 	HU	Ugrás vissza %s másodpercet
 	NB	Hopp %s sekunder tilbake
 	NL	Spring %s seconden terug
+	NN	Hopp %s sekund tilbake
 	PL	Przewiń do tyłu o %s sekund
 	SV	Hoppa tillbaka %s sekunder 
 
@@ -179,6 +190,7 @@ PLUGIN_PODCAST_RECENTLY_PLAYED
 	HU	Nemrég játszott
 	NB	Nylig spilt
 	NL	Recent afgespeeld
+	NN	Nyleg spelt
 	SV	Nyligen spelade
 
 PLUGIN_PODCAST_SEARCH
@@ -191,6 +203,7 @@ PLUGIN_PODCAST_SEARCH
 	HU	Hírcsatornák keresése
 	NB	Søk i feeder
 	NL	Zoek feeds
+	NN	Søk i feedar
 	SV	Sök efter podsändningar
 
 PLUGIN_PODCAST_PROVIDER
@@ -203,6 +216,7 @@ PLUGIN_PODCAST_PROVIDER
 	HU	Podcast szolgáltató
 	NB	Podkastleverandør
 	NL	Podcast aanbieder
+	NN	Podkastleverandør
 	SV	Podsändningsleverantör
 
 PLUGIN_PODCAST_PROVIDER_DESC
@@ -215,6 +229,7 @@ PLUGIN_PODCAST_PROVIDER_DESC
 	HU	Állítsa be a Podcast feed-szolgáltatót (összesítőt).
 	NB	Velg leverandør (aggregator) av podkastfeeder.
 	NL	Configureer de podcast feed aanbieder (aggregator)
+	NN	Vel leverandør (aggregator) av podkastfeedar.
 	SV	Välj podsändningsleverantör
 
 PLUGIN_PODCAST_SEARCH_FAILED
@@ -226,6 +241,7 @@ PLUGIN_PODCAST_SEARCH_FAILED
 	FR	Echec de recherche
 	NB	Søket mislyktes
 	NL	Zoeken mislukt
+	NN	Søket mislukkast
 	SV	Sökningen misslyckades
 
 PLUGIN_PODCAST_WHATSNEW
@@ -238,6 +254,7 @@ PLUGIN_PODCAST_WHATSNEW
 	HU	Új epizódok az elmúlt %s napból
 	NB	Nye episoder de siste %s dagene
 	NL	Nieuwe afleveringen van de laatste %s dagen
+	NN	Nye episodar dei siste %s dagane
 	SV	Nya avsnitt från de senaste %s dagarna
 
 PLUGIN_PODCAST_AUTHOR
@@ -250,6 +267,7 @@ PLUGIN_PODCAST_AUTHOR
 	HU	Szerző:
 	NB	Forfatter:
 	NL	Auteur:
+	NN	Forfattar:
 	SV	Upphovsman:
 
 PLUGIN_PODCAST_WHATSNEW_DESC
@@ -262,6 +280,7 @@ PLUGIN_PODCAST_WHATSNEW_DESC
 	HU	Állítsa be, hogy hány napig nézzen vissza az új epizódok után, és adja meg az epizódok maximális számát folyamonként. Vegye figyelembe, hogy a manuálisan hozzáadott hírcsatornákat a szolgáltató nem követheti nyomon
 	NB	Angi hvor mange dager tilbake det skal letes etter nye episoder, og høyeste antall episoder per feed. Merk at leverandøren kanskje ikke følger med på feeder som er lagt til manuelt
 	NL	Stel het maximale aantal afleveringen en de hoeveelheid dagen die je wilt terugkijken voor het traceren van nieuwe afleveringen in. Houd er rekening mee dat handmatig toegevoegde feeds mogelijk niet worden bijgehouden door de aanbieder.
+	NN	Vel kor mange dagar tilbake det skal leitast etter nye episodar, og høgaste tal på episodar per feed. Merk at leverandøren kanskje ikkje følgjer med på feedar som er lagde til manuelt
 	SV	Definiera det maximala antalet dagar för att söka efter nya avsnitt och det maximala antalet avsnitt per flöde. Observera att manuellt tillagda podsändningar kanske inte uppdateras av leverantören.
 
 PLUGIN_PODCAST_NEWSINCE
@@ -274,6 +293,7 @@ PLUGIN_PODCAST_NEWSINCE
 	HU	A történelem napjainak száma
 	NB	Antall dager tilbake
 	NL	Aantal dagen terug
+	NN	Tal på dagar tilbake
 	SV	Antal dagars historik
 
 PLUGIN_PODCAST_MAXNEW
@@ -286,6 +306,7 @@ PLUGIN_PODCAST_MAXNEW
 	HU	Új epizódok száma hírcsatornánként
 	NB	Antall nye episoder per feed
 	NL	Aantal nieuwe afleveringen per feed
+	NN	Tal på nye episodar per feed
 	SV	Antal nya avsnitt per flöde
 
 PLUGIN_PODCAST_COUNTRY_DESC
@@ -298,6 +319,7 @@ PLUGIN_PODCAST_COUNTRY_DESC
 	HU	Keresés korlátozása egy országra (opcionális)
 	NB	Begrens søket til ett land (valgfritt)
 	NL	Zoekopdracht beperken tot een land (optioneel)
+	NN	Avgrens søket til eitt land (valfritt)
 	SV	Begränsa sökningen till et land (valfritt)
 
 PLUGIN_PODCAST_COUNTRY
@@ -310,6 +332,7 @@ PLUGIN_PODCAST_COUNTRY
 	FR	Pays
 	NB	Land
 	NL	Land
+	NN	Land
 	SV	Land
 
 PLUGIN_PODCAST_SUBSCRIBE
@@ -322,6 +345,7 @@ PLUGIN_PODCAST_SUBSCRIBE
 	HU	Feliratkozás a következőre: '%s'
 	NB	Abonner på «%s»
 	NL	Abonneren op '%s'
+	NN	Abonner på «%s»
 	SV	Prenumerera på '%s'
 
 PLUGIN_PODCAST_UNSUBSCRIBE
@@ -334,6 +358,7 @@ PLUGIN_PODCAST_UNSUBSCRIBE
 	HU	Leiratkozás a következőről: '%s'
 	NB	Avslutt abonnementet på «%s»
 	NL	Afmelden van '%s'
+	NN	Avslutt abonnementet på «%s»
 	SV	Avbeställ prenumerationen '%s'
 
 PLUGIN_PODCAST_DONE
@@ -346,4 +371,5 @@ PLUGIN_PODCAST_DONE
 	HU	Feliratkozott/leiratkozott a műsorról...
 	NB	Abonnementet på podkasten er endret...
 	NL	Abonneren/Afmelden...
+	NN	Abonnementet på podkasten er endra...
 	SV	Prenumerationsstatus uppdaterad

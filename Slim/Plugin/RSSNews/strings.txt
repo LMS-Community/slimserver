@@ -14,6 +14,7 @@ PLUGIN_RSSNEWS
 	IT	RSS News Ticker
 	NB	Rss-nyhetstelegraf
 	NL	RSS feeds
+	NN	Rss-nyheitstelegraf
 	PL	Wiadomości RSS
 	RU	Новостной RSS-канал
 	SV	RSS-nyhetsticker
@@ -31,6 +32,7 @@ PLUGIN_RSSNEWS_DESC
 	IT	Accesso ai news feed RSS
 	NB	Tilgang til nyhets-feeder på rss
 	NL	Toegang tot RSS feeds
+	NN	Tilgang til nyheitsfeedar på rss
 	PL	Dostęp do nowych źródeł wiadomości RSS
 	RU	Доступ к новостным RSS-каналам
 	SV	Tillgång till RSS-nyhetsflöden
@@ -49,6 +51,7 @@ PLUGIN_RSSNEWS_ADD_NEW
 	IT	Aggiungi un nuovo feed -->
 	NB	Legg til ny feed –>
 	NL	Nieuwe feed toevoegen -->
+	NN	Legg til ny feed –>
 	PL	Dodaj nowe źródło -->
 	RU	Добавить новый веб-канал -->
 	SV	Lägg till nytt flöde >
@@ -67,6 +70,7 @@ PLUGIN_RSSNEWS_WAIT
 	IT	Attendere. Richiesta feed in corso...
 	NB	Vent litt, sender forespørsel om feed...
 	NL	Feed wordt opgevraagd. Een ogenblik geduld...
+	NN	Vent litt, sender førespurnad om feed...
 	PL	Czekaj, trwa żądanie połączenia ze źródłem...
 	RU	Подождите, запрос на веб-канал выполняется...
 	SV	Begär flöde. Vänta...
@@ -85,6 +89,7 @@ PLUGIN_RSSNEWS_ERROR
 	IT	Impossibile recuperare feed RSS
 	NB	Innhenting av rss-feed mislyktes
 	NL	Fout bij ophalen RSS feed
+	NN	Henting av rss-feed mislukkast
 	PL	Pobranie źródła RSS nie powiodło się
 	RU	Не удалось извлечь RSS-канал
 	SV	Det gick inte att hämta RSS-flödet
@@ -103,6 +108,7 @@ PLUGIN_RSSNEWS_NO_TITLE
 	IT	Titolo non disponibile
 	NB	Tittelen er ikke tilgjengelig
 	NL	Titel niet beschikbaar
+	NN	Tittelen er ikkje tilgjengeleg
 	PL	Tytuł niedostępny
 	RU	Песня недоступна
 	SV	Titel ej tillgänglig
@@ -121,6 +127,7 @@ PLUGIN_RSSNEWS_SCREENSAVER
 	IT	RSS News Ticker
 	NB	Rss-nyhetstelegraf
 	NL	RSS feeds
+	NN	Rss-nyheitstelegraf
 	PL	Wiadomości RSS
 	RU	Новостной RSS-канал
 	SV	RSS-nyhetsticker
@@ -139,6 +146,7 @@ PLUGIN_RSSNEWS_NAME
 	IT	RSS News Ticker
 	NB	Rss-nyhetstelegraf
 	NL	RSS feeds
+	NN	Rss-nyheitstelegraf
 	PL	Wiadomości RSS
 	RU	Новостной RSS-канал
 	SV	RSS-nyhetsticker
@@ -157,6 +165,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_SETTINGS
 	IT	Impostazioni screen saver RSS News
 	NB	Innstilling for skjermspareren med rss-nyheter
 	NL	Instellingen van RSS feed screensaver
+	NN	Innstilling for skjermspararen med rss-nyheiter
 	PL	Ustawienia wygaszacza ekranu wiadomości RSS
 	RU	Настройки экранной заставки "Новости RSS"
 	SV	Inställningar för RSS-nyhetsskärmsläckare
@@ -175,6 +184,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE
 	IT	Seleziona lo screen saver corrente
 	NB	Velg gjeldende skjermsparer
 	NL	Huidige screensaver selecteren
+	NN	Vel gjeldande skjermsparar
 	PL	Wybierz aktualny wygaszacz ekranu
 	RU	Выбрать текущую экранную заставку
 	SV	Välj aktuell skärmsläckare
@@ -193,6 +203,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE
 	IT	Screen saver corrente
 	NB	Gjeldende skjermsparer
 	NL	Huidige screensaver
+	NN	Gjeldande skjermsparar
 	PL	Bieżący wygaszacz ekranu
 	RU	Текущая экранная заставка
 	SV	Aktuell skärmsläckare
@@ -211,6 +222,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED
 	IT	Usa RSS News come screen saver corrente
 	NB	Bruk rss-nyheter som standard skjermsparer
 	NL	RSS feeds gebruiken als huidige screensaver
+	NN	Bruk rss-nyheiter som standard skjermsparar
 	PL	Użyj źródła wiadomości RSS jako bieżącego wygaszacza ekranu
 	RU	Использовать "Новости RSS" в качестве экранной заставки
 	SV	Använd RSS-nyheter som aktuell skärmsläckare
@@ -229,6 +241,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_DEFAULT
 	IT	Usa lo screen saver predefinito (non RSS News)
 	NB	Bruk standard skjermsparer (ikke rss-nyheter)
 	NL	Standaard screensaver gebruiken (geen RSS feeds)
+	NN	Bruk standard skjermsparar (ikkje rss-nyheiter)
 	PL	Użyj domyślnego wygaszacza ekranu (nie wiadomości RSS)
 	RU	Использовать экранную заставку по умолчанию (не "Новости RSS")
 	SV	Använd standardskärmsläckare (inte RSS-nyheter).
@@ -247,6 +260,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ENABLE
 	IT	Attivazione del ticker come screen saver corrente
 	NB	Aktiverer telegraftekst som skjermsparer
 	NL	RSS feeds worden als screensaver ingeschakeld
+	NN	Slår på telegraftekst som skjermsparar
 	PL	Włączanie znacznika jako bieżącego wygaszacza ekranu
 	RU	Активация часов в качестве экранной заставки
 	SV	Aktiverar ticker som aktuell skärmsläckare
@@ -265,6 +279,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_DISABLE
 	IT	Ritorno allo screen saver predefinito
 	NB	Går tilbake til standard skjermsparer
 	NL	Terug naar standaard screensaver
+	NN	Går tilbake til standard skjermsparar
 	PL	Przywracanie domyślnego wygaszacza ekranu
 	RU	Возврат к экранной заставке по умолчанию
 	SV	Återställ till standardskärmsläckare
@@ -283,6 +298,7 @@ PLUGIN_RSSNEWS_ERROR_IN_FEED
 	IT	Errore durante l'analisi del feed RSS
 	NB	Feil ved analyse av rss-feed
 	NL	Fout bij parseren RSS feed
+	NN	Feil ved analyse av rss-feed
 	PL	Błąd analizy źródła RSS
 	RU	Ошибка при анализе RSS-канала
 	SV	Fel vid tolkning av RSS-flöde
@@ -301,6 +317,7 @@ PLUGIN_RSSNEWS_LOADING_FEED
 	IT	Caricamento del feed RSS...
 	NB	Laster inn rss-feed...
 	NL	RSS feed wordt geladen...
+	NN	Lastar inn rss-feed...
 	PL	Ładowanie źródła RSS...
 	RU	Загрузка RSS-канала...
 	SV	Läser in RSS-flöde...
@@ -319,6 +336,7 @@ SETUP_GROUP_PLUGIN_RSSNEWS_DESC
 	IT	È possibile utilizzare il plugin RSS News Ticker per sfogliare e visualizzare argomenti dei feed RSS. Per specificare i feed RSS da utilizzare e impostarne il tipo di visualizzazione, utilizzare le preferenze indicate di seguito. Al termine delle operazioni, fare clic sul pulsante Cambia.
 	NB	Plugin-modulen rss-nyhetstelegraf kan brukes til å lese og vise elementer fra rss-feeder. Du kan bruke innstillingene nedenfor til å avgjøre hvilke rss-feeder du vil bruke, og kontrollere hvordan de vises. Klikk på Endre når du er ferdig.
 	NL	Met de plug-in voor RSS feeds kun je items van RSS feeds bekijken en weergeven. Met de instellingen hieronder kun je bepalen welke RSS feeds je wilt gebruiken en hoe ze worden weergegeven. Klik op de knop 'Wijzigen' wanneer je klaar bent.
+	NN	Plugin-modulen rss-nyheitstelegraf kan brukast til å lese og vise element frå rss-feedar. Med innstillingane nedanfor kan du velje kva rss-feedar du vil bruke, og styre korleis dei blir viste. Klikk på Endre når du er ferdig.
 	PL	Dodatek Wiadomości RSS umożliwia przeglądanie i wyświetlanie elementów ze źródeł RSS. Poniższe preferencje pozwalają określić, które źródła RSS mają zostać użyte oraz dostosować sposób ich wyświetlania. Po zakończeniu kliknij przycisk Zmień.
 	RU	Плагин "Новостной RSS-канал" позволяет просматривать и отображать элементы RSS-каналов. С помощью следующих настроек можно определить перечень RSS-каналов и управлять их отображением. После завершения настройки нажмите кнопку "Изменить".
 	SV	Med plugin-programmet RSS-nyhetsticker kan du söka efter och visa innehåll från RSS-flöden. Nedan kan du ange vilka RSS-flöden som ska användas och hur de ska visas. Klicka på Ändra när du är klar.
@@ -337,6 +355,7 @@ SETUP_PLUGIN_RSSNEWS_RESET
 	IT	Reimposta i feed RSS predefiniti
 	NB	Tilbakestill standard rss-feeder
 	NL	Standaard RSS feeds opnieuw instellen
+	NN	Tilbakestill standard rss-feedar
 	PL	Zresetuj domyślne źródła RSS
 	RU	Восстановить RSS-каналы по умолчанию
 	SV	Återställ till standard-RSS-flöden.
@@ -355,6 +374,7 @@ PLUGIN_RSSNEWS_RESETTING
 	IT	Reimpostazione sui feed RSS predefiniti.
 	NB	Tilbakestiller til standard rss-feeder.
 	NL	Standaard RSS feeds worden hersteld.
+	NN	Tilbakestiller til standard rss-feedar.
 	PL	Resetowanie do domyślnych źródeł RSS.
 	RU	Восстановление RSS-каналов по умолчанию.
 	SV	Återställer till standard-RSS-flödena.
@@ -373,6 +393,7 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED
 	IT	Argomenti visualizzati per canale
 	NB	Elementer som vises per kanal
 	NL	Weergegeven items per feed
+	NN	Element som blir viste per kanal
 	PL	Liczba elementów wyświetlanych na kanał
 	RU	Элементы, отображаемые для 1 канала
 	SV	Visade objekt per kanal
@@ -391,6 +412,7 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
 	IT	Numero massimo di argomenti visualizzati per ogni feed quando lo screen saver è attivo. Se si imposta un valore maggiore sullo screen saver viene visualizzato un numero di argomenti maggiore prima di passare al feed successivo.
 	NB	Maksimalt antall elementer som vises for hver feed mens skjermspareren er aktiv. En høyere verdi gjør at skjermspareren viser flere elementer før den bytter til neste feed.
 	NL	Het maximum aantal items dat per feed wordt weergegeven terwijl de screensaver actief is. Een hogere waarde betekent dat de screensaver meer items laat zien, voordat deze naar de volgende feed springt.
+	NN	Høgaste tal på element som blir viste for kvar feed medan skjermspararen er aktiv. Ein høgare verdi gjer at skjermspararen viser fleire element før han byter til neste feed.
 	PL	Maksymalna liczba elementów wyświetlanych dla każdego źródła, gdy aktywny jest wygaszacz ekranu. Większa wartość oznacza, że wygaszacz ekranu wyświetli więcej elementów przed przejściem do kolejnego źródła.
 	RU	Макс. количество элементов, которые отображаются для каждого канала, пока активна экранная заставка. Чем выше значение, тем больше элементов будет отображаться экранной заставкой перед переключением на следующий канал.
 	SV	Maximalt antal objekt ur varje flöde som visas medan skärmsläckaren är aktiv. Ett större antal innebär att skärmsläckaren visar fler objekt innan den växlar över till nästa flöde.
@@ -408,6 +430,7 @@ SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS
 	IT	Feed esistenti:
 	NB	Eksisterende feeder:
 	NL	Bestaande feeds:
+	NN	Eksisterande feedar:
 	PL	Istniejące źródła:
 	RU	Существующие веб-каналы:
 	SV	Befintliga flöden:
@@ -425,6 +448,7 @@ SETUP_PLUGIN_RSSNEWS_INVALID_FEED
 	IT	Feed non valido. %s
 	NB	Ugyldig feed: %s
 	NL	Ongeldige feed - %s
+	NN	Ugyldig feed: %s
 	PL	Nieprawidłowe źródło — %s
 	RU	Недействительный веб-канал — %s
 	SV	Ogiltigt flöde – %s

@@ -14,6 +14,7 @@ PLUGIN_CLI
 	IT	Interfaccia della riga di comando
 	NB	Kommandolinjegrensesnitt
 	NL	Opdrachtregel Interface (CLI)
+	NN	Kommandolinjegrensesnitt
 	PL	Interfejs wiersza polecenia (CLI)
 	RU	Интерфейс командной строки (CLI)
 	SV	Kommandoradsgränssnitt
@@ -32,6 +33,7 @@ PLUGIN_CLI_DESC
 	IT	Il plugin dell'interfaccia della riga di comando consente di controllare Squeezebox e i lettori in remoto su una connessione TCP/IP mediante, ad esempio, un sistema di automatizzazione di terze parti, quale AMX o Crestron.
 	NB	Med kommandolinjegrensesnittet kan Squeezebox-programvaren og spillerne kontrolleres eksternt via en TCP/IP-tilkopling, for eksempel av et tredjeparts automatiseringssystem som AMX eller Crestron.
 	NL	Met de opdrachtregel interface plug-in is het mogelijk om de Squeezebox software en systemen op afstand te bedienen via een TCP/IP-verbinding, bijvoorbeeld door een automatiseringssysteem van een derde partij zoals AMX of Creston.
+	NN	Med kommandolinjegrensesnittet kan Squeezebox-programvara og spelarane styrast eksternt via ei TCP/IP-tilkopling, til dømes av eit automatiseringssystem frå ein tredjepart, som AMX eller Crestron.
 	PL	Dodatek interfejsu wiersza polecenia umożliwia obsługę oprogramowania Squeezebox i odtwarzaczy zdalnie przez połączenie TCP/IP, na przykład przez automatyczny system innej firmy, taki jak AMX lub Crestron.
 	RU	Плагин "Интерфейс командной строки" позволяет управлять Squeezebox и плеерами удаленно по подключению TCP/IP, например, с помощью сторонней автоматической системы, такой как AMX или Crestron.
 	SV	Med plugin-programmet för kommandoradsgränssnitt kan Squeezebox-spelarna fjärrstyras via en TCP/IP-anslutning, exempelvis av ett automatiseringssystem från tredje part såsom AMX eller Crestron.
@@ -51,6 +53,7 @@ SETUP_CLIPORT
 	JA	コマンドライン インターフェース ポートナンバー
 	NB	Portnummer for kommandolinjegrensesnitt
 	NL	Poortnummer van de opdrachtregel interface
+	NN	Portnummer for kommandolinjegrensesnittet
 	PL	Numer portu interfejsu wiersza polecenia
 	PT	Porta TCP da Interface de Linha de Comando
 	RU	Номер порта интерфейса командной строки
@@ -72,6 +75,7 @@ SETUP_CLIPORT_DESC
 	JA	プレーヤーをコントロールする、コマンドライン インターフェースに使われるポートナンバーを変更することができます。
 	NB	Du kan endre portnummeret som brukes for å kontrollere spilleren via et kommandolinjegrensesnitt.
 	NL	Je kunt het poortnummer wijzigen dat door een opdrachtregel interface gebruikt wordt om de muziekspeler te bedienen.
+	NN	Du kan endre portnummeret som blir brukt for å styre spelaren via eit kommandolinjegrensesnitt.
 	PL	Możliwa jest zmiana numeru portu używanego przez interfejs wiersza polecenia w celu sterowania odtwarzaczem.
 	PT	Pode mudar o número da porta para ligação da interface de linha de comando do player.
 	RU	Номер порта, используемого интерфейсом командной строки для управления плеером, можно изменить.

@@ -13,6 +13,7 @@ PLUGIN_PREVENTSTANDBY
 	IT	Impedisci standby del sistema
 	NB	Hindre hvilemodus
 	NL	Stand-by Systeem Voorkomen
+	NN	Hindre kvilemodus
 	PL	Zapobiegaj przejściu systemu do trybu wstrzymania
 	RU	не переходить в режим ожидания
 	SV	Förhindra viloläge
@@ -30,6 +31,7 @@ PLUGIN_PREVENTSTANDBY_DESC
 	IT	Questo plugin tiene sotto controllo i lettori SqueezeBox e impedisce che nel sistema venga attivata la modalità standby durante la riproduzione della musica, l'analisi di Squeezebox, l'aggiornamento dei lettori e così via. Impedisce inoltre che il sistema entri prematuramente in modalità standby due minuti dopo l'attivazione LAN.
 	NB	Denne plugin-modulen overvåker SqueezeBox-spillerne og forhindrer systemet fra å gå i hvilemodus mens det spilles musikk, mens Lyrion Music Server søker, mens spillere oppdateres osv. Den forhindrer også at systemet går i for tidlig hvilemodus to minutter etter at det har blitt startet opp via et LAN.
 	NL	Deze plug-in houdt jouw Squeezebox muziekspelers in de gaten en voorkomt dat het systeem naar energiebesparende stand-by modus gaat terwijl er bijvoorbeeld muziek speelt, Lyrion Music Server een scan uitvoert of systemen worden bijgewerkt. De plug-in voorkomt ook dat het systeem vroegtijdig naar stand-by modus gaat twee minuten na wake-on-lan.
+	NN	Denne plugin-modulen overvakar Squeezebox-spelarane og hindrar systemet i å gå i kvilemodus medan det blir spelt musikk, medan Lyrion Music Server søkjer, medan spelarar blir oppdaterte osv. Han hindrar òg at systemet går i kvilemodus for tidleg to minutt etter at det er starta via eit LAN.
 	PL	Ten dodatek monitoruje odtwarzacze SqueezeBox i zapobiega przejściu systemu do trybu wstrzymania w celu oszczędzania energii, kiedy odtwarzana jest muzyka, program Lyrion Music Server wykonuje przeszukiwanie, trwa aktualizacja odtwarzaczy itp. Dodatek uniemożliwi także przedwczesne przejście do trybu wstrzymania po upływie dwóch minut od zadziałania funkcji wake-on-lan.
 	RU	Этот подключаемый модуль выполняет мониторинг плееров SqueezeBox и предотвращает переход в энергосберегающий режим ожидания во время воспроизведения музыки, сканирования Lyrion Music Server, обновления плееров и др. Он также не позволяет преждевременно переходить в режим ожидания через две минуты после пробуждения по сети.
 	SV	Detta plugin-program övervakar SqueezeBox-spelarna och förhindrar att systemet försätts i viloläge när du spelar musik, när sökning sker, spelare uppdateras o.s.v. Det förhindrar även att systemet automatiskt försätts i viloläge två minuter efter wake-on-lan.
@@ -47,6 +49,7 @@ PLUGIN_PREVENTSTANDBY_IDLETIME
 	IT	Attivare la modalità standby dopo quanti minuti di inattività?
 	NB	Hvor mange inaktive minutter før hvilemodus?
 	NL	Stand-by toestaan na hoeveel minuten inactiviteit?
+	NN	Kor mange inaktive minutt før kvilemodus?
 	PL	Zezwalaj na tryb wstrzymania po upływie ilu minut bezczynności?
 	RU	Через сколько минут неактивности переходить в режим ожидания?
 	SV	Efter hur många minuter ska viloläge tillåtas?
@@ -64,6 +67,7 @@ PLUGIN_PREVENTSTANDBY_IDLETIME_DESC
 	IT	Immettere il numero di minuti che devono trascorrere (dopo il termine della riproduzione o la riattivazione del sistema) prima che il plugin consenta di nuovo al sistema di entrare in modalità standby. Immettere 0 (zero) per impedire l'attivazione automatica della modalità standby.
 	NB	Angi hvor mange minutter (etter avspillingen stopper eller systemet starter opp) det skal gå før plugin-modulen tillater systemet å gå i hvilemodus. Hvis du angir 0 (null), går systemet aldri i automatisk hvilemodus.
 	NL	Voer het aantal minuten in (nadat afspelen is gestopt of het systeem is hervat) waarna de plug-in weer toestaat dat het systeem stand-by gaat. Voer 0 (nul) in om automatische stand-by op dit systeem volledig te verhinderen.
+	NN	Vel kor mange minutt (etter at avspelinga stoppar eller systemet startar) det skal gå før plugin-modulen lèt systemet gå i kvilemodus. Viss du vel 0 (null), går systemet aldri automatisk i kvilemodus.
 	PL	Wprowadź liczbę minut (od zakończenia odtwarzania lub wznowienia pracy systemu), po upływie których dodatek umożliwi systemowi ponowne przejście do trybu wstrzymania. Wprowadź wartość 0 (zero), aby całkowicie wyłączyć automatyczne przechodzenie w tryb wstrzymania w tym systemie.
 	RU	Введите число минут (после остановки воспроизведения или после возобновления работы системы), по истечении которых подключаемый модуль вновь разрешит переход в режим ожидания. Чтобы полностью запретить автоматический переход в режим ожидания, введите 0 (ноль).
 	SV	Ange antal minuter (efter att spelaren stoppas eller systemet återupptas) som ska förflyta innan systemet åter kan försättas i viloläge. Ange 0 (noll) om du inte vill att det ska försättas i viloläge.
@@ -81,6 +85,7 @@ PLUGIN_PREVENTSTANDBY_PLAYERSON
 	IT	Non attivare la modalità standby se i lettori sono accesi?
 	NB	Forhindre hvilemodus hvis spillerne er slått på?
 	NL	Stand-by voorkomen als muziekspelers aan staan?
+	NN	Hindre kvilemodus viss spelarane er slått på?
 	PL	Uniemożliwić tryb wstrzymania, kiedy odtwarzacze są włączone?
 	RU	Запретить переход в режим ожидания во время работы плееров?
 	SV	Ska viloläge förhindras när spelarna är påslagna?
@@ -98,6 +103,7 @@ PLUGIN_PREVENTSTANDBY_PLAYERSON_DESC
 	IT	Attivare questa impostazione per impedire l'attivazione della modalità standby quando i lettori sono accesi, vale a dire quando non visualizzano l'orologio.
 	NB	Når denne innstillingen er aktivert, forhindrer den systemet fra å gå hvilemodus mens spillerne er slått på (altså når de ikke viser klokken).
 	NL	Schakel deze instelling in om te voorkomen dat het systeem naar stand-by gaat terwijl er muziekspelers actief zijn, d.w.z. niet de klok weergeven.
+	NN	Når denne innstillinga er slått på, hindrar ho systemet i å gå i kvilemodus medan spelarane er slått på (altså når dei ikkje viser klokka).
 	PL	Włącz to ustawienie, aby uniemożliwić tryb wstrzymania systemu, kiedy odtwarzacze są włączone (tzn. nie wyświetlają zegara).
 	RU	Включите этот параметр, чтобы запретить переход в режим ожидания во время работы плееров (не отображать часы).
 	SV	Aktivera den här inställningen för att förhindra viloläge när spelare är påslagna (klockan visas inte).

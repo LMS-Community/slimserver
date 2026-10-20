@@ -16,6 +16,7 @@ PLUGIN_AUDIOSCROBBLER_LISTENBRAINZ_LABEL
 	FR	API ListenBrainz (Expérimental)
 	NB	ListenBrainz API (eksperimentell)
 	NL	ListenBrainz API (Experimenteel)
+	NN	ListenBrainz API (eksperimentell)
 	SV	ListenBrainz API (experimentellt)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS
@@ -31,6 +32,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS
 	IT	Account Last.fm / ListenBrainz
 	NB	Last.fm / ListenBrainz-konto(er)
 	NL	Last.fm / ListenBrainz account(s)
+	NN	Last.fm / ListenBrainz-konto(ar)
 	PL	Konta w usłudze Last.fm / ListenBrainz
 	RU	Учетные записи Last.fm / ListenBrainz
 	SV	Last.fm / ListenBrainz-konto(n)
@@ -48,6 +50,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC
 	IT	Inserire il nome utente e la password di Last.fm o chiave API/token per ListenBrainz.</br>Se si desidera inviare brani da lettori diversi a più account, è possibile creare diversi account. È anche possibile impostare un URL API personalizzato per configurazioni alternative, altrimenti lasciare vuota questa impostazione.</br> </br>Esempi di URL di base personalizzati:</br> </br>Maloja (con Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (con ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (con ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (con ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	NB	Angi brukernavn og passord for Last.fm eller API-nøkkel/token for ListenBrainz.</br>Du kan angi flere kontoer hvis du vil sende spor fra ulike spillere til ulike kontoer. Du kan også angi en tilpasset API-URL for alternative konfigurasjoner, ellers la denne innstillingen være tom.</br> </br>Eksempler på tilpassede basis-URL-er:</br> </br>Maloja (med Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (med ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (med ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (med ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	NL	Voer jouw gebruikersnaam en wachtwoord voor Last.fm in of API-sleutel/token voor ListenBrainz.</br>Je kan meerdere accounts invoeren als je nummers van verschillende muziekspelers naar verschillende accounts wilt versturen. Je kunt ook een aangepaste API-URL instellen voor alternatieve configuraties, anders laat je deze instelling leeg.</br> </br>Voorbeelden van aangepaste basis-URL's:</br> </br>Maloja (met Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (met ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (met ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (met ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
+	NN	Skriv inn brukarnamn og passord for Last.fm eller API-nøkkel/token for ListenBrainz.</br>Du kan leggje inn fleire kontoar viss du vil sende spor frå ulike spelarar til ulike kontoar. Du kan òg skrive inn ein tilpassa API-URL for alternative oppsett, elles la denne innstillinga stå tom.</br> </br>Døme på tilpassa basis-URL-ar:</br> </br>Maloja (med Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (med ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (med ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (med ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	PL	Wprowadź nazwę użytkownika i hasło w usłudze Last.fm lub klucz API/token dla ListenBrainz.</br>W celu przesłania informacji o utworach z różnych odtwarzaczy na różne konta można wprowadzić dane z kilku kont. Możesz również ustawić niestandardowy adres URL API dla alternatywnych konfiguracji, w przeciwnym razie pozostaw to ustawienie puste.</br> </br>Przykłady niestandardowych podstawowych adresów URL:</br> </br>Maloja (z Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (z ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (z ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (z ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	RU	Введите имя пользователя и пароль Last.fm или API ключ/токен для ListenBrainz.</br>Можно указать несколько учетных записей, чтобы передавать дорожки с разных плееров в разные учетные записи. Вы также можете установить пользовательский URL API для альтернативных конфигураций, иначе оставьте эту настройку пустой.</br> </br>Примеры пользовательских базовых URL:</br> </br>Maloja (с Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (с ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (с ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (с ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
 	SV	Ange användarnamn och lösenord för Last.fm eller API-nyckel/token för ListenBrainz.</br>Du kan ange flera konton för att skicka spår från olika spelare till olika konton. Du kan också ställa in en anpassad API-URL för alternativa konfigurationer, lämna annars denna inställning tom.</br> </br>Exempel på anpassade bas-URL:er:</br> </br>Maloja (med Last.fm v1.2 API) (http):</br><i>http://localhost:42010/apis/audioscrobbler_legacy</i></br> </br>Maloja (med ListenBrainz API):</br><i>https://maloja.yourdomain.com/apis/listenbrainz</i></br> </br>Koito (med ListenBrainz API):</br><i>https://koito.yourdomain.com/apis/listenbrainz</i></br> </br>Multi-Scrobbler (med ListenBrainz API):</br><i>https://scrobble.yourdomain.com</i>
@@ -66,6 +69,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DELETE
 	IT	Per eliminare un account esistente, selezionare la casella di controllo accanto a esso.
 	NB	Merk av boksen ved siden av en konto for å slette den.
 	NL	Hef de selectie van het vakje naast een bestaande account op om deze te verwijderen.
+	NN	Merk av boksen ved sida av ein konto for å slette han.
 	PL	Aby usunąć istniejące konto, zaznacz pole wyboru obok niego.
 	RU	Чтобы удалить существующую учетную запись, установите рядом с ней флажок.
 	SV	Om du vill ta bort ett befintligt konto, markerar du motsvarande kryssruta.
@@ -83,6 +87,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_USERNAME_PASSWORD
 	IT	Immettere nome utente e password di Last.fm o credenziali di ListenBrainz.
 	NB	Oppgi brukernavn og passord for Last.fm eller påloggingsopplysninger for ListenBrainz.
 	NL	Voer jouw gebruikersnaam en wachtwoord voor Last.fm of inloggegevens voor ListenBrainz in.
+	NN	Skriv inn brukarnamn og passord for Last.fm eller påloggingsopplysningar for ListenBrainz.
 	PL	Wprowadź nazwę użytkownika i hasło w usłudze Last.fm lub dane uwierzytelniające ListenBrainz.
 	RU	Введите имя пользователя и пароль Last.fm или учетные данные ListenBrainz.
 	SV	Ange användarnamn och lösenord för Last.fm eller inloggningsuppgifter för ListenBrainz.
@@ -100,6 +105,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_USERNAME
 	IT	Nome utente:
 	NB	Brukernavn:
 	NL	Gebruikersnaam:
+	NN	Brukarnamn:
 	PL	Nazwa użytkownika:
 	RU	Имя пользователя:
 	SV	Användarnamn:
@@ -117,6 +123,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_PASSWORD
 	IT	Password / Chiave API:
 	NB	Passord / API-nøkkel:
 	NL	Wachtwoord / API-sleutel:
+	NN	Passord / API-nøkkel:
 	PL	Hasło / Klucz API:
 	RU	Пароль / API ключ:
 	SV	Lösenord / API-nyckel:
@@ -134,6 +141,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_API_TYPE
 	IT	Selezionare il tipo di API (e inserire l'URL di base API personalizzato se necessario).
 	NB	Velg API-typen (og skriv inn den tilpassede API-base-URL-en hvis nødvendig).
 	NL	Selecteer het API-type (en voer de aangepaste API-basis-URL in indien nodig).
+	NN	Vel API-typen (og skriv inn den tilpassa API-base-URL-en om nødvendig).
 	PL	Wybierz typ API (i wprowadź niestandardowy podstawowy adres URL API, jeśli to konieczne).
 	RU	Выберите тип API (и введите пользовательский базовый URL API при необходимости).
 	SV	Välj API-typ (och ange den anpassade API-bas-URL:en om det behövs).
@@ -151,6 +159,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_CUSTOM_URL
 	IT	URL di base API personalizzato:
 	NB	Tilpasset API-base-URL:
 	NL	Aangepaste API-basis-URL:
+	NN	Tilpassa API-base-URL:
 	PL	Niestandardowy podstawowy adres URL API:
 	RU	Пользовательский базовый URL API:
 	SV	Anpassad API-bas-URL:
@@ -168,6 +177,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING
 	IT	Invia tutti i brani riprodotti.
 	NB	Send (scrobble) alle spor som spilles av.
 	NL	Alle gespeelde nummers versturen (scrobble).
+	NN	Send (scrobble) alle spor som blir spelte av.
 	PL	Prześlij informacje o wszystkich odtwarzanych utworach.
 	RU	Передавать (скробблить) все воспроизводимые дорожки.
 	SV	Rapportera spelade spår (skrobbla).
@@ -185,6 +195,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING_DESC
 	IT	Selezionare questa opzione per aggiornare il profilo musicale di Last.fm / ListenBrainz con tutta la musica ascoltata.
 	NB	Aktiver dette alternativet hvis du vil oppdatere musikkprofilen din på Last.fm / ListenBrainz med all musikken du har lyttet til.
 	NL	Schakel deze optie in om jouw Last.fm / ListenBrainz profiel bij te werken met alle muziek waarnaar je geluisterd hebt.
+	NN	Slå på dette alternativet viss du vil oppdatere musikkprofilen din på Last.fm / ListenBrainz med all musikken du har lytta til.
 	PL	Włącz tę opcję, aby zaktualizować profil muzyczny w usłudze Last.fm / ListenBrainz informacjami o słuchanej muzyce.
 	RU	Включите этот параметр, чтобы обновить свой музыкальный профиль Last.fm / ListenBrainz с учетом всех прослушанных песен.
 	SV	Aktivera det här alternativet om du vill uppdatera din musikprofil på Last.fm / ListenBrainz med all musik du lyssnar på.
@@ -202,6 +213,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_YES
 	IT	Sì, segnala i brani riprodotti a Last.fm / ListenBrainz.
 	NB	Ja, send informasjon om avspilte spor til Last.fm / ListenBrainz.
 	NL	Ja, gespeelde nummers naar Last.fm / ListenBrainz versturen.
+	NN	Ja, send informasjon om avspelte spor til Last.fm / ListenBrainz.
 	PL	Tak, wysyłaj informacje o odtwarzanych utworach do usługi Last.fm / ListenBrainz.
 	RU	Да, сообщать о воспроизводимых дорожках на Last.fm / ListenBrainz.
 	SV	Ja, rapportera spelade spår till Last.fm / ListenBrainz.
@@ -219,6 +231,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_NO
 	IT	No, non segnalare i brani riprodotti a Last.fm / ListenBrainz.
 	NB	Nei, ikke send informasjon om avspilte spor til Last.fm / ListenBrainz.
 	NL	Nee, gespeelde nummers niet naar Last.fm / ListenBrainz versturen.
+	NN	Nei, ikkje send informasjon om avspelte spor til Last.fm / ListenBrainz.
 	PL	Nie, nie przesyłaj informacji o odtwarzanych utworach do usługi Last.fm / ListenBrainz.
 	RU	Нет, не сообщать о воспроизводимых дорожках на Last.fm / ListenBrainz.
 	SV	Nej, rapportera inte spelade spår till Last.fm / ListenBrainz.
@@ -233,6 +246,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES
 	HU	Címek kizárása
 	NB	Ignorer titler
 	NL	Negeer titels
+	NN	Oversjå titlar
 	SV	Ignorera spår
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC
@@ -245,6 +259,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_TITLES_DESC
 	HU	Adja meg a címek vagy nevek vesszővel elválasztott listáját. Azok a számok, amelyek megfelelnek ezen karakterláncok valamelyikének, nem lesznek elküldve.
 	NB	Angi en kommadelt liste over titler eller navn. Spor som samsvarer med en av disse, blir ikke scrobblet.
 	NL	Definieer een door komma's gescheiden lijst van titels. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
+	NN	Skriv inn ei kommadelt liste over titlar eller namn. Spor som samsvarer med ein av desse, blir ikkje scrobbla.
 	SV	Ange en komma-separerad list med låt- eller spårnamn. Spår med namn som överenstämmer med någon av textsträngarna i listan blir inte rapporterade (scrobblade) til Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS
@@ -257,6 +272,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS
 	HU	Előadók kizárása
 	NB	Ignorer artister
 	NL	Negeer artiesten
+	NN	Oversjå artistar
 	SV	Ignorera artister
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC
@@ -269,6 +285,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ARTISTS_DESC
 	HU	Adja meg az előadónevek vesszővel elválasztott listáját. Azok a számok, amelyek megfelelnek ezen karakterláncok valamelyikének, nem lesznek elküldve.
 	NB	Angi en kommadelt liste over artistnavn. Spor som samsvarer med en av disse, blir ikke scrobblet.
 	NL	Definieer een door komma's gescheiden lijst van artiesten. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
+	NN	Skriv inn ei kommadelt liste over artistnamn. Spor som samsvarer med ein av desse, blir ikkje scrobbla.
 	SV	Ange en komma-separerad list med artistnamn. Spår av artister som överenstämmer med någon av textsträngarna i listan blir inte rapporterade (scrobblade) til Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS
@@ -281,6 +298,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS
 	HU	Albumcímek kizárása
 	NB	Ignorer albumtitler
 	NL	Negeer albums
+	NN	Oversjå albumtitlar
 	SV	Ignorera album
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS_DESC
@@ -293,6 +311,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_ALBUMS_DESC
 	HU	Adja meg az albumnevek vesszővel elválasztott listáját. Azok a számok, amelyek megfelelnek ezen karakterláncok valamelyikének, nem lesznek elküldve.
 	NB	Angi en kommadelt liste over albumnavn. Spor som samsvarer med en av disse, blir ikke scrobblet.
 	NL	Definieer een door komma's gescheiden lijst van albums. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
+	NN	Skriv inn ei kommadelt liste over albumnamn. Spor som samsvarer med ein av desse, blir ikkje scrobbla.
 	SV	Ange en komma-separerad list med albumnamn. Spår från ett album som överenstämmer med någon av textsträngarna i listan blir inte rapporterade (scrobblade) til Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES
@@ -305,6 +324,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES
 	HU	Műfajok kizárása
 	NB	Ignorer sjangere
 	NL	Negeer genres
+	NN	Oversjå sjangrar
 	SV	Ignorera genrer
 
 PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES_DESC
@@ -317,6 +337,7 @@ PLUGIN_AUDIOSCROBBLER_IGNORE_GENRES_DESC
 	HU	Adja meg a műfajok vesszővel elválasztott listáját. Azok a számok, amelyek megfelelnek ezen karakterláncok valamelyikének, nem lesznek elküldve.
 	NB	Angi en kommadelt liste over sjangere. Spor som samsvarer med en av disse, blir ikke scrobblet.
 	NL	Definieer een door komma's gescheiden lijst van genres. Nummers die overeenkomen met een van deze tekenreeksen worden niet verstuurd naar Last.fm (gescrobbled).
+	NN	Skriv inn ei kommadelt liste over sjangrar. Spor som samsvarer med ein av desse, blir ikkje scrobbla.
 	SV	Ange en komma-separerad list med genrer. Spår med en genre som överenstämmer med någon av textsträngarna i listan blir inte rapporterade (scrobblade) til Last.fm.
 
 PLUGIN_AUDIOSCROBBLER_BANNED
@@ -332,6 +353,7 @@ PLUGIN_AUDIOSCROBBLER_BANNED
 	IT	È possibile che questa versione di Lyrion Music Server non sia supportata in Last.fm. Eseguire l'aggiornamento a una versione successiva.
 	NB	Det ser ut til at Last.fm har blokkert denne versjonen av Lyrion Music Server. Du bør oppgradere til en nyere versjon.
 	NL	Deze versie van Lyrion Music Server wordt niet meer door Last.fm ondersteund. Upgrade naar een nieuwere versie.
+	NN	Det ser ut til at Last.fm har blokkert denne versjonen av Lyrion Music Server. Du bør oppgradere til ein nyare versjon.
 	PL	Ta wersja programu Lyrion Music Server jest blokowana przez usługę Last.fm; uaktualnij go do nowszej wersji.
 	RU	По-видимому, эта версия Lyrion Music Server запрещена на Last.fm. Обновите версию.
 	SV	Den här versionen av Lyrion Music Server verkar ha spärrats av Last.fm. Uppgradera till senare version.
@@ -349,6 +371,7 @@ PLUGIN_AUDIOSCROBBLER_BADAUTH
 	IT	Nome utente o password Last.fm non valida.
 	NB	Ugyldig brukernavn eller passord fra Last.fm.
 	NL	Ongeldige gebruikersnaam of ongeldig wachtwoord voor Last.fm.
+	NN	Ugyldig brukarnamn eller passord frå Last.fm.
 	PL	Nieprawidłowa nazwa użytkownika i hasło w usłudze Last.fm.
 	RU	Недействительные имя пользователя или пароль Last.fm.
 	SV	Ogiltigt användarnamn eller lösenord för Last.fm.
@@ -366,6 +389,7 @@ PLUGIN_AUDIOSCROBBLER_BADTIME
 	IT	Impossibile stabilire la connessione a Last.fm poiché l'orologio di sistema non è impostato correttamente. Aggiornare l'orologio e riprovare.
 	NB	Kan ikke kople til Last.fm fordi klokken til systemet ditt er feil. Oppdater klokken og prøv på nytt.
 	NL	Verbinding met Last.fm mislukt omdat de systeemklok onjuist is. Update de klok en probeer het opnieuw.
+	NN	Kan ikkje kople til Last.fm fordi klokka på systemet ditt går feil. Oppdater klokka og prøv på nytt.
 	PL	Nie można nawiązać połączenia z usługą Last.fm, ponieważ zegar systemowy jest ustawiony nieprawidłowo. Zmień ustawienia zegara i spróbuj ponownie.
 	RU	Невозможно подтверждение с Last.fm, поскольку часы вашей системы настроены некорректно. Настройте часы и повторите попытку.
 	SV	Handskakning med Last.fm misslyckades eftersom systemklockan inte är korrekt inställd. Uppdatera klockan och försök igen.
@@ -383,6 +407,7 @@ PLUGIN_AUDIOSCROBBLER_VALID_LOGIN
 	IT	Nome utente e password Last.fm verificati.
 	NB	Bekreftet brukernavn og passord fra Last.fm.
 	NL	Gebruikersnaam en wachtwoord voor Last.fm zijn geverifieerd.
+	NN	Brukarnamn og passord frå Last.fm er stadfesta.
 	PL	Weryfikacja nawy użytkownika i hasła w usłudze Last.fm powiodła się.
 	RU	Имя пользователя и пароль Last.fm успешно проверены.
 	SV	Användarnamn och lösenord för Last.fm har verifierats.
@@ -395,6 +420,7 @@ SETUP_AUDIOSCROBBLER_VALID_CREDENTIALS
 	FR	Vos informations de compte ont été validées avec succès.
 	NB	Kontoopplysningene dine er bekreftet.
 	NL	Uw accountgegevens zijn succesvol gevalideerd.
+	NN	Kontoopplysningane dine er stadfesta.
 	SV	Din kontoinformation har verifierats.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER
@@ -410,6 +436,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER
 	IT	Impostazioni del lettore Audioscrobbler Last.fm
 	NB	Spillerinnstillinger for Last.fm Audioscrobbler
 	NL	Muziekspeler instellingen voor Last.fm Audioscrobbler
+	NN	Spelarinnstillingar for Last.fm Audioscrobbler
 	PL	Ustawienia odtwarzacza w usłudze Last.fm Audioscrobbler
 	RU	Настройки скробблера Last.fm
 	SV	Spelarinställningar för Last.fm Audioscrobbler
@@ -427,6 +454,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DESC
 	IT	Per abilitare Audioscrobbler per questo lettore, selezionare l'account da utilizzare.
 	NB	Hvis du vil aktivere Audioscrobbler for denne spilleren, må du velge en konto.
 	NL	Selecteer een te gebruiken account om Audioscrobbler voor deze muziekspeler in te schakelen.
+	NN	Viss du vil slå på Audioscrobbler for denne spelaren, må du velje ein konto.
 	PL	Aby włączyć funkcję Audioscrobbler dla tego odtwarzacza, wybierz konto do użycia.
 	RU	Чтобы активировать Audioscrobbler на этом плеере, выберите учетную запись.
 	SV	Om du vill aktivera Audioscrobbler för den här spelaren väljer du ett konto som du vill använda.
@@ -444,6 +472,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED
 	IT	Disattiva. Non inviare i brani riprodotti con questo lettore.
 	NB	Deaktivert, ikke send inn spor som spilles på denne spilleren.
 	NL	Uitgeschakeld; nummers gespeeld op deze muziekspeler niet versturen.
+	NN	Deaktivert, ikkje send inn spor som blir spelte på denne spelaren.
 	PL	Wyłączone, nie wysyłaj informacji o odtwarzanych utworach.
 	RU	Отключено, не передавать дорожки, воспроизводимые на этом плеере.
 	SV	Avaktiverad, skicka ingen information om vilka spår som spelats på den här spelaren.
@@ -461,6 +490,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED
 	IT	Avviso: l'invio di tutti i brani è stato disattivato a livello globale. Per inviare i dati relativi ai brani del lettore corrente, attivare l'impostazione Invia tutti i brani, accessibile dalla scheda Avanzate -> Audioscrobbler Last.fm.
 	NB	Advarsel: Innsending av spor er deaktivert i hele systemet. Hvis du vil sende informasjon om avspilte spor fra denne spilleren, må du aktivere innstillingen Send alle spor under Avansert -> Last.fm Audioscrobbler.
 	NL	Waarschuwing: Alle nummers versturen is globaal uitgeschakeld. Als je nummers voor deze muziekspeler wilt indienen, schakel je Alle nummers indienen in via Geavanceerd -> Last.fm Audioscrobbler.
+	NN	Åtvaring: Innsending av spor er slått av i heile systemet. Viss du vil sende informasjon om avspelte spor frå denne spelaren, må du slå på innstillinga Send alle spor under Avansert -> Last.fm Audioscrobbler.
 	PL	Ostrzeżenie: wysyłanie informacji o wszystkich utworach jest globalnie wyłączone. Aby przesyłać informacje do tego odtwarzacza, włącz ustawienie przesyłania informacji o wszystkich utworach, wybierając opcję Zaawansowane -> Last.fm Audioscrobbler.
 	RU	Предупреждение. Параметр "Передавать все дорожки" глобально отключен. Чтобы передавать информацию о дорожках для этого плеера, перейдите на "Дополнительно" -> "Last.fm Аудиоскробблер" и включите "Передавать все дорожки".
 	SV	Varning! Rapporteringen är globalt avaktiverad. Om du vill rapportera spårinformation från den här spelaren aktiverar du inställningen under Avancerat > Last.fm Audioscrobbler.
@@ -478,6 +508,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE
 	IT	Nota: è inoltre necessario attivare Audioscrobbler per ogni lettore. Fare clic sulla scheda Lettore e selezionare la voce Audioscrobbler per ogni lettore che si desidera monitorare.
 	NB	Merk: Du må også aktivere Audioscrobbler for hver spiller. Klikk på kategorien Spiller, og velg Audioscrobbler-elementet for hver spiller du vil bruke med Audioscrobbler.
 	NL	Opmerking: Je dient Autoscrobbler voor elke muziekspeler in te schakelen. Klik op de tab Muziekspeler en selecteer het item Audioscrobbler voor elke muziekspeler die je wilt scrobbelen.
+	NN	Merk: Du må òg slå på Audioscrobbler for kvar spelar. Klikk på kategorien Spelar, og vel Audioscrobbler-elementet for kvar spelar du vil bruke med Audioscrobbler.
 	PL	Uwaga: Funkcję Audioscrobbler należy włączyć dla każdego odtwarzacza. Kliknij kartę Odtwarzacz, a następnie wybierz pozycję Audioscrobbler dla każdego odtwarzacza, z którego chcesz wysłać informacje.
 	RU	Примечание. Нужно также включить скробблер для каждого плеера. Щелкните вкладку "Плеер" и выберите элемент "Скробблер" для каждого плеера, который необходимо скробблить.
 	SV	Obs! Du måste också aktivera Audioscrobbler för varje spelare. Klicka på fliken Spelare och markera sedan Audioscrobbler för varje spelare du vill skrobbla från.
@@ -495,6 +526,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR
 	IT	Errore durante la verifica dell'account con Last.fm. Riprovare. (%s)
 	NB	Det oppsto en feil under bekreftelsen av kontoen hos Last.fm. Prøv igjen senere. (%s)
 	NL	Er is een fout opgetreden bij de verificatie van jouw account bij Last.fm. Probeer het later opnieuw. (%s)
+	NN	Det oppstod ein feil då kontoen hos Last.fm skulle stadfestast. Prøv igjen seinare. (%s)
 	PL	Podczas weryfikacji konta w usłudze Last.fm wystąpił błąd. Spróbuj ponownie później. (%s)
 	RU	Возникла ошибка при проверке вашей учетной записи на Last.fm. Повторите попытку позже. (%s)
 	SV	Ett fel uppstod vid verifieringen av Last.fm-kontot. Försök igen senare. (%s)
@@ -507,6 +539,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_VALIDATION_ERROR
 	FR	Une erreur est survenue lors de la validation des informations de votre compte. Veuillez réessayer ultérieurement. (%s)
 	NB	Kunne ikke bekrefte kontoopplysningene dine. Prøv igjen senere. (%s)
 	NL	Er is een fout opgetreden bij de verificatie van jouw account bij. Probeer het later opnieuw. (%s)
+	NN	Kunne ikkje stadfeste kontoopplysningane dine. Prøv igjen seinare. (%s)
 	SV	Ett fel uppstod vid verifieringen av Last.fm-kontot. Försök igen senare. (%s)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW
@@ -523,6 +556,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW
 	IT	Last.fm è un servizio di musica che crea un profilo musicale personale tenendo traccia della musica che si ascolta. Last.fm si basa sui gusti personali e fornisce suggerimenti personalizzati su stazioni radio, musica ed eventi, download gratuiti e altro ancora. Iscriviti gratuitamente all'indirizzo <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> o, per saperne di più, visita il sito Web <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
 	NB	Last.fm er en musikktjeneste som bygger opp en personlig musikkprofil for deg ved å spore musikken du spiller. Ut fra dine valg lager Last.fm tilpassede radiostasjoner, spiller utvalgt musikk og viser relevante arrangementsanbefalinger. Du kan registrere deg gratis på <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a>, eller finne ut mer på <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
 	NL	Last.fm: een muziekservice die een persoonlijk muziekprofiel opbouwt door bij te houden naar welke muziek je luistert. Last.fm biedt gepersonaliseerde radiostations, muziek- en evenemententips, gratis downloads en nog meer op basis van je muzieksmaak. Meld je gratis aan op <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> of kom meer te weten op <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
+	NN	Last.fm er ei musikkteneste som byggjer opp ein personleg musikkprofil for deg ved å følgje med på musikken du spelar. Ut frå vala dine lagar Last.fm tilpassa radiostasjonar, spelar utvald musikk og viser relevante tips om arrangement. Du kan registrere deg gratis på <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a>, eller finne ut meir på <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
 	PL	Usługa muzyczna Last.fm tworzy osobisty profil muzyczny użytkownika, śledząc informacje o słuchanej muzyce. Opierając się na upodobaniach użytkownika, usługa Last.fm udostępnia dostosowane stacje radiowe, rekomendacje muzyki i imprez, bezpłatne pliki do pobrania i nie tylko. Dołącz bezpłatnie pod adresem <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> lub uzyskaj więcej informacji pod adresem <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>.
 	RU	Last.fm — музыкальная служба, отслеживающая музыку, которую вы слушаете, и определяющая ваш личный музыкальный профиль. На основании ваших вкусов Last.fm создает персональные радиостанции, рекомендации по музыке и мероприятиям, бесплатные загрузки и многое другое. Подключитесь к Last.fm бесплатно на сайте <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a> или посетите <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a>, чтобы получить дополнительную информацию.
 	SV	Last.fm är en musiktjänst som skapar en personlig musikprofil för dig genom att registrera vad du lyssnar på. Du får rekommendationer och kan lyssna på anpassade radiostationer och musik som passar just dig. Det kostar ingenting att registrera sig via <a href="https://www.last.fm/join" target="_blank">www.last.fm/join</a>. Gå in på <a href="https://www.last.fm/about" target="_blank">www.last.fm/about</a> om du vill veta mer om hur det fungerar.
@@ -540,6 +574,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE
 	IT	Nota: per configurare l'account Last.fm, fare clic sulla scheda Avanzate e selezionare la voce  Audioscrobbler Last.fm.
 	NB	Merk: Hvis du vil konfigurere Last.fm-kontoen din, klikker du på kategorien Avansert og velger Last.fm Audioscrobbler.
 	NL	Opmerking: Als je jouw Last.fm-account wilt configureren, klik op de tab Geavanceerd en selecteer Last.fm Audioscrobbler.
+	NN	Merk: Viss du vil setje opp Last.fm-kontoen din, klikkar du på kategorien Avansert og vel Last.fm Audioscrobbler.
 	PL	Uwaga: aby skonfigurować konto w usłudze Last.fm, kliknij kartę Zaawansowane, a następnie wybierz pozycję Last.fm Audioscrobbler.
 	RU	Примечание. Чтобы настроить учетную запись Last.fm, щелкните вкладку "Дополнительно" и выберите Last.fm Audioscrobbler.
 	SV	Obs! Om du vill konfigurera Last.fm-kontot klickar du på fliken Avancerat och väljer sedan Last.fm Audioscrobbler.
@@ -557,6 +592,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO
 	IT	Registra i brani della radio su Internet.
 	NB	Scrobble Internett-radio.
 	NL	Scrobbel internetradio.
+	NN	Scrobble Internett-radio.
 	PL	Prześlij informacje o internetowych stacjach radiowych.
 	RU	Скробблить радиостанции Интернета.
 	SV	Skrobbla webbradio.
@@ -574,6 +610,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_DESC
 	IT	La registrazione dei brani della radio su Internet potrebbe causare l'inclusione di dati indesiderati nel profilo Last.fm. È possibile disattivare la registrazione di tutti i brani della radio modificando le impostazioni dell'opzione. È comunque possibile aggiungere tali brani ai preferiti.
 	NB	Hvis du scrobbler spor fra Internett-radio, kan det føre til at uønsket data legges til Last.fm-profilen din. Du kan deaktivere scrobbling av alle radiospor ved å endre dette alternativet. Radiospor kan fremdeles favoriseres.
 	NL	Wanneer je internetradionummers scrobbelt, bevat jouw Last.fm-profiel misschien ongewenste gegevens. Je kunt het scrobbelen van alle radionummers uitschakelen door deze optie te wijzigen. Je kunt echter nog steeds genieten van jouw favoriete radionummers.
+	NN	Viss du scrobblar spor frå Internett-radio, kan det føre til at uønskte data blir lagde til i Last.fm-profilen din. Du kan slå av scrobbling av alle radiospor ved å endre dette alternativet. Radiospor kan framleis merkjast som favorittar.
 	PL	Wysyłanie informacji o utworach z internetowych stacji radiowych może spowodować, że profil w usłudze Last.fm będzie zawierał niechciane dane. Wysyłanie informacji o utworach ze stacji radiowych można wyłączyć, zmieniając tę opcję. Nadal można jednak oceniać utwory ze stacji radiowych.
 	RU	В результате скробблирования дорожек радиостанций Интернета в ваш профиль Last.fm могут попасть нежелательные данные. Изменив этот параметр, вы отключите скробблирование всех дорожек радиостанций, однако сможете отмечать их как понравившиеся.
 	SV	Om du väljer att skrobbla webbradiospåren kan det hända att oönskade data hamnar i din Last.fm-profil. Avaktivera skrobbling genom att ändra det här alternativet. Radiospår kan fortfarande väljas som favoriter.
@@ -591,6 +628,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_YES
 	IT	Sì, registra i brani della radio su Internet.
 	NB	Ja, scrobble spor fra Internett-radio.
 	NL	Ja, internetradionummers scrobbelen.
+	NN	Ja, scrobble spor frå Internett-radio.
 	PL	Tak, przesyłaj informacje o utworach z internetowych stacji radiowych.
 	RU	Да, скробблить дорожки радиостанций Интернета.
 	SV	Ja, skrobbla webbradiospåren.
@@ -608,6 +646,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_NO
 	IT	No, non registrare i brani della radio su Internet.
 	NB	Nei, ikke scrobble spor fra Internett-radio.
 	NL	Nee, internetradionummers niet scrobbelen.
+	NN	Nei, ikkje scrobble spor frå Internett-radio.
 	PL	Nie, nie pobieraj informacji o utworach w internetowych stacjach radiowych.
 	RU	Нет, не скробблить дорожки радиостанций Интернета.
 	SV	Nej, skrobbla inte webbradiospår.
@@ -625,6 +664,7 @@ PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED
 	IT	Non monitorare
 	NB	Ikke scrobble
 	NL	Niet scrobbelen
+	NN	Ikkje scrobble
 	PL	Nie przesyłaj informacji
 	RU	Не скробблить
 	SV	Skrobbla inte
@@ -642,6 +682,7 @@ PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT
 	IT	Utilizza account: %s
 	NB	Bruk konto %s
 	NL	Gebruik account: %s
+	NN	Bruk kontoen %s
 	PL	Użyj konta: %s
 	RU	Использовать учетную запись: %s
 	SV	Använd kontot: %s
@@ -659,6 +700,7 @@ PLUGIN_AUDIOSCROBBLER_LOVE_TRACK
 	IT	Last.fm: brano preferito
 	NB	Last.fm: Gi sporet en positiv stemme
 	NL	Last.fm: Love dit nummer
+	NN	Last.fm: Gje sporet ei positiv stemme
 	PL	Last.fm: lubię ten utwór
 	RU	Last.fm: дорожка нравится
 	SV	Last.fm: Visa att du älskar den här låten
@@ -676,6 +718,7 @@ PLUGIN_AUDIOSCROBBLER_TRACK_LOVED
 	IT	Il brano è stato aggiunto all'elenco dei preferiti.
 	NB	Dette sporet er godt likt.
 	NL	Dit is een geliefd nummer.
+	NN	Dette sporet er godt likt.
 	PL	Ten utwór otrzymał ocenę pozytywną.
 	RU	Эта дорожка понравилась.
 	SV	Spåret har registrerats som älskat.

@@ -13,6 +13,7 @@ PLUGIN_SONGSCANNER
 	IT	Analisi brani
 	NB	Sangsøk
 	NL	Nummer Scanner
+	NN	Songsøk
 	PL	Moduł przeszukiwania utworów
 	RU	Сканер песен
 	SV	Låtsökaren
@@ -30,6 +31,7 @@ PLUGIN_SONGSCANNER_DESC
 	IT	Interfaccia lettore per passare a posizioni casuali all'interno del brano in corso di riproduzione (Squeezebox Classic, Squeezebox Boom, Transporter)
 	NB	Spillergrensesnitt for å gå til vilkårlige plasseringer i sangen som spilles av (Squeezebox Classic, Squeezebox Boom, Transporter)
 	NL	Muziekspeler interface om naar willekeurige posities in het huidige nummer te springen (Squeezebox Classic, Squeezebox Boom, Transporter)
+	NN	Spelargrensesnitt for å gå til vilkårlege plasseringar i songen som blir spelt av (Squeezebox Classic, Squeezebox Boom, Transporter)
 	PL	Interfejs odtwarzacza umożliwiający przejście do dowolnego miejsca w aktualnie odtwarzanym utworze (Squeezebox Classic, Squeezebox Boom, Transporter)
 	RU	Интерфейс плеера для перехода в произвольную позицию воспроизводимой песни (Squeezebox Classic, Squeezebox Boom, Transporter)
 	SV	Spelargränssnitt för att hoppa till godtyckliga ställen i låten som spelas upp (Squeezebox Classic, Squeezebox Boom, Transporter)
@@ -47,6 +49,7 @@ PLUGIN_SONGSCANNER_SET
 	IT	Ora:
 	NB	Klokkeslett:
 	NL	Tijd:
+	NN	Klokkeslett:
 	PL	Czas:
 	RU	Время:
 	SV	Tid:
@@ -64,6 +67,7 @@ PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE
 	IT	Impossibile analizzare il brano poiché non se ne conosce la durata
 	NB	Kan ikke søke igjennom sporet fordi varigheten er ukjent
 	NL	Kan niet door nummer scannen omdat duur onbekend is
+	NN	Kan ikkje spole gjennom sporet fordi varigheita er ukjend
 	PL	Nie można przeszukać utworu z powodu nieznanego czasu trwania
 	RU	Поиск внутри дорожки невозможен, поскольку неизвестна длительность
 	SV	Det går inte att söka igenom spåret eftersom varaktigheten är okänd
@@ -81,6 +85,7 @@ PLUGIN_SONGSCANNER_ERR_NOTRACK
 	IT	Nessun brano
 	NB	Ingen spor
 	NL	Geen nummer
+	NN	Ingen spor
 	PL	Brak utworu
 	RU	Нет дорожки
 	SV	Inget spår
@@ -98,6 +103,7 @@ PLUGIN_SONGSCANNER_MAX_RATE_FWD
 	IT	È stata raggiunta la velocità di avanzamento massima
 	NB	Maks spolingshastighet forover er nådd
 	NL	Maximale snelheid voor vooruitspoelen bereikt
+	NN	Høgaste spolefart framover er nådd
 	PL	Osiągnięto maksymalną szybkość przewijania do przodu
 	RU	Достигнута макс. скорость перемотки вперед
 	SV	Maximal framspolningstakt har uppnåtts
@@ -115,6 +121,7 @@ PLUGIN_SONGSCANNER_MAX_RATE_REW
 	IT	È stata raggiunta la velocità di riavvolgimento massima
 	NB	Maks spolingshastighet bakover er nådd
 	NL	Maximale snelheid voor terugspoelen bereikt
+	NN	Høgaste spolefart bakover er nådd
 	PL	Osiągnięto maksymalną szybkość przewijania do tyłu
 	RU	Достигнута макс. скорость перемотки назад
 	SV	Maximal tillbakaspolningstakt har uppnåtts

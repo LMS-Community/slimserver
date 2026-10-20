@@ -8,6 +8,7 @@ PLUGIN_ONLINE_LIBRARY_MODULE_NAME
 	HU	Online zenei könyvtár integráció
 	NB	Integrering av nettbaserte musikkbiblioteker
 	NL	Online Muziek Integratie
+	NN	Integrering av nettbaserte musikkbibliotek
 	SV	Integration av online-musikbibliotek
 
 PLUGIN_ONLINE_LIBRARY_MODULE_NAME_DESC
@@ -20,6 +21,7 @@ PLUGIN_ONLINE_LIBRARY_MODULE_NAME_DESC
 	HU	Jobban irányíthatja online zenei könyvtárait a helyi zenével.
 	NB	Få mer kontroll over hvordan de nettbaserte musikkbibliotekene dine integreres med den lokale musikken.
 	NL	Krijg meer controle over hoe jouw online muziek wordt geïntegreerd met jouw lokale muziek.
+	NN	Få meir kontroll over korleis dei nettbaserte musikkbiblioteka dine blir integrerte med den lokale musikken.
 	SV	Få mer kontroll över hur ditt online-musikbibliotek är integrerat med din lokala musik
 
 PLUGIN_ONLINE_LIBRARY_INTEGRATE_NO_POLL
@@ -32,6 +34,7 @@ PLUGIN_ONLINE_LIBRARY_INTEGRATE_NO_POLL
 	HU	Integrálja az online könyvtárat, de ne ellenőrizze automatikusan a változásokat
 	NB	Integrer nettbiblioteket, men ikke se etter endringer automatisk
 	NL	Integreer online muziek, maar controleer niet automatisch op wijzigingen
+	NN	Integrer nettbiblioteket, men ikkje sjå etter endringar automatisk
 	SV	Integrera online-bibliotek men kolla inte automatiskt efter förändringar
 
 PLUGIN_ONLINE_LIBRARY_FULL_INTEGRATION
@@ -44,6 +47,7 @@ PLUGIN_ONLINE_LIBRARY_FULL_INTEGRATION
 	HU	Integrálja az online könyvtárat, és automatikusan ellenőrizze a változásokat
 	NB	Integrer nettbiblioteket og se etter endringer automatisk
 	NL	Integreer online muziek en controleer automatisch op wijzigingen
+	NN	Integrer nettbiblioteket og sjå etter endringar automatisk
 	SV	Integrera online-bibliotek och kolla automatiskt efter förändringar
 
 PLUGIN_ONLINE_LIBRARY_NO_INTEGRATION
@@ -56,6 +60,7 @@ PLUGIN_ONLINE_LIBRARY_NO_INTEGRATION
 	HU	Ne integrálja az online zenei gyűjteményt
 	NB	Ikke integrer den nettbaserte musikksamlingen
 	NL	Geen integratie van online muziek
+	NN	Ikkje integrer den nettbaserte musikksamlinga
 	SV	Integrera inte online-bibliotek
 
 PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_NOT_AVAILABLE
@@ -68,6 +73,7 @@ PLUGIN_ONLINE_LIBRARY_POLL_UPDATES_NOT_AVAILABLE
 	HU	Nem áll rendelkezésre támogatott streaming szolgáltatás
 	NB	Ingen strømmetjeneste med støtte for dette er tilgjengelig.
 	NL	Er is geen ondersteunde online muziek streaming dienst gevonden
+	NN	Inga straumeteneste med støtte for dette er tilgjengeleg.
 	SV	Ingen understödd strömningstjänst hittades
 
 PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL
@@ -80,6 +86,7 @@ PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL
 	HU	Zene online másolatok nélkül
 	NB	Musikk uten duplikater fra nett
 	NL	Mediabibliotheek zonder online duplicaten
+	NN	Musikk utan duplikat frå nettet
 	SV	Musikbibliotek utan online-dubbletter
 
 PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL_DESC
@@ -92,6 +99,7 @@ PLUGIN_ONLINE_LIBRARY_DEDUPE_PREFER_LOCAL_DESC
 	HU	Csak a helyi album megjelenítése, ha van egy másik példánya az online zenei gyűjteményében.
 	NB	Vis bare det lokale albumet hvis du har en kopi til i den nettbaserte musikksamlingen.
 	NL	Alleen lokaal album tonen als een album zowel lokaal als online beschikbaar is
+	NN	Vis berre det lokale albumet viss du har ein kopi til i den nettbaserte musikksamlinga.
 	SV	Visa bara det lokala albumet när en kopia finns i ditt online-bibliotek
 
 PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY
@@ -104,6 +112,7 @@ PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY
 	HU	Csak helyi számok (nincs zeneszolgáltatás)
 	NB	Bare lokale spor (ingen musikktjeneste)
 	NL	Alleen lokale nummers (geen online muziek streaming diensten)
+	NN	Berre lokale spor (inga musikkteneste)
 	SV	Bara lokala spår (ingen strömningstjänst)
 
 PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY_DESC
@@ -116,6 +125,7 @@ PLUGIN_ONLINE_LIBRARY_LOCAL_MUSIC_ONLY_DESC
 	HU	Könyvtári nézet létrehozása csak helyi számokkal (zenei szolgáltatások nélkül)
 	NB	Lag en bibliotekvisning med bare lokale spor (ingen musikktjenester)
 	NL	Alleen lokale nummers (geen online muziek streaming diensten)
+	NN	Lag ei bibliotekvising med berre lokale spor (ingen musikktenester)
 	SV	Bara lokala spår (ingen strömningstjänst)
 
 PLUGIN_ONLINE_LIBRARY_NO_PLAYLIST_IMPORT
@@ -127,6 +137,7 @@ PLUGIN_ONLINE_LIBRARY_NO_PLAYLIST_IMPORT
 	FR	Ne pas importer les listes de lecture.
 	HU	Ne importáljon lejátszási listákat.
 	NB	Ikke importer spillelister.
+	NN	Ikkje importer spelelister.
 	SV	Importera inte spellistor
 
 PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO
@@ -139,6 +150,7 @@ PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO
 	HU	Zenei szolgáltatás logója
 	NB	Logo for musikktjeneste
 	NL	Muziek streaming dienst logo
+	NN	Logo for musikkteneste
 	SV	Strömningstjänst-logo
 
 PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO_DESC
@@ -151,6 +163,7 @@ PLUGIN_ONLINE_LIBRARY_SERVICE_LOGO_DESC
 	HU	Helyezze a streaming szolgáltatás logóját az albumborító tetejére (ha van).
 	NB	Vis strømmetjenestens logo oppå albumomslaget (hvis tilgjengelig).
 	NL	Markeer online albums met een streaming dienst logo op de albumhoes (indien beschikbaar)
+	NN	Vis logoen til straumetenesta oppå albumomslaget (viss tilgjengeleg).
 	SV	Markera online-album med strömningstjänstens logo (om den är tillgänglig).
 
 PLUGIN_ONLINE_LIBRARY_SETUP_RESCAN
@@ -163,6 +176,7 @@ PLUGIN_ONLINE_LIBRARY_SETUP_RESCAN
 	HU	Csak az online zenei könyvtár újraolvasása
 	NB	Skann bare nettbiblioteket på nytt
 	NL	Alleen online muziek collectie opnieuw scannen
+	NN	Skann berre nettbiblioteket på nytt
 	SV	Skanna bara online-musikbiblioteket
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT
@@ -175,6 +189,7 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT
 	HU	Műfaj csere
 	NB	Sjangererstatning
 	NL	Genres vervangen
+	NN	Sjangererstatting
 	SV	Byt ut genrer
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_DESC
@@ -187,6 +202,7 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_DESC
 	HU	Sajnos nem minden streaming szolgáltatás támogatja a műfajokat. Ez a beállítás lehetővé teszi a számok műfajokhoz rendelését a címük vagy az előadó neve alapján. Ez nyilvánvalóan nem igaz a valódi gyűjteményekhez. De ez pl. lehetővé teszi bizonyos műsorszámok megcímkézését egy adott műfajjal, amelyet a könyvtárnézetben alkalmazni kíván.
 	NB	Dessverre støtter ikke alle strømmetjenester sjangere. Med denne innstillingen kan du knytte spor til sjangere ut fra tittel eller artistnavn. Dette egner seg naturligvis ikke for store samlinger, men du kan for eksempel gi bestemte spor en sjanger som brukes i en bibliotekvisning.
 	NL	Niet alle online muziek streaming diensten ondersteunen genres. Met deze instelling kan je nummers toewijzen aan genres op basis van hun titel of artiesten. Dit werkt uiteraard niet voor erg grote collecties. Maar het stelt je in staat bepaalde nummers te taggen met een specifiek genre om toe te passen in een bibliotheekweergave.
+	NN	Diverre støttar ikkje alle straumetenester sjangrar. Med denne innstillinga kan du knyte spor til sjangrar ut frå tittel eller artistnamn. Dette passar sjølvsagt ikkje for store samlingar, men du kan til dømes gje bestemte spor ein sjanger som blir brukt i ei bibliotekvising.
 	SV	Inte alla strömningstjänster använder genrer. Den här inställningen gör det möjligt att sätta en genre på en låt baserat på namnet eller artistens namn. Det kommer givetvis inte att fungera speciellt bra för stora bibliotek men det gör det möjligt att ge vissa låtar en genre som kan användas i biblioteksvyer.
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_ADVANCED
@@ -199,6 +215,7 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_ADVANCED
 	HU	Speciális műfaj és kiadás típus csere
 	NB	Avansert erstatning av sjanger og utgivelsestype
 	NL	Geavanceerde instellingen voor genre vervanging
+	NN	Avansert erstatting av sjanger og utgivingstype
 	SV	Avancerade genre- och utgåvetypersättningar
 
 PLUGIN_ONLINE_LIBRARY_RELEASE_TYPE
@@ -209,6 +226,7 @@ PLUGIN_ONLINE_LIBRARY_RELEASE_TYPE
 	FR	Type de sortie
 	HU	Kiadás típusa
 	NB	Utgivelsestype
+	NN	Utgivingstype
 	SV	Utgåvetyp
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_BASIC
@@ -221,6 +239,7 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_BASIC
 	HU	Vissza az alapbeállításokhoz
 	NB	Tilbake til de enkle innstillingene
 	NL	Terug naar standaard instellingen
+	NN	Tilbake til dei enkle innstillingane
 	SV	Tillbaka till standardinställningar
 
 PLUGIN_ONLINE_LIBRARY_TAG
@@ -233,6 +252,7 @@ PLUGIN_ONLINE_LIBRARY_TAG
 	HU	Tag:
 	NB	Tagg:
 	NL	Tag:
+	NN	Tagg:
 	SV	Tag:
 
 PLUGIN_ONLINE_LIBRARY_MATCHING
@@ -245,6 +265,7 @@ PLUGIN_ONLINE_LIBRARY_MATCHING
 	HU	Egyező szöveg:
 	NB	Tekst som skal samsvare:
 	NL	Toepasselijke tekst:
+	NN	Tekst som skal samsvare:
 	SV	Matchande text:
 
 PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_PROGRESS
@@ -257,6 +278,7 @@ PLUGIN_ONLINE_LIBRARY_GENRE_REPLACEMENT_PROGRESS
 	HU	Online műfaj és kiadás típusának cseréje
 	NB	Erstatning av sjanger og utgivelsestype på nett
 	NL	Online Genres Vervangen
+	NN	Erstatting av sjanger og utgivingstype på nettet
 	SV	Ersätt online genre och utgåvetyp
 
 PLUGIN_ONLINE_LIBRARY_INFORMATION_PLAYLISTTRACKS
@@ -269,4 +291,5 @@ PLUGIN_ONLINE_LIBRARY_INFORMATION_PLAYLISTTRACKS
 	HU	Összes zeneszám a lejátszási listákban
 	NB	Totalt antall spor i spillelister
 	NL	Totaal aantal nummers in afspeellijsten
+	NN	Totalt tal på spor i spelelister
 	SV	Antal spår i spellistan

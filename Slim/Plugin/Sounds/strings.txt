@@ -11,6 +11,7 @@ PLUGIN_SOUNDS_MODULE_NAME
 	IT	Suoni ed effetti
 	NB	Lyder og effekter
 	NL	Geluiden en Effecten
+	NN	Lydar og effektar
 	PL	Dźwięki i efekty
 	RU	Звуки и эффекты
 	SV	Ljud och effekter
@@ -28,6 +29,7 @@ PLUGIN_SOUNDS_ERROR
 	IT	Errore di Suoni ed effetti
 	NB	Feil med lyder og effekter
 	NL	Fout in Geluiden en effecten
+	NN	Feil med lydar og effektar
 	PL	Błąd dźwięków i efektów
 	RU	Звуки и эффекты: ошибка
 	SV	Ljud och effekter: fel
@@ -40,6 +42,7 @@ PLUGIN_SOUNDS_ALARMS
 	FR	Sons d'alarme
 	NB	Alarmlyder
 	NL	Alarmgeluiden
+	NN	Alarmlydar
 	SV	Alarmljud
 
 PLUGIN_SOUNDS_EFFECTS
@@ -55,6 +58,7 @@ PLUGIN_SOUNDS_EFFECTS
 	IT	Effetti sonori
 	NB	Lydeffekter
 	NL	Geluidseffecten
+	NN	Lydeffektar
 	PL	Efekty dźwiękowe
 	RU	Звуковые эффекты
 	SV	Ljudeffekter
@@ -72,6 +76,7 @@ PLUGIN_SOUNDS_NATURAL
 	IT	Suoni della natura
 	NB	Naturlyder
 	NL	Natuurlijke geluiden
+	NN	Naturlydar
 	PL	Dźwięki natury
 	RU	Звуки природы
 	SV	Naturljud
@@ -89,6 +94,7 @@ PLUGIN_SOUNDS_MUSICAL
 	IT	Suoni musicali
 	NB	Musikksnutter
 	NL	Muziekgeluiden
+	NN	Musikksnutter
 	PL	Dźwięki muzyczne
 	RU	Музыкальные звукозаписи
 	SV	Musikljud
@@ -106,6 +112,7 @@ PLUGIN_SOUNDS_BARN_FIRE
 	IT	Fienile in fiamme
 	NB	Låvebrann
 	NL	Schuurbrand
+	NN	Løebrann
 	PL	Barn Fire
 	RU	Сарай в огне
 	SV	Ladan brinner
@@ -123,6 +130,7 @@ PLUGIN_SOUNDS_BLUE_HENRY
 	IT	Aspirapolvere
 	NB	Blue Henry
 	NL	Blue Henry
+	NN	Blue Henry
 	PL	Blue Henry
 	RU	Blue Henry
 	SV	Blue Henry
@@ -140,6 +148,7 @@ PLUGIN_SOUNDS_BLUE_ORCHID
 	IT	Orchidea blu
 	NB	Blue Orchid
 	NL	Blauwe orchidee
+	NN	Blue Orchid
 	PL	Błękitna orchidea
 	RU	Синяя орхидея
 	SV	Blå Orchidé
@@ -157,6 +166,7 @@ PLUGIN_SOUNDS_BONGO_TECH
 	IT	Bongo
 	NB	Bongo Tech
 	NL	Bongo Tech
+	NN	Bongo Tech
 	PL	Bongo Tech
 	RU	Bongo Tech
 	SV	Bongo Tech
@@ -174,6 +184,7 @@ PLUGIN_SOUNDS_BRAINFLUID
 	IT	Fluido cerebrale
 	NB	Hjernevæske
 	NL	Hersenvloeistof
+	NN	Hjernevæske
 	PL	Brainfluid
 	RU	Мозговая жидкость
 	SV	Hjärnvätska
@@ -191,6 +202,7 @@ PLUGIN_SOUNDS_BUTTERY
 	IT	Buttery
 	NB	Buttery
 	NL	Kantine
+	NN	Buttery
 	PL	Buttery
 	RU	Архив
 	SV	Buttery
@@ -208,6 +220,7 @@ PLUGIN_SOUNDS_CAPPUCINO
 	IT	Cappuccino
 	NB	Cappucino
 	NL	Cappucino
+	NN	Cappucino
 	PL	Cappucino
 	RU	Капучино
 	SV	Cappuccino
@@ -225,6 +238,7 @@ PLUGIN_SOUNDS_COOL_CATS
 	IT	Cool Cats
 	NB	Cool Cats
 	NL	Cool Cats
+	NN	Cool Cats
 	PL	Cool Cats
 	RU	Счастливые коты
 	SV	Cool Cats
@@ -242,6 +256,7 @@ PLUGIN_SOUNDS_CORNFLOWER
 	IT	Fiordaliso
 	NB	Kornblomst
 	NL	Cornflower
+	NN	Kornblomst
 	PL	Bławatek
 	RU	Василек
 	SV	Cornflower
@@ -259,6 +274,7 @@ PLUGIN_SOUNDS_CRYSTALIZE
 	IT	Cristallizzazione
 	NB	Crystalize
 	NL	Crystalize
+	NN	Crystalize
 	PL	Krystalizacja
 	RU	Кристаллизация
 	SV	Crystalize
@@ -276,6 +292,7 @@ PLUGIN_SOUNDS_EXPERIMENTAL
 	IT	Sperimentale
 	NB	Eksperimentell
 	NL	Experimenteel
+	NN	Eksperimentell
 	PL	Eksperymentalne
 	RU	Экспериментальный
 	SV	Experimental
@@ -293,6 +310,7 @@ PLUGIN_SOUNDS_HIBISCUS
 	IT	Ibisco
 	NB	Hibiscus
 	NL	Hibiscus
+	NN	Hibiscus
 	PL	Hibiskus
 	RU	Гибискус
 	SV	Hibiscus
@@ -310,6 +328,7 @@ PLUGIN_SOUNDS_JUNK_ARMOR
 	IT	Junk Armor
 	NB	Søppelrustning
 	NL	Junk Armor
+	NN	Skraprustning
 	PL	Junk Armor
 	RU	Ржавые доспехи
 	SV	Skrotrustning
@@ -327,6 +346,7 @@ PLUGIN_SOUNDS_MELANCHOLY_DAY
 	IT	Giorno malinconico
 	NB	Melankolsk dag
 	NL	Melancholy Day
+	NN	Melankolsk dag
 	PL	Melancholy Day
 	RU	Грустный день
 	SV	Melankolisk dag
@@ -344,6 +364,7 @@ PLUGIN_SOUNDS_SLICKBABY
 	IT	Slickbaby
 	NB	Slickbaby
 	NL	Slickbaby
+	NN	Slickbaby
 	PL	Slickbaby
 	RU	Ловкая малышка
 	SV	Slick baby
@@ -361,6 +382,7 @@ PLUGIN_SOUNDS_SLOG_IT_OUT
 	IT	Discussione animata
 	NB	Slog It Out
 	NL	Slog It Out
+	NN	Slog It Out
 	PL	Slog It Out
 	RU	До победного конца
 	SV	Slog It Out
@@ -378,6 +400,7 @@ PLUGIN_SOUNDS_SOFT_HORIZON
 	IT	Soft Horizon
 	NB	Soft Horizon
 	NL	Zachte horizon
+	NN	Soft Horizon
 	PL	Soft Horizon
 	RU	Горизонт
 	SV	Soft Horizon
@@ -395,6 +418,7 @@ PLUGIN_SOUNDS_SRI_LAMA
 	IT	Sri Lama
 	NB	Sri Lama
 	NL	Sri Lama
+	NN	Sri Lama
 	PL	Sri Lama
 	RU	Шри Лама
 	SV	Sri Lama
@@ -412,6 +436,7 @@ PLUGIN_SOUNDS_STARGAZER
 	IT	Sognatore
 	NB	Stargazer
 	NL	Sterrenkijker
+	NN	Stargazer
 	PL	Astrolog
 	RU	Звездочет
 	SV	Stargazer
@@ -429,6 +454,7 @@ PLUGIN_SOUNDS_SUPER_CHEESE
 	IT	Super Cheese
 	NB	Super Cheese
 	NL	Super Cheese
+	NN	Super Cheese
 	PL	Super Cheese
 	RU	Суперсыр
 	SV	Super Cheese
@@ -446,6 +472,7 @@ PLUGIN_SOUNDS_TAIL_HONKER
 	IT	Tail Honker
 	NB	Tuting
 	NL	Tail Honker
+	NN	Tuting
 	PL	Tail Honker
 	RU	Клаксон
 	SV	Tail Honker
@@ -463,6 +490,7 @@ PLUGIN_SOUNDS_TONGUE_CHEEK
 	IT	Tongue & Cheek
 	NB	Tongue & Cheek
 	NL	Tongue & Cheek
+	NN	Tongue & Cheek
 	PL	Ironia
 	RU	Иронический
 	SV	Tongue & Cheek
@@ -480,6 +508,7 @@ PLUGIN_SOUNDS_TRANSLAB
 	IT	TransLab
 	NB	TransLab
 	NL	TransLab
+	NN	TransLab
 	PL	TransLab
 	RU	TransLab
 	SV	TransLab
@@ -497,6 +526,7 @@ PLUGIN_SOUNDS_TWEEDLEDUM
 	IT	Tweedledum
 	NB	Tweedledum
 	NL	Tweedledum
+	NN	Tweedledum
 	PL	Tweedledum
 	RU	Труляля
 	SV	Tweedledum
@@ -514,6 +544,7 @@ PLUGIN_SOUNDS_TWENSA
 	IT	Twensa
 	NB	Twensa
 	NL	Twensa
+	NN	Twensa
 	PL	Twensa
 	RU	Twensa
 	SV	Twensa
@@ -531,6 +562,7 @@ PLUGIN_SOUNDS_BABBLING_BROOK
 	IT	Gorgoglio di ruscello
 	NB	Klukkende bekk
 	NL	Kabbelend beekje
+	NN	Klukkande bekk
 	PL	Babbling Brook
 	RU	Журчащий ручей
 	SV	Porlande bäck
@@ -548,6 +580,7 @@ PLUGIN_SOUNDS_BUBBLES
 	IT	Bollicine
 	NB	Bobler
 	NL	Luchtbellen
+	NN	Bobler
 	PL	Bąbelki
 	RU	Пузырьки
 	SV	Bubblor
@@ -565,6 +598,7 @@ PLUGIN_SOUNDS_CRICKETS
 	IT	Grilli
 	NB	Gresshopper
 	NL	Crickets
+	NN	Grashopper
 	PL	Świerszcze
 	RU	Сверчки
 	SV	Syrsor
@@ -582,6 +616,7 @@ PLUGIN_SOUNDS_FIRE
 	IT	Fuoco
 	NB	Brann
 	NL	Brand
+	NN	Brann
 	PL	Ogień
 	RU	Огонь
 	SV	Eld
@@ -599,6 +634,7 @@ PLUGIN_SOUNDS_HARD_RAIN_THUNDER
 	IT	Pioggia battente e tuoni
 	NB	Kraftig regn og torden
 	NL	Hard Rain & Thunder
+	NN	Kraftig regn og torden
 	PL	Ulewa i burza
 	RU	Ливень и гром
 	SV	Ösregn och åska
@@ -616,6 +652,7 @@ PLUGIN_SOUNDS_HEARTBEAT_FAST
 	IT	Battito cardiaco veloce
 	NB	Raske hjerteslag
 	NL	Snelle hartklopping
+	NN	Raske hjerteslag
 	PL	Szybki puls
 	RU	Биение сердца (быстрое)
 	SV	Snabba hjärtslag
@@ -633,6 +670,7 @@ PLUGIN_SOUNDS_HEARTBEAT
 	IT	Battito cardiaco
 	NB	Hjerteslag
 	NL	Hartslag
+	NN	Hjerteslag
 	PL	Puls
 	RU	Биение сердца
 	SV	Hjärtslag
@@ -650,6 +688,7 @@ PLUGIN_SOUNDS_HORSE_WALKING
 	IT	Zoccoli di cavallo
 	NB	Lyden av hestehover
 	NL	Lopend paard
+	NN	Lyden av hestehovar
 	PL	Tętent konia
 	RU	Конная прогулка
 	SV	Häst i skritt
@@ -667,6 +706,7 @@ PLUGIN_SOUNDS_HORSE_WHINNY
 	IT	Nitrito di cavallo
 	NB	Hestevrinsk
 	NL	Gehinnik
+	NN	Hestekneggjing
 	PL	Horse Whinny
 	RU	Лошадка Винни
 	SV	Hästgnägg
@@ -684,6 +724,7 @@ PLUGIN_SOUNDS_LAPPING_WAVES
 	IT	Sciabordio di onde
 	NB	Skvalpende bølger
 	NL	Gebabbel van de golven
+	NN	Skvalpande bølgjer
 	PL	Przychodzące fale
 	RU	Плеск волн
 	SV	Skvalpande vågor
@@ -701,6 +742,7 @@ PLUGIN_SOUNDS_MEADOWLARK
 	IT	Sturnella
 	NB	Lerke
 	NL	Meadowlark
+	NN	Lerke
 	PL	Meadowlark
 	RU	Жаворонок
 	SV	Stare
@@ -718,6 +760,7 @@ PLUGIN_SOUNDS_OCEAN_SURF
 	IT	Onde dell'oceano
 	NB	Dønninger
 	NL	Oceaansurf
+	NN	Dønninger
 	PL	Surfowanie po oceanie
 	RU	Океанский прибой
 	SV	Surfning
@@ -735,6 +778,7 @@ PLUGIN_SOUNDS_RAIN_THUNDER
 	IT	Pioggia e tuoni
 	NB	Regn og torden
 	NL	Regen en onweer
+	NN	Regn og torden
 	PL	Deszcz i burza
 	RU	Дождь и гром
 	SV	Regn och åska
@@ -752,6 +796,7 @@ PLUGIN_SOUNDS_RAIN_OUTSIDE
 	IT	Pioggia
 	NB	Regn ute
 	NL	Regen buiten
+	NN	Regn ute
 	PL	Padający deszcz
 	RU	Дождь за окном
 	SV	Regn utanför
@@ -769,6 +814,7 @@ PLUGIN_SOUNDS_RAIN_SPLASHING
 	IT	Pioggia battente
 	NB	Regndråper
 	NL	Spattende regen
+	NN	Regndropar
 	PL	Krople deszczu
 	RU	Шум дождя
 	SV	Regn
@@ -786,6 +832,7 @@ PLUGIN_SOUNDS_RIVER
 	IT	Fiume
 	NB	Elv
 	NL	Rivier
+	NN	Elv
 	PL	Rzeka
 	RU	Река
 	SV	Flod
@@ -803,6 +850,7 @@ PLUGIN_SOUNDS_ROBINS
 	IT	Pettirossi
 	NB	Meiser
 	NL	Roodborstjes
+	NN	Meiser
 	PL	Robins
 	RU	Малиновки
 	SV	Rödhakar
@@ -820,6 +868,7 @@ PLUGIN_SOUNDS_ROOSTER_CROW
 	IT	Canto del gallo
 	NB	Hanegal
 	NL	Hanengekraai
+	NN	Hanegal
 	PL	Pianie koguta
 	RU	Кукареканье петуха
 	SV	Tuppgalande
@@ -837,6 +886,7 @@ PLUGIN_SOUNDS_RURAL
 	IT	Rurale
 	NB	Landlig
 	NL	Landelijk
+	NN	Landlig
 	PL	Wiejski
 	RU	Деревня
 	SV	Landsbyggd
@@ -854,6 +904,7 @@ PLUGIN_SOUNDS_SHORE_SEAGULLS
 	IT	Mare e gabbiani
 	NB	Kyst og måker
 	NL	Kust en zeemeeuwen
+	NN	Kyst og måsar
 	PL	Brzeg morza i mewy
 	RU	Чайки на побережье
 	SV	Strand med måsar
@@ -871,6 +922,7 @@ PLUGIN_SOUNDS_SPRING_PEEPERS
 	IT	Rane
 	NB	Småfugler
 	NL	Kruisboomkikkers
+	NN	Småfuglar
 	PL	Spring Peepers
 	RU	Прибрежная квакша
 	SV	Grodor
@@ -888,6 +940,7 @@ PLUGIN_SOUNDS_STREAM_BIRDS
 	IT	Ruscello e uccelli
 	NB	Bekk og fugler
 	NL	Stroom en vogels
+	NN	Bekk og fuglar
 	PL	Strumień i ptaki
 	RU	Река и птицы
 	SV	Bäck och fågelkvitter
@@ -905,6 +958,7 @@ PLUGIN_SOUNDS_STREAM
 	IT	Stream
 	NB	Strøm
 	NL	Stream
+	NN	Straum
 	PL	Strumień
 	RU	Поток
 	SV	Ström
@@ -922,6 +976,7 @@ PLUGIN_SOUNDS_TROPICAL_AMBIENCE
 	IT	Ambiente tropicale
 	NB	Tropical Ambience
 	NL	Tropische sfeer
+	NN	Tropical Ambience
 	PL	Tropikalny ambient
 	RU	Тропики
 	SV	Tropisk atmosfär
@@ -939,6 +994,7 @@ PLUGIN_SOUNDS_WAVES
 	IT	Onde
 	NB	Bølger
 	NL	Golven
+	NN	Bølgjer
 	PL	Fale
 	RU	Волны
 	SV	Vågor
@@ -956,6 +1012,7 @@ PLUGIN_SOUNDS_WIND_WHISTLE
 	IT	Sibilo del vento
 	NB	Vind
 	NL	Wind Whistle
+	NN	Vind
 	PL	Gwizdek
 	RU	Свист ветра
 	SV	Vindpipa
@@ -973,6 +1030,7 @@ PLUGIN_SOUNDS_WIND
 	IT	Vento
 	NB	Wind
 	NL	Wind
+	NN	Wind
 	PL	Wiatr
 	RU	Ветер
 	SV	Vind
@@ -990,6 +1048,7 @@ PLUGIN_SOUNDS_AMBULANCE
 	IT	Ambulanza
 	NB	Ambulanse
 	NL	Ambulance
+	NN	Ambulanse
 	PL	Karetka pogotowia
 	RU	Скорая помощь
 	SV	Ambulans
@@ -1007,6 +1066,7 @@ PLUGIN_SOUNDS_BLENDER
 	IT	Frullatore
 	NB	Blender
 	NL	Blender
+	NN	Blender
 	PL	Blender
 	RU	Микшер
 	SV	Mixer
@@ -1024,6 +1084,7 @@ PLUGIN_SOUNDS_CITY
 	IT	Città
 	NB	By
 	NL	Plaats
+	NN	By
 	PL	Miasto
 	RU	Город
 	SV	Ort
@@ -1041,6 +1102,7 @@ PLUGIN_SOUNDS_COINS
 	IT	Monete
 	NB	Mynter
 	NL	Munten
+	NN	Myntar
 	PL	Monety
 	RU	Монеты
 	SV	Mynt
@@ -1058,6 +1120,7 @@ PLUGIN_SOUNDS_CROSSING_BELLS
 	IT	Campanelle
 	NB	Planovergang
 	NL	Belsignaal
+	NN	Planovergang
 	PL	Crossing Bells
 	RU	Cигнальный колокол на переезде
 	SV	Varningsklockor
@@ -1075,6 +1138,7 @@ PLUGIN_SOUNDS_ELECTRO_FUZZ
 	IT	Electro Fuzz
 	NB	Elektrofuzz
 	NL	Electro Fuzz
+	NN	Elektrofuzz
 	PL	Electro Fuzz
 	RU	Electro Fuzz
 	SV	Elektroniska ljud
@@ -1092,6 +1156,7 @@ PLUGIN_SOUNDS_FOGHORN
 	IT	Sirena da nebbia
 	NB	Tåkelur
 	NL	Misthoorn
+	NN	Tåkelur
 	PL	Syrena ostrzegawcza
 	RU	Сирена
 	SV	Mistlur
@@ -1109,6 +1174,7 @@ PLUGIN_SOUNDS_FREIGHT_TRAIN_PASSING
 	IT	Passaggio di treno merci
 	NB	Passerende tog
 	NL	Voorbijgaande goederentrein
+	NN	Tog som passerer
 	PL	Przejeżdżający pociąg towarowy
 	RU	Товарный поезд прибывает
 	SV	Godståg kör förbi
@@ -1126,6 +1192,7 @@ PLUGIN_SOUNDS_FREIGHT_TRAIN
 	IT	Treno merci
 	NB	Godstog
 	NL	Freight Train
+	NN	Godstog
 	PL	Pociąg towarowy
 	RU	Товарный поезд
 	SV	Godståg
@@ -1143,6 +1210,7 @@ PLUGIN_SOUNDS_HAIR_DRYER
 	IT	Asciugacapelli
 	NB	Hårføner
 	NL	Haardroger
+	NN	Hårtørkar
 	PL	Suszarka do włosów
 	RU	Фен
 	SV	Hårtork
@@ -1160,6 +1228,7 @@ PLUGIN_SOUNDS_MAGNETO_VAPOR
 	IT	Magneto Vapor
 	NB	Magneto Vapor
 	NL	Magneto Vapor
+	NN	Magneto Vapor
 	PL	Magneto Vapor
 	RU	Magneto Vapor
 	SV	Magneto Vapor
@@ -1177,6 +1246,7 @@ PLUGIN_SOUNDS_MOTORCYCLES
 	IT	Motocicli
 	NB	Motorsykler
 	NL	Motorcycles
+	NN	Motorsyklar
 	PL	Motocykle
 	RU	Мотоциклы
 	SV	Motorcyklar
@@ -1194,6 +1264,7 @@ PLUGIN_SOUNDS_SCUBA_DIVER
 	IT	Sommozzatore
 	NB	Dykker
 	NL	Scubaduiker
+	NN	Dykkar
 	PL	Nurek
 	RU	Аквалангист
 	SV	Dykare
@@ -1211,6 +1282,7 @@ PLUGIN_SOUNDS_SPOOKY_FEEDBACK
 	IT	Spooky Feedback
 	NB	Skummel feedback
 	NL	Spooky Feedback
+	NN	Skummel feedback
 	PL	Spooky Feedback
 	RU	Шумовая обратная связь
 	SV	Spöklik rundgång
@@ -1228,6 +1300,7 @@ PLUGIN_SOUNDS_STEAM_TRAIN_WHISTLE
 	IT	Locomotiva a vapore e fischio
 	NB	Damptog og fløyte
 	NL	Steam Train & Whistle
+	NN	Damptog og fløyte
 	PL	Lokomotywa parowa i gwizd
 	RU	Свисток паровоза
 	SV	Ånglok och vissla
@@ -1245,6 +1318,7 @@ PLUGIN_SOUNDS_SUB_ALERT
 	IT	Avviso secondario
 	NB	Undervannsalarm
 	NL	Subwaarschuwing
+	NN	Undervannsalarm
 	PL	Alert podrzędny
 	RU	Предупреждающий сигнал
 	SV	Dyklarm
@@ -1262,6 +1336,7 @@ PLUGIN_SOUNDS_TEA_KETTLE
 	IT	Bollitore
 	NB	Tekjele
 	NL	Tea Kettle
+	NN	Tekjel
 	PL	Czajnik
 	RU	Чайник
 	SV	Tekanna
@@ -1279,6 +1354,7 @@ PLUGIN_SOUNDS_TRAFFIC
 	IT	Traffico
 	NB	Trafikk
 	NL	Verkeer
+	NN	Trafikk
 	PL	Ruch
 	RU	Трафик
 	SV	Trafik
@@ -1296,6 +1372,7 @@ PLUGIN_SOUNDS_WIND_CHIME_FLOURISH
 	IT	Tintinnio forte
 	NB	Lengre vindorgel
 	NL	Wind Chime Flourish
+	NN	Lengre vindspel
 	PL	Wind Chime Flourish
 	RU	Музыка ветра
 	SV	Vindspelstoner
@@ -1313,6 +1390,7 @@ PLUGIN_SOUNDS_WIND_CHIME
 	IT	Tintinnio
 	NB	Vindorgel
 	NL	Windklok
+	NN	Vindspel
 	PL	Powiew wiatru
 	RU	Мелодия ветра
 	SV	Vindspel
@@ -1326,6 +1404,7 @@ PLUGIN_SOUNDS_ALARM_BUZZER
 	FR	Sonnerie d'alarme
 	HU	Riasztócsengő
 	NB	Alarmsummer
+	NN	Alarmsummer
 	SV	Alarmsummer
 
 PLUGIN_SOUNDS_ALARM_ACCELERATING
@@ -1336,6 +1415,7 @@ PLUGIN_SOUNDS_ALARM_ACCELERATING
 	FR	Bip accéléré
 	NB	Stadig raskere pip
 	NL	Versnellende piep
+	NN	Stadig raskare pip
 	SV	Accelererande pip
 
 PLUGIN_SOUNDS_ALARM_HIGH_BEEP
@@ -1346,6 +1426,7 @@ PLUGIN_SOUNDS_ALARM_HIGH_BEEP
 	FR	Bip aigu
 	NB	Høyt pip
 	NL	Hoge piep
+	NN	Høgt pip
 	SV	Högt pip
 
 PLUGIN_SOUNDS_ALARM_SIMPLE_CLOCK
@@ -1356,6 +1437,7 @@ PLUGIN_SOUNDS_ALARM_SIMPLE_CLOCK
 	FR	Bip simple
 	NB	Enkelt pip
 	NL	Eenvoudige piep
+	NN	Enkelt pip
 	SV	Enkel signalton
 
 PLUGIN_SOUNDS_ALARM_BEDSIDE
@@ -1366,6 +1448,7 @@ PLUGIN_SOUNDS_ALARM_BEDSIDE
 	FR	Bip quadruple
 	NB	Firedobbelt pip
 	NL	Viervoudige piep
+	NN	Firedobbelt pip
 	SV	Fyrfaldigt pip
 
 PLUGIN_SOUNDS_ALARM_ELECTRONIC_BEEP
@@ -1376,6 +1459,7 @@ PLUGIN_SOUNDS_ALARM_ELECTRONIC_BEEP
 	FR	Bip électronique
 	NB	Elektronisk pip
 	NL	Elektronische piep
+	NN	Elektronisk pip
 	SV	Elektroniskt pip
 
 PLUGIN_SOUNDS_ALARM_DIGITAL
@@ -1386,6 +1470,7 @@ PLUGIN_SOUNDS_ALARM_DIGITAL
 	FR	Bip grave
 	NB	Lavt pip
 	NL	Lage piep
+	NN	Lågt pip
 	SV	Lågt pip
 
 PLUGIN_SOUNDS_ALARM_DISTORTED
@@ -1396,6 +1481,7 @@ PLUGIN_SOUNDS_ALARM_DISTORTED
 	FR	Bip distordu
 	NB	Forvrengt pip
 	NL	Vervormde piep
+	NN	Forvrengt pip
 	SV	Förvrängt pip
 
 PLUGIN_SOUNDS_ALARM_DUAL_TONE
@@ -1406,6 +1492,7 @@ PLUGIN_SOUNDS_ALARM_DUAL_TONE
 	FR	Bip alterné
 	NB	Vekslende pip
 	NL	Afwisselende piep
+	NN	Vekslande pip
 	SV	Växlande pip
 
 PLUGIN_SOUNDS_ALARM_ELECTRONICAL
@@ -1416,6 +1503,7 @@ PLUGIN_SOUNDS_ALARM_ELECTRONICAL
 	FR	Bip électronique 2
 	NB	Elektronisk pip 2
 	NL	Elektronische piep 2
+	NN	Elektronisk pip 2
 	SV	Elektroniskt pip 2
 
 PLUGIN_SOUNDS_ALARM_FUTURISTIC
@@ -1426,6 +1514,7 @@ PLUGIN_SOUNDS_ALARM_FUTURISTIC
 	FR	Alarme futuriste
 	NB	Futuristisk alarm
 	NL	Futuristisch alarm
+	NN	Futuristisk alarm
 	SV	Futuristiskt alarm
 
 PLUGIN_SOUNDS_ALARM_PHONE
@@ -1436,6 +1525,7 @@ PLUGIN_SOUNDS_ALARM_PHONE
 	FR	Téléphone qui sonne
 	NB	Telefon som ringer
 	NL	Rinkelende telefoon
+	NN	Telefon som ringjer
 	SV	Ringande telefon
 
 PLUGIN_SOUNDS_ALARM_RINGING
@@ -1446,6 +1536,7 @@ PLUGIN_SOUNDS_ALARM_RINGING
 	FR	Alarme sonore
 	NB	Ringende alarm
 	NL	Rinkelend alarm
+	NN	Ringjande alarm
 	SV	Ringande alarm
 
 PLUGIN_SOUNDS_ALARM_RINGTONE
@@ -1456,6 +1547,7 @@ PLUGIN_SOUNDS_ALARM_RINGTONE
 	FR	Sonnerie
 	NB	Ringetone
 	NL	Beltoon
+	NN	Ringjetone
 	SV	Rington
 
 PLUGIN_SOUNDS_ALARM_TIC_TAC
@@ -1466,6 +1558,7 @@ PLUGIN_SOUNDS_ALARM_TIC_TAC
 	FR	Tic-Tac
 	NB	Tikk-takk
 	NL	Tik-Tak
+	NN	Tikk-takk
 	SV	Tick-tack
 
 PLUGIN_SOUNDS_ALARM_TICKING
@@ -1476,4 +1569,5 @@ PLUGIN_SOUNDS_ALARM_TICKING
 	FR	Horloge qui tic-tac
 	NB	Tikkende klokke
 	NL	Tikkende klok
+	NN	Tikkande klokke
 	SV	Tickande klocka

@@ -12,6 +12,7 @@ PLUGIN_ZENRADIO_DESC
 	NL	Zen Radio - Ontspannings- en meditatiemuziek
 	HU	Zen Radio - Relaxációs és meditációs zene
 	NB	Zen Radio - Avslappings- og meditasjonsmusikk
+	NN	Zen Radio - Musikk for avslapping og meditasjon
 	SV	Zen Radio - Musik för meditation och avslappning
 
 PLUGIN_ZENRADIO_MISSING_CREDS
@@ -24,6 +25,7 @@ PLUGIN_ZENRADIO_MISSING_CREDS
 	NL	Ga naar Zen Radio in de Lyrion Music Server Instellingen om je gegevens toe te voegen.
 	HU	Kérjük, keresse fel a Zen Radiot a Lyrion Music Server beállításainál a hitelesítési adatok hozzáadásához.
 	NB	Gå til Zen Radio i innstillingene for Lyrion Music Server for å legge inn påloggingsopplysningene dine.
+	NN	Gå til Zen Radio i innstillingane for Lyrion Music Server for å leggje inn påloggingsopplysningane dine.
 	SV	Gå till Zen Radio in Lyrion Music Server-inställningarna för att lägga till dina loginuppgifter.
 
 PLUGIN_ZENRADIO_LINK
@@ -36,4 +38,5 @@ PLUGIN_ZENRADIO_LINK
 	NL	Ga om een account aan te maken of te beheren naar <a href="https://www.zenradio.com" target="_blank">Zen Radio</a>.
 	HU	Fiókja létrehozásához vagy kezeléséhez látogasson el a <a href="https://www.zenradio.com" target="_blank">Zen Radio</a> oldalra.
 	NB	Gå til <a href="https://www.zenradio.com" target="_blank">Zen Radio</a> for å opprette eller administrere kontoen din.
+	NN	Gå til <a href="https://www.zenradio.com" target="_blank">Zen Radio</a> for å opprette eller administrere kontoen din.
 	SV	Gå till <a href="https://www.zenradio.com" target="_blank">Zen Radio</a> för att skapa eller ändra ditt konto.

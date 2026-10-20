@@ -11,6 +11,7 @@ PLUGIN_JAZZRADIO_DESC
 	NL	JAZZRADIO.com - Geniet van geweldige jazzmuziek
 	HU	JAZZRADIO.com – Élvezze a nagyszerű jazz zenét
 	NB	JAZZRADIO.com - Nyt god jazzmusikk
+	NN	JAZZRADIO.com - Nyt god jazzmusikk
 	SV	JAZZRADIO.com - Njut av fantastisk jazz
 
 PLUGIN_JAZZRADIO_MISSING_CREDS
@@ -23,6 +24,7 @@ PLUGIN_JAZZRADIO_MISSING_CREDS
 	NL	Ga naar JAZZRADIO.com in de Lyrion Music Server Instellingen om je gegevens toe te voegen.
 	HU	Kérjük, keresse fel a JAZZRADIO.com webhelyet a Lyrion Music Server beállításainál a hitelesítési adatok hozzáadásához.
 	NB	Gå til JAZZRADIO.com i innstillingene for Lyrion Music Server for å legge inn påloggingsopplysningene dine.
+	NN	Gå til JAZZRADIO.com i innstillingane for Lyrion Music Server for å leggje inn påloggingsopplysningane dine.
 	SV	Gå till JAZZRADIO.com i Lyrion Music Server-inställningarna och lägg till din inloggningsuppgifter.
 
 PLUGIN_JAZZRADIO_LINK
@@ -35,4 +37,5 @@ PLUGIN_JAZZRADIO_LINK
 	NL	Ga om een account aan te maken of te beheren naar <a href="https://www.jazzradio.com" target="_blank">JAZZRADIO.com</a>.
 	HU	Fiókja létrehozásához vagy kezeléséhez látogasson el a <a href="https://www.jazzradio.com" target="_blank">JAZZRADIO.com</a> oldalra.
 	NB	Gå til <a href="https://www.jazzradio.com" target="_blank">JAZZRADIO.com</a> for å opprette eller administrere kontoen din.
+	NN	Gå til <a href="https://www.jazzradio.com" target="_blank">JAZZRADIO.com</a> for å opprette eller administrere kontoen din.
 	SV	Gå til <a href="https://www.jazzradio.com" target="_blank">JAZZRADIO.com</a> för att skapa eller ändra ditt konto.
