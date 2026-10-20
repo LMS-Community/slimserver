@@ -12,8 +12,8 @@ PLUGIN_RESCAN_MUSIC_LIBRARY
 	HE	סריקה חוזרת של ספריית המוסיקה
 	HU	Zenekönyvtár újraolvasása
 	IT	Ripeti analisi della libreria musicale
+	NB	Søk gjennom musikkbiblioteket
 	NL	Opnieuw Scannen Mediabibliotheek
-	NO	Søk gjennom musikkbiblioteket
 	PL	Przeszukaj ponownie bibliotekę muzyki
 	RU	Повторно проверить медиатеку
 	SV	Sök igenom musikbiblioteket igen
@@ -29,8 +29,8 @@ PLUGIN_RESCAN_MUSIC_LIBRARY_DESC
 	FR	Analyse de bibliothèque automatique
 	HU	Automatikus könyvtári újraolvasás
 	IT	Analisi automatica della libreria in corso...
+	NB	Automatisk bibliotekssøk
 	NL	Automatisch scannen van de mediabibliotheek
-	NO	Automatisk bibliotekssøk
 	PL	Automatyczne ponowne przeszukiwanie biblioteki
 	RU	Автоматическая проверка медиатеки
 	SV	Automatisk bibliotekssökning
@@ -47,8 +47,8 @@ PLUGIN_RESCAN_RESCANNING
 	HE	השרת מבצע סריקה חוזרת...
 	HU	A szerver most újraolvas...
 	IT	Ripetizione analisi in corso...
+	NB	Tjeneren søker på nytt...
 	NL	Server scant opnieuw...
-	NO	Tjeneren søker på nytt...
 	PL	Serwer przeszukuje ponownie...
 	RU	Сервер производит повторное сканирование...
 	SV	Servern genomför en ny sökning...
@@ -65,8 +65,8 @@ PLUGIN_RESCAN_PRESS_PLAY
 	HE	לחץ על PLAY (הפעלה) כדי לבצע סריקה חוזרת כעת.
 	HU	Nyomja meg a PLAY gombot az újbóli beolvasáshoz.
 	IT	Premere PLAY per ripetere l'analisi ora.
+	NB	Trykk på PLAY for å søke på nytt nå.
 	NL	Druk op PLAY om nu opnieuw te scannen.
-	NO	Trykk på PLAY for å søke på nytt nå.
 	PL	Naciśnij przycisk PLAY, aby przeszukać ponownie teraz.
 	RU	Нажмите PLAY, чтобы начать повторное сканирование.
 	SV	Tryck på Play om du vill genomföra en ny sökning nu.
@@ -83,8 +83,8 @@ PLUGIN_RESCAN_TIMER_NAME
 	HE	קוצב-זמן לסריקה חוזרת
 	HU	Újrakeresés időzítő
 	IT	Timer analisi
+	NB	Søkekontroll
 	NL	Timer voor opnieuw scannen
-	NO	Søkekontroll
 	PL	Timer ponownego przeszukiwania
 	RU	Таймер повторного сканирования
 	SV	Sökningstimer
@@ -101,8 +101,8 @@ PLUGIN_RESCAN_TIMER_SET
 	HE	הגדרת קוצב-זמן לסריקה חוזרת
 	HU	Állítsa be az újrakeresési időt
 	IT	Imposta ora analisi
+	NB	Angi tidspunkt for søk
 	NL	Tijd voor opnieuw scannen instellen
-	NO	Angi tidspunkt for søk
 	PL	Ustaw godzinę ponownego przeszukiwania
 	RU	Настроить время повторного сканирования
 	SV	Ange tid för ny sökning
@@ -118,8 +118,8 @@ PLUGIN_RESCAN_TIMER_SAVED
 	FR	Enregistrement de l'heure...
 	HU	Időt takarít meg...
 	IT	Salvataggio ora...
+	NB	Lagrer tidspunkt...
 	NL	Tijd wordt opgeslagen...
-	NO	Lagrer tidspunkt...
 	PL	Zapisywanie godziny...
 	RU	Сохранение времени...
 	SV	Sparar tid...
@@ -136,8 +136,8 @@ PLUGIN_RESCAN_TIMER_TURNING_OFF
 	HE	מכבה את קוצב-הזמן לסריקה חוזרת...
 	HU	Újrakeresési időzítő kikapcsolása...
 	IT	Disattivazione timer analisi...
+	NB	Slår av søkekontroll...
 	NL	Timer voor opnieuw scannen wordt uitgezet...
-	NO	Slår av søkekontroll...
 	PL	Wyłączanie timera ponownego przeszukiwania...
 	RU	Выключение таймера повторного сканирования...
 	SV	Avaktiverar sökningstimern...
@@ -154,8 +154,8 @@ PLUGIN_RESCAN_TIMER_TURNING_ON
 	HE	מפעיל את קוצב-הזמן לסריקה חוזרת...
 	HU	Újrakeresési időzítő bekapcsolása...
 	IT	Attivazione timer analisi...
+	NB	Slår på søkekontroll...
 	NL	Timer voor opnieuw scannen wordt aangezet...
-	NO	Slår på søkekontroll...
 	PL	Włączanie timera ponownego przeszukiwania...
 	RU	Включение таймера повторного сканирования...
 	SV	Aktiverar sökningstimern...
@@ -172,8 +172,8 @@ PLUGIN_RESCAN_TIMER_ON
 	HE	קוצב-זמן לסריקה חוזרת מופעל
 	HU	Újrakeresési időzítő BE
 	IT	Timer analisi ATTIVATO
+	NB	Søkekontroll er på
 	NL	Timer voor opnieuw scannen AAN
-	NO	Søkekontroll er på
 	PL	Timer ponownego przeszukiwania WŁĄCZONY
 	RU	Таймер повторного сканирования включен
 	SV	Sökningstimern är aktiverad.
@@ -190,8 +190,8 @@ PLUGIN_RESCAN_TIMER_DESC
 	HE	באפשרותך לבחור לאפשר סריקה חוזרת מתוזמנת של ספריית המוסיקה שלך מדי 24 שעות. קבע את השעה והגדר את 'קוצב-זמן לסריקה חוזרת' ל'מופעל' כדי להשתמש במאפיין זה.
 	HU	Dönthet úgy, hogy engedélyezi zenei könyvtárának 24 óránkénti ütemezett újraellenőrzését.  Állítsa be az időt, és állítsa az Újrakeresés időzítőt BE állásba a funkció használatához.
 	IT	È possibile impostare la pianificazione dell'analisi della libreria musicale ogni 24 ore. Per utilizzare questa funzione, è sufficiente impostare l'ora di esecuzione e attivare il timer dell'analisi.
+	NB	Du kan velge at musikkbiblioteket skal gjennomsøkes en gang i døgnet. Angi tidspunkt og slå Søkekontroll på for å bruke funksjonen.
 	NL	Je kunt jouw muziekcollectie elke 24 uur opnieuw laten scannen. Stel de tijd in en zet de 'Timer voor opnieuw scannen' op AAN om deze functie te gebruiken.
-	NO	Du kan velge at musikkbiblioteket skal gjennomsøkes en gang i døgnet. Angi tidspunkt og slå Søkekontroll på for å bruke funksjonen.
 	PL	Możliwe jest zezwolenie na zaplanowane ponowne przeszukiwanie biblioteki muzyki co 24 godziny. Aby korzystać z tej funkcji, ustaw godzinę i Timer ponownego przeszukiwania na WŁĄCZONY.
 	RU	Вы можете запланировать проверку своей медиатеки каждые 24 часа. Для этого укажите время и включите таймер повторного сканирования.
 	SV	Du kan välja att aktivera en schemalagd sökning av ditt musikbibliotek en gång per dygn. Ange ett klockslag och aktivera sökningstimern om du vill använda den här funktionen.
@@ -208,8 +208,8 @@ PLUGIN_RESCAN_TIMER_OFF
 	HE	קוצב-זמן לסריקה חוזרת כבוי
 	HU	Újrakeresési időzítő KI
 	IT	Timer analisi DISATTIVATO
+	NB	Søkekontroll er av
 	NL	Timer voor opnieuw scannen UIT
-	NO	Søkekontroll er av
 	PL	Timer ponownego przeszukiwania WYŁĄCZONY
 	RU	Таймер повторного сканирования выключен
 	SV	Sökningstimern är avaktiverad.
@@ -226,8 +226,8 @@ PLUGIN_RESCAN_TIMER_TYPE
 	HE	סוג סריקה חוזרת
 	HU	Újraolvasás típusa
 	IT	Tipo di analisi
+	NB	Søketype
 	NL	Type voor opnieuw scannen
-	NO	Søketype
 	PL	Typ ponownego przeszukiwania
 	RU	Тип повторного сканирования
 	SV	Typ av ny sökning
@@ -243,8 +243,8 @@ PLUGIN_RESCAN_PLEASE_WAIT
 	FR	Veuillez patienter
 	HU	Kérem, várjon
 	IT	Attendere
+	NB	Vent litt
 	NL	Even wachten
-	NO	Vent litt
 	PL	Czekaj
 	RU	Подождите
 	SV	Ett ögonblick...
