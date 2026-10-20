@@ -12,8 +12,9 @@ SLIMTRIS
 	HE	טטריס
 	HU	SlimTris
 	IT	SlimTris
+	NB	SlimTris
 	NL	SlimTris
-	NO	SlimTris
+	NN	SlimTris
 	PL	SlimTris
 	RU	SlimTris
 	SV	SlimTris
@@ -29,8 +30,9 @@ SLIMTRIS_DESC
 	FR	Jouez à Tetris sur la Squeezebox ou sur Transporter.
 	HU	Tetris a Squeezeboxhoz vagy a Transporterhez!
 	IT	Tetris per Squeezebox o Transporter
+	NB	Tetris for Squeezebox eller Transporter.
 	NL	Tetris voor je Squeezebox of Transporter!
-	NO	Tetris for Squeezebox eller Transporter.
+	NN	Tetris for Squeezebox eller Transporter.
 	PL	Tetris dla urządzenia Squeezebox lub Transporter!
 	RU	Тетрис для Squeezebox или Transporter!
 	SV	Tetris för Squeezebox eller Transporter!

@@ -183,6 +183,7 @@ sub Browse {
 				foreach my $language (extract_language_tags($lang)) {
 					$language = uc($language);
 					$language =~ s/-/_/;  # we're using zh_cn, the header says zh-cn
+					$language = Slim::Utils::Strings::canonicalLanguage($language);
 
 					if (defined $all_langs->{$language}) {
 						$strings = Slim::Utils::Strings::loadAdditional($language);

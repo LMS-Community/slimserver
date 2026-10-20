@@ -6,8 +6,9 @@ PLUGIN_EXTENDED_BROWSEMODES
 	EN	Additional Browse Modes
 	FR	Autres Modes de Navigation
 	HU	Kiterjesztett böngészési módok
+	NB	Ytterligere browse-modi
 	NL	Additionele Blader Modi
-	NO	Ytterligere browse-modi
+	NN	Fleire blamodusar
 	PL	Dodatkowe tryby przeglądania
 	SV	Ytterligare blädder-menyer
 
@@ -19,8 +20,9 @@ PLUGIN_EXTENDED_BROWSEMODES_DESC
 	EN	Create additional browse modes to browse your music library by Album Artists, Composers, select Genres and more.
 	FR	Créer d'autres modes de navigation dans la bibliothèque musicale comme Artistes de l'Album, Compositeur, Genre etc.
 	HU	Hozzon létre további böngészési módokat, hogy böngészhessen a zenei könyvtárában album előadói, zeneszerzői, műfajok és egyebek szerint.
+	NB	Lag ytterligere menyer for å bla i musikksamlingen via albumartister, komponister, utvalgte sjangre osv.
 	NL	Creëer additionele menu's om door jouw mediabibliotheek te bladeren, bijvoorbeeld via Albumartiest, Componisten, Genres, enz.
-	NO	Lag ytterligere menyer for å bla i musikksamlingen via albumartister, komponister, utvalgte sjangre osv.
+	NN	Lag fleire menyar for å bla i musikksamlinga via albumartistar, komponistar, utvalde sjangrar osv.
 	PL	Tworzenie dodatkowych trybów przeglądania twojej biblioteki internetowej, np. przeglądanie wg wykonawców albumów, kompozytorów, wybranych gatunków itp.
 	SV	Skapa ytterligare menyer för att bläddra is musiksamlingen via albumartister, kompositörer, valda genrer osv.
 
@@ -36,8 +38,9 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_ALBUMARTIST
 	HE	מבצע האלבום
 	HU	Album előadói
 	IT	Artista album
+	NB	Albumartists
 	NL	Albumartiest
-	NO	Albumartists
+	NN	Albumartistar
 	PL	Wykonawcy albumów
 	RU	Исполнитель альбома
 	SV	Albumartist
@@ -52,8 +55,9 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_COMPOSERS
 	FR	Compositeurs
 	HU	Zeneszerzők
 	IT	Compositori
+	NB	Komponister
 	NL	Componisten
-	NO	Komponister
+	NN	Komponistar
 	PL	Kompozytorzy
 	SV	Kompositörer
 
@@ -70,8 +74,9 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_PLAYLIST_FOLDER
 	HU	Műsorlista mappa
 	IT	Cartella delle playlist
 	JA	現在のプレイリストフォルダー
+	NB	Mappe for spillelister
 	NL	Afspeellijstmap
-	NO	Mappe for spillelister
+	NN	Mappe for spelelister
 	PL	Folder list odtwarzania
 	PT	Directoria com Playlists
 	RU	Папка "Плей-листы"
@@ -85,8 +90,9 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_CLASSICAL_MUSIC_BY_CONDUCTOR
 	DE	Klassische Musik nach Dirigent
 	EN	Classical Music by Conductor
 	HU	Klasszikus zene adott karmestertől
+	NB	Klassisk musikk etter dirigent
 	NL	Klassieke muziek van Dirigent
-	NO	Klassisk musikk etter dirigent
+	NN	Klassisk musikk etter dirigent
 	SV	Klassisk musik sorterad efter dirigent
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS
@@ -96,8 +102,9 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY_JAZZ_COMPOSERS
 	DE	Jazz Komponisten
 	EN	Jazz Composers
 	HU	Jazz zeneszerzők
+	NB	Jazzkomponister
 	NL	Jazz Componisten
-	NO	Jazzkomponister
+	NN	Jazzkomponistar
 	SV	Jazz kompositörer
 
 PLUGIN_EXTENDED_BROWSEMODES_ROLES
@@ -108,8 +115,9 @@ PLUGIN_EXTENDED_BROWSEMODES_ROLES
 	EN	Contributor Roles:
 	FR	Rôles des artistes :
 	HU	Közreműködői szerepek:
+	NB	Utøverroller:
 	NL	Rol van uitvoerende:
-	NO	Utøverroller:
+	NN	Utøvarroller:
 	PL	Role kontrybutorów:
 	SV	Artistroll
 
@@ -121,8 +129,9 @@ PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE
 	EN	Release type:
 	FR	Type de sortie :
 	HU	Kiadás típusa:
+	NB	Utgivelsestype:
 	NL	Release type:
-	NO	Utgivelsestype:
+	NN	Utgivingstype:
 	SV	Utgåvetyp
 
 PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT
@@ -133,8 +142,9 @@ PLUGIN_EXTENDED_BROWSEMODES_RELEASE_TYPE_HINT
 	EN	Release Types:
 	FR	Types de sorties :
 	HU	Kiadás típusai:
+	NB	Utgivelsestyper:
 	NL	Release typen:
-	NO	Utgivelsestyper:
+	NN	Utgivingstypar:
 	SV	Utgåvetyper
 
 PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
@@ -145,8 +155,9 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSE_BY
 	EN	Browse by:
 	FR	Parcourir par :
 	HU	Tallózás:
+	NB	Bla etter:
 	NL	Blader op:
-	NO	Bla etter:
+	NN	Bla etter:
 	PL	Przeglądaj wg:
 	SV	Bläddra efter:
 
@@ -158,8 +169,9 @@ PLUGIN_EXTENDED_BROWSEMODES_APPLY_TO
 	EN	Apply to:
 	FR	Appliquer à :
 	HU	Jelentkezés:
+	NB	Anvendes på:
 	NL	Toepassen op:
-	NO	Anvendes på:
+	NN	Gjeld for:
 	PL	Zastosuj do:
 	SV	Använd på:
 
@@ -175,8 +187,9 @@ PLUGIN_EXTENDED_BROWSEMODES_COMPILATIONS
 	HE	אוספים
 	HU	Válogatások
 	IT	Compilation
+	NB	Samlinger
 	NL	Verzamelingen
-	NO	Samlinger
+	NN	Samlingar
 	PL	Kompilacje
 	RU	Сборки
 	SV	Samlingar
@@ -190,8 +203,9 @@ PLUGIN_EXTENDED_BROWSEMODES_BROWSEFS
 	EN	Disks and folders
 	FR	Disques et dossiers
 	HU	Lemezek és mappák
+	NB	Disker og mapper
 	NL	Schijven en mappen
-	NO	Disker og mapper
+	NN	Diskar og mapper
 	PL	Dyski i foldery
 	SV	Filer och mappar
 
@@ -203,8 +217,9 @@ PLUGIN_EXTENDED_BROWSEMODES_CONTRIBUTOR_HINT
 	EN	Contributor roles:
 	FR	Rôles des artistes :
 	HU	Közreműködői szerepek:
+	NB	Utøverroller:
 	NL	Rollen van uitvoerende:
-	NO	Utøverroller:
+	NN	Utøvarroller:
 	PL	Role kontrybutorów:
 	SV	Artistroll:
 
@@ -216,8 +231,9 @@ PLUGIN_EXTENDED_BROWSEMODES_ALL_LIBRARY
 	EN	All Library (Default)
 	FR	Toutes les bibliothèques (par défaut)
 	HU	Összes könyvtár (alapértelmezett)
+	NB	Hele musikksamlingen (Standard)
 	NL	Hele mediabibliotheek (standaard)
-	NO	Hele musikksamlingen (Standard)
+	NN	Heile musikksamlinga (standard)
 	PL	Cała biblioteka (domyślnie)
 	SV	Hela musiksamlingen (standard)
 
@@ -229,8 +245,9 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED
 	EN	Hide lossy duplicates if lossless track is available
 	FR	Masquer les doublons compressés avec perte si un fichier sans perte est disponible
 	HU	A veszteséges változatok elrejtése, ha elérhető veszteségmentes változat
+	NB	Gjem lossy duplikater dersom det finnes lossless-versjoner.
 	NL	Verberg lossy versie als een lossless versie beschikbaar is.
-	NO	Gjem lossy duplikater dersom det finnes lossless-versjoner.
+	NN	Gøym lossy-duplikat viss det finst lossless-versjonar.
 	PL	Ukryj duplikaty zapisane ze stratną kompresją, jeśli te same utwory są dostęne w bezstratnej jakości
 	SV	Dölj förlustbehäftade dubbletter om det finns förlustfria versioner.
 
@@ -242,8 +259,9 @@ PLUGIN_EXTENDED_BROWSEMODES_LOSSLESS_PREFERRED_DESC
 	EN	Create a library view which tries to suppress duplicate tracks by hiding lossy versions if a lossless version of the same recording is available. This is particularly helpful if you keep a collection of tracks for use at home (lossless) and on the road (lossy).
 	FR	Créer une bibliothèque thématique qui essaie de supprimer les pistes en double en masquant les versions avec perte si une version sans perte du même enregistrement est disponible. Ceci est particulièrement utile si vous avez une collection de morceaux à utiliser à la maison (sans perte) et sur la route (avec perte).
 	HU	Hozzon létre egy könyvtári nézetet, amely megpróbálja elrejteni az ismétlődő műsorszámokat a veszteséges verziók elrejtésével, ha ugyanannak a felvételnek veszteségmentes változata is elérhető. Ez különösen akkor hasznos, ha otthoni (veszteségmentes) és útközbeni (veszteséges) pályagyűjteményt tart.
+	NB	Lag en bibliotekvisning som forsøker å gjemme duplikatspor ved å gjemme komprimerte versjoner dersom tapsfri-versjoner av samme innspilling er tilgjengelig. Dette er særlig nyttig hvis du har én samlig av filer til hjemmeavspilling (tapsfri) og én til å spille av på farten (komprimert).
 	NL	Maak een deelcollectie die probeert om lossy versies te verbergen als van dezelfde opname ook een lossless versie beschikbaar is. Dit is bijvoorbeeld handig wanneer je een collectie nummers hebt voor thuis (lossless) en voor onderweg (lossy).
-	NO	Lag en bibliotekvisning som forsøker å gjemme duplikatspor ved å gjemme komprimerte versjoner dersom tapsfri-versjoner av samme innspilling er tilgjengelig. Dette er særlig nyttig hvis du har én samlig av filer til hjemmeavspilling (tapsfri) og én til å spille av på farten (komprimert).
+	NN	Lag ei bibliotekvising som prøver å gøyme duplikatspor ved å gøyme komprimerte versjonar viss tapsfrie versjonar av same innspeling finst. Dette er særleg nyttig viss du har éi samling filer til avspeling heime (tapsfri) og éi til å spele av på farten (komprimert).
 	PL	Utwórz bibliotekę tematyczną, która postara się ukryć duplikaty utworów w przypadku, gdy są dostępne zarówno w stratnej i bezstratnej jakości. Ta opcja może być przydatna w przypadku, gdy chcesz rozdzielić bibliotekę na utwory do użycia lokalnego (bezstratna kompresja) i zdalnego (stratna kompresja).
 	SV	Skapa ett delbibliotek som inte visar förlustbehäftade dubbletter när samma spår finns i en förlustfri version. Detta är speciellt användbart om du har skapat förlustbehäftade kopior av din musik för att använda i mobila apparater.
 
@@ -259,8 +277,9 @@ PLUGIN_EXTENDED_BROWSEMODES_RANDOM_ALBUMS
 	HE	אלבומים בסדר אקראי
 	HU	Véletlen albumok
 	IT	Album casuali
+	NB	Tilfeldige album
 	NL	Willekeurige Albums
-	NO	Tilfeldige album
+	NN	Tilfeldige album
 	PL	Losowe albumy
 	RU	Произвольные альбомы
 	SV	Slumpmässigt valda album
@@ -273,8 +292,9 @@ PLUGIN_EXTENDED_BROWSEMODES_RECENTLY_CHANGED
 	EN	Recently Updated Albums
 	FR	Albums modifiés récemment
 	HU	Nemrég frissített albumok
+	NB	Nylig oppdaterte album
 	NL	Recent Gewijzigde Albums
-	NO	Nylig oppdaterte album
+	NN	Nyleg oppdaterte album
 	SV	Nyligen ändrade album
 
 PLUGIN_EXTENDED_BROWSEMODES_POPULAR_ALBUMS
@@ -283,8 +303,9 @@ PLUGIN_EXTENDED_BROWSEMODES_POPULAR_ALBUMS
 	DE	Populäre Alben
 	EN	Popular Albums
 	FR	Albums les plus écoutés récemment
+	NB	Populære album
 	NL	Recent meest afgespeelde albums
-	NO	Populære album
+	NN	Populære album
 	SV	Populära album
 
 PLUGIN_EXTENDED_BROWSEMODES_TOP_ARTISTS
@@ -293,8 +314,9 @@ PLUGIN_EXTENDED_BROWSEMODES_TOP_ARTISTS
 	DE	Populäre Interpreten
 	EN	Popular Artists
 	FR	Artistes les plus populaires
+	NB	Populære artister
 	NL	Populairste artiesten
-	NO	Populære artister
+	NN	Populære artistar
 	SV	Populära artister
 
 PLUGIN_EXTENDED_BROWSEMODES_NEW_ARTISTS
@@ -303,8 +325,9 @@ PLUGIN_EXTENDED_BROWSEMODES_NEW_ARTISTS
 	DE	Neue Interpreten
 	EN	New Artists
 	FR	Nouveaux artistes
+	NB	Nye artister
 	NL	Nieuwe artiesten
-	NO	Nye artister
+	NN	Nye artistar
 	SV	Nya artister
 
 PLUGIN_EXTENDED_BROWSEMODES_ARTISTS_RECENTLY_PLAYED
@@ -313,8 +336,9 @@ PLUGIN_EXTENDED_BROWSEMODES_ARTISTS_RECENTLY_PLAYED
 	DE	Kürzlich gespielte Interpreten
 	EN	Recently Played Artists
 	FR	Artistes récemment écoutés
+	NB	Nylig spilte artister
 	NL	Onlangs afgespeelde artiesten
-	NO	Nylig spilte artister
+	NN	Nyleg spelte artistar
 	SV	Nyligen spelade artister
 
 PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
@@ -328,8 +352,9 @@ PLUGIN_EXTENDED_BROWSEMODES_TOP_TRACKS
 	FR	Morceaux les plus écoutés
 	HU	Legjobb számok
 	IT	Brani più ascoltati
+	NB	Mest populære spor
 	NL	Topnummers
-	NO	Mest populære spor
+	NN	Mest populære spor
 	PL	Najczęściej słuchane
 	RU	Лучшие дорожки
 	SV	Toppspår
@@ -342,8 +367,9 @@ PLUGIN_EXTENDED_BROWSEMODES_FLOP_TRACKS
 	EN	Flop Tracks
 	FR	Morceaux les moins écoutés
 	HU	Flop zeneszámok
+	NB	Minst avspilte spor
 	NL	Flopnummers
-	NO	Minst avspilte spor
+	NN	Minst spelte spor
 	PL	Najrzadziej słuchane
 	SV	Floppspår
 
@@ -355,8 +381,9 @@ PLUGIN_EXTENDED_BROWSEMODES_USE_X
 	EN	Use '%s'
 	FR	Utiliser '%s'
 	HU	'%s' használata
+	NB	Bruk '%s'
 	NL	Gebruik '%s'
-	NO	Bruk '%s'
+	NN	Bruk '%s'
 	PL	Przełącz na '%s'
 	SV	Använd '%s'
 
@@ -368,8 +395,9 @@ PLUGIN_EXTENDED_BROWSEMODES_USING_X
 	EN	Now using '%s'
 	FR	Utilise maintenant '%s'
 	HU	Most a '%s' használatával
+	NB	Bruker nå '%s'
 	NL	Gebruikt nu '%s'
-	NO	Bruker nå '%s'
+	NN	Brukar no '%s'
 	PL	Przełączono na '%s'
 	SV	Används nu '%s'
 
@@ -381,8 +409,9 @@ PLUGIN_EXTENDED_BROWSEMODES_DELETED
 	EN	Library View Deleted
 	FR	Bibliothèque thématique supprimée
 	HU	Könyvtári nézet törölve
+	NB	Delbibliotek slettet
 	NL	Deelcollectie verwijderd
-	NO	Delbibliotek slettet
+	NN	Delbiblioteket er sletta
 	PL	Biblioteka tematyczna została usunięta
 	SV	Delbibliotek suddat
 
@@ -394,8 +423,9 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS
 	EN	Audiobooks
 	FR	Livres audio
 	HU	Hangoskönyvek
+	NB	Lydbøker
 	NL	Luisterboeken
-	NO	Lydbøker
+	NN	Lydbøker
 	SV	Ljudböcker
 
 PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
@@ -406,8 +436,9 @@ PLUGIN_EXTENDED_BROWSEMODES_NO_AUDIOBOOKS
 	EN	All Music without Audiobooks
 	FR	Toute la musique sans les livres audio
 	HU	Minden zene hangoskönyvek nélkül
+	NB	All musikk uten lydbøker
 	NL	Alle muziek zonder luisterboeken
-	NO	All musikk uten lydbøker
+	NN	All musikk uten lydbøker
 	SV	All musik förutom ljudböcker
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
@@ -418,8 +449,9 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOKS_DESC
 	EN	Create an Audiobooks library view and a view without audio books based on the following genres:
 	FR	Créer une bibliothèque thématique de livres audio et une bibliothèque sans les livres audio en fonction des genres suivants :
 	HU	Hozzon létre egy Hangoskönyvek könyvtárnézetet és egy hangoskönyvek nélküli nézetet a következő műfajok alapján:
+	NB	Lag en bibliotekvisning med lydbøker og en visning uten lydbøker basert på disse sjangerne:
 	NL	Maak een luisterboek weergave en een weergave zonder luisterboeken gebaseerd op de volgende genres:
-	NO	Lag en bibliotekvisning med lydbøker og en visning uten lydbøker basert på disse sjangerne:
+	NN	Lag ei bibliotekvising med lydbøker og ei vising utan lydbøker ut frå desse sjangrane:
 	SV	Skapa ett "delbibliotek för ljudböcker" och ett "Allt utom ljudböcker delbibliotek" baserat på följande genrer:
 
 PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
@@ -430,8 +462,9 @@ PLUGIN_EXTENDED_BROWSEMODES_AUDIOBOOK_GENRES
 	EN	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast
 	FR	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Livre audio, Livres audio, Parlé, Discours
 	HU	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Livre audio, Livres audio, Parlé, Discours
+	NB	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Lydbok, Lydbøker, Opplesning, Tale, Komedie, Kabaret, Humor, Podkast
 	NL	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Luisterboeken
-	NO	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Lydbok, Lydbøker, Opplesning, Tale, Komedie, Kabaret, Humor, Podkast
+	NN	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Lydbok, Lydbøker, Opplesning, Tale, Komedie, Kabaret, Humor, Podkast
 	SV	Audiobook, Audiobooks, Spoken, Speech, Comedy, Spoken & Audio, Books & Spoken, Cabaret, Humour, Podcast, Talat, Tal, Ljudbok, Hörbok, Audiobok
 
 PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
@@ -442,7 +475,8 @@ PLUGIN_EXTENDED_BROWSEMODES_AUTHORS
 	EN	Authors
 	FR	Auteurs
 	HU	Szerzők
+	NB	Forfattere
 	NL	Schrijvers
-	NO	Forfattere
+	NN	Forfattarar
 	SV	Författare
 

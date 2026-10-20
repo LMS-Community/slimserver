@@ -12,8 +12,9 @@ PLUGIN_SCREENSAVER_VISUALIZER
 	HE	שומר מסך מייצג ויזואלי
 	HU	Vizualizáló Képernyővédő
 	IT	Screen saver con visualizzatore
+	NB	Skjermsparer med effektvisning
 	NL	Visualisatie screensaver
-	NO	Skjermsparer med effektvisning
+	NN	Skjermsparar med effektvising
 	PL	Wygaszacz ekranu Wizualizacja
 	RU	Экранная заставка "Визуализатор"
 	SV	Skärmsläckare med mätare
@@ -30,8 +31,9 @@ PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	HE	יש צורך בנגן Squeezebox2
 	HU	Squeezebox2 szükséges
 	IT	È richiesto Squeezebox2
+	NB	Krever Squeezebox2
 	NL	Vereist Squeezebox2
-	NO	Krever Squeezebox2
+	NN	Krev Squeezebox2
 	PL	Wymaga urządzenia Squeezebox2
 	RU	Требуется Squeezebox2
 	SV	Kräver Squeezebox 2
@@ -48,8 +50,9 @@ PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	HE	ברירת מחדל
 	HU	Alapértelmezett képernyővédő
 	IT	Screen saver predefinito
+	NB	Standard skjermsparer
 	NL	Standaard screensaver
-	NO	Standard skjermsparer
+	NN	Standard skjermsparar
 	PL	Domyślny wygaszacz ekranu
 	RU	Экранная заставка по умолчанию
 	SV	Standardskärmsläckare

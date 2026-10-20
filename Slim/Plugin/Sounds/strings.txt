@@ -9,8 +9,9 @@ PLUGIN_SOUNDS_MODULE_NAME
 	FR	Effets sonores
 	HU	Hangok és effektusok
 	IT	Suoni ed effetti
+	NB	Lyder og effekter
 	NL	Geluiden en Effecten
-	NO	Lyder og effekter
+	NN	Lydar og effektar
 	PL	Dźwięki i efekty
 	RU	Звуки и эффекты
 	SV	Ljud och effekter
@@ -26,8 +27,9 @@ PLUGIN_SOUNDS_ERROR
 	FR	Erreur d'effets sonores
 	HU	Hangok és effektusok hiba
 	IT	Errore di Suoni ed effetti
+	NB	Feil med lyder og effekter
 	NL	Fout in Geluiden en effecten
-	NO	Feil med lyder og effekter
+	NN	Feil med lydar og effektar
 	PL	Błąd dźwięków i efektów
 	RU	Звуки и эффекты: ошибка
 	SV	Ljud och effekter: fel
@@ -38,8 +40,9 @@ PLUGIN_SOUNDS_ALARMS
 	DE	Weckertöne
 	EN	Alarm Sounds
 	FR	Sons d'alarme
+	NB	Alarmlyder
 	NL	Alarmgeluiden
-	NO	Alarmlyder
+	NN	Alarmlydar
 	SV	Alarmljud
 
 PLUGIN_SOUNDS_EFFECTS
@@ -53,8 +56,9 @@ PLUGIN_SOUNDS_EFFECTS
 	FR	Effets sonores
 	HU	Hangeffektusok
 	IT	Effetti sonori
+	NB	Lydeffekter
 	NL	Geluidseffecten
-	NO	Lydeffekter
+	NN	Lydeffektar
 	PL	Efekty dźwiękowe
 	RU	Звуковые эффекты
 	SV	Ljudeffekter
@@ -70,8 +74,9 @@ PLUGIN_SOUNDS_NATURAL
 	FR	Sons naturels
 	HU	Természetes hangok
 	IT	Suoni della natura
+	NB	Naturlyder
 	NL	Natuurlijke geluiden
-	NO	Naturlyder
+	NN	Naturlydar
 	PL	Dźwięki natury
 	RU	Звуки природы
 	SV	Naturljud
@@ -87,8 +92,9 @@ PLUGIN_SOUNDS_MUSICAL
 	FR	Sons musicaux
 	HU	Zenei hangok
 	IT	Suoni musicali
+	NB	Musikksnutter
 	NL	Muziekgeluiden
-	NO	Musikksnutter
+	NN	Musikksnutter
 	PL	Dźwięki muzyczne
 	RU	Музыкальные звукозаписи
 	SV	Musikljud
@@ -104,8 +110,9 @@ PLUGIN_SOUNDS_BARN_FIRE
 	FR	Grange en feu
 	HU	Pajtatűz
 	IT	Fienile in fiamme
+	NB	Låvebrann
 	NL	Schuurbrand
-	NO	Låvebrann
+	NN	Løebrann
 	PL	Barn Fire
 	RU	Сарай в огне
 	SV	Ladan brinner
@@ -121,8 +128,9 @@ PLUGIN_SOUNDS_BLUE_HENRY
 	FR	Blue Henry
 	HU	Kék Henrik
 	IT	Aspirapolvere
+	NB	Blue Henry
 	NL	Blue Henry
-	NO	Blue Henry
+	NN	Blue Henry
 	PL	Blue Henry
 	RU	Blue Henry
 	SV	Blue Henry
@@ -138,8 +146,9 @@ PLUGIN_SOUNDS_BLUE_ORCHID
 	FR	Blue Orchid
 	HU	Kék orchidea
 	IT	Orchidea blu
+	NB	Blue Orchid
 	NL	Blauwe orchidee
-	NO	Blue Orchid
+	NN	Blue Orchid
 	PL	Błękitna orchidea
 	RU	Синяя орхидея
 	SV	Blå Orchidé
@@ -155,8 +164,9 @@ PLUGIN_SOUNDS_BONGO_TECH
 	FR	Bongo Tech
 	HU	Bongo Tech
 	IT	Bongo
+	NB	Bongo Tech
 	NL	Bongo Tech
-	NO	Bongo Tech
+	NN	Bongo Tech
 	PL	Bongo Tech
 	RU	Bongo Tech
 	SV	Bongo Tech
@@ -172,8 +182,9 @@ PLUGIN_SOUNDS_BRAINFLUID
 	FR	Liquide cérébral
 	HU	Agymenés
 	IT	Fluido cerebrale
+	NB	Hjernevæske
 	NL	Hersenvloeistof
-	NO	Hjernevæske
+	NN	Hjernevæske
 	PL	Brainfluid
 	RU	Мозговая жидкость
 	SV	Hjärnvätska
@@ -189,8 +200,9 @@ PLUGIN_SOUNDS_BUTTERY
 	FR	Butyreux
 	HU	Vajas
 	IT	Buttery
+	NB	Buttery
 	NL	Kantine
-	NO	Buttery
+	NN	Buttery
 	PL	Buttery
 	RU	Архив
 	SV	Buttery
@@ -206,8 +218,9 @@ PLUGIN_SOUNDS_CAPPUCINO
 	FR	Cappucino
 	HU	Cappucino
 	IT	Cappuccino
+	NB	Cappucino
 	NL	Cappucino
-	NO	Cappucino
+	NN	Cappucino
 	PL	Cappucino
 	RU	Капучино
 	SV	Cappuccino
@@ -223,8 +236,9 @@ PLUGIN_SOUNDS_COOL_CATS
 	FR	Chats
 	HU	Cool Cats
 	IT	Cool Cats
+	NB	Cool Cats
 	NL	Cool Cats
-	NO	Cool Cats
+	NN	Cool Cats
 	PL	Cool Cats
 	RU	Счастливые коты
 	SV	Cool Cats
@@ -240,8 +254,9 @@ PLUGIN_SOUNDS_CORNFLOWER
 	FR	Bleuet
 	HU	Búzavirág
 	IT	Fiordaliso
+	NB	Kornblomst
 	NL	Cornflower
-	NO	Kornblomst
+	NN	Kornblomst
 	PL	Bławatek
 	RU	Василек
 	SV	Cornflower
@@ -257,8 +272,9 @@ PLUGIN_SOUNDS_CRYSTALIZE
 	FR	Cristallisation
 	HU	Kristályos
 	IT	Cristallizzazione
+	NB	Crystalize
 	NL	Crystalize
-	NO	Crystalize
+	NN	Crystalize
 	PL	Krystalizacja
 	RU	Кристаллизация
 	SV	Crystalize
@@ -274,8 +290,9 @@ PLUGIN_SOUNDS_EXPERIMENTAL
 	FR	Expérimental
 	HU	Kísérleti
 	IT	Sperimentale
+	NB	Eksperimentell
 	NL	Experimenteel
-	NO	Eksperimentell
+	NN	Eksperimentell
 	PL	Eksperymentalne
 	RU	Экспериментальный
 	SV	Experimental
@@ -291,8 +308,9 @@ PLUGIN_SOUNDS_HIBISCUS
 	FR	Hibiscus
 	HU	Hibiszkusz
 	IT	Ibisco
+	NB	Hibiscus
 	NL	Hibiscus
-	NO	Hibiscus
+	NN	Hibiscus
 	PL	Hibiskus
 	RU	Гибискус
 	SV	Hibiscus
@@ -308,8 +326,9 @@ PLUGIN_SOUNDS_JUNK_ARMOR
 	FR	Armure
 	HU	Junk Armor
 	IT	Junk Armor
+	NB	Søppelrustning
 	NL	Junk Armor
-	NO	Søppelrustning
+	NN	Skraprustning
 	PL	Junk Armor
 	RU	Ржавые доспехи
 	SV	Skrotrustning
@@ -325,8 +344,9 @@ PLUGIN_SOUNDS_MELANCHOLY_DAY
 	FR	Journée mélancolique
 	HU	Melankolikus nap
 	IT	Giorno malinconico
+	NB	Melankolsk dag
 	NL	Melancholy Day
-	NO	Melankolsk dag
+	NN	Melankolsk dag
 	PL	Melancholy Day
 	RU	Грустный день
 	SV	Melankolisk dag
@@ -342,8 +362,9 @@ PLUGIN_SOUNDS_SLICKBABY
 	FR	Slickbaby
 	HU	Slickbaby
 	IT	Slickbaby
+	NB	Slickbaby
 	NL	Slickbaby
-	NO	Slickbaby
+	NN	Slickbaby
 	PL	Slickbaby
 	RU	Ловкая малышка
 	SV	Slick baby
@@ -359,8 +380,9 @@ PLUGIN_SOUNDS_SLOG_IT_OUT
 	FR	Slog It Out
 	HU	Slog It Out
 	IT	Discussione animata
+	NB	Slog It Out
 	NL	Slog It Out
-	NO	Slog It Out
+	NN	Slog It Out
 	PL	Slog It Out
 	RU	До победного конца
 	SV	Slog It Out
@@ -376,8 +398,9 @@ PLUGIN_SOUNDS_SOFT_HORIZON
 	FR	Soft Horizon
 	HU	Lágy horizont
 	IT	Soft Horizon
+	NB	Soft Horizon
 	NL	Zachte horizon
-	NO	Soft Horizon
+	NN	Soft Horizon
 	PL	Soft Horizon
 	RU	Горизонт
 	SV	Soft Horizon
@@ -393,8 +416,9 @@ PLUGIN_SOUNDS_SRI_LAMA
 	FR	Sri Lama
 	HU	Sri Lama
 	IT	Sri Lama
+	NB	Sri Lama
 	NL	Sri Lama
-	NO	Sri Lama
+	NN	Sri Lama
 	PL	Sri Lama
 	RU	Шри Лама
 	SV	Sri Lama
@@ -410,8 +434,9 @@ PLUGIN_SOUNDS_STARGAZER
 	FR	Stargazer
 	HU	Stargazer
 	IT	Sognatore
+	NB	Stargazer
 	NL	Sterrenkijker
-	NO	Stargazer
+	NN	Stargazer
 	PL	Astrolog
 	RU	Звездочет
 	SV	Stargazer
@@ -427,8 +452,9 @@ PLUGIN_SOUNDS_SUPER_CHEESE
 	FR	Super Cheese
 	HU	Super Cheese
 	IT	Super Cheese
+	NB	Super Cheese
 	NL	Super Cheese
-	NO	Super Cheese
+	NN	Super Cheese
 	PL	Super Cheese
 	RU	Суперсыр
 	SV	Super Cheese
@@ -444,8 +470,9 @@ PLUGIN_SOUNDS_TAIL_HONKER
 	FR	Tail Honker
 	HU	Tail Honker
 	IT	Tail Honker
+	NB	Tuting
 	NL	Tail Honker
-	NO	Tuting
+	NN	Tuting
 	PL	Tail Honker
 	RU	Клаксон
 	SV	Tail Honker
@@ -461,8 +488,9 @@ PLUGIN_SOUNDS_TONGUE_CHEEK
 	FR	Claquement de langue
 	HU	Tongue & Cheek
 	IT	Tongue & Cheek
+	NB	Tongue & Cheek
 	NL	Tongue & Cheek
-	NO	Tongue & Cheek
+	NN	Tongue & Cheek
 	PL	Ironia
 	RU	Иронический
 	SV	Tongue & Cheek
@@ -478,8 +506,9 @@ PLUGIN_SOUNDS_TRANSLAB
 	FR	TransLab
 	HU	TransLab
 	IT	TransLab
+	NB	TransLab
 	NL	TransLab
-	NO	TransLab
+	NN	TransLab
 	PL	TransLab
 	RU	TransLab
 	SV	TransLab
@@ -495,8 +524,9 @@ PLUGIN_SOUNDS_TWEEDLEDUM
 	FR	Tweedledum
 	HU	Tweedledum
 	IT	Tweedledum
+	NB	Tweedledum
 	NL	Tweedledum
-	NO	Tweedledum
+	NN	Tweedledum
 	PL	Tweedledum
 	RU	Труляля
 	SV	Tweedledum
@@ -512,8 +542,9 @@ PLUGIN_SOUNDS_TWENSA
 	FR	Twensa
 	HU	Twensa
 	IT	Twensa
+	NB	Twensa
 	NL	Twensa
-	NO	Twensa
+	NN	Twensa
 	PL	Twensa
 	RU	Twensa
 	SV	Twensa
@@ -529,8 +560,9 @@ PLUGIN_SOUNDS_BABBLING_BROOK
 	FR	Cascade ruisselante
 	HU	Babbling Brook
 	IT	Gorgoglio di ruscello
+	NB	Klukkende bekk
 	NL	Kabbelend beekje
-	NO	Klukkende bekk
+	NN	Klukkande bekk
 	PL	Babbling Brook
 	RU	Журчащий ручей
 	SV	Porlande bäck
@@ -546,8 +578,9 @@ PLUGIN_SOUNDS_BUBBLES
 	FR	Bulles
 	HU	Bubbles
 	IT	Bollicine
+	NB	Bobler
 	NL	Luchtbellen
-	NO	Bobler
+	NN	Bobler
 	PL	Bąbelki
 	RU	Пузырьки
 	SV	Bubblor
@@ -563,8 +596,9 @@ PLUGIN_SOUNDS_CRICKETS
 	FR	Grillons
 	HU	Tücskök
 	IT	Grilli
+	NB	Gresshopper
 	NL	Crickets
-	NO	Gresshopper
+	NN	Grashopper
 	PL	Świerszcze
 	RU	Сверчки
 	SV	Syrsor
@@ -580,8 +614,9 @@ PLUGIN_SOUNDS_FIRE
 	FR	Fire (Feu)
 	HU	Tűz
 	IT	Fuoco
+	NB	Brann
 	NL	Brand
-	NO	Brann
+	NN	Brann
 	PL	Ogień
 	RU	Огонь
 	SV	Eld
@@ -597,8 +632,9 @@ PLUGIN_SOUNDS_HARD_RAIN_THUNDER
 	FR	Trombes de pluie et tonnerre
 	HU	Kemény eső és mennydörgés
 	IT	Pioggia battente e tuoni
+	NB	Kraftig regn og torden
 	NL	Hard Rain & Thunder
-	NO	Kraftig regn og torden
+	NN	Kraftig regn og torden
 	PL	Ulewa i burza
 	RU	Ливень и гром
 	SV	Ösregn och åska
@@ -614,8 +650,9 @@ PLUGIN_SOUNDS_HEARTBEAT_FAST
 	FR	Battements de cœur rapides
 	HU	Gyors szívverés
 	IT	Battito cardiaco veloce
+	NB	Raske hjerteslag
 	NL	Snelle hartklopping
-	NO	Raske hjerteslag
+	NN	Raske hjerteslag
 	PL	Szybki puls
 	RU	Биение сердца (быстрое)
 	SV	Snabba hjärtslag
@@ -631,8 +668,9 @@ PLUGIN_SOUNDS_HEARTBEAT
 	FR	Battements de cœur
 	HU	Szívverés
 	IT	Battito cardiaco
+	NB	Hjerteslag
 	NL	Hartslag
-	NO	Hjerteslag
+	NN	Hjerteslag
 	PL	Puls
 	RU	Биение сердца
 	SV	Hjärtslag
@@ -648,8 +686,9 @@ PLUGIN_SOUNDS_HORSE_WALKING
 	FR	Cheval au pas
 	HU	Patadobogás
 	IT	Zoccoli di cavallo
+	NB	Lyden av hestehover
 	NL	Lopend paard
-	NO	Lyden av hestehover
+	NN	Lyden av hestehovar
 	PL	Tętent konia
 	RU	Конная прогулка
 	SV	Häst i skritt
@@ -665,8 +704,9 @@ PLUGIN_SOUNDS_HORSE_WHINNY
 	FR	Faible hennissement
 	HU	Ló nyerítés
 	IT	Nitrito di cavallo
+	NB	Hestevrinsk
 	NL	Gehinnik
-	NO	Hestevrinsk
+	NN	Hestekneggjing
 	PL	Horse Whinny
 	RU	Лошадка Винни
 	SV	Hästgnägg
@@ -682,8 +722,9 @@ PLUGIN_SOUNDS_LAPPING_WAVES
 	FR	Clapotement de vagues
 	HU	Hullámok
 	IT	Sciabordio di onde
+	NB	Skvalpende bølger
 	NL	Gebabbel van de golven
-	NO	Skvalpende bølger
+	NN	Skvalpande bølgjer
 	PL	Przychodzące fale
 	RU	Плеск волн
 	SV	Skvalpande vågor
@@ -699,8 +740,9 @@ PLUGIN_SOUNDS_MEADOWLARK
 	FR	Meadowlark
 	HU	Meadowlark
 	IT	Sturnella
+	NB	Lerke
 	NL	Meadowlark
-	NO	Lerke
+	NN	Lerke
 	PL	Meadowlark
 	RU	Жаворонок
 	SV	Stare
@@ -716,8 +758,9 @@ PLUGIN_SOUNDS_OCEAN_SURF
 	FR	Océan
 	HU	Óceáni szörfözés
 	IT	Onde dell'oceano
+	NB	Dønninger
 	NL	Oceaansurf
-	NO	Dønninger
+	NN	Dønninger
 	PL	Surfowanie po oceanie
 	RU	Океанский прибой
 	SV	Surfning
@@ -733,8 +776,9 @@ PLUGIN_SOUNDS_RAIN_THUNDER
 	FR	Pluie et tonnerre
 	HU	Eső és mennydörgés
 	IT	Pioggia e tuoni
+	NB	Regn og torden
 	NL	Regen en onweer
-	NO	Regn og torden
+	NN	Regn og torden
 	PL	Deszcz i burza
 	RU	Дождь и гром
 	SV	Regn och åska
@@ -750,8 +794,9 @@ PLUGIN_SOUNDS_RAIN_OUTSIDE
 	FR	Pluie dehors
 	HU	Kinti eső
 	IT	Pioggia
+	NB	Regn ute
 	NL	Regen buiten
-	NO	Regn ute
+	NN	Regn ute
 	PL	Padający deszcz
 	RU	Дождь за окном
 	SV	Regn utanför
@@ -767,8 +812,9 @@ PLUGIN_SOUNDS_RAIN_SPLASHING
 	FR	Pluie
 	HU	Fröccsenő eső
 	IT	Pioggia battente
+	NB	Regndråper
 	NL	Spattende regen
-	NO	Regndråper
+	NN	Regndropar
 	PL	Krople deszczu
 	RU	Шум дождя
 	SV	Regn
@@ -784,8 +830,9 @@ PLUGIN_SOUNDS_RIVER
 	FR	Rivière
 	HU	Folyó
 	IT	Fiume
+	NB	Elv
 	NL	Rivier
-	NO	Elv
+	NN	Elv
 	PL	Rzeka
 	RU	Река
 	SV	Flod
@@ -801,8 +848,9 @@ PLUGIN_SOUNDS_ROBINS
 	FR	Rouges-gorges
 	HU	Robins
 	IT	Pettirossi
+	NB	Meiser
 	NL	Roodborstjes
-	NO	Meiser
+	NN	Meiser
 	PL	Robins
 	RU	Малиновки
 	SV	Rödhakar
@@ -818,8 +866,9 @@ PLUGIN_SOUNDS_ROOSTER_CROW
 	FR	Chant du coq
 	HU	Kakas
 	IT	Canto del gallo
+	NB	Hanegal
 	NL	Hanengekraai
-	NO	Hanegal
+	NN	Hanegal
 	PL	Pianie koguta
 	RU	Кукареканье петуха
 	SV	Tuppgalande
@@ -835,8 +884,9 @@ PLUGIN_SOUNDS_RURAL
 	FR	Rural
 	HU	Vidéki
 	IT	Rurale
+	NB	Landlig
 	NL	Landelijk
-	NO	Landlig
+	NN	Landlig
 	PL	Wiejski
 	RU	Деревня
 	SV	Landsbyggd
@@ -852,8 +902,9 @@ PLUGIN_SOUNDS_SHORE_SEAGULLS
 	FR	Mouettes
 	HU	Part és sirályok
 	IT	Mare e gabbiani
+	NB	Kyst og måker
 	NL	Kust en zeemeeuwen
-	NO	Kyst og måker
+	NN	Kyst og måsar
 	PL	Brzeg morza i mewy
 	RU	Чайки на побережье
 	SV	Strand med måsar
@@ -869,8 +920,9 @@ PLUGIN_SOUNDS_SPRING_PEEPERS
 	FR	Grenouilles
 	HU	Tavaszi kukucskálók
 	IT	Rane
+	NB	Småfugler
 	NL	Kruisboomkikkers
-	NO	Småfugler
+	NN	Småfuglar
 	PL	Spring Peepers
 	RU	Прибрежная квакша
 	SV	Grodor
@@ -886,8 +938,9 @@ PLUGIN_SOUNDS_STREAM_BIRDS
 	FR	Ruisseau et oiseaux
 	HU	Patak és madarak
 	IT	Ruscello e uccelli
+	NB	Bekk og fugler
 	NL	Stroom en vogels
-	NO	Bekk og fugler
+	NN	Bekk og fuglar
 	PL	Strumień i ptaki
 	RU	Река и птицы
 	SV	Bäck och fågelkvitter
@@ -903,8 +956,9 @@ PLUGIN_SOUNDS_STREAM
 	FR	Flux
 	HU	Folyam
 	IT	Stream
+	NB	Strøm
 	NL	Stream
-	NO	Strøm
+	NN	Straum
 	PL	Strumień
 	RU	Поток
 	SV	Ström
@@ -920,8 +974,9 @@ PLUGIN_SOUNDS_TROPICAL_AMBIENCE
 	FR	Ambiance tropicale
 	HU	Trópusi hangulat
 	IT	Ambiente tropicale
+	NB	Tropical Ambience
 	NL	Tropische sfeer
-	NO	Tropical Ambience
+	NN	Tropical Ambience
 	PL	Tropikalny ambient
 	RU	Тропики
 	SV	Tropisk atmosfär
@@ -937,8 +992,9 @@ PLUGIN_SOUNDS_WAVES
 	FR	Vagues
 	HU	Hullámok
 	IT	Onde
+	NB	Bølger
 	NL	Golven
-	NO	Bølger
+	NN	Bølgjer
 	PL	Fale
 	RU	Волны
 	SV	Vågor
@@ -954,8 +1010,9 @@ PLUGIN_SOUNDS_WIND_WHISTLE
 	FR	Souffle du vent
 	HU	Szélsíp
 	IT	Sibilo del vento
+	NB	Vind
 	NL	Wind Whistle
-	NO	Vind
+	NN	Vind
 	PL	Gwizdek
 	RU	Свист ветра
 	SV	Vindpipa
@@ -971,8 +1028,9 @@ PLUGIN_SOUNDS_WIND
 	FR	Vent
 	HU	Szél
 	IT	Vento
+	NB	Wind
 	NL	Wind
-	NO	Wind
+	NN	Wind
 	PL	Wiatr
 	RU	Ветер
 	SV	Vind
@@ -988,8 +1046,9 @@ PLUGIN_SOUNDS_AMBULANCE
 	FR	Ambulance
 	HU	Mentőautó
 	IT	Ambulanza
+	NB	Ambulanse
 	NL	Ambulance
-	NO	Ambulanse
+	NN	Ambulanse
 	PL	Karetka pogotowia
 	RU	Скорая помощь
 	SV	Ambulans
@@ -1005,8 +1064,9 @@ PLUGIN_SOUNDS_BLENDER
 	FR	Mixeur
 	HU	Mixer
 	IT	Frullatore
+	NB	Blender
 	NL	Blender
-	NO	Blender
+	NN	Blender
 	PL	Blender
 	RU	Микшер
 	SV	Mixer
@@ -1022,8 +1082,9 @@ PLUGIN_SOUNDS_CITY
 	FR	Ville
 	HU	Város
 	IT	Città
+	NB	By
 	NL	Plaats
-	NO	By
+	NN	By
 	PL	Miasto
 	RU	Город
 	SV	Ort
@@ -1039,8 +1100,9 @@ PLUGIN_SOUNDS_COINS
 	FR	Pièces
 	HU	Érmék
 	IT	Monete
+	NB	Mynter
 	NL	Munten
-	NO	Mynter
+	NN	Myntar
 	PL	Monety
 	RU	Монеты
 	SV	Mynt
@@ -1056,8 +1118,9 @@ PLUGIN_SOUNDS_CROSSING_BELLS
 	FR	Passage à niveau
 	HU	Crossing Bells
 	IT	Campanelle
+	NB	Planovergang
 	NL	Belsignaal
-	NO	Planovergang
+	NN	Planovergang
 	PL	Crossing Bells
 	RU	Cигнальный колокол на переезде
 	SV	Varningsklockor
@@ -1073,8 +1136,9 @@ PLUGIN_SOUNDS_ELECTRO_FUZZ
 	FR	Electro Fuzz
 	HU	Electro Fuzz
 	IT	Electro Fuzz
+	NB	Elektrofuzz
 	NL	Electro Fuzz
-	NO	Elektrofuzz
+	NN	Elektrofuzz
 	PL	Electro Fuzz
 	RU	Electro Fuzz
 	SV	Elektroniska ljud
@@ -1090,8 +1154,9 @@ PLUGIN_SOUNDS_FOGHORN
 	FR	Corne de brume
 	HU	Ködkürt
 	IT	Sirena da nebbia
+	NB	Tåkelur
 	NL	Misthoorn
-	NO	Tåkelur
+	NN	Tåkelur
 	PL	Syrena ostrzegawcza
 	RU	Сирена
 	SV	Mistlur
@@ -1107,8 +1172,9 @@ PLUGIN_SOUNDS_FREIGHT_TRAIN_PASSING
 	FR	Train de marchandises au loin
 	HU	Tehervonat elhaladása
 	IT	Passaggio di treno merci
+	NB	Passerende tog
 	NL	Voorbijgaande goederentrein
-	NO	Passerende tog
+	NN	Tog som passerer
 	PL	Przejeżdżający pociąg towarowy
 	RU	Товарный поезд прибывает
 	SV	Godståg kör förbi
@@ -1124,8 +1190,9 @@ PLUGIN_SOUNDS_FREIGHT_TRAIN
 	FR	Train de marchandises
 	HU	Tehervonat
 	IT	Treno merci
+	NB	Godstog
 	NL	Freight Train
-	NO	Godstog
+	NN	Godstog
 	PL	Pociąg towarowy
 	RU	Товарный поезд
 	SV	Godståg
@@ -1141,8 +1208,9 @@ PLUGIN_SOUNDS_HAIR_DRYER
 	FR	Sèche-cheveux
 	HU	Hajszárító
 	IT	Asciugacapelli
+	NB	Hårføner
 	NL	Haardroger
-	NO	Hårføner
+	NN	Hårtørkar
 	PL	Suszarka do włosów
 	RU	Фен
 	SV	Hårtork
@@ -1158,8 +1226,9 @@ PLUGIN_SOUNDS_MAGNETO_VAPOR
 	FR	Vapeur magnétique
 	HU	Magneto Vapor
 	IT	Magneto Vapor
+	NB	Magneto Vapor
 	NL	Magneto Vapor
-	NO	Magneto Vapor
+	NN	Magneto Vapor
 	PL	Magneto Vapor
 	RU	Magneto Vapor
 	SV	Magneto Vapor
@@ -1175,8 +1244,9 @@ PLUGIN_SOUNDS_MOTORCYCLES
 	FR	Motos
 	HU	Motorkerékpárok
 	IT	Motocicli
+	NB	Motorsykler
 	NL	Motorcycles
-	NO	Motorsykler
+	NN	Motorsyklar
 	PL	Motocykle
 	RU	Мотоциклы
 	SV	Motorcyklar
@@ -1192,8 +1262,9 @@ PLUGIN_SOUNDS_SCUBA_DIVER
 	FR	Plongeur
 	HU	Búvár
 	IT	Sommozzatore
+	NB	Dykker
 	NL	Scubaduiker
-	NO	Dykker
+	NN	Dykkar
 	PL	Nurek
 	RU	Аквалангист
 	SV	Dykare
@@ -1209,8 +1280,9 @@ PLUGIN_SOUNDS_SPOOKY_FEEDBACK
 	FR	Spooky
 	HU	Kísérteties
 	IT	Spooky Feedback
+	NB	Skummel feedback
 	NL	Spooky Feedback
-	NO	Skummel feedback
+	NN	Skummel feedback
 	PL	Spooky Feedback
 	RU	Шумовая обратная связь
 	SV	Spöklik rundgång
@@ -1226,8 +1298,9 @@ PLUGIN_SOUNDS_STEAM_TRAIN_WHISTLE
 	FR	Train à vapeur et coup de sifflet
 	HU	Steam Train & Whistle
 	IT	Locomotiva a vapore e fischio
+	NB	Damptog og fløyte
 	NL	Steam Train & Whistle
-	NO	Damptog og fløyte
+	NN	Damptog og fløyte
 	PL	Lokomotywa parowa i gwizd
 	RU	Свисток паровоза
 	SV	Ånglok och vissla
@@ -1243,8 +1316,9 @@ PLUGIN_SOUNDS_SUB_ALERT
 	FR	En plongée
 	HU	Riasztás
 	IT	Avviso secondario
+	NB	Undervannsalarm
 	NL	Subwaarschuwing
-	NO	Undervannsalarm
+	NN	Undervannsalarm
 	PL	Alert podrzędny
 	RU	Предупреждающий сигнал
 	SV	Dyklarm
@@ -1260,8 +1334,9 @@ PLUGIN_SOUNDS_TEA_KETTLE
 	FR	Bouilloire
 	HU	Tea vízforraló
 	IT	Bollitore
+	NB	Tekjele
 	NL	Tea Kettle
-	NO	Tekjele
+	NN	Tekjel
 	PL	Czajnik
 	RU	Чайник
 	SV	Tekanna
@@ -1277,8 +1352,9 @@ PLUGIN_SOUNDS_TRAFFIC
 	FR	Trafic
 	HU	Forgalom
 	IT	Traffico
+	NB	Trafikk
 	NL	Verkeer
-	NO	Trafikk
+	NN	Trafikk
 	PL	Ruch
 	RU	Трафик
 	SV	Trafik
@@ -1294,8 +1370,9 @@ PLUGIN_SOUNDS_WIND_CHIME_FLOURISH
 	FR	Carillons éoliens
 	HU	Szélcsengő
 	IT	Tintinnio forte
+	NB	Lengre vindorgel
 	NL	Wind Chime Flourish
-	NO	Lengre vindorgel
+	NN	Lengre vindspel
 	PL	Wind Chime Flourish
 	RU	Музыка ветра
 	SV	Vindspelstoner
@@ -1311,8 +1388,9 @@ PLUGIN_SOUNDS_WIND_CHIME
 	FR	Carillon
 	HU	Szélcsengő
 	IT	Tintinnio
+	NB	Vindorgel
 	NL	Windklok
-	NO	Vindorgel
+	NN	Vindspel
 	PL	Powiew wiatru
 	RU	Мелодия ветра
 	SV	Vindspel
@@ -1325,7 +1403,8 @@ PLUGIN_SOUNDS_ALARM_BUZZER
 	EN	Alarm Buzzer
 	FR	Sonnerie d'alarme
 	HU	Riasztócsengő
-	NO	Alarmsummer
+	NB	Alarmsummer
+	NN	Alarmsummer
 	SV	Alarmsummer
 
 PLUGIN_SOUNDS_ALARM_ACCELERATING
@@ -1334,8 +1413,9 @@ PLUGIN_SOUNDS_ALARM_ACCELERATING
 	DE	Beschleunigendes Biepen
 	EN	Accelerating beep
 	FR	Bip accéléré
+	NB	Stadig raskere pip
 	NL	Versnellende piep
-	NO	Stadig raskere pip
+	NN	Stadig raskare pip
 	SV	Accelererande pip
 
 PLUGIN_SOUNDS_ALARM_HIGH_BEEP
@@ -1344,8 +1424,9 @@ PLUGIN_SOUNDS_ALARM_HIGH_BEEP
 	DE	Hohes Biepen
 	EN	High beep
 	FR	Bip aigu
+	NB	Høyt pip
 	NL	Hoge piep
-	NO	Høyt pip
+	NN	Høgt pip
 	SV	Högt pip
 
 PLUGIN_SOUNDS_ALARM_SIMPLE_CLOCK
@@ -1354,8 +1435,9 @@ PLUGIN_SOUNDS_ALARM_SIMPLE_CLOCK
 	DE	Einfacher Signalton
 	EN	Simple beep
 	FR	Bip simple
+	NB	Enkelt pip
 	NL	Eenvoudige piep
-	NO	Enkelt pip
+	NN	Enkelt pip
 	SV	Enkel signalton
 
 PLUGIN_SOUNDS_ALARM_BEDSIDE
@@ -1364,8 +1446,9 @@ PLUGIN_SOUNDS_ALARM_BEDSIDE
 	DE	Vierfacher Signalton
 	EN	Quadrupel beep
 	FR	Bip quadruple
+	NB	Firedobbelt pip
 	NL	Viervoudige piep
-	NO	Firedobbelt pip
+	NN	Firedobbelt pip
 	SV	Fyrfaldigt pip
 
 PLUGIN_SOUNDS_ALARM_ELECTRONIC_BEEP
@@ -1374,8 +1457,9 @@ PLUGIN_SOUNDS_ALARM_ELECTRONIC_BEEP
 	DE	Elektronisches Piepen
 	EN	Electronical beep
 	FR	Bip électronique
+	NB	Elektronisk pip
 	NL	Elektronische piep
-	NO	Elektronisk pip
+	NN	Elektronisk pip
 	SV	Elektroniskt pip
 
 PLUGIN_SOUNDS_ALARM_DIGITAL
@@ -1384,8 +1468,9 @@ PLUGIN_SOUNDS_ALARM_DIGITAL
 	DE	Tiefes Piepen
 	EN	Low beep
 	FR	Bip grave
+	NB	Lavt pip
 	NL	Lage piep
-	NO	Lavt pip
+	NN	Lågt pip
 	SV	Lågt pip
 
 PLUGIN_SOUNDS_ALARM_DISTORTED
@@ -1394,8 +1479,9 @@ PLUGIN_SOUNDS_ALARM_DISTORTED
 	DE	Verzerrtes Piepen
 	EN	Distorted beep
 	FR	Bip distordu
+	NB	Forvrengt pip
 	NL	Vervormde piep
-	NO	Forvrengt pip
+	NN	Forvrengt pip
 	SV	Förvrängt pip
 
 PLUGIN_SOUNDS_ALARM_DUAL_TONE
@@ -1404,8 +1490,9 @@ PLUGIN_SOUNDS_ALARM_DUAL_TONE
 	DE	Wechselndes Piepen
 	EN	Alternating beep
 	FR	Bip alterné
+	NB	Vekslende pip
 	NL	Afwisselende piep
-	NO	Vekslende pip
+	NN	Vekslande pip
 	SV	Växlande pip
 
 PLUGIN_SOUNDS_ALARM_ELECTRONICAL
@@ -1414,8 +1501,9 @@ PLUGIN_SOUNDS_ALARM_ELECTRONICAL
 	DE	Elektronisches Piepen 2
 	EN	Electronical beep 2
 	FR	Bip électronique 2
+	NB	Elektronisk pip 2
 	NL	Elektronische piep 2
-	NO	Elektronisk pip 2
+	NN	Elektronisk pip 2
 	SV	Elektroniskt pip 2
 
 PLUGIN_SOUNDS_ALARM_FUTURISTIC
@@ -1424,8 +1512,9 @@ PLUGIN_SOUNDS_ALARM_FUTURISTIC
 	DE	Futuristischer Alarm
 	EN	Futuristic alarm
 	FR	Alarme futuriste
+	NB	Futuristisk alarm
 	NL	Futuristisch alarm
-	NO	Futuristisk alarm
+	NN	Futuristisk alarm
 	SV	Futuristiskt alarm
 
 PLUGIN_SOUNDS_ALARM_PHONE
@@ -1434,8 +1523,9 @@ PLUGIN_SOUNDS_ALARM_PHONE
 	DE	Klingelndes Telefon
 	EN	Ringing phone
 	FR	Téléphone qui sonne
+	NB	Telefon som ringer
 	NL	Rinkelende telefoon
-	NO	Telefon som ringer
+	NN	Telefon som ringjer
 	SV	Ringande telefon
 
 PLUGIN_SOUNDS_ALARM_RINGING
@@ -1444,8 +1534,9 @@ PLUGIN_SOUNDS_ALARM_RINGING
 	DE	Klingelnder Alarm
 	EN	Ringing alarm
 	FR	Alarme sonore
+	NB	Ringende alarm
 	NL	Rinkelend alarm
-	NO	Ringende alarm
+	NN	Ringjande alarm
 	SV	Ringande alarm
 
 PLUGIN_SOUNDS_ALARM_RINGTONE
@@ -1454,8 +1545,9 @@ PLUGIN_SOUNDS_ALARM_RINGTONE
 	DE	Klingelton
 	EN	Ringtone
 	FR	Sonnerie
+	NB	Ringetone
 	NL	Beltoon
-	NO	Ringetone
+	NN	Ringjetone
 	SV	Rington
 
 PLUGIN_SOUNDS_ALARM_TIC_TAC
@@ -1464,8 +1556,9 @@ PLUGIN_SOUNDS_ALARM_TIC_TAC
 	DE	Tick-Tack
 	EN	Tic-Tac
 	FR	Tic-Tac
+	NB	Tikk-takk
 	NL	Tik-Tak
-	NO	Tikk-takk
+	NN	Tikk-takk
 	SV	Tick-tack
 
 PLUGIN_SOUNDS_ALARM_TICKING
@@ -1474,6 +1567,7 @@ PLUGIN_SOUNDS_ALARM_TICKING
 	DE	Tickende Uhr
 	EN	Ticking clock
 	FR	Horloge qui tic-tac
+	NB	Tikkende klokke
 	NL	Tikkende klok
-	NO	Tikkende klokke
+	NN	Tikkande klokke
 	SV	Tickande klocka

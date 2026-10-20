@@ -12,8 +12,9 @@ PLUGIN_DIGITAL_INPUT
 	HE	פריטי קלט דיגיטלי
 	HU	Digitális bemenetek
 	IT	Ingressi digitali
+	NB	Digitale innganger
 	NL	Digitale Ingangen
-	NO	Digitale innganger
+	NN	Digitale inngangar
 	PL	Wejścia cyfrowe
 	RU	Цифровые входы
 	SV	Digitala ingångar
@@ -29,8 +30,9 @@ PLUGIN_DIGITAL_INPUT_DESC
 	FR	Entrée numérique pour Transporter
 	HU	Digitális bemenet Transporter számára
 	IT	Ingresso digitale per Transporter
+	NB	Digital inngang for Transporter
 	NL	Digitale ingang voor Transporter
-	NO	Digital inngang for Transporter
+	NN	Digital inngang for Transporter
 	PL	Wejście cyfrowe urządzenia Transporter
 	RU	Цифровой вход для Transporter
 	SV	Digital ingång för Transporter
@@ -47,8 +49,9 @@ PLUGIN_DIGITAL_INPUT_BALANCED_AES
 	HE	AES/EBU מאוזן
 	HU	Kiegyensúlyozott AES/EBU
 	IT	AES/EBU bilanciato
+	NB	Balansert AES/EBU
 	NL	Gebalanceerde AES/EBU
-	NO	Balansert AES/EBU
+	NN	Balansert AES/EBU
 	PL	Zbalansowane AES/EBU
 	RU	Сбалансированный AES/EBU
 	SV	Balanserat AES/EBU
@@ -65,8 +68,9 @@ PLUGIN_DIGITAL_INPUT_BNC_SPDIF
 	HE	BNC Coax S/PDIF
 	HU	BNC Coax S/PDIF
 	IT	S/PDIF coassiale per BNC
+	NB	BNC koaks S/PDIF
 	NL	BNC coaxiale S/PDIF
-	NO	BNC koaks S/PDIF
+	NN	BNC koaks S/PDIF
 	PL	BNC koncentryczne S/PDIF
 	RU	Коаксиальный BNC S/PDIF
 	SV	BNC-koaxial S/PDIF
@@ -83,8 +87,9 @@ PLUGIN_DIGITAL_INPUT_RCA_SPDIF
 	HE	RCA Coax S/PDIF
 	HU	RCA Coax S/PDIF
 	IT	S/PDIF RCA coassiale
+	NB	RCA koaks S/PDIF
 	NL	RCA coaxiale S/PDIF
-	NO	RCA koaks S/PDIF
+	NN	RCA koaks S/PDIF
 	PL	RCA koncentryczne S/PDIF
 	RU	Коаксиальный RCA S/PDIF
 	SV	RCA-koaxial S/PDIF
@@ -101,8 +106,9 @@ PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF
 	HE	Optical S/PDIF (TOSLINK)‎
 	HU	Optical S/PDIF (TOSLINK)
 	IT	S/PDIF ottico (TOSLINK)
+	NB	Optisk S/PDIF (TOSLINK)
 	NL	Optische S/PDIF (TOSLINK)
-	NO	Optisk S/PDIF (TOSLINK)
+	NN	Optisk S/PDIF (TOSLINK)
 	PL	Optyczne S/PDIF (TOSLINK)
 	RU	Оптический S/PDIF (TOSLINK)
 	SV	Optisk S/PDIF (TOSLINK)
@@ -119,8 +125,9 @@ PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW
 	HE	בחר אחת מאפשרויות הקלט הדיגיטלי הבאות:
 	HU	Válasszon egy digitális bemeneti lehetőséget az alábbiakból:
 	IT	Scegliere una delle seguenti opzioni di ingresso digitale:
+	NB	Velg et alternativ for digitalinngang nedenfor:
 	NL	Kies hieronder een digitale-ingangsoptie:
-	NO	Velg et alternativ for digitalinngang nedenfor:
+	NN	Vel eit alternativ for digital inngang nedanfor:
 	PL	Wybierz opcję wejścia cyfrowego poniżej:
 	RU	Выберите цифровой вход из списка:
 	SV	Välj digital ingång nedan:

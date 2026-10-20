@@ -11,8 +11,9 @@ PLUGIN_LINE_IN
 	FR	Entrée ligne
 	HU	Vonalbemenet
 	IT	Ingresso
+	NB	Lydinngang
 	NL	Lijningang
-	NO	Lydinngang
+	NN	Lydinngang
 	PL	Wejście liniowe
 	RU	Линейный вход
 	SV	Ljudingång
@@ -28,8 +29,9 @@ PLUGIN_LINE_IN_DESC
 	FR	Entrée ligne pour Boom
 	HU	Vonalbemenet a Boomhoz
 	IT	Ingresso Boom
+	NB	Lydinngang for Boom
 	NL	Lijningang voor Boom
-	NO	Lydinngang for Boom
+	NN	Lydinngang for Boom
 	PL	Wejście liniowe niskich tonów
 	RU	Линейный вход для Squeezebox Boom
 	SV	Ljudingång för Boom
@@ -45,8 +47,9 @@ PLUGIN_LINE_IN_LINE_IN
 	FR	Entrée ligne
 	HU	Vonal bemenet
 	IT	Ingresso
+	NB	Lydinngang
 	NL	Lijningang
-	NO	Lydinngang
+	NN	Lydinngang
 	PL	Wejście liniowe
 	RU	Линейный вход
 	SV	Ljudingång
@@ -62,8 +65,9 @@ PLUGIN_LINE_IN_IN_USE
 	FR	L'entrée ligne est active.
 	HU	A vonalbemenet aktív
 	IT	Ingresso attivo
+	NB	Lydinngang aktiv
 	NL	Lijningang is actief
-	NO	Lydinngang aktiv
+	NN	Lydinngang aktiv
 	PL	Wejście liniowe jest aktywne
 	RU	Линейный вход активен
 	SV	Ljudingången är aktiv
@@ -79,8 +83,9 @@ LINE_IN_LEVEL
 	FR	Niveau de l'entrée ligne
 	HU	Vonalbemenet szint
 	IT	Livello ingresso
+	NB	Lydinngangsnivå
 	NL	Niveau van lijningang
-	NO	Lydinngangsnivå
+	NN	Lydinngangsnivå
 	PL	Poziom sygnału wejścia liniowego
 	RU	Уровень линейного входа
 	SV	Nivå för linjeingång
@@ -96,8 +101,9 @@ LINE_IN_LEVEL_DESC
 	FR	A l'aide de ce paramètre, vous pouvez régler le gain de l'entrée ligne.
 	HU	Ezzel a beállítással beállíthatja a jel erősségét.
 	IT	Questa impostazione consente di regolare il guadagno dell'ingresso.
+	NB	Du kan bruke denne innstillingen til å justere gain for lydinngang.
 	NL	Met deze instelling kun je de versterking van de lijningang aanpassen.
-	NO	Du kan bruke denne innstillingen til å justere gain for lydinngang.
+	NN	Du kan bruke denne innstillinga til å justere gain for lydinngangen.
 	PL	To ustawienie umożliwia dostosowanie wzmocnienia wejścia liniowego.
 	RU	С помощью этой настройки можно задать коэффициент усиления для линейного входа.
 	SV	Med det här alternativet kan du justera hur linjeingångens signal förstärks.
@@ -113,8 +119,9 @@ LINE_IN_ALWAYS_ON
 	FR	Entrée ligne toujours activée
 	HU	Vonalbemenet mindig bekapcsolva
 	IT	Ingresso sempre attivato
+	NB	Lydinngang alltid på
 	NL	Lijningang altijd ingeschakeld
-	NO	Lydinngang alltid på
+	NN	Lydinngang alltid på
 	PL	Wejście liniowe zawsze włączone
 	RU	Линейный вход всегда включен
 	SV	Linjeingång alltid på
@@ -130,8 +137,9 @@ LINE_IN_ALWAYS_ON_DESC
 	FR	Cette option active l'entrée ligne en permanence pour les utilisateurs qui veulent incorporer l'entrée ligne en permanence (par exemple pour le karaoké).
 	HU	Ez az opció folyamatosan bekapcsolja a vonal bevitelt, hogy azok a felhasználók, akik folyamatosan szeretnék használni (pl. karaoke esetén)
 	IT	Questa opzione mantiene sempre attivato l'ingresso di linea per consentire in ogni momento il missaggio dell'audio proveniente da tale ingresso (ad esempio per il karaoke)
+	NB	Hvis du velger dette alternativet, er lydinngangen på hele tiden, slik at brukere kan mikse i lydinngangen hele tiden (for eksempel for karaoke)
 	NL	Met deze optie wordt de lijningang altijd ingeschakeld, zodat deze op elk moment kan worden gebruikt (bijvoorbeeld voor karaoke).
-	NO	Hvis du velger dette alternativet, er lydinngangen på hele tiden, slik at brukere kan mikse i lydinngangen hele tiden (for eksempel for karaoke)
+	NN	Viss du vel dette alternativet, er lydinngangen på heile tida, slik at brukarar kan mikse inn lydinngangen heile tida (til dømes for karaoke)
 	PL	Ta opcja powoduje, że wejście liniowe jest stale włączone, co umożliwia użytkownikom miksowanie dźwięków z linią (np. w przypadku Karaoke).
 	RU	Благодаря этому параметру линейный вход постоянно включен, позволяя пользователям непрерывно создавать миксы (например, для караоке)
 	SV	Med det här alternativet är linjeingången aktiverad hela tiden, så att du kan mixa linjeingångens signal över ljudspåret när som helst (t.ex. för karaoke)

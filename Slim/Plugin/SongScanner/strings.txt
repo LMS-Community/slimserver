@@ -11,8 +11,9 @@ PLUGIN_SONGSCANNER
 	FR	Analyseur de morceau
 	HU	Dalelemző
 	IT	Analisi brani
+	NB	Sangsøk
 	NL	Nummer Scanner
-	NO	Sangsøk
+	NN	Songsøk
 	PL	Moduł przeszukiwania utworów
 	RU	Сканер песен
 	SV	Låtsökaren
@@ -28,8 +29,9 @@ PLUGIN_SONGSCANNER_DESC
 	FR	Interface de la platine permettant d'accéder à des emplacements arbitraires du morceau en cours de lecture (Squeezebox Classic, Squeezebox Boom, Transporter)
 	HU	A lejátszó felülete tetszőleges pozícióba ugráshoz az éppen lejátszott dalon belül (csak a Squeezebox Classic, Squeezebox Boom, Transporter)
 	IT	Interfaccia lettore per passare a posizioni casuali all'interno del brano in corso di riproduzione (Squeezebox Classic, Squeezebox Boom, Transporter)
+	NB	Spillergrensesnitt for å gå til vilkårlige plasseringer i sangen som spilles av (Squeezebox Classic, Squeezebox Boom, Transporter)
 	NL	Muziekspeler interface om naar willekeurige posities in het huidige nummer te springen (Squeezebox Classic, Squeezebox Boom, Transporter)
-	NO	Spillergrensesnitt for å gå til vilkårlige plasseringer i sangen som spilles av (Squeezebox Classic, Squeezebox Boom, Transporter)
+	NN	Spelargrensesnitt for å gå til vilkårlege plasseringar i songen som blir spelt av (Squeezebox Classic, Squeezebox Boom, Transporter)
 	PL	Interfejs odtwarzacza umożliwiający przejście do dowolnego miejsca w aktualnie odtwarzanym utworze (Squeezebox Classic, Squeezebox Boom, Transporter)
 	RU	Интерфейс плеера для перехода в произвольную позицию воспроизводимой песни (Squeezebox Classic, Squeezebox Boom, Transporter)
 	SV	Spelargränssnitt för att hoppa till godtyckliga ställen i låten som spelas upp (Squeezebox Classic, Squeezebox Boom, Transporter)
@@ -45,8 +47,9 @@ PLUGIN_SONGSCANNER_SET
 	FR	Heure :
 	HU	Idő:
 	IT	Ora:
+	NB	Klokkeslett:
 	NL	Tijd:
-	NO	Klokkeslett:
+	NN	Klokkeslett:
 	PL	Czas:
 	RU	Время:
 	SV	Tid:
@@ -62,8 +65,9 @@ PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE
 	FR	Impossible d'analyser la piste car la durée est inconnue
 	HU	Nem lehet beolvasni a számot, mert az időtartam ismeretlen
 	IT	Impossibile analizzare il brano poiché non se ne conosce la durata
+	NB	Kan ikke søke igjennom sporet fordi varigheten er ukjent
 	NL	Kan niet door nummer scannen omdat duur onbekend is
-	NO	Kan ikke søke igjennom sporet fordi varigheten er ukjent
+	NN	Kan ikkje spole gjennom sporet fordi varigheita er ukjend
 	PL	Nie można przeszukać utworu z powodu nieznanego czasu trwania
 	RU	Поиск внутри дорожки невозможен, поскольку неизвестна длительность
 	SV	Det går inte att söka igenom spåret eftersom varaktigheten är okänd
@@ -79,8 +83,9 @@ PLUGIN_SONGSCANNER_ERR_NOTRACK
 	FR	Aucune piste
 	HU	Nincs szám
 	IT	Nessun brano
+	NB	Ingen spor
 	NL	Geen nummer
-	NO	Ingen spor
+	NN	Ingen spor
 	PL	Brak utworu
 	RU	Нет дорожки
 	SV	Inget spår
@@ -96,8 +101,9 @@ PLUGIN_SONGSCANNER_MAX_RATE_FWD
 	FR	Le débit maximal d'avance rapide a été atteint
 	HU	Elérte a maximális gyors előretekerési sebességet
 	IT	È stata raggiunta la velocità di avanzamento massima
+	NB	Maks spolingshastighet forover er nådd
 	NL	Maximale snelheid voor vooruitspoelen bereikt
-	NO	Maks spolingshastighet forover er nådd
+	NN	Høgaste spolefart framover er nådd
 	PL	Osiągnięto maksymalną szybkość przewijania do przodu
 	RU	Достигнута макс. скорость перемотки вперед
 	SV	Maximal framspolningstakt har uppnåtts
@@ -113,8 +119,9 @@ PLUGIN_SONGSCANNER_MAX_RATE_REW
 	FR	Le débit maximal de retour rapide a été atteint
 	HU	Elérte a maximális visszatekerési sebességet
 	IT	È stata raggiunta la velocità di riavvolgimento massima
+	NB	Maks spolingshastighet bakover er nådd
 	NL	Maximale snelheid voor terugspoelen bereikt
-	NO	Maks spolingshastighet bakover er nådd
+	NN	Høgaste spolefart bakover er nådd
 	PL	Osiągnięto maksymalną szybkość przewijania do tyłu
 	RU	Достигнута макс. скорость перемотки назад
 	SV	Maximal tillbakaspolningstakt har uppnåtts

@@ -12,8 +12,9 @@ PLUGIN_SCREENSAVER_SNOW
 	HE	שומר מסך שלג
 	HU	Hó Képernyővédő
 	IT	Screen saver con neve
+	NB	Skjermsparer med snø
 	NL	Sneeuw screensaver
-	NO	Skjermsparer med snø
+	NN	Skjermsparar med snø
 	PL	Wygaszacz ekranu Śnieg
 	RU	Экранная заставка "Снег"
 	SV	Snöskärmsläckare
@@ -30,8 +31,9 @@ PLUGIN_SCREENSAVER_SNOW_SETTINGS
 	HE	הגדרות שומר מסך שלג
 	HU	Hó Screensaver beállításai
 	IT	Impostazioni screen saver con neve
+	NB	Innstillinger for skjermsparer med snø
 	NL	Instellingen van sneeuw screensaver
-	NO	Innstillinger for skjermsparer med snø
+	NN	Innstillingar for skjermsparar med snø
 	PL	Ustawienia wygaszacza ekranu Śnieg
 	RU	Настройки экранной заставки "Снег"
 	SV	Inställningar för snöskärmsläckare
@@ -48,8 +50,9 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY
 	HE	כמות שלג
 	HU	A hó mennyisége
 	IT	Quantità di neve
+	NB	Snømengde
 	NL	Hoeveelheid sneeuw
-	NO	Snømengde
+	NN	Snømengde
 	PL	Ilość śniegu
 	RU	Количество снега
 	SV	Snömängd
@@ -66,8 +69,9 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
 	HE	שומר מסך שלג: כמות שלג
 	HU	Hó Képernyővédő: A hó mennyisége
 	IT	Screen saver con neve: quantità di neve
+	NB	Skjermsparer med snø: Snømengde
 	NL	Sneeuw screensaver: hoeveelheid sneeuw
-	NO	Skjermsparer med snø: Snømengde
+	NN	Skjermsparar med snø: Snømengd
 	PL	Wygaszacz ekranu Śnieg: ilość śniegu
 	RU	Экранная заставка "Снег": количество снега
 	SV	Snöskärmsläckare: snömängd
@@ -84,8 +88,9 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
 	HE	משקעי שלג מתונים
 	HU	Könnyű záporok
 	IT	Leggero turbinio
+	NB	Lette fnugg
 	NL	Lichte sneeuwbui
-	NO	Lette fnugg
+	NN	Lette fnugg
 	PL	Lekkie podmuchy
 	RU	Легкий порыв ветра
 	SV	Snöbyar
@@ -102,8 +107,9 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
 	HE	בסגנון חג המולד
 	HU	Karácsonyi
 	IT	Natalizia
+	NB	Julete
 	NL	Kerstmis!
-	NO	Julete
+	NN	Julete
 	PL	Boże Narodzenie
 	RU	Рождественский
 	SV	Julstämning
@@ -120,8 +126,9 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
 	HE	סופת שלג
 	HU	Hóvihar
 	IT	Bufera
+	NB	Snøstorm
 	NL	Sneeuwstorm
-	NO	Snøstorm
+	NN	Snøstorm
 	PL	Zamieć
 	RU	Снежная буря
 	SV	Snöstorm
@@ -138,8 +145,9 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
 	HE	סופת שלג עזה
 	HU	Kifehéredés
 	IT	Tutto coperto
+	NB	Blank
 	NL	Zware sneeuwstorm
-	NO	Blank
+	NN	Blank
 	PL	Olśnienie
 	RU	Снежная пелена
 	SV	Igensnöat
@@ -156,8 +164,9 @@ PLUGIN_SCREENSAVER_SNOW_STYLE
 	HE	סגנון שלג במצב מופעל
 	HU	A hó stílusa bekapcsolt állapotban
 	IT	Tipo di neve quando attivo
+	NB	Snøtype når påslått
 	NL	Sneeuwstijl wanneer aan
-	NO	Snøtype når påslått
+	NN	Snøtype når påslått
 	PL	Rodzaj śniegu po włączeniu
 	RU	Стиль снега, когда включено
 	SV	Snötyp i påslaget läge
@@ -174,8 +183,9 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
 	HE	סגנון שלג במצב כבוי
 	HU	A hó stílusa kikapcsolt állapotban
 	IT	Tipo di neve quando disattivo
+	NB	Snøtype når avslått
 	NL	Sneeuwstijl wanneer uit
-	NO	Snøtype når avslått
+	NN	Snøtype når avslått
 	PL	Rodzaj śniegu po wyłączeniu
 	RU	Стиль снега, когда выключено
 	SV	Snötyp i avstängt läge
@@ -192,8 +202,9 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	HE	שומר מסך שלג: סגנון שלג
 	HU	Hó Képernyővédő: A hó stílusa
 	IT	Screen saver con neve: Tipo di neve
+	NB	Skjermsparer med snø: Snøtype
 	NL	Sneeuw screensaver: sneeuwstijl
-	NO	Skjermsparer med snø: Snøtype
+	NN	Skjermsparar med snø: Snøtype
 	PL	Wygaszacz ekranu Śnieg: rodzaj śniegu
 	RU	Экранная заставка "Снег": стиль снега
 	SV	Snöskärmsläckare: Snötyp
@@ -210,8 +221,9 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	HE	מושמע כעת, שלג נופל מאחור
 	HU	Most játszott, alul esen a hó
 	IT	Riproduzione in corso. Nevicata sullo sfondo.
+	NB	Spilles nå, med snø i bakgrunnen
 	NL	Speelt nu, sneeuw valt achter
-	NO	Spilles nå, med snø i bakgrunnen
+	NN	Spelar no, med snø i bakgrunnen
 	PL	Teraz odtwarzane, śnieg w tle
 	RU	Воспроизводится, позади падает снег
 	SV	Snö i bakgrunden när Nu spelas visas
@@ -228,8 +240,9 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_2
 	HE	מושמע כעת, שלג נופל מלפנים
 	HU	Most játszott, elöl esik a hó
 	IT	Riproduzione in corso. Nevicata in primo piano.
+	NB	Spilles nå, med snø i forgrunnen
 	NL	Speelt nu, sneeuw valt voor
-	NO	Spilles nå, med snø i forgrunnen
+	NN	Spelar no, med snø i forgrunnen
 	PL	Teraz odtwarzane, śnieg na pierwszym planie
 	RU	Воспроизводится, на переднем плане падает снег
 	SV	Snö i förgrunden när Nu spelas visas
@@ -246,8 +259,9 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_3
 	HE	תאריך/שעה
 	HU	Dátum/Idő
 	IT	Data/ora
+	NB	Dato/tid
 	NL	Datum/tijd
-	NO	Dato/tid
+	NN	Dato/tid
 	PL	Data/Godzina
 	RU	Дата/время
 	SV	Datum/Tid
@@ -264,8 +278,9 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_4
 	HE	שלג בלבד
 	HU	Csak hó
 	IT	Solo neve
+	NB	Bare snø
 	NL	Alleen sneeuw
-	NO	Bare snø
+	NN	Berre snø
 	PL	Tylko śnieg
 	RU	Просто снег
 	SV	Vanlig snö
@@ -282,8 +297,9 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_5
 	HE	אוטומטי
 	HU	Automatikus
 	IT	Automatico
+	NB	Automatisk
 	NL	Automatisch
-	NO	Automatisk
+	NN	Automatisk
 	PL	Automatycznie
 	RU	Автоматический
 	SV	Automatiskt
@@ -300,8 +316,9 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_6
 	HE	ברכות לחגים
 	HU	Szezonális üdvözlet
 	IT	Buone feste
+	NB	God jul!
 	NL	Prettige feestdagen
-	NO	God jul!
+	NN	God jul!
 	PL	Pozdrowienia
 	RU	Сезонные поздравления
 	SV	Julhälsning
@@ -318,8 +335,9 @@ PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
 	HE	5
 	HU	5
 	IT	5
+	NB	5
 	NL	5
-	NO	5
+	NN	5
 	PL	5
 	RU	5
 	SV	5
@@ -336,8 +354,9 @@ PLUGIN_SCREENSAVER_SNOW_WORD_0
 	HE	חג
 	HU	BOLDOG
 	IT	BUON
+	NB	GOD
 	NL	Vrolijk
-	NO	GOD
+	NN	GOD
 	PL	WESOŁYCH
 	RU	ВЕСЕЛОГО
 	SV	GOD
@@ -354,8 +373,9 @@ PLUGIN_SCREENSAVER_SNOW_WORD_1
 	HE	שמח
 	HU	KARÁCSONYT
 	IT	NATALE
+	NB	JUL
 	NL	Kerstmis
-	NO	JUL
+	NN	JUL
 	PL	ŚWIĄT
 	RU	РОЖДЕСТВА
 	SV	JUL
@@ -372,8 +392,9 @@ PLUGIN_SCREENSAVER_SNOW_WORD_2
 	HE	לכל
 	HU	ÉS
 	IT	E FELICE
+	NB	OG ET
 	NL	en een heel
-	NO	OG ET
+	NN	OG EIT
 	PL	I BARDZO
 	RU	И ОЧЕНЬ
 	SV	OCH ETT
@@ -390,8 +411,9 @@ PLUGIN_SCREENSAVER_SNOW_WORD_3
 	HE	עם
 	HU	BOLDOG
 	IT	ANNO
+	NB	GODT
 	NL	gelukkig
-	NO	GODT
+	NN	GODT
 	PL	SZCZĘŚLIWEGO
 	RU	СЧАСТЛИВОГО
 	SV	GOTT
@@ -407,8 +429,9 @@ PLUGIN_SCREENSAVER_SNOW_WORD_4
 	HE	ישראל!
 	HU	ÚJ ÉVET
 	IT	NUOVO!
+	NB	NYTTÅR!
 	NL	nieuwjaar!
-	NO	NYTTÅR!
+	NN	NYTTÅR!
 	PL	NOWEGO ROKU!
 	RU	НОВОГО ГОДА!
 	SV	NYTT ÅR!

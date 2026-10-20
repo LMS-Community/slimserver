@@ -11,8 +11,9 @@ PLUGIN_RS232_NAME
 	FR	RS232
 	HU	RS232
 	IT	RS232
+	NB	RS232
 	NL	RS232
-	NO	RS232
+	NN	RS232
 	PL	RS232
 	RU	RS232
 	SV	RS232
@@ -28,8 +29,9 @@ PLUGIN_RS232_NAME_DESC
 	FR	Accès RS232 pour Transporter
 	HU	RS232 hozzáférés a Transporter számára
 	IT	Accesso RS232 per Transporter
+	NB	RS232-tilgang for Transporter
 	NL	RS232 toegang voor Transporter
-	NO	RS232-tilgang for Transporter
+	NN	RS232-tilgang for Transporter
 	PL	Dostęp do urządzenia Transporter przez port RS232
 	RU	Доступ RS232 для Transporter
 	SV	RS232-åtkomst för Transporter
@@ -45,8 +47,9 @@ SETUP_CLI_OVER_RS232
 	FR	Interface de ligne de commande pour RS232
 	HU	CLI interfész RS232-n keresztül
 	IT	Interfaccia CLI su RS232
+	NB	Kommandolinjegrensesnitt over RS232
 	NL	CLI interface over RS232
-	NO	Kommandolinjegrensesnitt over RS232
+	NN	Kommandolinjegrensesnitt over RS232
 	PL	Interfejs CLI przez port RS232
 	RU	Интерфейс CLI по RS232
 	SV	Kommandoradsgränssnitt över RS232
@@ -62,8 +65,9 @@ SETUP_CLI_OVER_RS232_ENABLE
 	FR	Activer
 	HU	Engedélyezés
 	IT	Attiva
+	NB	Aktiver
 	NL	Inschakelen
-	NO	Aktiver
+	NN	Aktiver
 	PL	Włącz
 	RU	Включить
 	SV	Aktivera

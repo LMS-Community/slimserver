@@ -12,8 +12,9 @@ PLUGIN_XPL
 	HE	ממשק xPL
 	HU	xPL interfész
 	IT	Interfaccia xPL
+	NB	xPL-grensesnitt
 	NL	xPL interface
-	NO	xPL-grensesnitt
+	NN	xPL-grensesnitt
 	PL	Interfejs xPL
 	RU	Интерфейс xPL
 	SV	xPL-gränssnitt
@@ -31,8 +32,9 @@ SETUP_GROUP_XPL
 	HU	xPL beállítások
 	IT	Impostazioni xPL
 	JA	xPL セッティング
+	NB	xPL-innstillinger
 	NL	xPL instellingen
-	NO	xPL-innstillinger
+	NN	xPL-innstillingar
 	PL	Ustawienia protokołu xPL
 	RU	Параметры xPL
 	SV	xPL-inställningar
@@ -52,8 +54,9 @@ SETUP_GROUP_XPL_DESC
 	HU	Ezek a beállítások szabályozzák az xPL protokoll viselkedését
 	IT	Queste impostazioni consentono di controllare il funzionamento del protocollo xPL.
 	JA	これらのセッティングはxPLプロトコルを調節します
+	NB	Dette er innstillinger for xPL-protokollen
 	NL	Deze instellingen bepalen het gedrag van het xPL-protocol.
-	NO	Dette er innstillinger for xPL-protokollen
+	NN	Dette er innstillingar for xPL-protokollen
 	PL	Te ustawienia umożliwiają konfigurację działania protokołu xPL
 	RU	Эти настройки служат для управления протоколом xPL
 	SV	De här inställningarna styr hur xPL-protokollet fungerar
@@ -72,8 +75,9 @@ SETUP_XPLINTERVAL
 	HU	Intervallum
 	IT	Intervallo di heartbeat
 	JA	インターバル
+	NB	Intervall for hjerteslag
 	NL	Heartbeat interval
-	NO	Intervall for hjerteslag
+	NN	Intervall for hjerteslag
 	PL	Interwał pulsu
 	RU	Интервал подтверждения соединения
 	SV	Hjärtslagsintervall
@@ -92,8 +96,9 @@ SETUP_XPLIR
 	HU	Infravörös feldolgozás
 	IT	Elaborazione segnale a infrarossi
 	JA	赤外線プロセシング
+	NB	Infrarød prosessering
 	NL	Infraroodverwerking
-	NO	Infrarød prosessering
+	NN	Infraraud prosessering
 	PL	Przetwarzanie za pomocą podczerwieni
 	RU	Обработка инфракрасного сигнала
 	SV	IR-bearbetning
@@ -112,8 +117,9 @@ SETUP_XPLIR_NONE
 	HU	Egyik sem
 	IT	Nessuno
 	JA	なし
+	NB	Ingen
 	NL	Geen
-	NO	Ingen
+	NN	Ingen
 	PL	Brak
 	RU	Нет
 	SV	Inget
@@ -132,8 +138,9 @@ SETUP_XPLIR_BUTTONS
 	HU	Gombok
 	IT	Pulsanti
 	JA	ボタン
+	NB	Knapper
 	NL	Knoppen
-	NO	Knapper
+	NN	Knappar
 	PL	Przyciski
 	RU	Кнопки
 	SV	Knappar
@@ -152,8 +159,9 @@ SETUP_XPLIR_RAW
 	HU	Nyers
 	IT	Non elaborato
 	JA	列
+	NB	Ubehandlet
 	NL	Ruw (Raw)
-	NO	Ubehandlet
+	NN	Ubehandlet
 	PL	Nieprzetworzone
 	RU	Исходный
 	SV	Rå
@@ -172,8 +180,9 @@ SETUP_XPLIR_BOTH
 	HU	Minddkettő
 	IT	Entrambi
 	JA	両方
+	NB	Begge
 	NL	Beide
-	NO	Begge
+	NN	Begge
 	PL	Obie
 	RU	Оба
 	SV	Båda

@@ -11,8 +11,9 @@ PLUGIN_LINE_OUT
 	FR	Sortie ligne
 	HU	Vonalkimenet
 	IT	Uscita
+	NB	Utgang
 	NL	Lijnuitgang
-	NO	Utgang
+	NN	Utgang
 	PL	Wyjście liniowe
 	RU	Линейный выход
 	SV	Utgång
@@ -28,8 +29,9 @@ PLUGIN_LINE_OUT_DESC
 	FR	Basculez entre mode subwoofer, mode casque et sortie ligne sur Boom
 	IT	Passa dalla modalità subwoofer alla modalità cuffie o uscita del radioregistratore
 	HU	Váltás a mélysugárzó, a fejhallgató és a vonalkimeneti mód között a Boom készüléken
+	NB	Bytt mellom basshøyttaler, hodetelefoner og utgangsmodus på Boom
 	NL	Tussen subwoofer-, hoofdtelefoon- en lijnuitgangsmodus op de Boom schakelen
-	NO	Bytt mellom basshøyttaler, hodetelefoner og utgangsmodus på Boom
+	NN	Byt mellom basshøgtalar, hovudtelefonar og utgangsmodus på Boom
 	PL	Przełączanie między trybem niskich tonów subwoofera, słuchawek i wyjścia liniowego
 	RU	Переключение между сабвуфером, наушниками и линейным выходом на Squeezebox Boom
 	SV	Växla mellan baselement, hörlurar och ljudutgång på Boom.

@@ -6,8 +6,9 @@ PLUGIN_DSTM
 	EN	Don't Stop The Music
 	FR	N'arrêtez pas la musique
 	HU	Ne hagyja abba a zenét
-	NO	Ikke stopp musikken
+	NB	Ikke stopp musikken
 	NL	Don't Stop The Music
+	NN	Ikkje stopp musikken
 	SV	Stoppa inte musiken
 
 PLUGIN_DSTM_DESC
@@ -18,9 +19,10 @@ PLUGIN_DSTM_DESC
 	EN	Don't Stop The Music will make sure you don't let the silence kill your flow. Once you reach the end of your playlist it will automatically add music similar to what you've been listening to.
 	FR	Ce plugin s'assurera de ne laisser aucune place au silence ! Une fois la fin de votre liste de lecture atteinte, de la musique similaire à celle que vous venez d'écouter est automatiquement ajoutée.
 	HU	A "Ne hagyja abba a zenét" gondoskodik arról, hogy ne hagyja, hogy a csend megölje a hangulatot. Amint eléred a lejátszási lista végét, automatikusan hozzáadja az általad hallgatotthoz hasonló zenéket.
+	NB	Ikke stopp musikken sørger for at stillheten ikke forstyrrer flyten din. Den vil automagisk legge til lignende musikk som du har hørt på, så snart enden på spillelista er nådd.
 	NL	Don't Stop The Music zorgt ervoor dat er geen onverwachte stilte valt. Eenmaal aan het einde van de playlist worden automatisch nummers toegevoegd op basis van de gemaakte keuze. Deze voorkeuze vind je in het hoofdmenu onder Extra en kan voor elke muziekspeler afzonderlijk worden ingesteld.
-	NO	Ikke stopp musikken sørger for at stillheten ikke forstyrrer flyten din. Den vil automagisk legge til lignende musikk som du har hørt på, så snart enden på spillelista er nådd.
 	NL	Don't Stop The Music zorgt ervoor dat er geen stiltes vallen. Zodra je het einde van jouw afspeellijst hebt bereikt, wordt er automatisch muziek toegevoegd die lijkt op waar je naar hebt geluisterd.
+	NN	Ikkje stopp musikken sørgjer for at stilla ikkje forstyrrar flyten din. Han legg automagisk til liknande musikk som den du har høyrt på, så snart slutten på spelelista er nådd.
 	SV	Stoppa inte musiken säkerställer att tystnad inte dödar ditt flyt. Pluginprogrammet lägger automatiskt till mer musik av samma typ som du har lyssnat till när slutet av din spellista nås. 
 
 PLUGIN_DSTM_HELP
@@ -31,6 +33,7 @@ PLUGIN_DSTM_HELP
 	EN	Select what you'd like to play once a playlist has come to an end. The choice can vary, depending on the plugins you've installed and configured.
 	FR	Sélectionnez ce que vous souhaitez jouer une fois la liste de lecture terminée. Le choix peut varier en fonction des plugins que vous avez installés et configurés.
 	HU	Válaszd ki, hogy mit szeretnél lejátszani, ha egy lejátszási lista véget ér. A választás a telepített és konfigurált bővítményektől függően változhat.
+	NB	Velg hva du vil skal spilles av når slutten på spillelista er nådd. Valget kan variere etter hvilke tilleggsmoduler du har installert og satt opp.
 	NL	Selecteer wat je afgespeeld wilt hebben zodra jouw afspeellijst is afgelopen. De keuzemogelijkheid is afhankelijk van de geïnstalleerde plug-ins.
-	NO	Velg hva du vil skal spilles av når slutten på spillelista er nådd. Valget kan variere etter hvilke tilleggsmoduler du har installert og satt opp.
+	NN	Vel kva du vil skal spelast av når slutten på spelelista er nådd. Vala kan variere etter kva tilleggsmodular du har installert og sett opp.
 	SV	Välj vad du vill spela när spellistan tar slut. Valet kan variera beroende på vilka pluginprogram som är installerade och konfigurerade.
