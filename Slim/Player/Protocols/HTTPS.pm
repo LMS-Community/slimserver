@@ -65,6 +65,14 @@ sub new {
 
 sub close {
 	my $self = shift;
+
+	# remove the reference to ourselves held by the IO::Select object, as
+	# RemoteStream::close() would - we never get there (see HTTP::close())
+	if (defined ${*$self}{'_sel'}) {
+		${*$self}{'_sel'}->remove($self);
+		${*$self}{'_sel'} = undef;
+	}
+
 	$self->SUPER::close;
 	# if we are really HTTPS, we also need to call HTTP's close() to let it do cleanup
 	# and it will know that it should not call own parent's close()
