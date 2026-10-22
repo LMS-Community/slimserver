@@ -348,6 +348,13 @@ sub sanitizeTagValues {
 
 sub sanitizeYearTag {
 	my ($class, $year) = @_;
+
+	return $year unless $year;
+
+	if (ref $year && ref $year eq 'ARRAY') {
+		($year) = grep /\d\d\d\d/, @$year;
+	}
+
 	$year =~ s/.*(\d\d\d\d).*/$1/ if $year;
 	return $year;
 }
