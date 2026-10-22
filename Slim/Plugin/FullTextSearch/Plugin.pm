@@ -110,7 +110,8 @@ use constant SQL_CREATE_ALBUM_ITEM => qq{
 		SELECT '@{[ ALBUMS_ID_PREFIX ]}' || albums.id, 'album',
 		-- weight 10
 		UNIQUE_TOKENS(LOWER(IFNULL(albums.title, '')) || ' ' || IFNULL(albums.titlesearch, '') || ' ' || IFNULL(albums.customsearch, '') || ' '
-		|| IFNULL((SELECT GROUP_CONCAT(wt,' ') FROM (SELECT DISTINCT works.titlesearch wt FROM tracks JOIN works ON tracks.work = works.id WHERE tracks.album = albums.id) ), ' ') ),
+		|| IFNULL((SELECT GROUP_CONCAT(work_and_composer,' ') FROM (SELECT DISTINCT works.titlesearch || ' ' || contributors.namesearch AS work_and_composer
+			FROM tracks JOIN works ON tracks.work = works.id JOIN contributors ON contributors.id = works.composer WHERE tracks.album = albums.id) ), ' ') ),
 		-- weight 5
 		IFNULL(albums.year, ''),
 		-- weight 3
