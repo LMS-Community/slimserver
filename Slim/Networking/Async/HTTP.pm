@@ -322,6 +322,7 @@ sub read_body {
 	my $args = shift;
 
 	$self->socket->set( passthrough => [ $self, $args ] );
+	$self->socket->set( http_body_suspended => 0 );
 
 	# Timer in case the server never sends any body data
 	my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
@@ -334,14 +335,26 @@ sub read_body {
 	# or in IO::Socket::SSL's buffer of decrypted data, and the socket won't become readable for it again. With a
 	# server keeping the connection open we would wait until it closes it or the timeout fires, so read it now.
 	my $socket = $self->socket;
-	if ( $socket->_rbuf_length || ( $socket->can('pending') && $socket->pending() ) ) {
+	my $response = $self->response;
+	my $length = $response->header('Content-Length');
+	if ( _body_data_pending($socket)
+		|| $self->request->method eq 'HEAD'
+		|| $response->code == 204 || $response->code == 304
+		|| (!$response->header('Transfer-Encoding') && defined $length && $length =~ /^\s*0+\s*$/) ) {
 		_http_read_body( $socket, $self, $args );
 	}
+}
+
+sub _body_data_pending {
+	my $socket = shift;
+
+	return $socket->_rbuf_length || ( $socket->can('pending') && $socket->pending() );
 }
 
 sub suspend_stream {
 	my $self = shift;
 
+	$self->socket->set( http_body_suspended => 1 );
 	Slim::Utils::Timers::killTimers( $self->socket, \&_http_read_timeout );
 	Slim::Networking::Select::removeRead( $self->socket );
 }
@@ -349,10 +362,7 @@ sub suspend_stream {
 sub resume_stream {
 	my $self = shift;
 
-	my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
-
-	Slim::Utils::Timers::setTimer( $self->socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self->socket->get('passthrough') );
-	Slim::Networking::Select::addRead( $self->socket, \&_http_read_body );
+	$self->read_body( $self->socket->get('passthrough')->[1] );
 }
 
 sub _http_socket_error {
@@ -502,27 +512,7 @@ sub _http_read {
 		}
 
 		# if not, keep going and read the body
-		$self->socket->set( passthrough => [ $self, $args ] );
-
-		# Timer in case the server never sends any body data
-		my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
-		Slim::Utils::Timers::setTimer( $self->socket, Time::HiRes::time() + $timeout, \&_http_socket_error, $self, $args );
-
-		Slim::Networking::Select::addError( $self->socket, \&_http_socket_error );
-		Slim::Networking::Select::addRead( $self->socket, \&_http_read_body );
-
-		# in a *confirmed* keep-alive situation, the whole body might already be in the buffer,
-		# so there could be no further event which would lead to an error timeout, so body reading
-		# must be forced. But if nothing has been read yet, attempting to force body reading can lead to
-		# a false empty body result, so let it to the event loop.
-		# Body might also be empty but a keep-alive with no content-length in the response is an error
-		# if everything has already been read, _http_body_read will unsubscribe to event loop
-		# we just subscrive above ... a bit unefficient
-		if ( (!defined $self->response->headers->header('Connection') ||  $self->response->headers->header('Connection') =~ /keep-alive/i)
-			&& ($self->socket->_rbuf_length > 0 || $self->socket->_rbuf_length == ($headers->content_length || 0)) )
-		{
-			_http_read_body( $self->socket, $self, $args )
-		}
+		$self->read_body($args);
 	}
 }
 
@@ -587,6 +577,8 @@ sub _http_read_body {
 			$self->response->add_content( $buf );
 		}
 
+		return unless $self->socket && $self->socket == $socket;
+
 		# Does the caller want us to quit reading early (i.e. for mp3 frames)?
 		if ( $args->{readLimit} && length( $self->response->content ) >= $args->{readLimit} ) {
 
@@ -601,9 +593,12 @@ sub _http_read_body {
 				my $passthrough = $args->{passthrough} || [];
 				return $cb->( $self, @{$passthrough} );
 			}
+			return;
 		}
 
-		if ( (defined $result && $result == 0) || (defined $self->response->headers->header('Content-Length') && length($self->response->content) == $self->response->headers->header('Content-Length')) ) {
+		if ( (defined $result && $result == 0)
+			|| (!$self->response->header('Transfer-Encoding') && defined $self->response->headers->header('Content-Length') && length($self->response->content) == $self->response->headers->header('Content-Length'))
+		) {
 			# if here, we've reached the end of the body
 
 			# close and remove the socket if not keep-alive
@@ -628,20 +623,18 @@ sub _http_read_body {
 		}
 		else {
 			# More body data to read
+			return if $socket->get('http_body_suspended');
 
 			# Some servers may never send EOF, but we want to return whatever data we've read
 			my $timeout = $self->timeout || $prefs->get('remotestreamtimeout');
 			Slim::Utils::Timers::setTimer( $socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self, $args );
 
-			# For SSL sockets, IO::Socket::SSL decrypts whole TLS records at once into an
-			# internal buffer. After read_entity_body returns, the OS FD may be empty (all
-			# TLS record bytes consumed) even though plaintext data remains in the SSL buffer.
-			# The event loop won't fire the callback again in that case, so we redo the read
-			# loop ourselves to drain whatever SSL has already buffered.
-			if ( $socket->can('pending') && $socket->pending() ) {
+			# Net::HTTP and SSL can both retain data without another socket-readiness event.
+			if ( _body_data_pending($socket) ) {
 				# avoid starving the event loop with a long-running read loop by yielding every 10 iterations
 				# this should never be needed, I've never seen more than 2 iterations in testing, but just in case ...
 				main::idle() if $iteration++ % 10 == 0;
+				return unless $self->socket && $self->socket == $socket && !$socket->get('http_body_suspended');
 				redo BODY_READ;
 			}
 		}
