@@ -2,7 +2,7 @@ package Audio::Scan;
 
 use strict;
 
-our $VERSION = '1.13';
+our $VERSION = '1.14';
 
 require XSLoader;
 XSLoader::load('Audio::Scan', $VERSION);
@@ -205,8 +205,8 @@ determined by the file's extension.  Supported extensions are:
     MP3:  mp3, mp2
     MP4:  mp4, m4a, m4b, m4p, m4v, m4r, k3g, skm, 3gp, 3g2, mov
     AAC (ADTS): aac
-    Ogg:  ogg, oga
-    FLAC: flc, flac, fla
+    Ogg:  ogg, oga, ogf
+    FLAC: flc, flac, fla, ogf
     ASF:  wma, wmv, asf
     Musepack:  mpc, mpp, mp+
     Monkey's Audio:  ape, apl
@@ -578,7 +578,7 @@ The following metadata about a file is returned:
 
 Raw Vorbis comments are returned.  All comment keys are capitalized.
 
-=head1 FLAC
+=head1 FLAC or OggFLAC
 
 =head2 INFO
 
@@ -587,6 +587,7 @@ The following metadata about a file is returned:
     channels
     samplerate (in kHz)
     bitrate (in bps)
+    bitrage_ogg (in bps, calculate from ogg frames)
     file_size
     audio_offset (byte offset to first audio frame)
     audio_size
@@ -908,7 +909,7 @@ and adapted by Netgear.  It has been heavily rewritten to fix bugs and add
 more features.
 
 The source to the original Netgear C scanner for SqueezeCenter is located
-at L<http://svn.slimdevices.com/repos/slim/7.3/trunk/platforms/readynas/contrib/scanner>
+at L<https://github.com/LMS-Community/slimserver-platforms/tree/public/8.5/readynas/contrib/scanner>
 
 The audio MD5 feature uses an MD5 implementation by L. Peter Deutsch,
 E<lt>ghost@aladdin.comE<gt>.
@@ -927,13 +928,25 @@ Andy Grundman, E<lt>andy@hybridized.orgE<gt>
 
 Dan Sully, E<lt>daniel@cpan.orgE<gt>
 
-=head1 COPYRIGHT AND LICENSE
+=head1 COPYRIGHT AND LICENSES
 
 Copyright (C) 2010-2011 Logitech, Inc.
 
-This program is free software; you can redistribute it and/or modify
+Audio::Scan is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
+
+APE decoder originally copyright 2007 Jeremy Evans.
+
+<buffer.c> derived from Tatu Ylonen, copyright 1995.
+
+MPC decoder originally copyright 2005, The Musepack Development Team.
+
+ISO C9x compliant inttypes.h Copyright 2006 Alexander Chemeris.
+
+Portable C<stdint.h> originally copyright 2005-2007 Paul Hsieh.
+
+See the C<COPYING*> files in the distribution for more information.
 
 =cut
