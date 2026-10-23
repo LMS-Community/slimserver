@@ -71,6 +71,7 @@ sub modelName   { 'Web Client' }
 sub decoder     { 'http' }
 sub vfd         { undef }
 sub canPowerOff { 0 }
+sub startAt	{ 1 }
 
 sub power {
 	my $client = shift;
