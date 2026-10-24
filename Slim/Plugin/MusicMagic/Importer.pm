@@ -294,7 +294,7 @@ sub exportSongs {
 			# Convert $track->url to a path and call MusicIP
 			my $path = Slim::Utils::Misc::pathFromFileURL($trackurl);
 
-			my $pathEnc = Slim::Plugin::MusicMagic::Common::escape($path);
+			my $pathEnc = Slim::Plugin::MusicMagic::Common::escapePath($path);
 
 			# Set musicmagic_mixable on $track object and call $track->update to actually store it.
 			my $result = get("http://localhost:$MMSport/api/status?song=$pathEnc");
