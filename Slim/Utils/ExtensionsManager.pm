@@ -486,7 +486,11 @@ sub getExtensions {
 		Slim::Networking::SimpleAsyncHTTP->new(
 			\&_parseResponse,
 			\&_noResponse,
-			{ args => $args, cache => 1 }
+			{ 
+				options => { MaxLineLength => 16 * 1024 },
+				args => $args, 
+				cache => 1 
+			}
 		)->get( $args->{'name'}, 'User-Agent' => Slim::Utils::Misc::userAgentString('legacy') );
 	}
 }

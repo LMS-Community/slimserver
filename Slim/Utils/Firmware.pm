@@ -384,6 +384,7 @@ sub downloadAsync {
 		\&downloadAsyncError,
 		{
 			%$args,
+			options => { MaxLineLength => 16 * 1024 },
 			saveAs => "$file.tmp",
 			file   => $file,
 		},
@@ -417,6 +418,7 @@ sub downloadAsyncDone {
 		\&downloadAsyncError,
 		{
 			%$args,
+			options => { MaxLineLength => 16 * 1024 },
 			saveAs => undef,
 		}
 	);
