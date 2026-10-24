@@ -79,6 +79,7 @@ sub checkVersion {
 		\&checkVersionCB,
 		\&checkVersionError,
 		{
+			options => { MaxLineLength => 16 * 1024 },
 			cb => $cb
 		}
 	)->get(REPOSITORY_URL);
