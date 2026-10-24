@@ -178,7 +178,11 @@ sub install {
 		_installDownload($file, $args);
 	}
 	else {
-		my $http = Slim::Networking::SimpleAsyncHTTP->new( \&_downloadDone, \&_downloadError, { saveAs => $file, args => $args } );
+		my $http = Slim::Networking::SimpleAsyncHTTP->new( \&_downloadDone, \&_downloadError, { 
+			options => { MaxLineLength => 16 * 1024 },
+			saveAs => $file, 
+			args => $args 
+		} );
 
 		main::INFOLOG && $log->info("install - downloading $name from $url");
 
