@@ -157,7 +157,7 @@ sub find {
 			return 1;
 		}
 
-		my $mtime = $stat[9] || 0;
+		my $mtime = Slim::Utils::Misc::fixMTime($stat[9]) || 0;
 		my $size  = -d $file ? 0 : ($stat[7] || 0);
 
 		$sth->execute(

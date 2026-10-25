@@ -259,6 +259,7 @@ sub readTags {
 	if (-e $filepath) {
 		# cache the file size & date
 		($tags->{'FILESIZE'}, $tags->{'TIMESTAMP'}) = (stat(_))[7,9];
+		$tags->{'TIMESTAMP'} = Slim::Utils::Misc::fixMTime($tags->{'TIMESTAMP'});
 	}
 
 	if ($tags->{'LEADING_MDAT'}) {

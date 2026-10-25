@@ -60,7 +60,7 @@ sub find {
 	} );
 
 	# Add the root directory to the database
-	my $mtime = (stat $path)[9] || 0;
+	my $mtime = Slim::Utils::Misc::fixMTime( (stat $path)[9] ) || 0;
 	$sth->execute(
 		Slim::Utils::Misc::fileURLFromPath($path),
 		$mtime,
@@ -124,7 +124,7 @@ sub find {
 				$_[0] && return;
 
 				my @stat = stat _;
-				my $mtime = $stat[9] || 0;
+				my $mtime = Slim::Utils::Misc::fixMTime($stat[9]) || 0;
 				my $size  = $stat[7] || 0;
 
 				if ( -d _ ) {
