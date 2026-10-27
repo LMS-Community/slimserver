@@ -520,9 +520,10 @@ sub indexHandler {
 				if (defined $params->{'entryurl'} && $params->{'entryurl'} ne $entry->{'URL'}) {
 
 					my $url = $params->{'entryurl'};
+
 					if ($url !~ /^https?:/) {
 
-						if ($url == /\.(xml|opml|rss)$/) {
+						if ($url =~ /\.(xml|opml|rss)$/) {
 							$entry->{'type'} = 'feed';
 						} else {
 							$entry->{'type'} = 'audio';
@@ -560,11 +561,11 @@ sub indexHandler {
 							main::INFOLOG && $log->info("content type $type - treating as audio");
 
 							$entry->{'type'} = 'audio';
-						} elsif ($url == /\.(xml|opml|rss)$/) {
+						} elsif ($url =~ /\.(xml|opml|rss)$/) {
 
 							main::INFOLOG && $log->info("content type $type - treating as podcast feed");
 
-                                                        $entry->{'type'} = 'feed';
+							$entry->{'type'} = 'feed';
 						} else {
 
 							main::INFOLOG && $log->info("content type $type - treating as non audio");
@@ -852,7 +853,7 @@ sub cliAdd {
 				'icon' => $icon || $favs->icon($url),
 			};
 
-			if ($url == /\.(xml|opml|rss)$/) {
+			if ($url =~ /\.(xml|opml|rss)$/) {
 				$entry->{'type'} = $type || 'feed';
 			} else {
 				$entry->{'type'} = $type || 'audio';
