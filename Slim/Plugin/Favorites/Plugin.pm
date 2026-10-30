@@ -523,17 +523,13 @@ sub indexHandler {
 
 					if ($url !~ /^https?:/) {
 
-						if ($url !~ /\.(xml|opml|rss)$/) {
-
-							$entry->{'type'} = 'audio';
-
+						if ($url =~ /\.(xml|opml|rss)$/) {
+							$entry->{'type'} = 'feed';
 						} else {
-
-							delete $entry->{'type'};
+							$entry->{'type'} = 'audio';
 						}
 
 					} elsif (!$params->{'fetched'}) {
-
 						main::INFOLOG && $log->info("checking content type for $url");
 
 						Slim::Networking::Async::HTTP->new()->send_request( {
@@ -546,7 +542,6 @@ sub indexHandler {
 						return;
 
 					} else {
-
 						my $mime = $params->{'fetchedtype'} || 'error';
 						my $type = Slim::Music::Info::mimeToType($mime);
 
@@ -566,7 +561,11 @@ sub indexHandler {
 							main::INFOLOG && $log->info("content type $type - treating as audio");
 
 							$entry->{'type'} = 'audio';
+						} elsif ($url =~ /\.(xml|opml|rss)$/) {
 
+							main::INFOLOG && $log->info("content type $type - treating as podcast feed");
+
+							$entry->{'type'} = 'feed';
 						} else {
 
 							main::INFOLOG && $log->info("content type $type - treating as non audio");
@@ -851,9 +850,15 @@ sub cliAdd {
 			$entry = {
 				'text' => $title,
 				'URL'  => $url,
-				'type' => $type || 'audio',
 				'icon' => $icon || $favs->icon($url),
 			};
+
+			if ($url =~ /\.(xml|opml|rss)$/) {
+				$entry->{'type'} = $type || 'feed';
+			} else {
+				$entry->{'type'} = $type || 'audio';
+			}
+
 			$entry->{'parser'} = $parser if $parser;
 
 			$request->addResult('count', 1);
