@@ -682,6 +682,9 @@ sub minVolume {	return 100; }
 sub maxPitch {	return 100; }
 sub minPitch {	return 100; }
 
+sub maxSpeed {	return 100; }
+sub minSpeed {	return 100; }
+
 sub maxTreble {	return 50; }
 sub minTreble {	return 50; }
 
@@ -703,7 +706,7 @@ sub canHTTPS { return 0; }
 
 Returns the requested aspect of a given mixer feature.
 
-Supported features: volume, pitch, bass & treble.
+Supported features: volume, pitch, speed, bass & treble.
 
 Supported aspects:
 
@@ -770,6 +773,15 @@ sub mixerConstant {
 		return $client->maxPitch() if $aspect eq 'max';
 		return $client->minPitch() if $aspect eq 'min';
 		return ( ( $client->maxPitch() + $client->minPitch() ) / 2 ) if $aspect eq 'mid';
+		return 1 if $aspect eq 'scale';
+		return 1 if $aspect eq 'increment';
+		return 0 if $aspect eq 'balanced';
+
+	} elsif ($feature eq 'speed') {
+
+		return $client->maxSpeed() if $aspect eq 'max';
+		return $client->minSpeed() if $aspect eq 'min';
+		return ( ( $client->maxSpeed() + $client->minSpeed() ) / 2 ) if $aspect eq 'mid';
 		return 1 if $aspect eq 'scale';
 		return 1 if $aspect eq 'increment';
 		return 0 if $aspect eq 'balanced';
@@ -880,6 +892,15 @@ sub pitch {
 	my ($client, $value) = @_;
 
 	return $client->_mixerPrefs('pitch', 'maxPitch', 'minPitch', $value);
+}
+
+# playback speed, expressed as a percentage of normal speed (100 == normal, 150 == 1.5x, ...)
+# implemented via a transcoding pipeline (see convert.conf), so it works regardless of player
+# hardware - unlike pitch() above which only works on the original mas35x9-based Squeezebox1.
+sub speed {
+	my ($client, $value) = @_;
+
+	return $client->_mixerPrefs('speed', 'maxSpeed', 'minSpeed', $value);
 }
 
 sub stereoXL {

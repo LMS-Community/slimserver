@@ -82,6 +82,12 @@ sub registerDefaultInfoProviders {
 		func      => \&playTrack,
 	) );
 
+	$class->registerInfoProvider( speed => (
+		menuMode  => 1,
+		after     => 'playitem',
+		func      => \&infoSpeed,
+	) );
+
 	$class->registerInfoProvider( artwork => (
 		menuMode  => 1,
 		after     => 'year',
@@ -503,6 +509,50 @@ sub playTrack {
 	};
 
 	return $items;
+}
+
+# mirrors the <option> values/labels in HTML/Default/status_header.html's #ctrlSpeed
+my @speedChoices = (
+	[100 => '1.0x'], [110 => '1.1x'], [120 => '1.2x'], [130 => '1.3x'],
+	[150 => '1.5x'], [175 => '1.75x'], [200 => '2.0x'],
+);
+
+sub infoSpeed {
+	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
+
+	return undef unless blessed($client) && ($client->maxSpeed() - $client->minSpeed());
+
+	# playback speed is a player-level setting, not a track one - only offer it from the
+	# currently playing track's own context menu, not while just browsing/viewing info
+	# for some other, unrelated track
+	my $current = Slim::Player::Playlist::track($client);
+	return undef unless $current && $track && $current->url eq $track->url;
+
+	my $speed = $client->speed();
+	my $items = [];
+
+	for my $choice ( @speedChoices ) {
+		my ( $value, $label ) = @{$choice};
+
+		push @{$items}, {
+			type => 'text',
+			name => ( $value == $speed ? "\x{2022} " : '' ) . $label,
+			jive => {
+				actions => {
+					go => {
+						player     => 0,
+						cmd        => [ 'mixer', 'speed', $value ],
+						nextWindow => 'nowPlaying',
+					},
+				},
+			},
+		};
+	}
+
+	return {
+		name  => cstring($client, 'SPEED'),
+		items => $items,
+	};
 }
 
 sub addTrackNext {
