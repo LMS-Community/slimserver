@@ -3167,7 +3167,10 @@ sub _mergeAndCreateContributors {
 	main::DEBUGLOG && $isDebug && $log->debug("-- Track has ", scalar (keys %contributors), " contributor(s)");
 
 	# Create a singleton for "No Artist"
-	if ($create && !$foundContributor) {
+	# Don't do this on track creation only: an update of a track whose tags
+	# were removed must also get the fallback contributor, or the track
+	# would be left without any contributor_track row (see #1706)
+	if (!$foundContributor) {
 
 		if (!$_unknownArtist) {
 			my $name        = string('NO_ARTIST');
