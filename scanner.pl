@@ -356,7 +356,6 @@ sub main {
 
 			if ($changes) {
 				Slim::Music::Import->setLastScanTime;
-				Slim::Music::Import->setLastScanTimeIsDST();
 			}
 
 			# Notify server we are done scanning

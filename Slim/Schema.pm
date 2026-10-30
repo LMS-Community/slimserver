@@ -2610,7 +2610,7 @@ sub _hasChanged {
 		my $agecheck = 0;
 
 		if ($agedef) {
-			$agecheck = ((stat(_))[9] == $timestamp);
+			$agecheck = (Slim::Utils::Misc::fixMTime((stat(_))[9]) == $timestamp);
 		}
 
 		return 0 if  $fsdef && $fscheck && $agedef && $agecheck;
