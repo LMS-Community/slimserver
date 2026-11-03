@@ -9,7 +9,10 @@ use base 'Slim::Schema::DBI';
 
 	$class->table('comments');
 
-	$class->add_columns(qw(id track value));
+	$class->add_columns(
+		id => { is_auto_increment => 1 },
+		qw(track value),
+	);
 
 	$class->set_primary_key('id');
 

@@ -20,23 +20,26 @@ my $log = logger('database.info');
 
 	$class->table('albums');
 
-	$class->add_columns(qw(
-		id
-		titlesort
-		contributor
-		compilation
-		year
-		artwork
-		disc
-		discc
-		musicmagic_mixable
-		titlesearch
-		replay_gain
-		replay_peak
-		musicbrainz_id
-		release_type
-		extid
-	), title => { accessor => undef() });
+	$class->add_columns(
+		'id' => { is_auto_increment => 1 },
+		'title' => { accessor => undef() },
+		qw(
+			titlesort
+			contributor
+			compilation
+			year
+			artwork
+			disc
+			discc
+			musicmagic_mixable
+			titlesearch
+			replay_gain
+			replay_peak
+			musicbrainz_id
+			release_type
+			extid
+		),
+	);
 
 	$class->set_primary_key('id');
 	$class->add_unique_constraint('titlesearch' => [qw/id titlesearch/]);

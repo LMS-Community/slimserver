@@ -16,7 +16,10 @@ use Slim::Utils::Strings qw(string);
 	# Magic to create a ResultSource for this inherited class.
 	$class->table('works');
 
-	$class->add_columns(qw(id composer title titlesort titlesearch));
+	$class->add_columns(
+		id => { is_auto_increment => 1 },
+		qw(composer title titlesort titlesearch),
+	);
 	$class->set_primary_key('id');
 
 	$class->has_many('track' => 'Slim::Schema::Track' => 'work');
