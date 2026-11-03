@@ -266,12 +266,17 @@ sub _connect {
 	# For custom exceptions
 	$class->storage_type('Slim::Schema::Storage');
 
+	# Don't use autocommit mode for the scanner.
+	# Needs to be set here as setting dbh->{'AutoCommit'} = 0 later
+	# confusing the transaction nesting logic.
+	my $AutoCommit = (main::SCANNER ? 0 : 1);
+
 	my $sqlHelperClass = Slim::Utils::OSDetect->getOS()->sqlHelperClass();
 	my $on_connect_do = $sqlHelperClass->on_connect_do();
 
 	$class->connection( $dsn || $source, $username, $password, {
 		RaiseError    => 1,
-		AutoCommit    => 1,
+		AutoCommit    => $AutoCommit,
 		PrintError    => 0,
 		Taint         => 1,
 		on_connect_do => [

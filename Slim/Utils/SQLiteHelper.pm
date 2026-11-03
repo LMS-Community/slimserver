@@ -96,8 +96,22 @@ sub source {
 sub on_connect_do {
 	my $class = shift;
 
+	my $pragmaSynchronousOff = 'PRAGMA synchronous = OFF';
+	if ( main::SCANNER ) {
+		# Avoid error "Safety level may not be changed inside a
+		# transaction".  This happens because, when running with
+		# AutoCommit => 0, a transaction will already have
+		# implicitly been started for us.
+		$pragmaSynchronousOff = join(
+			'; ',
+			'END TRANSACTION',
+			$pragmaSynchronousOff,
+			'BEGIN TRANSACTION',
+		);
+	}
+
 	my $sql = [
-		'PRAGMA synchronous = OFF',
+		$pragmaSynchronousOff,
 		'PRAGMA journal_mode = WAL',
 		'PRAGMA foreign_keys = ON',
 		'PRAGMA wal_autocheckpoint = ' . (main::SCANNER ? 10000 : 200),
