@@ -13,7 +13,12 @@ use Slim::Schema::ResultSet::PlaylistTrack;
 
 	$class->table('playlist_track');
 
-	$class->add_columns(qw(id position playlist track));
+	$class->add_columns(
+		id => { is_auto_increment => 1 },
+		'position',
+		'playlist',
+		'track',
+	);
 
 	$class->set_primary_key('id');
 

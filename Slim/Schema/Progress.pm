@@ -9,7 +9,10 @@ use base 'Slim::Schema::DBI';
 
 	$class->table('progress');
 
-	$class->add_columns(qw/id type name active total done start finish info/);
+	$class->add_columns(
+		id => { is_auto_increment => 1 },
+		qw/type name active total done start finish info/,
+	  );
 	$class->set_primary_key('id');
 
 	$class->utf8_columns(qw/name info/);

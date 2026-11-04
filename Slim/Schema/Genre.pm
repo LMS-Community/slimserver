@@ -19,13 +19,15 @@ my $myClassicalGenreIds;
 
 	$class->table('genres');
 
-	$class->add_columns(qw(
-		id
-		name
-		namesort
-		namesearch
-		musicmagic_mixable
-	));
+	$class->add_columns(
+		id => { is_auto_increment => 1 },
+		qw(
+			name
+			namesort
+			namesearch
+			musicmagic_mixable
+		),
+	);
 
 	$class->set_primary_key('id');
 	$class->add_unique_constraint('namesearch' => [qw/namesearch/]);
