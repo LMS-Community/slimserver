@@ -2,10 +2,18 @@ package Audio::Scan;
 
 use strict;
 
-our $VERSION = '1.13';
+# DO NOT OVERWRITE THIS FILE AS LONG AS WE WANT TO SUPPORT x86_64! Only update the following version:
+our $VERSION = '1.14';
 
 require XSLoader;
-XSLoader::load('Audio::Scan', $VERSION);
+
+# unfortunately I'm no longer able to build for x86_64 macOS, so we try to load the XS module and fall back if it fails
+eval { XSLoader::load('Audio::Scan', $VERSION) };
+
+if ($@) {
+    $VERSION = '1.13';
+    XSLoader::load('Audio::Scan', $VERSION);
+}
 
 use constant FILTER_INFO_ONLY => 1;
 use constant FILTER_TAGS_ONLY => 2;
@@ -278,7 +286,7 @@ the usual $info hash with 2 additional keys:
     seek_header - A rewritten MP4/OggFlac header that can be prepended to the audio data
                   found at seek_offset to construct a valid bitstream. Specifically, for MP4
                   the following boxes are rewritten: stts, stsc, stsz, stco. For FLAC, the
-                  number of samples and md5 in STREAMINFO are zero'd 
+                  number of samples and md5 in STREAMINFO are zero'd
 
 For example, to seek 30 seconds into a file and write out a new MP4 file seeked to
 this point:
