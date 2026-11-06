@@ -31,6 +31,7 @@ sub find {
 	main::DEBUGLOG && $log->is_debug && (my $start = Time::HiRes::time);
 
 	my $count = 0;
+	my $skipped = 0;
 
 	# Other paths we need to scan later
 	my $others = [];
@@ -80,6 +81,8 @@ sub find {
 				my $diff = sprintf "%.2f", Time::HiRes::time - $start;
 				$log->debug( "Async scanner found $count files/dirs in $diff sec" );
 			}
+
+			$log->error("Skipped $skipped items that could not be read") if $skipped;
 
 			$progress && $progress->final($count);
 
@@ -153,7 +156,11 @@ sub find {
 		# Some platforms appear to lose the stat cache (`_`) before execute().
 		my @stat = stat $file;
 		if ( !@stat ) {
-			$log->warn("Failed to stat while scanning: $file ($!)");
+			# Logged as an error so it shows at the default log level: this item
+			# never reaches the library. On Windows this is what happens to paths
+			# of MAX_PATH or longer, and to names outside the system code page.
+			$log->error("Failed to stat while scanning: $file ($!)");
+			$skipped++;
 			return 1;
 		}
 
