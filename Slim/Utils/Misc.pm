@@ -81,6 +81,11 @@ elsif ($^O =~/darwin/i) {
 	$canFollowAlias = Slim::Utils::OS::OSX->canFollowAlias();
 }
 
+# bug 18078 - Perl before 5.34 uses the C runtime's stat() on Windows, which reports
+# a file's mtime one hour off whenever the file's date and today fall into different
+# DST periods. Perl 5.34 ships its own stat() implementation which is not affected.
+use constant FIX_DST_MTIME => (main::ISWINDOWS && $] < 5.034) ? 1 : 0;
+
 # Cache our user agent string.
 my ($userAgentString, $legacyUserAgentString, $apiHeaders);
 my $tempdir;
@@ -98,6 +103,29 @@ $prefs->setChange( sub {
 }, 'mediadirs', 'ignoreInAudioScan');
 
 =head1 METHODS
+
+=head2 fixMTime( $mtime )
+
+Correct a file modification time as returned by stat().
+
+On Windows, Perl before 5.34 uses the C runtime's stat(). It converts the file time
+to local time using today's DST state, but back to an epoch value using the DST
+state of the file's own date. A file dated in the other DST period than today is
+therefore reported one hour off, and the reported value changes with every DST
+change. Undo that error so that timestamps stored in the database stay stable.
+On other platforms, and with Perl 5.34 or later, this returns $mtime unchanged.
+
+=cut
+
+sub fixMTime {
+	my $mtime = shift;
+
+	return $mtime unless FIX_DST_MTIME && $mtime;
+
+	my $shift = (localtime())[8] - (localtime($mtime))[8];
+
+	return $shift ? $mtime - $shift * 3600 : $mtime;
+}
 
 =head2 findbin( $executable)
 
@@ -1117,7 +1145,7 @@ sub findAndScanDirectoryTree {
 	# Check for changes - these can be adds or deletes.
 	# Do a realtime scan - don't send anything to the scheduler.
 	my $path    = $topLevelObj->path;
-	my $fsMTime = (stat($path))[9] || 0;
+	my $fsMTime = fixMTime( (stat($path))[9] ) || 0;
 	my $dbMTime = $topLevelObj->timestamp || 0;
 
 	main::DEBUGLOG && $scannerlog->is_debug && $scannerlog->debug( "findAndScanDirectoryTree( $path ): fsMTime: $fsMTime, dbMTime: $dbMTime" );
