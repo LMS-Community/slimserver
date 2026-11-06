@@ -1,7 +1,13 @@
-# Ignore custom OS module as this is installed in devcontainer and not part of this repo
+# Ignore VSCode Perl Language Server settings
+.vscode/perl-lang/*
+
+# Ignore VSCode settings file
+.vscode/settings.json
+
+# Ignore custom OS module as this is installed in Dev Container and not part of this repo
 Slim/Utils/OS/Custom.pm
 
-# Ignore cache, logs and prefs files
+# Ignore cache, logs, prefs, and plugins directories
 Cache/*
 Logs/*
 prefs/*

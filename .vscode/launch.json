@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "perl",
+            "request": "launch",
+            "name": "LMS: Debug slimserver.pl",
+            "program": "${workspaceFolder}/slimserver.pl",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "--httpport", "9000",
+                "--cachedir", "${workspaceFolder}/Cache",
+                "--logdir",   "${workspaceFolder}/Logs",
+                "--prefsdir", "${workspaceFolder}/prefs",
+                // "--d_startup" // Uncomment for more verbose module loading
+            ],
+            "env": {
+                "LMS_VSCODE_DEBUG": "1",
+                "PERL5OPT": "-Mlib=${workspaceFolder}/.vscode -MPerlLanguageServerBootstrap",
+                "PERL5LIB": "${workspaceFolder}:${workspaceFolder}/lib"
+            },
+            "stopOnEntry": false,
+            "reloadModules": true
+        }
+    ]
+}
