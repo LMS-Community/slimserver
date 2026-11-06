@@ -421,6 +421,22 @@
 		[% END %]
 	[% END %]
 
+	[% IF prefs.exists('pref_speedReset') %]
+		[% WRAPPER setting title="SETUP_SPEEDRESET" desc="SETUP_SPEEDRESET_DESC" %]
+			<select class="stdedit" name="pref_speedReset" id="pref_speedReset">
+
+			[% FOREACH option = {
+				'0' => 'SPEEDRESET_OFF',
+				'1' => 'SPEEDRESET_TRACK',
+				'2' => 'SPEEDRESET_ALBUM',
+			} %]
+				<option [% IF prefs.pref_speedReset == option.key %]selected [% END %]value="[% option.key | html %]">[% option.value | string %]</option>
+			[%- END -%]
+
+			</select>
+		[% END %]
+	[% END %]
+
 	[% IF prefs.exists('pref_outputChannels') %]
 		[% WRAPPER setting title="SETUP_OUTPUT_CHANNELS" desc="SETUP_OUTPUT_CHANNELS_DESC" %]
 			<select class="stdedit" name="pref_outputChannels" id="pref_outputChannels">
