@@ -940,16 +940,18 @@ sub stream_s {
 		$transitionType = $prefs->client($master)->get('transitionType') || TRANSITION_NONE;
 		$transitionDuration = $prefs->client($master)->get('transitionDuration') || 0;
 		my $configuredTransition = $transitionType;
+
 		main::INFOLOG && $log->is_info && $log->info(sprintf(
-		'Smart transition check: streaming index %s, album match with previous track: %s, with next track: %s, '
-		. 'transition type %s -> %s, duration %s, smart crossfade %s',
-		Slim::Player::Source::streamingSongIndex($master),
-		Slim::Player::ReplayGain->trackAlbumMatch($master, -1) // 'undef',
-		Slim::Player::ReplayGain->trackAlbumMatch($master, 1) // 'undef',
-		$configuredTransition,
-		$transitionType,
-		$transitionDuration,
-		$prefs->client($master)->get('transitionSmart') ? 'on' : 'off'));
+			'Smart transition check: streaming index %s, album match with previous track: %s, with next track: %s, transition type %s -> %s, duration %s, smart crossfade %s',
+			Slim::Player::Source::streamingSongIndex($master),
+			Slim::Player::ReplayGain->trackAlbumMatch($master, -1) // 'undef',
+			Slim::Player::ReplayGain->trackAlbumMatch($master, 1) // 'undef',
+			$configuredTransition,
+			$transitionType,
+			$transitionDuration,
+			$prefs->client($master)->get('transitionSmart') ? 'on' : 'off')
+		);
+
 		# If we need to determine dynamically
 		if (
 			$transitionType != TRANSITION_NONE
@@ -959,8 +961,6 @@ sub stream_s {
 			( Slim::Player::Playlist::count($master) < 2
 			  ||
 			  Slim::Player::ReplayGain->trackAlbumMatch( $master, -1 )
-                          # The transition is between the previous track and this one, so only
-		          # whether this track follows the previous one on its album matters.
 			)
 		) {
 			main::INFOLOG && $log->info('Using smart transition mode');
