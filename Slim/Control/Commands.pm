@@ -2767,6 +2767,7 @@ sub rescanCommand {
 		my $dbh = Slim::Schema->dbh;
 		my $sth = $dbh->prepare_cached('DELETE FROM scanned_files WHERE url = ?');
 		my @trackList;
+		my $sthPics = $dbh->prepare_cached('DELETE FROM scanned_pics WHERE folder = ?');
 		my @paths = Slim::Utils::Misc::uniq(
 			map {
 				# build list of tracks to rescan
@@ -2779,9 +2780,10 @@ sub rescanCommand {
 			} @tracks
 		);
 
-		# need to delete the entry for the folder, too
+		# need to delete the entry for the folder and images in the folder, too
 		foreach (@paths) {
 			$sth->execute(Slim::Utils::Misc::fileURLFromPath($_));
+			$sthPics->execute($_);
 		}
 
 		if (scalar @paths) {
@@ -2791,8 +2793,8 @@ sub rescanCommand {
 				recursive => 0,
 				trackList => \@trackList,
 			} );
+			Slim::Music::Artwork->precacheAllArtwork;
 		}
-
 	}
 	else {
 		# In-process scan

@@ -13,6 +13,7 @@ package Slim::Utils::Scanner::Local::Async;
 
 use strict;
 
+use File::Basename qw(basename dirname);
 use File::Next;
 use File::Spec ();
 use Path::Class ();
@@ -38,14 +39,32 @@ sub find {
 	# Scanned files are stored in the database, use raw DBI to improve performance here
 	my $dbh = Slim::Schema->dbh;
 
-	my $sth = $dbh->prepare_cached( qq{
+	my $audioSth = $dbh->prepare_cached( qq{
 		INSERT INTO scanned_files
 		(url, timestamp, filesize)
 		VALUES
 		(?, ?, ?)
 	} );
 
-	my $types = Slim::Music::Info::validTypeExtensions( $args->{types} || 'audio' );
+	# Delete images first if requested
+	my ($sthDeletePics, $artUrl);
+	if ( my $artPath = $args->{delete_path} ) {
+		$artUrl = Slim::Utils::Misc::fileURLFromPath($artPath);
+		$sthDeletePics = $dbh->prepare("DELETE FROM scanned_pics WHERE folder_url = ? OR folder_url LIKE ?");
+	}
+
+	# Populate enhanced scanned_pics table (status E = already exists in the tracks table, status N = new)
+	my $imageSth = $dbh->prepare_cached( qq{
+		REPLACE INTO scanned_pics
+		(folder, full_path, timestamp, filesize, coverid, status, folder_url)
+		VALUES
+		(?, ?, ?, ?, ?,
+		CASE WHEN EXISTS (SELECT 1 FROM tracks WHERE tracks.coverid = ?) THEN 'E' ELSE 'N' END,
+		?
+		)
+	} );
+
+	my $types = Slim::Music::Info::validTypeExtensions( ($args->{types} || 'audio') . '|image' );
 
 	my $progress;
 	if ( $args->{progress} ) {
@@ -72,6 +91,12 @@ sub find {
 	}, $path );
 
 	my $walk = sub {
+
+		if ($sthDeletePics) {
+			$sthDeletePics->execute($artUrl, $artUrl . '/%');
+			$sthDeletePics = undef;
+		}
+
 		my $file = $iter->();
 
 		if ( !defined $file ) {
@@ -160,11 +185,27 @@ sub find {
 		my $mtime = $stat[9] || 0;
 		my $size  = -d $file ? 0 : ($stat[7] || 0);
 
-		$sth->execute(
-			Slim::Utils::Misc::fileURLFromPath($file),
-			$mtime,
-			$size,
-		);
+		my ($ext) = $file =~ /\.([^.]+)$/;
+
+		if ( $ext && Slim::Music::Info::isImage($file, lc($ext)) ) {
+			my $coverid = Slim::Music::Artwork->calculateCoverId($file, $mtime, $size);
+			$imageSth->execute(
+				dirname($file),
+				$file,
+				$mtime,
+				$size,
+				$coverid,
+				$coverid,
+				Slim::Utils::Misc::fileURLFromPath(dirname($file))
+			);
+		}
+		else {
+			$audioSth->execute(
+				Slim::Utils::Misc::fileURLFromPath($file),
+				$mtime,
+				$size
+			);
+		}
 
 		return 1;
 	};
