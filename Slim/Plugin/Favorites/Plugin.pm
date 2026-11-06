@@ -550,29 +550,7 @@ sub indexHandler {
 						my $mime = $params->{'fetchedtype'} || 'error';
 						my $type = Slim::Music::Info::mimeToType($mime);
 
-						if ($type) {
-
-							main::INFOLOG && $log->info("got mime type $mime");
-
-						} else {
-
-							main::INFOLOG && $log->info("unknown mime type $mime, inferring from url");
-
-							$type = Slim::Music::Info::typeFromPath($url);
-						}
-
-						if (Slim::Music::Info::isSong(undef, $type) || Slim::Music::Info::isPlaylist(undef, $type)) {
-
-							main::INFOLOG && $log->info("content type $type - treating as audio");
-
-							$entry->{'type'} = 'audio';
-
-						} else {
-
-							main::INFOLOG && $log->info("content type $type - treating as non audio");
-
-							delete $entry->{'type'};
-						}
+						setEntryType($entry, $type, $url);
 					}
 
 					$entry->{'URL'} = $url;
@@ -707,6 +685,27 @@ sub indexHandler {
 	my $output = Slim::Web::HTTP::filltemplatefile('plugins/Favorites/index.html', $params);
 
 	$callback->($client, $params, $output, @_);
+}
+
+sub setEntryType {
+	my ($entry, $type, $url) = @_;
+
+	if ($type) {
+		main::INFOLOG && $log->info("got mime type $type");
+	} else {
+		main::INFOLOG && $log->info("unknown mime type, inferring from url");
+		$type = Slim::Music::Info::typeFromPath($url);
+	}
+
+	if (Slim::Music::Info::isSong(undef, $type) || Slim::Music::Info::isPlaylist(undef, $type)) {
+		main::INFOLOG && $log->info("content type $type - treating as audio");
+		$entry->{'type'} = 'audio';
+	} else {
+		main::INFOLOG && $log->info("content type $type - treating as non audio");
+		delete $entry->{'type'};
+	}
+
+	return $entry;
 }
 
 sub asyncCBContent {
@@ -846,8 +845,6 @@ sub cliAdd {
 
 		if ($command eq 'add' && defined $title && defined $url) {
 
-			main::INFOLOG && $log->info("adding entry $title $url at index $index");
-
 			$entry = {
 				'text' => $title,
 				'URL'  => $url,
@@ -855,6 +852,10 @@ sub cliAdd {
 				'icon' => $icon || $favs->icon($url),
 			};
 			$entry->{'parser'} = $parser if $parser;
+
+			setEntryType($entry, $type, $url);
+
+			main::INFOLOG && $log->info("adding entry $title $url at index $index ($entry->{type})");
 
 			$request->addResult('count', 1);
 
