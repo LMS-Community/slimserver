@@ -28,17 +28,14 @@ my $log = logger('database.info');
 # keep a small cache of contributor objects for a short period of time, while we're looping the playlist items
 tie my %albumCache, 'Tie::Cache::LRU::Expires', EXPIRES => 5, ENTRIES => 15;
 
-our @allColumns = (
-	id => { is_auto_increment => 1 },
-	qw(
-		urlmd5 url content_type title titlesort titlesearch album primary_artist tracknum
-		timestamp added_time updated_time filesize disc remote audio audio_size audio_offset year secs
-		cover cover_cached vbr_scale bitrate samplerate samplesize channels block_alignment endian
-		bpm tagversion drm musicmagic_mixable dlna_profile
-		musicbrainz_id lossless lyrics replay_gain replay_peak extid virtual work subtitle grouping performance
-		discsubtitle
-	),
-);
+our @allColumns = (qw(
+	urlmd5 url content_type title titlesort titlesearch album primary_artist tracknum
+	timestamp added_time updated_time filesize disc remote audio audio_size audio_offset year secs
+	cover cover_cached vbr_scale bitrate samplerate samplesize channels block_alignment endian
+	bpm tagversion drm musicmagic_mixable dlna_profile
+	musicbrainz_id lossless lyrics replay_gain replay_peak extid virtual work subtitle grouping performance
+	discsubtitle
+));
 
 {
 	my $class = __PACKAGE__;
@@ -46,6 +43,7 @@ our @allColumns = (
 	$class->table('tracks');
 
 	$class->add_columns(
+		id => { is_auto_increment => 1 },
 		@allColumns,
 		coverid => { accessor => '_coverid' }, # use a wrapper method for coverid
 	);

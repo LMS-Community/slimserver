@@ -22,7 +22,6 @@ my $log = logger('database.info');
 
 	$class->add_columns(
 		'id' => { is_auto_increment => 1 },
-		'title' => { accessor => undef() },
 		qw(
 			titlesort
 			contributor
@@ -39,6 +38,7 @@ my $log = logger('database.info');
 			release_type
 			extid
 		),
+		'title' => { accessor => undef() },
 	);
 
 	$class->set_primary_key('id');

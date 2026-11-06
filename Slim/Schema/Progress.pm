@@ -12,7 +12,7 @@ use base 'Slim::Schema::DBI';
 	$class->add_columns(
 		id => { is_auto_increment => 1 },
 		qw/type name active total done start finish info/,
-	  );
+	);
 	$class->set_primary_key('id');
 
 	$class->utf8_columns(qw/name info/);
