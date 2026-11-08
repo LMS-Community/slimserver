@@ -6759,10 +6759,7 @@ sub _getTagDataForTracks {
 
 		my $want_names = $tags =~ /A/;
 		my $want_ids   = $tags =~ /S/;
-		# Performers first, then the other roles (allAlbumLinkRoles is in alphabetical order, with track artists last)
-		my %headerRoleOrder = ( ALBUMARTIST => 1, ARTIST => 2, TRACKARTIST => 3, BAND => 4, CONDUCTOR => 5, COMPOSER => 6 );
-		my @albumTitleRoles = map { Slim::Schema::Contributor->typeToRole($_) }
-			sort { ($headerRoleOrder{$a} || 99) <=> ($headerRoleOrder{$b} || 99) } Slim::Schema::Contributor->allAlbumLinkRoles();
+		my @albumTitleRoles = map { Slim::Schema::Contributor->typeToRole($_) } Slim::Schema::Contributor->allAlbumLinkRoles();
 		my @albumTitleNames;
 		my @albumTitleIds;
 
@@ -6779,8 +6776,8 @@ sub _getTagDataForTracks {
 		}
 
 		if ( $oneAlbum ) {
-			# Role by role, and within a role in track order, so that e.g. all the performers come before the composers,
-			# and the order doesn't depend on hash order. De-duplicate by ID, keeping names and IDs in step.
+			# Role by role, and within a role in track order, so that the order doesn't depend on hash order.
+			# De-duplicate by ID, keeping names and IDs in step.
 			my %seen;
 			foreach my $role_id (@albumTitleRoles) {
 				foreach my $track_id (@resultOrder) {
