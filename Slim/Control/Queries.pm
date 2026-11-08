@@ -6759,7 +6759,10 @@ sub _getTagDataForTracks {
 
 		my $want_names = $tags =~ /A/;
 		my $want_ids   = $tags =~ /S/;
-		my @albumTitleRoles = map { Slim::Schema::Contributor->typeToRole($_) } Slim::Schema::Contributor->allAlbumLinkRoles();
+		# Performers first, then the other roles (allAlbumLinkRoles is in alphabetical order, with track artists last)
+		my %headerRoleOrder = ( ALBUMARTIST => 1, ARTIST => 2, TRACKARTIST => 3, BAND => 4, CONDUCTOR => 5, COMPOSER => 6 );
+		my @albumTitleRoles = map { Slim::Schema::Contributor->typeToRole($_) }
+			sort { ($headerRoleOrder{$a} || 99) <=> ($headerRoleOrder{$b} || 99) } Slim::Schema::Contributor->allAlbumLinkRoles();
 		my @albumTitleNames;
 		my @albumTitleIds;
 
@@ -6773,17 +6776,28 @@ sub _getTagDataForTracks {
 				# XXX: what if name has ", " in it?
 				$track->{$role} = join($separator, @{$role_info->{names}}) if $want_names;
 			}
+		}
 
-			if ( $oneAlbum ) {
-				foreach (@albumTitleRoles) {
-					push @albumTitleNames, @{$role->{$_}->{names}} if $role->{$_}->{names};
-					push @albumTitleIds, @{$role->{$_}->{ids}} if $role->{$_}->{ids};
+		if ( $oneAlbum ) {
+			# Role by role, and within a role in track order, so that e.g. all the performers come before the composers,
+			# and the order doesn't depend on hash order. De-duplicate by ID, keeping names and IDs in step.
+			my %seen;
+			foreach my $role_id (@albumTitleRoles) {
+				foreach my $track_id (@resultOrder) {
+					my $role_info = $values{$track_id} && $values{$track_id}->{$role_id} || next;
+
+					for my $i (0 .. $#{$role_info->{ids}}) {
+						next if $seen{$role_info->{ids}->[$i]}++;
+						push @albumTitleNames, $role_info->{names}->[$i];
+						push @albumTitleIds, $role_info->{ids}->[$i];
+					}
 				}
 			}
 		}
+
 		if ( scalar @albumTitleIds ) {
-			@{$albumHeader->{title_names}} = Slim::Utils::Misc::uniq(@albumTitleNames);
-			@{$albumHeader->{title_ids}} = Slim::Utils::Misc::uniq(@albumTitleIds);
+			$albumHeader->{title_names} = \@albumTitleNames;
+			$albumHeader->{title_ids} = \@albumTitleIds;
 		}
 		elsif ( $oneAlbum ) {
 			# We've been asked for a specific album but for some reason we don't have any artists for the header: get from the album
