@@ -17,6 +17,7 @@ use base qw(Slim::Plugin::AudioScrobbler::API);
 use HTTP::Date qw(str2time);
 use JSON::XS qw(decode_json encode_json);
 use List::Util qw(max);
+use Scalar::Util qw(blessed);
 use Time::HiRes ();
 use URI;
 use URI::Escape qw(uri_escape_utf8 uri_unescape);
@@ -39,30 +40,15 @@ my $requestActive;
 my $dispatchTimer;
 my $nextRequestAt = 0;
 
-sub _request {
-	my ($method, $url, $apiKey, $cb, $ecb, $json, $isCurrent) = @_;
+sub _queueRequest {
+	my ($http, $method, $url, @args) = @_;
 
-	push @requests, sub {
-		return if $isCurrent && !$isCurrent->();
+	$http->params('successCallback', $http->cb);
+	$http->params('errorCallback', $http->ecb);
+	$http->cb(\&_requestDone);
+	$http->ecb(\&_requestDone);
 
-		my $http = Slim::Networking::SimpleAsyncHTTP->new(
-			sub { _requestDone($cb, @_) },
-			sub { _requestDone($ecb, @_) },
-			{ timeout => 30 },
-		);
-		my @headers = (
-			'User-Agent'    => "LyrionMusicServer/$::VERSION (https://lyrion.org/contact/)",
-			'Authorization' => "Token $apiKey",
-		);
-		push @headers, 'Content-Type' => 'application/json', $json if defined $json;
-
-		$requestActive = 1;
-		$nextRequestAt = Time::HiRes::time() + 1;
-		$http->$method($url, @headers);
-		# Include HTTP setup time without shortening a cooldown set by an inline callback.
-		$nextRequestAt = max($nextRequestAt, Time::HiRes::time() + 1);
-		return 1;
-	};
+	push @requests, [$http, $method, $url, @args];
 	_dispatchRequest();
 }
 
@@ -70,33 +56,46 @@ sub _dispatchRequest {
 	return if $requestActive || $dispatchTimer || !@requests;
 
 	if (Time::HiRes::time() < $nextRequestAt) {
-		$dispatchTimer = Slim::Utils::Timers::setTimer(undef, $nextRequestAt, sub {
-			$dispatchTimer = undef;
-			_dispatchRequest();
-		});
+		$dispatchTimer = Slim::Utils::Timers::setTimer(undef, $nextRequestAt, \&_dispatchTimer);
 		return;
 	}
 
 	while (my $request = shift @requests) {
-		return if $request->();
+		my ($http, $method, $url, @args) = @$request;
+		my $canSend = $http->params('canSend');
+		next if $canSend && !$canSend->($http->params);
+
+		$requestActive = 1;
+		$nextRequestAt = Time::HiRes::time() + 1;
+		$http->$method($url, 'User-Agent' => "LyrionMusicServer/$::VERSION (https://lyrion.org/contact/)", @args);
+		# Include HTTP setup time without shortening a cooldown set by an inline callback.
+		$nextRequestAt = max($nextRequestAt, Time::HiRes::time() + 1);
+		return;
 	}
 }
 
+sub _dispatchTimer {
+	undef $dispatchTimer;
+	_dispatchRequest();
+}
+
 sub _requestDone {
-	my ($cb, $http, undef, $response) = @_;
+	my ($http, $error, $response) = @_;
 
 	# SimpleAsyncHTTP passes the response separately on HTTP errors.
 	_applyCooldown($response || $http);
+	my $cb = $http->params(defined $error ? 'errorCallback' : 'successCallback');
 	eval { $cb->($http); 1 } or $log->error("ListenBrainz callback failed: $@");
 	$requestActive = 0;
 	_dispatchRequest();
 }
 
-sub _unsignedHeader {
+sub _parseNonNegativeInteger {
 	my ($value) = @_;
 	return unless defined $value && $value =~ /\A\s*([0-9]+)\s*\z/;
 	my $number = 0 + $1;
-	return $number if $number < 'Inf';
+	return if $number >= 'Inf';
+	return $number;
 }
 
 sub _applyCooldown {
@@ -104,13 +103,13 @@ sub _applyCooldown {
 	my $headers = $response->headers || return;
 	my $now = Time::HiRes::time();
 	my $retryAfter = $headers->header('Retry-After');
-	my $delay = _unsignedHeader($retryAfter);
+	my $delay = _parseNonNegativeInteger($retryAfter);
 	my $retryAt = defined $delay ? $now + $delay : (str2time($retryAfter, 'GMT') // 0);
-	my $remaining = _unsignedHeader($headers->header('X-RateLimit-Remaining'));
+	my $remaining = _parseNonNegativeInteger($headers->header('X-RateLimit-Remaining'));
 
 	if (($response->code || 0) == 429 || (defined $remaining && $remaining == 0)) {
-		my $resetIn = _unsignedHeader($headers->header('X-RateLimit-Reset-In'));
-		my $resetAt = $resetIn ? $now + $resetIn : (_unsignedHeader($headers->header('X-RateLimit-Reset')) // 0);
+		my $resetIn = _parseNonNegativeInteger($headers->header('X-RateLimit-Reset-In'));
+		my $resetAt = $resetIn ? $now + $resetIn : (_parseNonNegativeInteger($headers->header('X-RateLimit-Reset')) // 0);
 		$retryAt = max($retryAt, $resetAt);
 		$retryAt = $now + 2 if $retryAt <= $now;
 	}
@@ -119,9 +118,13 @@ sub _applyCooldown {
 }
 
 sub _apiUrl {
-	my ($base, $endpoint) = @_;
+	my ($self, $url) = @_;
 
-	my $uri = URI->new(($base || API_URL) . $endpoint);
+	$url = ($self->account->{api_url} || API_URL) . $url if $url !~ m{^https?://} && blessed $self;
+
+	# Normalize ListenBrainz endpoint to always end with /1/submit-listens
+	# Remove everything after /1/ and add the correct endpoint
+	my $uri = URI->new($url);
 
 	my $path = $uri->path;
 	$path =~ s{/1/1/}{/1/};
@@ -176,24 +179,25 @@ sub _getTrackMetadata {
 }
 
 sub submitNowPlaying {
-	my ($self, $track, $retry, $startedAt) = @_;
+	my ( $self, $track, $retry, $startedAt ) = @_;
 
-	my $clientId = $self->client || return;
-	my $client = Slim::Player::Client::getClient($clientId) || return;
+	my $client = $self->client || return;
+	$client = Slim::Player::Client::getClient($client) if !blessed $client;
+	return unless $client;
 
-	my $account = $self->account;
-	$startedAt //= $client->master()->trackStartTime();
-	my $isCurrent = sub {
-		my $current = Slim::Player::Client::getClient($clientId) || return;
-		my $selected = Slim::Plugin::AudioScrobbler::Plugin::getAccount($current) || return;
-		return $selected == $account && $prefs->get('enable_scrobbling') && !$current->isStopped()
-			&& $current->master()->trackStartTime() == $startedAt
-			&& (Slim::Player::Playlist::url($current) // '') eq $track->url;
+	my $params = {
+		client    => $client,
+		track     => $track,
+		retry     => $retry,
+		api       => $self,
+		timeout   => 30,
+		startedAt => $startedAt // $client->master()->trackStartTime(),
+		canSend   => \&_isCurrentNowPlaying,
 	};
-	return unless $isCurrent->();
+	return unless _isCurrentNowPlaying($params);
 
-	my $api_url = _apiUrl($account->{api_url}, '/1/submit-listens');
-	my $api_key = $account->{password};
+	my $api_url = $self->_apiUrl('/1/submit-listens');
+	my $api_key = $self->account->{password};
 
 	my $meta = $self->getMetadata($track) || return;
 	my $payload = {
@@ -204,16 +208,32 @@ sub submitNowPlaying {
 	};
 
 	my $json = encode_json($payload);
-	my $retryNowPlaying = $retry ? undef : sub { $self->submitNowPlaying($track, 1, $startedAt) };
 
 	main::DEBUGLOG && $log->debug("Submitting Now Playing track to ListenBrainz: " . $meta->{title});
 
-	_request(
-		'post', $api_url, $api_key,
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&_submitNowPlayingOK,
-		sub { _submitNowPlayingError($_[0], $client, $retryNowPlaying) },
-		$json, $isCurrent,
+		\&_submitNowPlayingError,
+		$params,
 	);
+
+	_queueRequest(
+		$http, 'post', $api_url,
+		'Content-Type'  => 'application/json',
+		'Authorization' => "Token $api_key",
+		$json,
+	);
+}
+
+sub _isCurrentNowPlaying {
+	my ($params) = @_;
+	my $api = $params->{api};
+	my $client = Slim::Player::Client::getClient($api->client) || return;
+	my $account = Slim::Plugin::AudioScrobbler::Plugin::getAccount($client) || return;
+
+	return $account == $api->account && $prefs->get('enable_scrobbling') && !$client->isStopped()
+		&& $client->master()->trackStartTime() == $params->{startedAt}
+		&& (Slim::Player::Playlist::url($client) // '') eq $params->{track}->url;
 }
 
 sub _submitNowPlayingOK {
@@ -224,11 +244,16 @@ sub _submitNowPlayingOK {
 }
 
 sub _submitNowPlayingError {
-	my ($http, $client, $retry) = @_;
+	my $http = shift;
 
 	main::DEBUGLOG && $log->debug('ListenBrainz Now Playing submission failed: ' . $http->error);
-	return unless $retry;
-	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 5, $retry);
+	return if $http->params('retry');
+	Slim::Utils::Timers::setTimer($http->params('client'), Time::HiRes::time() + 5, \&_retryNowPlaying, $http->params);
+}
+
+sub _retryNowPlaying {
+	my (undef, $params) = @_;
+	$params->{api}->submitNowPlaying($params->{track}, 1, $params->{startedAt});
 }
 
 # Scrobbling to ListenBrainz API
@@ -236,7 +261,7 @@ sub submitScrobble {
 	my ($self, $queue, $params) = @_;
 
 	my $clientId = $self->client;
-	my $api_url = _apiUrl($self->account->{api_url}, '/1/submit-listens');
+	my $api_url = $self->_apiUrl('/1/submit-listens');
 	my $api_key = $self->account->{password};
 	my $cb = $params->{cb} || sub {};
 
@@ -280,30 +305,44 @@ sub submitScrobbleItems {
 		$log->debug("ListenBrainz: Submitting item 1 of " . scalar(@$listens) . ": " . $listen->{track_metadata}->{track_name});
 	}
 
-	my $next = sub { submitScrobbleItems($listens, $api_url, $api_key, $cb, $clientId) };
-	_request(
-		'post', $api_url, $api_key,
-		sub { _submitScrobbleOK($_[0], $listens, $next) },
-		sub { _submitScrobbleError($_[0], $cb, $next, $clientId, scalar @$listens) },
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_submitScrobbleOK,
+		\&_submitScrobbleError,
+		{
+			timeout => 30,
+			cb      => $cb,
+			listens => $listens,
+			api_url => $api_url,
+			api_key => $api_key,
+			client  => $clientId,
+		},
+	);
+
+	_queueRequest(
+		$http, 'post', $api_url,
+		'Content-Type'  => 'application/json',
+		'Authorization' => "Token $api_key",
 		$json,
 	);
 }
 
 # Success callback for single ListenBrainz item submission
 sub _submitScrobbleOK {
-	my ($http, $listens, $next) = @_;
+	my $http = shift;
+	my $listens = $http->params('listens');
 
 	main::DEBUGLOG && $log->debug("ListenBrainz: Item 1 submitted successfully : " . $http->content);
 
 	$failures = 0;  # Reset failure count on success
 	shift @$listens;  # Remove the first item from the list
 
-	$next->();
+	_submitScrobbleItems($http);
 }
 
 # Error callback for single ListenBrainz item submission
 sub _submitScrobbleError {
-	my ($http, $cb, $next, $clientId, $unsent) = @_;
+	my $http = shift;
+	my $clientId = $http->params('client');
 
 	my $wait = $nextRequestAt - Time::HiRes::time();
 	my $delay = $wait > 0 ? sprintf(' (next request eligible in %.2f s)', $wait) : '';
@@ -312,13 +351,26 @@ sub _submitScrobbleError {
 	$failures++;  # Increment failure count on error
 
 	if ($failures >= MAX_FAILURES) {
+		my $unsent = scalar @{ $http->params('listens') };
 		$log->error("ListenBrainz: Discarding batch for player $clientId after $failures consecutive failures (unsent listens: $unsent)");
 		$failures = 0;  # Reset failure count
+		my $cb = $http->params('cb');
 		$cb->() if $cb;
 		return;
 	}
 
-	$next->();
+	_submitScrobbleItems($http);
+}
+
+sub _submitScrobbleItems {
+	my $http = shift;
+	my $cb = $http->params('cb');
+	my $listens = $http->params('listens');
+	my $api_url = $http->params('api_url');
+	my $api_key = $http->params('api_key');
+	my $clientId = $http->params('client');
+
+	submitScrobbleItems($listens, $api_url, $api_key, $cb, $clientId);
 }
 
 sub validate {
@@ -326,7 +378,9 @@ sub validate {
 
 	my $api_key = $params->{password};
 
-	my $api_url = _apiUrl($params->{api_url}, '/1/validate-token');
+	# Normalize ListenBrainz endpoint to always end with /1/validate-token
+	# Remove everything after /1/ and add the correct endpoint
+	my $api_url = $class->_apiUrl(($params->{api_url} || API_URL) . '/1/validate-token');
 
 	if (!$api_key) {
 		if ( $params->{ecb} ) {
@@ -337,15 +391,24 @@ sub validate {
 
 	main::DEBUGLOG && $log->debug("Validating ListenBrainz token: $api_url");
 
-	_request(
-		'get', $api_url, $api_key,
-		sub { _validateOK($_[0], $params) },
-		sub { _validateError($_[0], $params) },
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_validateOK,
+		\&_validateError,
+		{
+			params  => $params,
+			timeout => 30,
+		},
+	);
+
+	_queueRequest(
+		$http, 'get', $api_url,
+		'Authorization' => "Token $api_key",
 	);
 }
 
 sub _validateOK {
-	my ($http, $params) = @_;
+	my $http   = shift;
+	my $params = $http->params('params');
 
 	my $content = $http->content;
 
@@ -378,8 +441,9 @@ sub _validateOK {
 }
 
 sub _validateError {
-	my ($http, $params) = @_;
+	my $http   = shift;
 	my $error  = $http->error;
+	my $params = $http->params('params');
 
 	$log->error("Error validating ListenBrainz token: $error");
 
