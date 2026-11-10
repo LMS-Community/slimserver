@@ -1188,8 +1188,12 @@ sub generateHTTPResponse {
 
 			# short circuit here if it's a slim/squeezebox
 			if ($sendMetaData{$httpClient}) {
+				# Encode the localised name to bytes here: the header block is measured
+				# with length() in addStreamingResponse but written with syswrite under
+				# "use bytes". With a character string and a non-ASCII language the
+				# block would be sent short and its terminating CRLF lost.
 				$response->header("icy-metaint" => METADATAINTERVAL);
-				$response->header("icy-name"    => string('WELCOME_TO_SQUEEZEBOX_SERVER'));
+				$response->header("icy-name"    => Slim::Utils::Unicode::utf8encode(string('WELCOME_TO_SQUEEZEBOX_SERVER')));
 			}
 
 			main::INFOLOG && $log->is_info && $log->info("Disabling keep-alive for stream.mp3");
@@ -2328,6 +2332,9 @@ sub sendStreamingResponse {
 
 			my $title = $url ? Slim::Music::Info::getCurrentTitle($client, $url) : string('WELCOME_TO_SQUEEZEBOX_SERVER');
 			$title =~ tr/'/ /;
+
+			# bytes, not characters: the length byte and syswrite both count bytes
+			$title = Slim::Utils::Unicode::utf8encode($title);
 
 			my $metastring = "StreamTitle='" . $title . "';";
 			my $length = length($metastring);
