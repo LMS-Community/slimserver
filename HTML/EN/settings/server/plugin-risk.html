@@ -1,0 +1,71 @@
+[% PROCESS settings/header.html %]
+	<style type="text/css">
+		h1 svg {
+			vertical-align: -0.1em;
+		}
+		div.stdedit label {
+			color: red;
+		}
+	</style>
+	[% IF useExtJS %]
+	<style type="text/css">
+		h1 {
+			font-size: 1.8em;
+			color: grey;
+		}
+		h1 svg {
+			vertical-align: -0.1em;
+		}
+		div.stdedit, li, p, span {
+			font-size: 1.3em;
+			padding-bottom: 1px;
+			color: dimgrey;
+		}
+		div.stdedit {
+			margin-top: 0.7em;
+		}
+		ul {
+			list-style: disc;
+			margin: 0.4em 0;
+			padding-left: 2em;
+		}
+		div.stdedit input[type="checkbox"] {
+			vertical-align: 2px;
+			margin-right: 3px;
+		}
+		div.stdedit label {
+			color: red;
+		}
+		div.agreementBox {
+			border-radius: 5px;
+			padding: 5px;
+			background-color: #ededed;
+			width: 50%;
+		}
+	</style>
+	[% END %]
+	[% WRAPPER setting title="" desc="" %]
+		<h1>
+			<svg fill="#808080" width="25px" height="25px" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg"><path d="M 9.5899 50.2070 L 46.4102 50.2070 C 49.9257 50.2070 52.1289 47.6758 52.1289 44.4883 C 52.1289 43.5273 51.8947 42.5664 51.3791 41.6758 L 32.9336 8.6758 C 31.8789 6.7773 29.9570 5.7930 28.0117 5.7930 C 26.0899 5.7930 24.1211 6.7773 23.0664 8.6758 L 4.6446 41.6992 C 4.1289 42.5898 3.8711 43.5273 3.8711 44.4883 C 3.8711 47.6758 6.0977 50.2070 9.5899 50.2070 Z M 28.0117 34.1523 C 26.7695 34.1523 26.0899 33.4492 26.0430 32.1836 L 25.7149 20.6055 C 25.6680 19.3399 26.6524 18.4024 27.9883 18.4024 C 29.3008 18.4024 30.3320 19.3633 30.2852 20.6289 L 29.9336 32.1836 C 29.8868 33.4726 29.2070 34.1523 28.0117 34.1523 Z M 28.0117 42.8008 C 26.6524 42.8008 25.3868 41.7227 25.3868 40.2695 C 25.3868 38.8164 26.6289 37.7383 28.0117 37.7383 C 29.3946 37.7383 30.6368 38.7930 30.6368 40.2695 C 30.6368 41.7461 29.3711 42.8008 28.0117 42.8008 Z"/></svg>
+			[% "SETUP_EXTENSIONS_RISK_TITLE" | string %]
+		</h1>
+		<div class="stdedit">[% "SETUP_EXTENSIONS_RISK_INTRO" | string %]</div>
+		<div class="stdedit">[% "SETUP_EXTENSIONS_RISK_PERMISSIONS" | string %]</div>
+		<ul>
+			<li>[% "SETUP_EXTENSIONS_RISK_NETWORK" | string %]</li>
+			<li>[% "SETUP_EXTENSIONS_RISK_DATA" | string %]</li>
+			<li>[% "SETUP_EXTENSIONS_RISK_STABILITY" | string %]</li>
+		</ul>
+		<div class="stdedit">[% "SETUP_EXTENSIONS_RISK_TRUST" | string %]</div>
+		<ul>
+			<li>[% "SETUP_EXTENSIONS_RISK_DOCUMENTATION" | string %]</li>
+			<li>[% "SETUP_EXTENSIONS_RISK_MONITOR" | string %]</li>
+			<li>[% "SETUP_EXTENSIONS_RISK_UNINSTALL" | string %]</li>
+		</ul>
+		<div class="stdedit agreementBox">
+			<input type="checkbox" name="acceptPluginRisk" id="acceptPluginRisk" value="1" required="required" />
+			<label for="acceptPluginRisk">[% "SETUP_EXTENSIONS_RISK_ACCEPT" | string %]</label>
+		</div>
+	[% END %]
+	<input type="hidden" name="rand" value="[% rand | html %]" />
+[% PROCESS settings/footer.html %]

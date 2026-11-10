@@ -23,10 +23,13 @@ use Slim::Utils::Strings qw(cstring);
 Slim::Utils::ExtensionsManager->init();
 
 use constant MAX_DOWNLOAD_WAIT => 30;
+use constant PLUGIN_RISK_ACCEPTANCE_TTL => 365 * 24 * 60 * 60;
 use constant GH_IMAGE_URL => "https://raw.githubusercontent.com/LMS-Community/slimserver/public/" . ($::VERSION =~ s/\.\d$//r) . "/Slim/Plugin/%s/HTML/EN/%s";
 
 my $log = logger('server.plugins');
 my $rand = Digest::MD5->new->add( 'ExtensionDownloader', preferences('server')->get('securitySecret'), time() )->hexdigest;
+
+my $prefs = preferences('plugin.extensions');
 
 sub new {
 	my $class = shift;
@@ -42,19 +45,35 @@ sub name {
 }
 
 sub page {
+	my ($class) = @_;
+	# the plugin-risk.html registration can be removed once we settled on the layout
+	Slim::Web::Pages->addPageFunction(Slim::Web::HTTP::CSRF->protectURI('settings/server/plugin-risk.html'), $class);
+
 	return Slim::Web::HTTP::CSRF->protectURI('settings/server/plugins.html');
 }
 
 sub handler {
 	my ($class, $client, $params, $callback, @args) = @_;
 
+	$params->{'pluginRiskRequired'} = 0;
+
 	# Simplistic anti CSRF protection in case the main server protection is off
-	if (($params->{'saveSettings'} || $params->{'restart'}) && (!$params->{'rand'} || $params->{'rand'} ne $rand)) {
-
+	if (($params->{'saveSettings'} || $params->{'restart'} || $params->{'acceptPluginRisk'}) && (!$params->{'rand'} || $params->{'rand'} ne $rand)) {
 		$log->error("attempt to set params with band random number - ignoring");
+		delete @{$params}{qw(saveSettings restart acceptPluginRisk)};
+	}
 
-		delete $params->{'saveSettings'};
-		delete $params->{'restart'};
+	if ( ($prefs->get('pluginRiskAcceptedUntil') || 0) < time() || $params->{'path'} =~ /plugin-risk\.html$/ ) {
+		delete @{$params}{qw(saveSettings restart doRescanNow)};
+
+		if ($params->{'acceptPluginRisk'}) {
+			$prefs->set('pluginRiskAcceptedUntil', time() + PLUGIN_RISK_ACCEPTANCE_TTL);
+		}
+		else {
+			$params->{'pluginRiskRequired'} = 1;
+			$params->{'rand'} = $rand;
+			return $class->SUPER::handler($client, $params);
+		}
 	}
 
 	if ($params->{'saveSettings'}) {

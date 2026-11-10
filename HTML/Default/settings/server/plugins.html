@@ -1,3 +1,6 @@
+[% IF pluginRiskRequired %]
+[% PROCESS "settings/server/plugin-risk.html" %]
+[% ELSE %]
 [% descHeight = 65 %]
 [% iconSize = 50 %]
 [% IF useExtJS; extJsScripts = BLOCK %]
@@ -231,3 +234,4 @@
 	}
 </style>
 [% PROCESS settings/server/plugins_main.html %]
+[% END %]

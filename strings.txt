@@ -8311,6 +8311,78 @@ SETUP_EXTENSIONS_AUTHOR
 	SV	Upphovsman
 	ZH_CN	作者
 
+SETUP_EXTENSIONS_RISK_TITLE
+	DE	Bevor Sie Plugin-Einstellungen ändern
+	EN	Before you change plugin settings
+	FR	Avant de modifier les paramètres des plugins
+	NL	Voordat je plugininstellingen wijzigt
+
+SETUP_EXTENSIONS_RISK_INTRO
+	DE	Plugins werden von Mitwirkenden aus der Community erstellt und vom Lyrion Music Server-Projekt nicht überprüft. Behandeln Sie sie wie Plugins für jede andere Software.
+	EN	Plugins are made by community contributors and are not reviewed by the Lyrion Music Server project. Treat them like plugins for any other software.
+	FR	Les plugins sont créés par des contributeurs de la communauté et ne sont pas examinés par le projet Lyrion Music Server. Considérez-les comme des plugins pour tout autre logiciel.
+	NL	Plugins worden gemaakt door bijdragers uit de community en worden niet beoordeeld door het Lyrion Music Server-project. Behandel ze net als plugins voor andere software.
+
+SETUP_EXTENSIONS_RISK_PERMISSIONS
+	DE	Plugins werden mit denselben Berechtigungen wie Lyrion Music Server ausgeführt. Alles, was Sie installieren, kann:
+	EN	Plugins run with the same permissions as Lyrion Music Server. Anything you install can:
+	FR	Les plugins s'exécutent avec les mêmes permissions que Lyrion Music Server. Tout ce que vous installez peut :
+	NL	Plugins draaien met dezelfde machtigingen als Lyrion Music Server. Alles wat je installeert kan:
+
+SETUP_EXTENSIONS_RISK_NETWORK
+	DE	Eine Verbindung zum Internet herstellen
+	EN	Connect to the internet
+	FR	Se connecter à Internet
+	NL	Verbinding maken met internet
+
+SETUP_EXTENSIONS_RISK_DATA
+	DE	Auf Ihre Daten zugreifen und sie mit anderen teilen
+	EN	Access your data and share it with others
+	FR	Accéder à vos données et les partager avec d'autres
+	NL	Je gegevens bekijken en delen met anderen
+
+SETUP_EXTENSIONS_RISK_STABILITY
+	DE	Lyrion Music Server verlangsamen oder zum Absturz bringen
+	EN	Slow down or crash Lyrion Music Server
+	FR	Ralentir ou faire planter Lyrion Music Server
+	NL	Lyrion Music Server vertragen of laten crashen
+
+SETUP_EXTENSIONS_RISK_TRUST
+	DE	Installieren Sie Plugins nur aus Quellen, denen Sie vertrauen, und beachten Sie:
+	EN	Only install plugins from sources you trust, and be mindful:
+	FR	Installez uniquement des plugins provenant de sources fiables et gardez à l'esprit :
+	NL	Installeer alleen plugins uit bronnen die je vertrouwt en let op:
+
+SETUP_EXTENSIONS_RISK_DOCUMENTATION
+	DE	Lesen Sie die Beschreibungen und verstehen Sie, was das Plugin tut.
+	EN	Read the descriptions and understand what the plugin does.
+	FR	Lisez les descriptions et comprenez ce que fait le plugin.
+	NL	Lees de beschrijvingen en begrijp wat de plugin doet.
+
+SETUP_EXTENSIONS_RISK_MONITOR
+	DE	Behalten Sie Ihr System nach der Installation im Auge.
+	EN	Keep an eye on your system after installing.
+	FR	Surveillez votre système après l'installation.
+	NL	Houd je systeem na installatie in de gaten.
+
+SETUP_EXTENSIONS_RISK_UNINSTALL
+	DE	Wenn etwas schiefgeht, deinstallieren Sie das Plugin sofort.
+	EN	If something goes wrong, uninstall the plugin right away.
+	FR	En cas de problème, désinstallez immédiatement le plugin.
+	NL	Verwijder de plugin onmiddellijk als er iets misgaat.
+
+SETUP_EXTENSIONS_RISK_ACCEPT
+	DE	Ich verstehe die Risiken und stimme zu.
+	EN	I understand the risks and agree.
+	FR	Je comprends les risques et je suis d'accord.
+	NL	Ik begrijp de risico's en ga akkoord.
+
+SETUP_EXTENSIONS_RISK_CONTINUE
+	DE	Weiter
+	EN	Continue
+	FR	Continuer
+	NL	Doorgaan
+
 SETUP_EXTENSIONS_WARNING_POPUP
 	CA	Esteu a punt d'instal·lar:
 	CS	Chystáte se nainstalovat:

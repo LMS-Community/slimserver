@@ -1,3 +1,6 @@
+[% IF pluginRiskRequired %]
+[% PROCESS "settings/server/plugin-risk.html" %]
+[% ELSE %]
 [% descHeight = 650 %]
 [% iconSize = 50 %]
 [% pageHeaderScripts = BLOCK %]
@@ -77,3 +80,4 @@
 		}
 	}
 </script>
+[% END %]
