@@ -848,12 +848,44 @@ sub cliAdd {
 			$entry = {
 				'text' => $title,
 				'URL'  => $url,
-				'type' => $type || 'audio',
+				'type' => $type,
 				'icon' => $icon || $favs->icon($url),
 			};
 			$entry->{'parser'} = $parser if $parser;
 
 			setEntryType($entry, $type, $url);
+
+			if (!$entry->{type} && !$type) {
+				main::INFOLOG && $log->info("checking content type for $url");
+
+				# clone request to force the content type
+				my $newRequest = $request->virginCopy();
+				$newRequest->addParam('type', 'unk');
+
+				Slim::Networking::Async::HTTP->new()->send_request( {
+					# use GET instead of HEAD as not all stations support HEAD
+					'request' => HTTP::Request->new( GET => $url ),
+					'onHeaders' => sub {
+						my ($http) = @_;
+						$http->disconnect;
+
+						if (my $type = $http->response->content_type) {
+							$newRequest->addParam('type', Slim::Music::Info::mimeToType($type) || $type);
+						}
+
+						$newRequest->execute();
+						$request->setStatusDone();
+					},
+					'onError' => sub {
+						my ($http, $error) = @_;
+						$log->error("failed to detect content type for $url: $error");
+						$newRequest->execute();
+						$request->setStatusDone();
+					},
+				} );
+
+				return;
+			}
 
 			main::INFOLOG && $log->info("adding entry $title $url at index $index ($entry->{type})");
 
