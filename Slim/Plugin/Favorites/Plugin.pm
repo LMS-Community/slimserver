@@ -697,7 +697,7 @@ sub setEntryType {
 		$type = Slim::Music::Info::typeFromPath($url);
 	}
 
-	if (Slim::Music::Info::isSong(undef, $type) || Slim::Music::Info::isPlaylist(undef, $type)) {
+	if (lc($type) eq 'audio' || Slim::Music::Info::isSong(undef, $type) || Slim::Music::Info::isPlaylist(undef, $type)) {
 		main::INFOLOG && $log->info("content type $type - treating as audio");
 		$entry->{'type'} = 'audio';
 	} else {
