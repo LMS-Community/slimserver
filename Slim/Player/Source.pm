@@ -340,6 +340,12 @@ sub _readNextChunk {
 						# The advice for future readers is to NOT use EWOULDBLOCK in your ProtocolHandler's sysread()
 						# use EINTR instead which is a bit slower but totally safe.
 						Slim::Networking::Select::addRead(${*$fd}{'pipeline_reader'} || $fd, sub {_wakeupOnReadable(shift, $client);}, 1);
+
+						# If this pipeline's input is full, also wake up when it drains. Until the pipeline
+						# produces its first output, the reader above cannot become readable.
+						if (${*$fd}{'pipeline_pending_size'} && defined ${*$fd}{'pipeline_writer'}) {
+							Slim::Networking::Select::addWrite(${*$fd}{'pipeline_writer'}, sub {_wakeupOnWritable(shift, $client);}, 1);
+						}
 					}
 					return undef;
 				} elsif ($! == EINTR) {
@@ -415,6 +421,22 @@ sub _wakeupOnReadable {
 	main::DEBUGLOG && $log->debug($master->id);
 
 	Slim::Networking::Select::removeRead($fd) if defined $fd;
+
+	_wakeupStream($master);
+}
+
+sub _wakeupOnWritable {
+	my ($fd, $master) = @_;
+
+	main::DEBUGLOG && $log->debug($master->id);
+
+	Slim::Networking::Select::removeWrite($fd) if defined $fd;
+
+	_wakeupStream($master);
+}
+
+sub _wakeupStream {
+	my ($master) = @_;
 
 	foreach ($master->syncGroupActiveMembers()) {
 		if (my $cb = $_->streamReadableCallback) {
