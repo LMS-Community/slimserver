@@ -8381,6 +8381,13 @@ SETUP_EXTENSIONS_RISK_UNINSTALL
 	NL	Verwijder de plugin onmiddellijk als er iets misgaat.
 	SV	omedelbart avinstallera tilläggsprogrammet om något går fel.
 
+SETUP_EXTENSIONS_RISK_CHECK_FORUMS
+	DE	Fragen Sie im Zweifelsfall <a href="https://forums.lyrion.org/forum/user-forums/3rd-party-software" target="_blank">die freundliche, hilfsbereite Community</a>.
+	EN	If you’re unsure, <a href="https://forums.lyrion.org/forum/user-forums/3rd-party-software" target="_blank">do pop a question to our lovely community</a> – they’re always happy to help!.
+	FR	En cas de doute, <a href="https://forums.lyrion.org/forum/user-forums/3rd-party-software" target="_blank">consultez la communauté bienveillante</a>.
+	NL	Vraag bij twijfel de <a href="https://forums.lyrion.org/forum/user-forums/3rd-party-software" target="_blank">vriendelijke community</a> om advies.
+	SV	Kontakta den <a href="https://forums.lyrion.org/forum/user-forums/3rd-party-software" target="_blank">hjälpsamma communityn</a> om du är osäker.
+
 SETUP_EXTENSIONS_RISK_ACCEPT
 	DE	Ich verstehe die Risiken und stimme zu.
 	EN	I understand the risks and agree.
