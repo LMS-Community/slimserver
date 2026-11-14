@@ -4384,7 +4384,7 @@ SETUP_GROUP_PLUGINS
 	PL	Dodatki
 	PT	Plugins
 	RU	Подключаемые модули
-	SV	Plugin-program
+	SV	Tilläggsprogram
 	ZH_CN	插件
 
 INSTALLERROR_INVALID_VERSION
@@ -4404,7 +4404,7 @@ INSTALLERROR_INVALID_VERSION
 	PL	Dodatek jest niezgodny z tą wersją programu Lyrion Music Server. Dokonaj aktualizacji.
 	PT	O Plugin é incompatível com esta versão do Lyrion Music Server
 	RU	Плагин несовместим с данной версией Lyrion Music Server. Обновите программу.
-	SV	Plugin-programmet är inte kompatibelt med den här versionen av Lyrion Music Server. Du behöver uppdatera.
+	SV	Tilläggsprogrammet är inte kompatibelt med den här versionen av Lyrion Music Server. Du behöver uppdatera.
 	ZH_CN	插件与 Lyrion Music Server 的这个版本不兼容。请更新。
 
 INSTALLERROR_INCOMPATIBLE_PLATFORM
@@ -4424,7 +4424,7 @@ INSTALLERROR_INCOMPATIBLE_PLATFORM
 	PL	Dodatek jest niezgodny z platformą.
 	PT	O Plugin é incompatível com a sua plataforma.
 	RU	Плагин несовместим с данной платформой.
-	SV	Plugin-programmet är inte kompatibelt med din plattform.
+	SV	Tilläggsprogrammet är inte kompatibelt med din plattform.
 	ZH_CN	插件与您的平台不兼容。
 
 INSTALLERROR_FAILED_TO_LOAD
@@ -4444,7 +4444,7 @@ INSTALLERROR_FAILED_TO_LOAD
 	PL	Załadowanie dodatku nie powiodło się
 	PT	O Plugin não foi carregado
 	RU	Сбой загрузки подключаемого модуля
-	SV	Det gick inte att läsa in plugin-programmet
+	SV	Det gick inte att läsa in tilläggsprogrammet
 	ZH_CN	插件加载失败
 
 SETUP_GROUP_FORMATS_CONVERSION
@@ -8006,7 +8006,7 @@ SETUP_PLUGINS
 	PL	Dodatki
 	PT	Gerir Plugins
 	RU	Подключаемые модули
-	SV	Plugin-program
+	SV	Tilläggsprogram
 	ZH_CN	插件管理
 
 SETUP_EXTENSIONS_CATEGORY_ALL
@@ -8316,72 +8316,84 @@ SETUP_EXTENSIONS_RISK_TITLE
 	EN	Before you change plugin settings
 	FR	Avant de modifier les paramètres des plugins
 	NL	Voordat je plugininstellingen wijzigt
+	SV	Innan du ändrar inställningar för tilläggsprogram
 
 SETUP_EXTENSIONS_RISK_INTRO
 	DE	Plugins werden von Mitwirkenden aus der Community erstellt und vom Lyrion Music Server-Projekt nicht überprüft. Behandeln Sie sie wie Plugins für jede andere Software.
 	EN	Plugins are made by community contributors and are not reviewed by the Lyrion Music Server project. Treat them like plugins for any other software.
 	FR	Les plugins sont créés par des contributeurs de la communauté et ne sont pas examinés par le projet Lyrion Music Server. Considérez-les comme des plugins pour tout autre logiciel.
 	NL	Plugins worden gemaakt door bijdragers uit de community en worden niet beoordeeld door het Lyrion Music Server-project. Behandel ze net als plugins voor andere software.
+	SV	Tilläggsprogram skrivs av utvecklare från användargemenskapen och granskas inte av projektet bakom Lyrion Music Server. Betrakta dem på samma sätt som tilläggsprogram för vilken annan programvara som helst.
 
 SETUP_EXTENSIONS_RISK_PERMISSIONS
 	DE	Plugins werden mit denselben Berechtigungen wie Lyrion Music Server ausgeführt. Alles, was Sie installieren, kann:
 	EN	Plugins run with the same permissions as Lyrion Music Server. Anything you install can:
 	FR	Les plugins s'exécutent avec les mêmes permissions que Lyrion Music Server. Tout ce que vous installez peut :
 	NL	Plugins draaien met dezelfde machtigingen als Lyrion Music Server. Alles wat je installeert kan:
+	SV	Tilläggsprogram körs med samma behörigheter som Lyrion Music Server. Allt du installerar kan:
 
 SETUP_EXTENSIONS_RISK_NETWORK
 	DE	Eine Verbindung zum Internet herstellen
 	EN	Connect to the internet
 	FR	Se connecter à Internet
 	NL	Verbinding maken met internet
+	SV	koppla upp sig mot internet
 
 SETUP_EXTENSIONS_RISK_DATA
 	DE	Auf Ihre Daten zugreifen und sie mit anderen teilen
 	EN	Access your data and share it with others
 	FR	Accéder à vos données et les partager avec d'autres
 	NL	Je gegevens bekijken en delen met anderen
+	SV	läsa dina data och dela dem med andra
 
 SETUP_EXTENSIONS_RISK_STABILITY
 	DE	Lyrion Music Server verlangsamen oder zum Absturz bringen
 	EN	Slow down or crash Lyrion Music Server
 	FR	Ralentir ou faire planter Lyrion Music Server
 	NL	Lyrion Music Server vertragen of laten crashen
+	SV	sakta ner eller krascha Lyrion Music Server.
 
 SETUP_EXTENSIONS_RISK_TRUST
 	DE	Installieren Sie Plugins nur aus Quellen, denen Sie vertrauen, und beachten Sie:
 	EN	Only install plugins from sources you trust, and be mindful:
 	FR	Installez uniquement des plugins provenant de sources fiables et gardez à l'esprit :
 	NL	Installeer alleen plugins uit bronnen die je vertrouwt en let op:
+	SV	Installera bara tilläggsprogram från källor som du litar på, och tänk på att:
 
 SETUP_EXTENSIONS_RISK_DOCUMENTATION
 	DE	Lesen Sie die Beschreibungen und verstehen Sie, was das Plugin tut.
 	EN	Read the descriptions and understand what the plugin does.
 	FR	Lisez les descriptions et comprenez ce que fait le plugin.
 	NL	Lees de beschrijvingen en begrijp wat de plugin doet.
+	SV	läsa beskrivningen och förstå vad tilläggsprogrammet gör
 
 SETUP_EXTENSIONS_RISK_MONITOR
 	DE	Behalten Sie Ihr System nach der Installation im Auge.
 	EN	Keep an eye on your system after installing.
 	FR	Surveillez votre système après l'installation.
 	NL	Houd je systeem na installatie in de gaten.
+	SV	hålla ett öga på ditt system efter installationen
 
 SETUP_EXTENSIONS_RISK_UNINSTALL
 	DE	Wenn etwas schiefgeht, deinstallieren Sie das Plugin sofort.
 	EN	If something goes wrong, uninstall the plugin right away.
 	FR	En cas de problème, désinstallez immédiatement le plugin.
 	NL	Verwijder de plugin onmiddellijk als er iets misgaat.
+	SV	omedelbart avinstallera tilläggsprogrammet om något går fel.
 
 SETUP_EXTENSIONS_RISK_ACCEPT
 	DE	Ich verstehe die Risiken und stimme zu.
 	EN	I understand the risks and agree.
 	FR	Je comprends les risques et je suis d'accord.
 	NL	Ik begrijp de risico's en ga akkoord.
+	SV	Jag förstår riskerna och samtycker.
 
 SETUP_EXTENSIONS_RISK_CONTINUE
 	DE	Weiter
 	EN	Continue
 	FR	Continuer
 	NL	Doorgaan
+	SV	Fortsätt
 
 SETUP_EXTENSIONS_WARNING_POPUP
 	CA	Esteu a punt d'instal·lar:
@@ -8438,7 +8450,7 @@ SETUP_EXTENSIONS_ACTIVE
 	PL	Włączone dodatki
 	PT	Plugins activos
 	RU	Активные подключаемые модули
-	SV	Aktiva plugin-program
+	SV	Aktiva tilläggsprogram
 	ZH_CN	活动插件
 
 SETUP_EXTENSIONS_INACTIVE
@@ -8458,7 +8470,7 @@ SETUP_EXTENSIONS_INACTIVE
 	PL	Wyłączone dodatki
 	PT	Plugins Iinactivos
 	RU	Неактивные подключаемые модули
-	SV	Inaktiva plugin-program
+	SV	Inaktiva tilläggsprogram
 	ZH_CN	非活动插件
 
 SETUP_EXTENSIONS_UPDATES
@@ -8477,7 +8489,7 @@ SETUP_EXTENSIONS_UPDATES
 	NN	Oppdaterte plugin-moduler er tilgjengelege
 	PL	Dostępne są zaktualizowane dodatki.
 	RU	Доступны обновленные подключаемые модули
-	SV	Uppdaterade plugin-program är tillgängliga
+	SV	Uppdaterade tilläggsprogram är tillgängliga
 	ZH_CN	有可用的更新插件
 
 SETUP_EXTENSIONS_AUTO
@@ -8497,7 +8509,7 @@ SETUP_EXTENSIONS_AUTO
 	PL	Automatycznie aktualizuj dodatki
 	PT	Actualizar plugins automaticamente
 	RU	Обновить подключаемые модули автоматически
-	SV	Uppdatera plugin-program automatiskt
+	SV	Uppdatera tilläggsprogram automatiskt
 	ZH_CN	自动更新插件
 
 SETUP_EXTENSIONS_AUTO_DESC
@@ -8517,7 +8529,7 @@ SETUP_EXTENSIONS_AUTO_DESC
 	PL	Zezwala programowi Lyrion Music Server na automatyczne wyszukiwanie aktualizacji zainstalowanych dodatków oraz ich pobieranie i instalowanie. Jeśli ta opcja nie zostanie zaznaczona, na tej stronie ustawień dodatki można zaktualizować ręcznie.
 	PT	Permita que o Lyrion Music Server automaticamente procure actualizações dos plugins instalados, faça o seu download para que no proximo arranque do servdiro estejam prontos a a a serusados. Se esta opçãp não for selccionada poderá proceder à sua actualização nesta pagina.
 	RU	Разрешить серверу Squeezebox автоматически проверять наличие обновлений для установленных подключаемых модулей и загружать их для использования при следующем запуске сервера. Если этот параметр не выбран, можно загружать подключаемые модули вручную с этой страницы настройки.
-	SV	Tillåt Lyrion Music Server att automatiskt söka efter uppdateringar till installerade plugin-program och ladda ner de som är redo att användas när servern startas om nästa gång. Om alternativet inte väljs kan du uppdatera plugin-programmen manuellt via den här inställningssidan.
+	SV	Tillåt Lyrion Music Server att automatiskt söka efter uppdateringar till installerade tilläggsprogram och ladda ner de som är redo att användas när servern startas om nästa gång. Om alternativet inte väljs kan du uppdatera tilläggsprogrammen manuellt via den här inställningssidan.
 	ZH_CN	允许 Lyrion Music Server 自动检查已安装插件的更新并下载它们，以便在下次重新启动服务器时使用。如果未选择此选项，则可以通过此设置页面手动更新插件。
 
 SETUP_EXTENSIONS_WARNING_POPUP_OTHERREPO
@@ -8534,7 +8546,7 @@ SETUP_EXTENSIONS_WARNING_POPUP_OTHERREPO
 	NB	Du kan kontakte de som laget modulen for støtte.
 	NL	Neem contact op met de auteur van de plug-in voor ondersteuning.
 	NN	Du kan kontakte dei som laga modulen, for støtte.
-	SV	OBS! Användning av dessa plugin-program sker på eget ansvar. Du kan kontakta plugin-programmets upphovsperson för hjälp.
+	SV	OBS! Användning av dessa tilläggsprogram sker på eget ansvar. Du kan kontakta tilläggsprogrammets upphovsperson för hjälp.
 	ZH_CN	请注意，使用第三方插件的风险由您自行承担。请联系插件作者以获取支持。
 
 SETUP_EXTENSIONS_RECOMMENDED_REPOSITORIES
@@ -8554,7 +8566,7 @@ SETUP_EXTENSIONS_RECOMMENDED_REPOSITORIES
 	NN	Tilrådde plugin-moduler frå tredjepartar
 	PL	Zalecane dodatki innych firm
 	RU	Рекомендуемые подключаемые модули сторонних изготовителей
-	SV	Rekommenderade plugin-program från tredje part
+	SV	Rekommenderade tilläggsprogram från tredje part
 	ZH_CN	推荐的第三方插件
 
 SETUP_EXTENSIONS_OTHER_REPOSITORIES
@@ -8590,7 +8602,7 @@ SETUP_EXTENSIONS_USE_UNSUPPORTED
 	NB	Bruk utvidelser uten støtte
 	NN	Bruk utvidingar utan støtte
 	PT	Usar extensões não suportadas
-	SV	Plugin-program som inte längre har support
+	SV	Tilläggsprogram som inte längre har support
 	ZH_CN	使用不受支持的扩展
 
 SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC
@@ -8604,7 +8616,7 @@ SETUP_EXTENSIONS_USE_UNSUPPORTED_DESC
 	HU	FIGYELMEZTETÉS – Ezek harmadik féltől származó beépülő modulok, amelyek nem garantáltan működnek a Lyrion Music Server jelenlegi verziójában. Szerzőik elhagyták őket, és már nem tartják karban. A legrosszabb esetben feltörhetik a Lyrion zeneszerverét. Használat csak saját felelősségre.
 	NB	ADVARSEL – Dette er plugin-moduler fra tredjeparter som ikke garantert virker med denne versjonen av Lyrion Music Server. Utviklerne har forlatt dem, og de vedlikeholdes ikke lenger. I verste fall kan de ødelegge Lyrion Music Server. Bruk dem på eget ansvar.
 	NN	ÅTVARING – Dette er plugin-moduler frå tredjepartar som ikkje sikkert verkar med denne versjonen av Lyrion Music Server. Utviklarane har forlate dei, og dei blir ikkje haldne ved like lenger. I verste fall kan dei øydeleggje Lyrion Music Server. Bruk dei på eige ansvar.
-	SV	OBS! Dessa tredjeparts plugin-program fungerar kanske inte med denna version av Lyrion Music Server. De underhålls inte längre aktivt av deras upphovspersoner.
+	SV	OBS! Dessa tredjeparts tilläggsprogram fungerar kanske inte med denna version av Lyrion Music Server. De underhålls inte längre aktivt av deras upphovspersoner.
 	ZH_CN	警告 - 这些是第三方插件，不能保证在 Lyrion Music Server 的当前版本中正常工作。它们已经被它们的作者遗弃，并且不再维护。最坏的情况下，它们可能会破坏您的 Lyrion Music Server。使用风险自负。
 
 SETUP_EXTENSIONS_TOGGLE_VIEW
@@ -8993,7 +9005,7 @@ SETUP_CHECKVERSION_DESC
 	NB	Lyrion Music Server kan automatisk se etter om en nyere versjon av programvaren er tilgjengelig. Hvis det er det, vises en melding i nettgrensesnittet til Lyrion Music Server. Merk at Lyrion Music Server alltid ser etter oppdateringer av plugin-moduler med de valgte intervallene, selv om sjekk av programvaren er slått av.
 	NL	Lyrion Music Server kan automatisch kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de webinterface van Lyrion Music Server. Houd er rekening mee dat het programma altijd zal controleren op updates voor plug-ins volgens de geselecteerde intervallen, zelfs als softwarecontroles zijn uitgeschakeld.
 	NN	Lyrion Music Server kan automatisk sjå etter om ein nyare versjon av programvara er tilgjengeleg. Viss det er det, blir det vist ei melding i nettgrensesnittet til Lyrion Music Server. Merk at Lyrion Music Server alltid ser etter oppdateringar av plugin-moduler med dei valde intervalla, sjølv om sjekk av programvara er slått av.
-	SV	Lyrion Music Server kan automatiskt kontrollera on det finns en nyare version tillgänglig. Om så är fallet visas ett meddelande i Lyrion Music Servers webgränssnitt. Observera att Lyrion Music Server kommer alltid att kontrollera om det finns nya versioner av de installerade plugin-programmen.
+	SV	Lyrion Music Server kan automatiskt kontrollera on det finns en nyare version tillgänglig. Om så är fallet visas ett meddelande i Lyrion Music Servers webgränssnitt. Observera att Lyrion Music Server kommer alltid att kontrollera om det finns nya versioner av de installerade tilläggsprogrammen.
 	ZH_CN	Lyrion Music Server 可以自动检查是否有更新的软件版本可用。如果有，则在 Lyrion Music Server 的网页界面中会显示一条消息。
 
 SETUP_CHECKVERSION_1
@@ -11890,7 +11902,7 @@ SETUP_WIZARD_PLUGINS_INTRO
 	HU	Javasoljuk a következő külső beépülő modulok telepítését. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Sok más beépülő modul</a> a telepítés befejezése után bármikor telepíthető a Beállítások/Beépülő modulok kezelése menüpontban.
 	NB	Vi anbefaler å installere disse plugin-modulene fra tredjeparter. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Mange andre plugin-moduler</a> kan installeres når som helst i Innstillinger/Plugin-moduler når installasjonen er ferdig.
 	NN	Vi rår deg til å installere desse plugin-modulane frå tredjepartar. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Mange andre plugin-moduler</a> kan installerast når som helst i Innstillingar/Plugin-moduler når installasjonen er ferdig.
-	SV	Följande tredje-parts pluginprogram rekommenderas. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Många andra pluginprogram</a> kan installeras från Inställningar/Plugin-program efter att installationen är komplett.
+	SV	Följande tredje-parts tilläggsprogram rekommenderas. <a href="https://lyrion.org/plugins/directory/" target="lyrion">Många andra tilläggsprogram</a> kan installeras från Inställningar/Tilläggsprogram efter att installationen är komplett.
 	ZH_CN	我们建议安装以下第三方插件。 <a href="https://lyrion.org/plugins/directory/" target="lyrion">许多其他插件</a>可以在安装完成后随时在设置/管理插件中安装。
 
 SETUP_WIZARD_AUDIODIR
@@ -19500,7 +19512,7 @@ INFORMATION_MENU_MODULE
 	NN	Plugin-moduler
 	PL	Moduły dodatków
 	RU	Подключаемые модули
-	SV	Plugin-moduler
+	SV	Tilläggsmoduler
 	ZH_CN	插件模块
 
 INFORMATION_PLAYER_NAME
@@ -19820,7 +19832,7 @@ INFORMATION_PLUGINDIRS
 	PL	Foldery dodatków
 	PT	Directório dos plugins
 	RU	Папки подключаемых модулей
-	SV	Mappar för plugin-program
+	SV	Mappar för tilläggsprogram
 	ZH_CN	插件文件夹
 
 INFORMATION_BINDIRS
@@ -23012,7 +23024,7 @@ DEBUG_SERVER_PLUGINS
 	NN	Plugin-modular blir lasta inn
 	PL	Ładowanie modułu dodatku
 	RU	Загрузка подключаемого модуля
-	SV	Inläsning av plugin-moduler
+	SV	Inläsning av tilläggsmoduler
 	ZH_CN	插件模块装载
 
 DEBUG_SERVER_UPDATE
@@ -24994,7 +25006,7 @@ PLUGINS_CHANGED
 	NN	Endringar trer i kraft neste gong programmet startar på nytt, for desse plugin-modulane:
 	PL	W przypadku następujących dodatków zmiany zostaną wprowadzone po następnym uruchomieniu aplikacji:
 	RU	Изменения вступят в силу при следующем запуске приложения для следующих подключаемых модулей:
-	SV	Nästa gång programmet startas görs ändringar i följande plugin-program:
+	SV	Nästa gång programmet startas görs ändringar i följande tilläggsprogram:
 	ZH_CN	以下插件的更改将在下次应用程序重启时生效：
 
 PLUGINS_CHANGED_NEED_RESTART
@@ -26644,7 +26656,7 @@ PLUGINS_UPDATES_AVAILABLE
 	PL	Dostępne są nowe aktualizacje.
 	PT	Estão disponíveis actualizações dos Plugins
 	RU	Доступны обновления подключаемых модулей
-	SV	Plugin-uppdateringar finns tillgängliga
+	SV	Uppdateringar finns för tilläggsprogram
 	ZH_CN	有可用的插件更新
 
 PLUGINS_RESTART_MSG
@@ -26664,7 +26676,7 @@ PLUGINS_RESTART_MSG
 	PL	Dodatki zostały zaktualizowane – wymagane jest ponowne uruchomienie.
 	PT	Os Plugins forma actualizados - Necessário reiniciar o servidor.
 	RU	Подключаемые модули были обновлены. Требуется перезагрузка.
-	SV	Plugin-programmen har uppdaterats. Omstart krävs.
+	SV	Tilläggsprogrammen har uppdaterats. Omstart krävs.
 	ZH_CN	插件已更新 - 需要重启
 
 NO_LIBRARY
