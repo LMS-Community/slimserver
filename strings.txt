@@ -8350,7 +8350,7 @@ SETUP_EXTENSIONS_RISK_STABILITY
 SETUP_EXTENSIONS_RISK_TRUST
 	DE	Installieren Sie Plugins nur aus Quellen, denen Sie vertrauen, und beachten Sie:
 	EN	Only install plugins from sources you trust, and be mindful:
-	FR	Installez uniquement des plugins provenant de sources fiables et gardez à l'esprit :
+	FR	N’installez des extensions qu’à partir de sources en lesquelles vous avez confiance, et faites preuve de vigilance :
 	NL	Installeer alleen plugins uit bronnen die je vertrouwt en let op:
 
 SETUP_EXTENSIONS_RISK_DOCUMENTATION
