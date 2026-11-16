@@ -167,7 +167,9 @@ sub _submitNowPlayingError {
 
 	main::DEBUGLOG && $log->debug('ListenBrainz Now Playing submission failed: ' . $http->error);
 	return if $http->params('retry');
-	Slim::Utils::Timers::setTimer($http->params('client'), Time::HiRes::time() + 5, \&_retryNowPlaying, $http->params);
+	my $client = $http->params('client');
+	Slim::Utils::Timers::killTimers($client, \&_retryNowPlaying);
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 5, \&_retryNowPlaying, $http->params);
 }
 
 sub _retryNowPlaying {
