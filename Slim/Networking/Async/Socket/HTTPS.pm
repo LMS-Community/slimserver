@@ -22,6 +22,10 @@ sub new {
 	return $class->SUPER::new(%args);
 }
 
+sub can_read {
+	return 1;
+}
+
 sub close {
 	my $self = shift;
 
