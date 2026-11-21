@@ -1443,8 +1443,10 @@ sub playlistXitemCommand {
 		}
 	}
 
-	# Un-escape URI that have been escaped again.
-	if (Slim::Music::Info::isRemoteURL($path) && $path =~ /%3A%2F%2F/) {
+	# Un-escape URI that have been escaped again. Only look before the query string:
+	# an escaped URL in a query parameter (eg. ?podcastUrl=https%3A%2F%2F...) is legit
+	# and must be kept, or the URL would no longer match its cached metadata.
+	if (Slim::Music::Info::isRemoteURL($path) && $path =~ /^[^?]*%3A%2F%2F/) {
 
 		$path = Slim::Utils::Misc::unescape($path);
 	}
