@@ -32,6 +32,8 @@ use File::Basename qw(basename dirname);
 use JSON::XS qw(encode_json);
 
 use Slim::Utils::Alarm;
+use Slim::Utils::Cache;
+use Slim::Utils::Favorites;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -1448,6 +1450,8 @@ sub playlistXitemCommand {
 
 		$path = Slim::Utils::Misc::unescape($path);
 	}
+
+	_cacheFavoriteIcon($client, $path) if Slim::Music::Info::isRemoteURL($path);
 
 	main::INFOLOG && $log->info("path: $path");
 
@@ -3237,6 +3241,30 @@ sub _mixer_mute {
 	my $client = shift;
 
 	$client->mute();
+}
+
+# A remote URL played directly (eg. a radio pinned to a web UI's home screen) doesn't come with
+# its artwork. If it's a favorite and we have no cached artwork, use the favorite's icon.
+sub _cacheFavoriteIcon {
+	my ($client, $url) = @_;
+
+	my $cache = Slim::Utils::Cache->new;
+	return if $cache->get("remote_image_$url");
+
+	my $favs = Slim::Utils::Favorites->new($client);
+	return unless $favs && $favs->can('entry');
+
+	my $index = $favs->findUrl($url);
+	return unless defined $index;
+
+	my $entry = $favs->entry($index) || return;
+	my $icon  = $entry->{icon};
+
+	# ignore the generic icons set on favorites which don't have their own
+	return if !$icon || $icon =~ m{^html/images/};
+
+	main::INFOLOG && $log->info("Using favorite's icon for $url: $icon");
+	$cache->set("remote_image_$url", $icon, '30 days');
 }
 
 sub _playlistXitem_load_done {
