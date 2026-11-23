@@ -1028,6 +1028,10 @@ sub audioScrobblerSource {
 	return 'R';
 }
 
+# Radio stations usually send their stream title as "Artist - Title". Subclasses
+# whose titles aren't built like that can return 0 to keep the title unchanged.
+sub splitTitleIntoArtist { 1 }
+
 sub getMetadataFor {
 	my ( $class, $client, $url, $forceCurrent ) = @_;
 
@@ -1075,7 +1079,7 @@ sub getMetadataFor {
 	# Radio tracks, return artist and title if the metadata looks like Artist - Title
 	if ( my $currentTitle = Slim::Music::Info::getCurrentTitle( $client, $url ) ) {
 		my @dashes = $currentTitle =~ /( - )/g;
-		if ( scalar @dashes == 1 ) {
+		if ( scalar @dashes == 1 && $class->splitTitleIntoArtist ) {
 			($artist, $title) = split /\s+-\s+/, $currentTitle;
 		}
 

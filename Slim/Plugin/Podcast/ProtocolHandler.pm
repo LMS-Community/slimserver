@@ -70,24 +70,9 @@ sub scanUrl {
 
 sub shouldCacheImage { 1 }
 
-sub getMetadataFor {
-	my ($class, $client, $url, $forceCurrent) = @_;
-
-	my $meta = $class->SUPER::getMetadataFor($client, $url, $forceCurrent);
-
-	# The HTTP handler splits radio titles like "Artist - Title". An episode title comes
-	# from the feed and is not built like that: show it unchanged (eg. "Movie - Guest").
-	my $title = Slim::Music::Info::getCurrentTitle($client, $url);
-
-	if ( $title && $meta->{artist} && $meta->{title}
-		&& $title =~ /^\Q$meta->{artist}\E\s+-\s+\Q$meta->{title}\E$/
-	) {
-		$meta->{title} = $title;
-		delete $meta->{artist};
-	}
-
-	return $meta;
-}
+# Episode titles come from the feed, they're not built as "Artist - Title" like radio
+# stream titles: don't let the HTTP handler split them (eg. "Movie - Guest").
+sub splitTitleIntoArtist { 0 }
 
 sub new {
 	my ($class, $args) = @_;
