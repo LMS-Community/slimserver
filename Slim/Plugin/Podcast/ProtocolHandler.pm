@@ -71,8 +71,11 @@ sub scanUrl {
 sub shouldCacheImage { 1 }
 
 # Episode titles come from the feed, they're not built as "Artist - Title" like radio
-# stream titles: don't let the HTTP handler split them (eg. "Movie - Guest").
-sub splitTitleIntoArtist { 0 }
+# stream titles: keep them unchanged (eg. "Movie - Guest").
+sub splitTitleArtist {
+	my ( $class, $title ) = @_;
+	return (undef, $title);
+}
 
 sub new {
 	my ($class, $args) = @_;
