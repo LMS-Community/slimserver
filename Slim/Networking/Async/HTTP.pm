@@ -514,6 +514,13 @@ sub _http_read {
 		# if not, keep going and read the body
 		$self->read_body($args);
 	}
+
+	# The headers didn't fit in this read and the rest of them already sits in IO::Socket::SSL's buffer of
+	# decrypted data: the socket won't become readable for it again, and a keep-alive server sends nothing more.
+	# Read on now. Check SSL's buffer only: partial headers in Net::HTTP's own buffer need more data from the socket.
+	elsif ( $self->socket && $self->socket->can('pending') && $self->socket->pending ) {
+		return _http_read( $self, $args );
+	}
 }
 
 sub _http_read_body {
