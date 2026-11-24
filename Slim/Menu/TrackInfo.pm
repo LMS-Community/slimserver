@@ -1342,6 +1342,9 @@ sub tagDump {
 			}
 		}
 
+		# break the self-reference of the recursive closure
+		undef $array_tag;
+
 		if ( !scalar @{$menu} ) {
 			$menu = {
 				type => 'text',

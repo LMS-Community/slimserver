@@ -106,6 +106,9 @@ sub find {
 						if ( $todo > 0 || scalar @items ) {
 							$childgrp->add( aio_nop( $nop ) );
 						}
+						else {
+							undef $nop;
+						}
 					};
 
 					$childgrp->add( aio_nop( $nop ) );
