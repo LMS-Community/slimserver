@@ -1165,7 +1165,7 @@ sub modifyPlaylistCallback {
 						Slim::Utils::Unicode::utf8encode($eachclient->name ||  $eachclient->ip),
 					);
 
-			my $playlistUrl = _playlistUrlForClient($client) or next;
+			my $playlistUrl = _playlistUrlForClient($eachclient) or next;
 
 			Slim::Formats::Playlists::M3U->write(
 				$playlist,
