@@ -70,6 +70,13 @@ sub scanUrl {
 
 sub shouldCacheImage { 1 }
 
+# Episode titles come from the feed, they're not built as "Artist - Title" like radio
+# stream titles: keep them unchanged (eg. "Movie - Guest").
+sub splitTitleArtist {
+	my ( $class, $client, $url ) = @_;
+	return (undef, Slim::Music::Info::getCurrentTitle( $client, $url ));
+}
+
 sub new {
 	my ($class, $args) = @_;
 
