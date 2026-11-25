@@ -10,6 +10,7 @@ use strict;
 
 use Digest::MD5;
 use JSON::XS qw(encode_json);
+use Scalar::Util;
 
 use base qw(Slim::Web::Settings);
 
@@ -157,7 +158,10 @@ sub handler {
 				$callback->($client, $params, $pageInfo, @args);
 			};
 
-			$finalize->();
+			# the closure only references itself weakly; pending timers keep it alive while we wait
+			my $finalizeRef = $finalize;
+			Scalar::Util::weaken($finalize);
+			$finalizeRef->();
 		},
 		onError => sub { $data->{errors}->{$_[0]} = $_[1] },
 	});

@@ -550,6 +550,20 @@ sub _noResponse {
 }
 
 sub _parseXML {
+	my ($args, $xml) = @_;
+
+	# always call back - callers like Async::Util::amap() rely on it to complete and release their closures
+	my ($res, $info) = eval { _extractExtensions($args, $xml) };
+
+	if ($@) {
+		$log->warn("Error parsing $args->{name}: $@");
+		($res, $info) = ([], undef);
+	}
+
+	$args->{'cb'}->( @{$args->{'pt'}}, $res, $info );
+}
+
+sub _extractExtensions {
 	my $args = shift;
 	my $xml  = shift;
 
@@ -638,7 +652,7 @@ sub _parseXML {
 
 	if ($details) {
 
-		if ( $xml->{details} && $xml->{details}->{title}
+		if ( $xml->{details} && ref $xml->{details}->{title} eq 'HASH'
 				 && ($xml->{details}->{title}->{$lang} || $xml->{details}->{title}->{EN}) ) {
 
 			$repoTitle = $xml->{details}->{title}->{$lang} || $xml->{details}->{title}->{EN};
@@ -658,7 +672,7 @@ sub _parseXML {
 
 	$debug && $log->debug("found " . scalar(@res) . " extensions");
 
-	$args->{'cb'}->( @{$args->{'pt'}}, \@res, $info );
+	return (\@res, $info);
 }
 
 1;
