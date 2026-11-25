@@ -387,7 +387,7 @@ sub getDefaultGateway {
 }
 
 my $updateCheckInitialized;
-my $plistLabel = "com.slimdevices.updatecheck";
+my $plistLabel = "org.lyrion.updatecheck";
 
 sub initUpdate {
 	return if $updateCheckInitialized;
@@ -444,6 +444,10 @@ sub initUpdate {
 	<string>$logDir</string>
 	<key>StartInterval</key>
 	<integer>$interval</integer>
+	<key>AssociatedBundleIdentifiers</key>
+	<array>
+		<string>org.lyrion.lyrionmusicserver</string>
+	</array>
 </dict>
 </plist>);
 
