@@ -81,19 +81,22 @@ sub _amap {
 
         if ($err) {
             $any_err = 1;
+            undef $run;     # break the $run <-> $after_work cycle
             return $cb->(undef, $err);
         }
 
         # store the output
         $outputs->[$index] = $output;
 
-        return $cb->($outputs) if $cb_count == @{ $inputs };
+        if ($cb_count == @{ $inputs }) {
+            undef $run;     # break the $run <-> $after_work cycle
+            return $cb->($outputs);
+        }
 
-        $run->();
+        $run->() if $run;
     };
 
     $run->();
-    # weaken $run;
 
     return;
 }
@@ -215,18 +218,21 @@ sub azipmap {
 
         if ($err) {
             $any_err = 1;
-            $cb->(undef, $err);
+            undef $run;     # break the $run <-> $after_work cycle
+            return $cb->(undef, $err);
         }
 
         $outputs->[$index] = $output;
 
-        return $cb->($outputs) if $cb_count == @{ $actions };
+        if ($cb_count == @{ $actions }) {
+            undef $run;     # break the $run <-> $after_work cycle
+            return $cb->($outputs);
+        }
 
-        $run->();
+        $run->() if $run;
     };
 
     $run->();
-    weaken $run;
 
     return;
 }
