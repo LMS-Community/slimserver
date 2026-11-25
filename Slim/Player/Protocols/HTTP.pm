@@ -82,6 +82,8 @@ sub close {
 	} elsif ($enhanced->{'status'} && $enhanced->{'status'} > IDLE) {
 		# disconnect persistent session (if any)
 		$enhanced->{'session'}->disconnect;
+		# a connect may still be in flight: let its callbacks know we're gone
+		$enhanced->{'status'} = DISCONNECTED;
 	}
 }
 
@@ -505,13 +507,20 @@ sub readPersistentChunk {
 		$enhanced->{'session'}->send_request( {
 			request   => $request,
 			onHeaders => sub {
-				my $headers = shift->response->headers;
+				my $http = shift;
+
+				# stream was closed while we were connecting - drop the socket to break the reference cycle
+				return $http->disconnect if $enhanced->{'status'} == DISCONNECTED;
+
+				my $headers = $http->response->headers;
 				$enhanced->{'length'} = $1 if $headers->header('Content-Range') =~ /^bytes\s+\d+-\d+\/(\d+)/i;
 				$enhanced->{'length'} ||= $headers->header('Content-Length') if $headers->header('Content-Length');
 				$enhanced->{'status'} = CONNECTED;
 				$enhanced->{'errors'} = 0;
 			},
 			onError  => sub {
+				return if $enhanced->{'status'} == DISCONNECTED;
+
 				$enhanced->{'session'}->disconnect;
 				$enhanced->{'status'} = READY;
 				$enhanced->{'errors'}++;
