@@ -19,6 +19,17 @@ use Slim::Utils::Unicode;
 
 *escape = main::ISWINDOWS ? \&URI::Escape::uri_escape : \&URI::Escape::uri_escape_utf8;
 
+# File paths are raw bytes in the filesystem encoding. Decode them to characters before
+# escape() encodes them as UTF-8, or non-ASCII bytes get encoded twice. On Windows escape()
+# passes the bytes through as they are.
+sub escapePath {
+	my $path = shift;
+
+	$path = Slim::Utils::Unicode::utf8decode_locale($path) unless main::ISWINDOWS;
+
+	return escape($path);
+}
+
 my $log = logger('plugin.musicip');
 
 my %filterHash = ();

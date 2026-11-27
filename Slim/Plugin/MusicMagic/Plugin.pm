@@ -11,7 +11,6 @@ use strict;
 
 use Scalar::Util qw(blessed);
 use LWP::UserAgent;
-use URI::Escape qw(uri_escape_utf8);
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
@@ -876,8 +875,9 @@ sub getMix {
 	}
 
 	my $mixArgs = join('&', map {
-		my $id = !main::ISWINDOWS && ($validMixTypes{$for} eq 'song' || $validMixTypes{$for} eq 'album') ? Slim::Utils::Unicode::utf8decode_locale($_) : $_;
-		$validMixTypes{$for} . '=' . Slim::Plugin::MusicMagic::Common::escape($id);
+		# song and album mixes are seeded with a track's file path
+		my $id = ($validMixTypes{$for} eq 'song' || $validMixTypes{$for} eq 'album') ? Slim::Plugin::MusicMagic::Common::escapePath($_) : Slim::Plugin::MusicMagic::Common::escape($_);
+		$validMixTypes{$for} . '=' . $id;
 	} @ids);
 
 	main::DEBUGLOG && $log->debug("Request http://localhost:$MMSport/api/mix?$mixArgs\&$argString");
@@ -1437,7 +1437,7 @@ sub checkSingleTrack {
 	Slim::Plugin::MusicMagic::Importer->initPlugin();
 
 	my $path   = Slim::Utils::Misc::pathFromFileURL($url);
-	my $apiurl = "http://localhost:$MMSport/api/getSong?file=" . uri_escape_utf8($path);
+	my $apiurl = "http://localhost:$MMSport/api/getSong?file=" . Slim::Plugin::MusicMagic::Common::escapePath($path);
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
