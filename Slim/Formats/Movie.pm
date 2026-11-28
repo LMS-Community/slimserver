@@ -321,6 +321,11 @@ sub parseStream {
 	# finally got it, align to beginning of 'moov'
 	substr($args->{_scanbuf}, 0, $args->{_moov_} - $args->{_range}, '');
 
+	# and only keep that atom: whatever follows it (eg. an empty 'free' atom before 'mdat')
+	# would be left out of the header built by Audio::Scan but still counted in its chunk
+	# offsets, so the player would skip the first bytes of audio
+	$args->{_scanbuf} = substr($args->{_scanbuf}, 0, unpack('N', $args->{_scanbuf}));
+
 	# put at least 16 bytes after mdat or it confuses audio::scan (and header creation)
 	my $fh = File::Temp->new( DIR => Slim::Utils::Misc::getTempDir);
 	$fh->write($args->{_scanbuf} . pack('N', $args->{_audio_size}) . 'mdat' . ' ' x 16);
