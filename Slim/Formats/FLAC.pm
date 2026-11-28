@@ -232,6 +232,8 @@ sub _getStandardTag {
 sub doTagMapping {
 	my ($class, $tags) = @_;
 
+	my $hasOriginalDate = exists $tags->{ORIGINALDATE};
+
 	# Map ID3 tags first, so FLAC tags win out
 	if ( $tags->{TAGVERSION} ) {
 		# Tell MP3 tag mapper to not overwrite existing tags
@@ -250,7 +252,7 @@ sub doTagMapping {
 
 	# Special handling for DATE tags
 	# Parse the date down to just the year, for compatibility with other formats
-	if (defined $tags->{DATE} && !defined $tags->{YEAR}) {
+	if (defined $tags->{DATE} && (!defined $tags->{YEAR} || $hasOriginalDate)) {
 		# bug 18112 - Sometimes we get a list of dates. Pick the first.
 		if (ref $tags->{DATE} eq 'ARRAY') {
 			my @years = sort @{$tags->{DATE}};
