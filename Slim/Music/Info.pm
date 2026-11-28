@@ -1335,6 +1335,17 @@ sub isContainer {
 	return 0;
 }
 
+sub isImage {
+	my $pathOrObj = shift;
+	my $type      = shift || _isContentTypeHelper($pathOrObj);
+
+	$type =~ s/jpeg/jpg/i if $type;
+
+	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'image') {
+		return $type;
+	}
+}
+
 sub isLossy {
 	my $type = shift;
 
