@@ -1,0 +1,29 @@
+# Source files are always stored with LF line endings so that they work
+# correctly inside Linux containers regardless of the developer's host OS.
+
+# Shell scripts
+*.sh            text eol=lf
+
+# Perl source
+*.pl            text eol=lf
+*.pm            text eol=lf
+
+# LMS locale strings (parsed by Linux server — CRLF causes parse errors)
+strings.txt     text eol=lf
+
+# Web assets
+*.js            text eol=lf
+*.css           text eol=lf
+*.html          text eol=lf
+*.xml           text eol=lf
+*.html.*        text eol=lf
+
+# Config / documentation
+*.json          text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+*.md            text eol=lf
+*.txt           text eol=lf
+
+# Third-party code — preserve as committed, no line-ending conversion
+CPAN/**         -text
