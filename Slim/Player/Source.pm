@@ -56,7 +56,8 @@ sub _returnPlayMode {
 	my $controller = $_[0];
 
 	# Should reall find out if the player is active in the sync-group but too expensive
-	return 'stop' if !$_[1]->power();
+	# 13 March, 2025 -- propose removing following line -- player can be isPaused.  Accuracy needed for alarm code
+#	return 'stop' if !$_[1]->power();
 
 	my $returnedmode = $controller->isStopped ? 'stop'
 						: $controller->isPaused ? 'pause' : 'play';
