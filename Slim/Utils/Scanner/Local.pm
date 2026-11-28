@@ -83,7 +83,7 @@ sub find {
 
 			$sth->execute(
 				$file,
-				(stat _)[9], # mtime
+				Slim::Utils::Misc::fixMTime( (stat _)[9] ), # mtime
 				(stat _)[7], # size
 			);
 
@@ -206,17 +206,35 @@ sub rescan {
 		my ($maxTrackId) = $dbh->selectrow_array('SELECT MAX(id) FROM tracks');
 		$maxTrackId ||= 0;
 
-		# bug 18078 - Windows doesn't handle DST changes in a file's timestamp correctly. We need to do this on our end.
+		# bug 18078 - Windows' C runtime reports a file's mtime one hour off when the file's date
+		# and today fall into different DST periods. Slim::Utils::Misc::fixMTime() now undoes this,
+		# but timestamps written by older versions (which shifted the whole tracks table by an hour
+		# on every DST change) can still be off by one hour. Where that is the only difference,
+		# take over the current value instead of re-reading the file.
 		if ( main::ISWINDOWS && !(main::SCANNER && $main::wipe) ) {
-			my $isDST = Slim::Utils::DateTime->isDST();
+			$dbh->do('DROP TABLE IF EXISTS dst_shifted');
+			$dbh->do( qq{
+				CREATE TEMPORARY TABLE dst_shifted AS
+					SELECT scanned_files.url AS url, scanned_files.timestamp AS timestamp
+					FROM   scanned_files
+					JOIN   tracks ON (
+						scanned_files.url = tracks.url
+						AND scanned_files.filesize = tracks.filesize
+						AND ABS(scanned_files.timestamp - tracks.timestamp) = 3600
+					)
+					WHERE  scanned_files.url LIKE '$basedir%'
+			} );
 
-			if ( $isDST != Slim::Music::Import->getLastScanTimeIsDST() ) {
-				my $offset = $isDST ? 3600 : -3600;
+			my $shifted = $dbh->do( qq{
+				UPDATE tracks
+				SET    timestamp = (SELECT timestamp FROM dst_shifted WHERE dst_shifted.url = tracks.url)
+				WHERE  url IN (SELECT url FROM dst_shifted)
+			} );
 
-				$log->error("DST has changed since last scan - fix timestamps in tracks table");
+			$dbh->do('DROP TABLE IF EXISTS dst_shifted');
 
-				$dbh->do("UPDATE tracks SET timestamp = (timestamp + $offset)");
-				Slim::Music::Import->setLastScanTimeIsDST();
+			if ( $shifted && $shifted > 0 ) {
+				$log->error("Corrected $shifted timestamps which were off by one hour (DST)");
 			}
 		}
 
@@ -1166,7 +1184,6 @@ sub markDone {
 	if (!main::SCANNER && $changes) {
 		main::DEBUGLOG && $log->is_debug && $log->debug("Scanner made $changes changes, updating last rescan timestamp");
 		Slim::Music::Import->setLastScanTime();
-		Slim::Music::Import->setLastScanTimeIsDST();
 	}
 
 	$pending{$path} &= ~$type if $type;
@@ -1202,7 +1219,6 @@ sub markDone {
 				if ($changes) {
 					main::DEBUGLOG && $log->is_debug && $log->debug("Scanner made $changes changes, updating last rescan timestamp");
 					Slim::Music::Import->setLastScanTime();
-					Slim::Music::Import->setLastScanTimeIsDST();
 				}
 
 				# Persist the count of "changes since last optimization"
