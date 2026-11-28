@@ -86,6 +86,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    mixer           bass                        <0..100|-100..+100|?>
  Y    mixer           treble                      <0..100|-100..+100|?>
  Y    mixer           pitch                       <80..120|-100..+100|?>
+ Y    mixer           speed                       <50..200|-100..+100|?>
  Y    mixer           muting                      <|?>
  Y    name            <newname|?>
  Y    playerpref      <prefname>                  <prefvalue|?>
@@ -518,6 +519,8 @@ sub init {
 	addDispatch(['mixer',          'stereoxl',       '_newvalue'],                                     [1, 0, 1, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mixer',          'pitch',          '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
 	addDispatch(['mixer',          'pitch',          '_newvalue'],                                     [1, 0, 1, \&Slim::Control::Commands::mixerCommand]);
+	addDispatch(['mixer',          'speed',          '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
+	addDispatch(['mixer',          'speed',          '_newvalue'],                                     [1, 0, 1, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mixer',          'treble',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
 	addDispatch(['mixer',          'treble',         '_newvalue'],                                     [1, 0, 1, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mixer',          'volume',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
@@ -672,6 +675,12 @@ sub init {
 
 	addDispatch(['playlisttracks', '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::playlistsTracksQuery]);
 	# use query "playlists tracks"
+
+	# reset 'mixer speed' on track/album change, per the player's 'speedReset' setting -
+	# see Slim::Control::Commands::_speedResetOnNewSong
+	if ( !main::SCANNER ) {
+		subscribe( \&Slim::Control::Commands::_speedResetOnNewSong, [['playlist'], ['newsong']] );
+	}
 
 ######################################################################################################################################################################
 

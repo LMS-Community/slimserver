@@ -248,6 +248,30 @@ Main = {
 			minWidth: 31
 		});
 
+		// playback speed selector - only shown when the current player supports it
+		var speedSelector = new SqueezeJS.UI.Component({
+			el: 'ctrlSpeed',
+
+			onPlayerStateChange : function(result){
+				var wrap = Ext.get('ctrlSpeedWrap');
+				if (!wrap)
+					return;
+
+				if (result['mixer speed'] != null) {
+					wrap.setDisplayed(true);
+					this.el.dom.value = parseInt(result['mixer speed']);
+				} else {
+					wrap.setDisplayed(false);
+				}
+			}
+		});
+
+		if (speedSelector.el) {
+			speedSelector.el.on('change', function(){
+				SqueezeJS.Controller.playerControl(['mixer', 'speed', speedSelector.el.dom.value]);
+			});
+		}
+
 		new SqueezeJS.UI.Buttons.VolumeDown({
 			renderTo: 'ctrlVolumeDown',
 			noText:   true,

@@ -1,6 +1,9 @@
 # Ignore custom OS module as this is installed in devcontainer and not part of this repo
 Slim/Utils/OS/Custom.pm
 
+# Local agent notes, not part of the upstream repo
+AGENTS.md
+
 # Ignore cache, logs and prefs files
 Cache/*
 Logs/*
